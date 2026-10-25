@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1440">
+<head>
+<meta charset="utf-8">
+<title>Here! — Importer la liste d'invités</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_backoffice.css">
+<style>
+  .wrap { display: grid; grid-template-columns: 1fr 320px; gap: var(--space-4); }
+  .file { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); border-radius: var(--radius-md); box-shadow: inset 0 0 0 1.5px var(--color-status-confirmed); margin-bottom: var(--space-5); }
+  .file .ic { width: 44px; height: 44px; border-radius: 12px; background: var(--color-surface); display: flex; align-items: center; justify-content: center; }
+  .file .ic i { width: 22px; height: 22px; }
+  .file b { display: block; font-size: 14px; font-weight: 600; }
+  .file small { font-size: 12px; color: var(--color-text-muted); }
+  .file .st { margin-left: auto; }
+  .q { font-family: var(--font-heading); font-size: 15px; font-weight: 600; margin-bottom: var(--space-3); }
+  .map { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-2); margin-bottom: var(--space-5); }
+  .map div { padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); font-size: 12px; }
+  .map span { display: block; color: var(--color-text-muted); }
+  .map b { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .map b i { width: 14px; height: 14px; color: var(--color-status-confirmed); }
+  tr.bad td { background: rgba(150,90,0,.06); }
+  .fix { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--color-accent-text); }
+  .fix i { width: 14px; height: 14px; }
+  .sum .big { font-family: var(--font-data); font-weight: 600; font-size: 40px; letter-spacing: -0.02em; }
+  .sum .big small { font-size: 15px; color: var(--color-text-muted); font-weight: 400; letter-spacing: 0; }
+  .sum p { font-size: 13px; color: var(--color-text-muted); margin: 4px 0 var(--space-4); }
+  .sum .l { display: grid; gap: 0; }
+  .sum .l div { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid var(--color-border); font-size: 13px; }
+  .sum .l b { font-family: var(--font-data); font-weight: 600; }
+  .tip { margin-top: var(--space-4); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); font-size: 12px; line-height: 1.5; display: flex; gap: var(--space-2); }
+  .tip i { width: 16px; height: 16px; color: var(--color-text-muted); margin-top: 1px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-4); }
+</style>
+</head>
+<body>
+  <aside data-active="invites"></aside>
+  <main>
+    <div class="topbar">
+      <div class="ttl">
+        <div class="crumb">Mariage Aya &amp; Koffi · Nouveau</div>
+        <h1>Importer vos invités</h1>
+      </div>
+      <div class="steps">
+        <span class="done"><b>1</b>L'événement</span><span class="line"></span>
+        <span class="on"><b>2</b>Les invités</span><span class="line"></span>
+        <span><b>3</b>La carte</span><span class="line"></span>
+        <span><b>4</b>Les relances</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="panel">
+        <div class="file">
+          <span class="ic"><i data-icon="importer"></i></span>
+          <div><b>invites-mariage-aya-koffi.xlsx</b><small>324 lignes · importé à l'instant</small></div>
+          <span class="st ok"><i data-icon="valide"></i>Fichier lu</span>
+          <span class="btn ghost sm">Changer de fichier</span>
+        </div>
+
+        <div class="q">Nous avons reconnu vos colonnes</div>
+        <div class="map">
+          <div><span>« Nom complet »</span><b><i data-icon="valide"></i>Nom de l'invité</b></div>
+          <div><span>« Téléphone »</span><b><i data-icon="valide"></i>Numéro WhatsApp</b></div>
+          <div><span>« Groupe »</span><b><i data-icon="valide"></i>Catégorie</b></div>
+          <div><span>« Nb pers. »</span><b><i data-icon="valide"></i>Personnes</b></div>
+          <div><span>« Table »</span><b><i data-icon="valide"></i>Table</b></div>
+        </div>
+
+        <div class="ph"><div class="q" style="margin:0">Aperçu de la liste</div><span class="note">4 numéros à vérifier sont en tête de liste</span></div>
+        <table>
+          <thead><tr><th>Invité</th><th>Numéro WhatsApp</th><th>Catégorie</th><th class="r">Personnes</th><th>Vérification</th></tr></thead>
+          <tbody>
+            <tr class="bad"><td><b>Paul Assi</b></td><td class="num">07 07 12 3</td><td><span class="tag">Amis</span></td><td class="r num">1</td><td><span class="st wait"><i data-icon="alerte"></i>Numéro incomplet</span> <span class="fix"><i data-icon="modifier"></i>Corriger</span></td></tr>
+            <tr class="bad"><td><b>Tante Adjoua</b></td><td class="num">—</td><td><span class="tag">Famille</span></td><td class="r num">3</td><td><span class="st wait"><i data-icon="alerte"></i>Numéro manquant</span> <span class="fix"><i data-icon="modifier"></i>Ajouter</span></td></tr>
+            <tr><td><b>M. et Mme Konan</b></td><td class="num">+225 07 07 12 34 56</td><td><span class="tag dark">VIP</span></td><td class="r num">2</td><td><span class="st ok"><i data-icon="valide"></i>Prêt</span></td></tr>
+            <tr><td><b>Fatou Bamba</b></td><td class="num">+225 05 44 81 81 07</td><td><span class="tag">Amis</span></td><td class="r num">1</td><td><span class="st ok"><i data-icon="valide"></i>Prêt</span></td></tr>
+            <tr><td><b>Famille Ouattara</b></td><td class="num">+225 01 23 12 12 90</td><td><span class="tag">Famille</span></td><td class="r num">4</td><td><span class="st ok"><i data-icon="valide"></i>Prêt</span></td></tr>
+            <tr><td><b>Dr Hamed Koné</b></td><td class="num">+225 07 58 20 66 14</td><td><span class="tag dark">VIP</span></td><td class="r num">2</td><td><span class="st ok"><i data-icon="valide"></i>Prêt</span></td></tr>
+          </tbody>
+        </table>
+        <div class="foot">
+          <span class="btn ghost"><i data-icon="telecharger"></i>Télécharger notre modèle Excel</span>
+          <span class="btn">Continuer : la carte<i data-icon="fleche-droite"></i></span>
+        </div>
+      </section>
+
+      <section class="panel sum">
+        <h2>Votre liste</h2>
+        <div class="big" style="margin-top:var(--space-3)">320 <small>invités</small></div>
+        <p>4 doublons retirés automatiquement. 4 numéros à vérifier avant l'envoi.</p>
+        <div class="l">
+          <div><span class="tag dark">VIP</span><b>40</b></div>
+          <div><span class="tag">Famille</span><b>120</b></div>
+          <div><span class="tag">Amis</span><b>110</b></div>
+          <div><span class="tag">Collègues</span><b>50</b></div>
+          <div><span>Personnes au total, accompagnants compris</span><b>548</b></div>
+        </div>
+        <div class="tip"><i data-icon="cadenas"></i><span>Les numéros de vos invités ne servent qu'à leur envoyer votre invitation. Ils ne sont jamais partagés ni réutilisés.</span></div>
+      </section>
+    </div>
+  </main>
+<script src="_backoffice.js"></script>
+<script src="_icons.js"></script>
+</body>
+</html>

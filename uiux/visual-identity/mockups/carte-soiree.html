@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr" data-theme="dark" data-export-width="720">
+<head>
+<meta charset="utf-8">
+<title>Carte d'invitation — modèle Soirée</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../typography/fonts-italic.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_carte.css">
+<style>
+  /* Modèle Soirée : concert privé, festival, soirée. Seul modèle qui utilise le slash et l'italique de campagne. */
+  :root { --c-bg: var(--color-ink); --c-text: var(--color-white); }
+  .pic { position: absolute; inset: 0 0 196px; }
+  .shade { position: absolute; inset: 0 0 196px; background: linear-gradient(180deg, rgba(11,11,11,.1) 20%, rgba(11,11,11,.95) 100%); }
+  .slash { position: absolute; background: var(--color-red); transform: skewX(-18deg); width: 54px; top: -30px; height: 360px; right: 96px; }
+  .slash.thin { width: 7px; right: 176px; height: 260px; }
+  .content { align-items: flex-start; text-align: left; padding: 0 56px 30px; justify-content: flex-end; z-index: 1; }
+  .kind { display: inline-flex; height: 30px; align-items: center; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-red); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .title { font-family: var(--font-heading); font-style: italic; font-weight: 800; font-size: 82px; line-height: .9; letter-spacing: -0.03em; text-transform: uppercase; margin: 14px 0 12px; }
+  .guest { font-size: 16px; color: var(--color-gray-300); }
+  .guest b { color: var(--color-white); font-weight: 600; }
+  .facts { display: flex; gap: 24px; margin-top: 16px; font-size: 15px; font-weight: 500; }
+  .facts span { display: inline-flex; gap: 8px; align-items: center; }
+  .facts i { width: 20px; height: 20px; color: var(--color-red-bright); }
+</style>
+</head>
+<body>
+  <div class="pic photo nuit" data-src="../imagery/hero-artiste.jpg" data-brief="hero-artiste.jpg"></div>
+  <span class="shade"></span>
+  <span class="slash"></span><span class="slash thin"></span>
+  <div class="content">
+    <span class="kind">Concert privé · sur invitation</span>
+    <div class="title">Babi<br>Private<br>Night</div>
+    <div class="guest">Babi Live Productions invite <b>Kevin Aka</b></div>
+    <div class="facts"><span><i data-icon="calendrier"></i>Sam. 19 déc · 22 h</span><span><i data-icon="lieu"></i>Rooftop 225, Plateau</span></div>
+  </div>
+
+  <div class="sceau">
+    <div class="qr"><img src="qr-invitation.svg" alt="QR code de l'invitation"></div>
+    <div class="who"><small>Invitation personnelle</small><b>Kevin Aka</b><span><em>1 personne</em> · VIP</span></div>
+    <div class="here"><img src="../logo/svg/favicon.svg" alt=""><b>Invitation<br>vérifiée par Here!</b><span class="code">INV-BL26-1204</span></div>
+  </div>
+  <script src="_icons.js"></script>
+</body>
+</html>

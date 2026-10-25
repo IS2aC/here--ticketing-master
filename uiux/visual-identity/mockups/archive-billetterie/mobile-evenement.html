@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Détail d'un événement</title>
+<link rel="stylesheet" href="../../typography/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../_mobile.css">
+<style>
+  .hero { position: absolute; top: 0; left: 0; right: 0; height: 270px; color: var(--color-white); }
+  .hero .status { color: var(--color-white); }
+  .hero-nav { position: relative; z-index: 2; display: flex; justify-content: space-between; padding: var(--space-1) var(--space-5); }
+  .round { width: 40px; height: 40px; border-radius: 50%; background: rgba(11,11,11,.55); display: flex; align-items: center; justify-content: center; color: var(--color-white); }
+  .round i { width: 20px; height: 20px; }
+  .back i { transform: rotate(180deg); }
+  .hero .slash { width: 8px; height: 110px; top: 110px; right: 40px; }
+  .hero.photo::before { top: 110px; max-width: 45%; }
+  .sheet { position: absolute; top: 230px; left: 0; right: 0; bottom: 0; background: var(--color-background); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: var(--space-6) var(--space-5) 0; }
+  .sheet .title-xl { color: var(--color-text); font-size: 28px; margin-top: var(--space-2); }
+  .facts { margin: var(--space-4) 0; display: grid; gap: var(--space-2); }
+  .facts .row { font-size: 13px; }
+  .facts i { width: 18px; height: 18px; color: var(--color-accent-text); }
+  .org { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); }
+  .org .av { width: 36px; height: 36px; border-radius: 50%; }
+  .org b { font-size: 13px; display: block; }
+  .org small { font-size: 11px; color: var(--color-text-muted); }
+  .org .ok { margin-left: auto; color: var(--color-success); width: 20px; height: 20px; }
+  .tickets { margin-top: var(--space-5); display: grid; gap: var(--space-2); }
+  .tk { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--color-border); }
+  .tk.sel { box-shadow: inset 0 0 0 2px var(--color-primary); }
+  .tk b { font-family: var(--font-heading); font-weight: 600; font-size: 14px; display: block; }
+  .tk small { font-size: 11px; color: var(--color-text-muted); }
+  .tk .p { font-family: var(--font-heading); font-weight: 700; font-size: 14px; text-align: right; }
+  .qty { display: flex; align-items: center; gap: var(--space-3); margin-top: 4px; justify-content: flex-end; font-weight: 600; }
+  .qty span { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1.5px var(--color-border); font-size: 15px; line-height: 1; }
+  .qty span.plus { background: var(--color-primary); color: var(--color-on-primary); box-shadow: none; }
+  .pay { margin-top: var(--space-3); display: flex; gap: 5px; align-items: center; font-size: 11px; color: var(--color-text-muted); flex-wrap: wrap; }
+  .pay span { height: 24px; padding: 0 6px; font-size: 10.5px; border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-text); font-weight: 600; display: inline-flex; align-items: center; }
+  .cta { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-4) var(--space-5) var(--space-8); background: var(--color-background); border-top: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--space-4); }
+  .cta .tot small { display: block; font-size: 11px; color: var(--color-text-muted); }
+  .cta .tot b { font-family: var(--font-heading); font-weight: 800; font-size: 20px; white-space: nowrap; }
+  .cta .btn { flex: 1; }
+</style>
+</head>
+<body>
+  <div class="hero photo" data-src="../../imagery/evt-afrofest.jpg" data-brief="evt-afrofest.jpg — artiste sur grande scène, foule au premier plan">
+    <span class="shade"></span>
+    <span class="slash"></span>
+    <div class="status"><span>9:41</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+    <div class="hero-nav">
+      <span class="round back"><i data-icon="fleche-droite"></i></span>
+      <span class="row" style="gap:var(--space-2)"><span class="round"><i data-icon="partager"></i></span><span class="round"><i data-icon="favori"></i></span></span>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div class="row" style="gap:var(--space-2)"><span class="badge red">Festival</span><span class="badge warn">Plus que 120 places VIP</span></div>
+    <div class="title-xl">Afro Fest 2026</div>
+    <div class="facts">
+      <div class="row"><i data-icon="calendrier"></i>Samedi 12 décembre 2026 · 18:00</div>
+      <div class="row"><i data-icon="lieu"></i>Palais de la Culture, Treichville, Abidjan</div>
+    </div>
+    <div class="org">
+      <span class="av photo" data-src="../../imagery/organisateur.jpg"></span>
+      <div><b>Babi Live Productions</b><small>Organisateur vérifié · 48 événements</small></div>
+      <i class="ok" data-icon="valide"></i>
+    </div>
+
+    <div class="tickets">
+      <div class="title-m" style="margin-bottom:var(--space-1)">Choisissez vos billets</div>
+      <div class="tk"><div><b>Standard</b><small>Accès pelouse</small></div><div><div class="p">5 000 FCFA</div><div class="qty"><span>−</span>0<span class="plus">+</span></div></div></div>
+      <div class="tk sel"><div><b>VIP</b><small>Carré VIP · 1 boisson offerte</small></div><div><div class="p">15 000 FCFA</div><div class="qty"><span>−</span>2<span class="plus">+</span></div></div></div>
+      <div class="tk"><div><b>VVIP</b><small>Loge · accès backstage</small></div><div><div class="p">30 000 FCFA</div><div class="qty"><span>−</span>0<span class="plus">+</span></div></div></div>
+    </div>
+    <div class="pay"><span>Orange Money</span><span>MTN MoMo</span><span>Wave</span><span>Moov</span><span>Carte</span></div>
+  </div>
+
+  <div class="cta">
+    <div class="tot"><small>2 billets VIP</small><b>30 000 FCFA</b></div>
+    <span class="btn">Acheter</span>
+  </div>
+  <span class="home-ind"></span>
+  <script src="../_icons.js"></script>
+</body>
+</html>

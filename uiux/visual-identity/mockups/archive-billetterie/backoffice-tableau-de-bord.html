@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1440">
+<head>
+<meta charset="utf-8">
+<title>Here! — Back-office : tableau de bord</title>
+<link rel="stylesheet" href="../../typography/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1440px; height: 900px; overflow: hidden; }
+  body { display: grid; grid-template-columns: 248px 1fr; background: var(--color-surface); color: var(--color-text);
+    font-family: var(--font-data); font-size: var(--text-data-size); -webkit-font-smoothing: antialiased; }
+  i[data-icon] { display: inline-flex; width: 20px; height: 20px; flex-shrink: 0; }
+  i[data-icon] svg { width: 100%; height: 100%; }
+  h1, h2, h3, .head-font { font-family: var(--font-heading); }
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--color-text-muted); }
+
+  /* Barre latérale */
+  aside { background: var(--color-background); border-right: 1px solid var(--color-border); padding: var(--space-6) var(--space-4); display: flex; flex-direction: column; }
+  aside .logo { height: 30px; margin: 0 var(--space-3) var(--space-8); align-self: flex-start; }
+  aside nav { display: grid; gap: 2px; }
+  aside nav a { display: flex; align-items: center; gap: var(--space-3); height: 42px; padding: 0 var(--space-3); border-radius: var(--radius-md); color: var(--color-text-muted); font-weight: 500; text-decoration: none; }
+  aside nav a.on { background: var(--color-surface); color: var(--color-text); font-weight: 600; box-shadow: inset 3px 0 0 var(--color-primary); }
+  aside nav a.on i { color: var(--color-primary); }
+  aside .sep { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); margin: var(--space-6) var(--space-3) var(--space-2); }
+  aside .me { margin-top: auto; display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); }
+  aside .me .av { width: 36px; height: 36px; border-radius: 50%; background: var(--color-ink); display: flex; align-items: center; justify-content: center; }
+  aside .me .av img { width: 22px; }
+  aside .me b { display: block; font-size: 13px; }
+  aside .me small { font-size: 12px; color: var(--color-text-muted); }
+
+  main { padding: var(--space-6) var(--space-8); display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: var(--space-4); }
+  .topbar h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .topbar .sub { font-size: 13px; color: var(--color-text-muted); margin-top: 2px; }
+  .select { display: flex; align-items: center; gap: var(--space-2); height: 40px; padding: 0 var(--space-4); border-radius: var(--radius-md); background: var(--color-background); box-shadow: inset 0 0 0 1px var(--color-border); font-weight: 500; }
+  .select i { width: 16px; height: 16px; color: var(--color-text-muted); }
+  .btn { display: inline-flex; align-items: center; gap: var(--space-2); height: 40px; padding: 0 var(--space-5); border-radius: var(--radius-full); background: var(--color-primary); color: var(--color-on-primary); font-family: var(--font-heading); font-weight: 600; font-size: 14px; }
+  .btn i { width: 18px; height: 18px; }
+  .btn.ghost { background: var(--color-background); color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-border); }
+
+  .panel { background: var(--color-background); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-sm); }
+  .panel h2 { font-size: 16px; font-weight: 600; }
+  .panel .ph { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+  .kpi .lab { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: 13px; font-weight: 500; }
+  .kpi .lab i { width: 18px; height: 18px; }
+  .kpi .val { font-family: var(--font-data); font-weight: 600; font-size: 30px; letter-spacing: -0.02em; margin: var(--space-2) 0 var(--space-1); }
+  .kpi .val small { font-size: 15px; font-weight: 500; color: var(--color-text-muted); margin-left: 4px; letter-spacing: 0; }
+  .delta { font-size: 12px; font-weight: 600; color: var(--color-success); }
+  .delta span { color: var(--color-text-muted); font-weight: 400; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 380px; gap: var(--space-4); }
+  .chart { position: relative; height: 230px; }
+  .chart svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .chart .grid line { stroke: var(--color-border); stroke-width: 1; }
+  .chart .axis text { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-data); }
+  .tip { position: absolute; pointer-events: none; transform: translate(-50%, -100%); background: var(--color-ink); color: var(--color-white); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; white-space: nowrap; margin-top: -12px; }
+  .tip b { font-weight: 600; }
+  .tip small { display: block; color: var(--color-gray-500); font-size: 11px; }
+  .legend-note { font-size: 12px; color: var(--color-text-muted); display: flex; align-items: center; gap: var(--space-2); }
+  .legend-note::before { content: ""; width: 14px; height: 2px; background: var(--color-primary); border-radius: 1px; }
+
+  .bars { display: grid; gap: var(--space-3); }
+  .bars .r { display: grid; grid-template-columns: 108px 1fr 64px; gap: var(--space-3); align-items: center; font-size: 13px; }
+  .bars .t { height: 10px; border-radius: 0 4px 4px 0; background: var(--color-surface); overflow: hidden; }
+  .bars .t span { display: block; height: 100%; background: var(--color-ink); border-radius: 0 4px 4px 0; }
+  .bars .v { text-align: right; font-weight: 600; }
+  .sub-h { font-size: 13px; font-weight: 600; margin: var(--space-5) 0 var(--space-3); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 500; color: var(--color-text-muted); font-size: 12px; padding: 0 var(--space-3) var(--space-2); border-bottom: 1px solid var(--color-border); }
+  td { padding: 11px var(--space-3); border-bottom: 1px solid var(--color-border); }
+  tr:last-child td { border-bottom: 0; }
+  td.r, th.r { text-align: right; }
+  .mono { font-family: var(--font-mono); font-size: 12px; }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+  .status i { width: 15px; height: 15px; }
+  .status.ok { color: var(--color-success); }
+  .status.wait { color: var(--color-warning); }
+  .status.ref { color: var(--color-text-muted); }
+
+  .gates { display: grid; gap: var(--space-2); }
+  .gate { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); font-size: 13px; }
+  .gate b { font-weight: 600; }
+  .gate .status { font-size: 12px; }
+</style>
+</head>
+<body>
+  <aside>
+    <img class="logo" src="../../logo/svg/logo-horizontal.svg" alt="Here!">
+    <nav>
+      <a class="on"><i data-icon="statistiques"></i>Tableau de bord</a>
+      <a><i data-icon="calendrier"></i>Événements</a>
+      <a><i data-icon="billet"></i>Billets et tarifs</a>
+      <a><i data-icon="participants"></i>Participants</a>
+      <a><i data-icon="scanner"></i>Contrôle d'accès</a>
+      <a><i data-icon="mobile-money"></i>Paiements</a>
+    </nav>
+    <div class="sep">Équipe</div>
+    <nav>
+      <a><i data-icon="badge"></i>Staff et badges</a>
+      <a><i data-icon="parametres"></i>Paramètres</a>
+    </nav>
+    <div class="me"><span class="av"><img src="../../logo/svg/favicon.svg" alt=""></span><div><b>Babi Live Productions</b><small>Compte vérifié</small></div></div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div style="margin-right:auto">
+        <h1>Bonjour, Babi Live</h1>
+        <div class="sub">Afro Fest 2026 · J−49 · mis à jour à l'instant</div>
+      </div>
+      <span class="select"><i data-icon="calendrier"></i>30 derniers jours</span>
+      <span class="btn ghost"><i data-icon="partager"></i>Exporter</span>
+      <span class="btn"><i data-icon="ajouter"></i>Créer un événement</span>
+    </div>
+
+    <section class="kpis">
+      <div class="panel kpi"><div class="lab"><i data-icon="billet"></i>Billets vendus</div><div class="val num">3 214<small>/ 5 000</small></div><div class="delta">+18 % <span>vs 30 jours précédents</span></div></div>
+      <div class="panel kpi"><div class="lab"><i data-icon="mobile-money"></i>Revenus</div><div class="val num">37 470 000<small>FCFA</small></div><div class="delta">+22 % <span>vs 30 jours précédents</span></div></div>
+      <div class="panel kpi"><div class="lab"><i data-icon="participants"></i>Taux de remplissage</div><div class="val num">64<small>%</small></div><div class="delta">+6 pts <span>cette semaine</span></div></div>
+      <div class="panel kpi"><div class="lab"><i data-icon="courbe"></i>Conversion de la page</div><div class="val num">6,8<small>%</small></div><div class="delta">+0,9 pt <span>vs 30 jours précédents</span></div></div>
+    </section>
+
+    <section class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>Billets vendus par jour</h2><span class="legend-note">Afro Fest 2026 · 2 956 billets sur la période</span></div>
+        <div class="chart" id="chart"><svg id="svg" role="img" aria-label="Billets vendus par jour, 25 septembre au 24 octobre"></svg><div class="tip" id="tip"></div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>Répartition</h2><span class="muted" style="font-size:12px">Depuis l'ouverture</span></div>
+        <div class="bars">
+          <div class="r"><span>Standard</span><span class="t"><span style="width:50.4%"></span></span><span class="v num">1 620</span></div>
+          <div class="r"><span>VIP</span><span class="t"><span style="width:38.3%"></span></span><span class="v num">1 230</span></div>
+          <div class="r"><span>VVIP</span><span class="t"><span style="width:11.3%"></span></span><span class="v num">364</span></div>
+        </div>
+        <div class="sub-h">Moyens de paiement</div>
+        <div class="bars">
+          <div class="r"><span>Orange Money</span><span class="t"><span style="width:41%"></span></span><span class="v num">41 %</span></div>
+          <div class="r"><span>Wave</span><span class="t"><span style="width:27%"></span></span><span class="v num">27 %</span></div>
+          <div class="r"><span>MTN MoMo</span><span class="t"><span style="width:19%"></span></span><span class="v num">19 %</span></div>
+          <div class="r"><span>Carte bancaire</span><span class="t"><span style="width:8%"></span></span><span class="v num">8 %</span></div>
+          <div class="r"><span>Moov Money</span><span class="t"><span style="width:5%"></span></span><span class="v num">5 %</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>Dernières commandes</h2><span class="muted" style="font-size:12px">Voir les 2 148 commandes</span></div>
+        <table>
+          <thead><tr><th>Commande</th><th>Client</th><th>Billets</th><th>Paiement</th><th class="r">Montant</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">CMD-26-10241</td><td>Aya Kouassi</td><td>2 × VIP</td><td>Orange Money</td><td class="r num">30 000 FCFA</td><td><span class="status ok"><i data-icon="valide"></i>Payé</span></td></tr>
+            <tr><td class="mono">CMD-26-10240</td><td>Koffi Yao</td><td>4 × Standard</td><td>Wave</td><td class="r num">20 000 FCFA</td><td><span class="status ok"><i data-icon="valide"></i>Payé</span></td></tr>
+            <tr><td class="mono">CMD-26-10239</td><td>Mariam Traoré</td><td>1 × VVIP</td><td>Carte bancaire</td><td class="r num">30 000 FCFA</td><td><span class="status ok"><i data-icon="valide"></i>Payé</span></td></tr>
+            <tr><td class="mono">CMD-26-10238</td><td>Serge N'Guessan</td><td>3 × Standard</td><td>MTN MoMo</td><td class="r num">15 000 FCFA</td><td><span class="status wait"><i data-icon="horloge"></i>En attente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>Contrôle d'accès</h2><span class="muted" style="font-size:12px">12 déc · ouverture 16:00</span></div>
+        <div class="gates">
+          <div class="gate"><span><b>Porte A</b> · Standard</span><span class="status ok"><i data-icon="valide"></i>4 scanners prêts</span></div>
+          <div class="gate"><span><b>Porte B</b> · VIP</span><span class="status ok"><i data-icon="valide"></i>2 scanners prêts</span></div>
+          <div class="gate"><span><b>Loges</b> · VVIP</span><span class="status wait"><i data-icon="horloge"></i>Staff à assigner</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="../_icons.js"></script>
+<script>
+  // Série unique : billets vendus par jour (25 sept → 24 oct 2026)
+  const data = [38,42,35,51,47,60,58,44,52,66,71,63,80,95,310,188,120,104,97,110,92,88,101,126,140,118,109,132,151,168];
+  const start = new Date(2026, 8, 25);
+  const fmtDay = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  const svg = document.getElementById('svg'), tip = document.getElementById('tip'), box = document.getElementById('chart');
+  const W = box.clientWidth, H = box.clientHeight, L = 36, R = 8, T = 8, B = 24;
+  const max = 420, x = i => L + i * (W - L - R) / (data.length - 1), y = v => T + (H - T - B) * (1 - v / max);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let g = '<g class="grid">', a = '<g class="axis">';
+  for (const v of [0, 100, 200, 300, 400]) { g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`; a += `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`; }
+  [0, 7, 14, 21, 29].forEach(i => { const d = new Date(start); d.setDate(d.getDate() + i); a += `<text x="${x(i)}" y="${H - 4}" text-anchor="middle">${fmtDay(d)}</text>`; });
+  const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  const area = `M${x(0)},${y(0)}L${pts.join('L')}L${x(data.length - 1)},${y(0)}Z`;
+  svg.innerHTML = `<defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${css('--color-red')}" stop-opacity=".16"/><stop offset="1" stop-color="${css('--color-red')}" stop-opacity="0"/></linearGradient></defs>`
+    + g + '</g>' + a + '</g>'
+    + `<path d="${area}" fill="url(#fill)"/>`
+    + `<path d="M${pts.join('L')}" fill="none" stroke="${css('--color-primary')}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
+    + `<line id="cx" y1="${T}" y2="${H - B}" stroke="${css('--color-gray-600')}" stroke-dasharray="3 3"/>`
+    + `<circle id="dot" r="5" fill="${css('--color-primary')}" stroke="${css('--color-white')}" stroke-width="2"/>`;
+  const cx = svg.querySelector('#cx'), dot = svg.querySelector('#dot');
+  function show(i) {
+    const d = new Date(start); d.setDate(d.getDate() + i);
+    cx.setAttribute('x1', x(i)); cx.setAttribute('x2', x(i)); dot.setAttribute('cx', x(i)); dot.setAttribute('cy', y(data[i]));
+    tip.style.left = x(i) + 'px'; tip.style.top = y(data[i]) + 'px';
+    tip.innerHTML = `<b>${data[i]} billets</b><small>${fmtDay(d)}${i === 14 ? ' · annonce de la programmation' : ''}</small>`;
+  }
+  box.addEventListener('mousemove', e => { const r = box.getBoundingClientRect(); show(Math.max(0, Math.min(data.length - 1, Math.round((e.clientX - r.left - L) / (W - L - R) * (data.length - 1))))); });
+  box.addEventListener('mouseleave', () => show(14));
+  show(14);
+</script>
+</body>
+</html>

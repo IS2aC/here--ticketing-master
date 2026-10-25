@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1440">
+<head>
+<meta charset="utf-8">
+<title>Here! — Créer un événement</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_backoffice.css">
+<style>
+  .wrap { display: grid; grid-template-columns: 1fr 360px; gap: var(--space-4); }
+  .q { font-family: var(--font-heading); font-size: 15px; font-weight: 600; margin-bottom: var(--space-3); }
+  .types { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); margin-bottom: var(--space-5); }
+  .type { height: 78px; border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--color-border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 500; }
+  .type i { width: 24px; height: 24px; color: var(--color-text-muted); }
+  .type.on { box-shadow: inset 0 0 0 2px var(--color-primary); font-weight: 600; }
+  .type.on i { color: var(--color-primary); }
+  .grid2 { display: grid; grid-template-columns: 1.2fr 1.2fr 0.6fr; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .places { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .place { display: grid; grid-template-columns: 120px 1fr 110px; gap: var(--space-3); }
+  .add { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-accent-text); }
+  .add i { width: 16px; height: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: var(--space-3); align-items: end; }
+  .chips { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; min-height: 46px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: var(--radius-full); background: var(--color-surface); font-size: 13px; font-weight: 500; }
+  .chip.dark { background: var(--color-ink); color: var(--color-white); }
+  .chip i { width: 14px; height: 14px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+  .foot .note { font-size: 12px; color: var(--color-text-muted); display: inline-flex; gap: 6px; align-items: center; }
+  .foot .note i { width: 14px; height: 14px; }
+  .side h2 { margin-bottom: var(--space-3); }
+  .side .tpl { border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-md); width: 190px; margin: 0 auto var(--space-3); }
+  .side .tpl img { width: 100%; display: block; }
+  .side .tname { text-align: center; font-size: 13px; margin-bottom: var(--space-5); }
+  .side .tname b { display: block; font-family: var(--font-heading); font-size: 15px; }
+  .plan { display: grid; gap: 0; }
+  .plan div { display: grid; grid-template-columns: 56px 1fr; gap: var(--space-3); font-size: 13px; padding: 8px 0; border-top: 1px solid var(--color-border); }
+  .plan b { font-family: var(--font-data); font-weight: 600; }
+  .plan span { color: var(--color-text-muted); }
+  .plan span strong { color: var(--color-text); font-weight: 600; }
+</style>
+</head>
+<body>
+  <aside data-active="evenements"></aside>
+  <main>
+    <div class="topbar">
+      <div class="ttl">
+        <div class="crumb">Mes événements · Nouveau</div>
+        <h1>Créer un événement</h1>
+      </div>
+      <div class="steps">
+        <span class="on"><b>1</b>L'événement</span><span class="line"></span>
+        <span><b>2</b>Les invités</span><span class="line"></span>
+        <span><b>3</b>La carte</span><span class="line"></span>
+        <span><b>4</b>Les relances</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="panel">
+        <div class="q">Quel type d'événement organisez-vous ?</div>
+        <div class="types">
+          <div class="type on"><i data-icon="mariage"></i>Mariage</div>
+          <div class="type"><i data-icon="cadeau"></i>Dot</div>
+          <div class="type"><i data-icon="favori"></i>Baptême</div>
+          <div class="type"><i data-icon="hommage"></i>Funérailles</div>
+          <div class="type"><i data-icon="anniversaire"></i>Anniversaire</div>
+          <div class="type"><i data-icon="brunch"></i>Brunch</div>
+          <div class="type"><i data-icon="retrouvailles"></i>Retrouvailles</div>
+          <div class="type"><i data-icon="reunion"></i>Réunion</div>
+          <div class="type"><i data-icon="conference"></i>Séminaire</div>
+          <div class="type"><i data-icon="concert"></i>Concert privé</div>
+          <div class="type"><i data-icon="festival"></i>Festival</div>
+          <div class="type"><i data-icon="ajouter"></i>Autre</div>
+        </div>
+
+        <div class="grid2">
+          <div class="field"><label>Nom de l'événement</label><div class="input focus">Mariage Aya &amp; Koffi</div></div>
+          <div class="field"><label>Date</label><div class="input"><i data-icon="calendrier"></i>Samedi 13 décembre 2026</div></div>
+          <div class="field"><label>Heure</label><div class="input"><i data-icon="horloge"></i>15:00</div></div>
+        </div>
+
+        <div class="field" style="margin-bottom:var(--space-2)"><label>Lieux</label></div>
+        <div class="places">
+          <div class="place"><div class="input">Cérémonie</div><div class="input"><i data-icon="lieu"></i>Église Saint-Jacques, Cocody</div><div class="input"><i data-icon="horloge"></i>15:00</div></div>
+          <div class="place"><div class="input">Réception</div><div class="input"><i data-icon="lieu"></i>Espace Les Jardins, Riviera 3</div><div class="input"><i data-icon="horloge"></i>19:00</div></div>
+          <span class="add"><i data-icon="ajouter"></i>Ajouter un lieu</span>
+        </div>
+
+        <div class="grid3">
+          <div class="field"><label>Invités prévus</label><div class="input num">320</div></div>
+          <div class="field"><label>Places disponibles</label><div class="input num">450</div></div>
+          <div class="field"><label>Catégories d'invités</label>
+            <div class="chips"><span class="chip dark">VIP</span><span class="chip">Famille</span><span class="chip">Amis</span><span class="chip">Collègues</span><span class="add"><i data-icon="ajouter"></i>Ajouter</span></div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="note"><i data-icon="cadenas"></i>Vos informations restent privées. Seule votre conseillère Here! y a accès.</span>
+          <div style="display:flex;gap:var(--space-3)"><span class="btn ghost">Enregistrer le brouillon</span><span class="btn">Continuer : les invités<i data-icon="fleche-droite"></i></span></div>
+        </div>
+      </section>
+
+      <section class="panel side">
+        <h2>Ce que nous préparons pour vous</h2>
+        <div class="tpl"><img src="carte-ceremonie.png" alt="Aperçu du modèle Cérémonie"></div>
+        <div class="tname"><b>Modèle conseillé : Cérémonie</b><span class="muted">Vous pourrez le changer à l'étape 3.</span></div>
+        <div class="plan">
+          <div><b>J−70</b><span><strong>Envoi des invitations</strong> sur WhatsApp</span></div>
+          <div><b>J−63</b><span><strong>1<sup>re</sup> relance</strong> aux invités sans réponse</span></div>
+          <div><b>J−56</b><span><strong>2<sup>e</sup> relance</strong> WhatsApp</span></div>
+          <div><b>J−52</b><span><strong>Appels de votre conseillère</strong> aux derniers invités</span></div>
+          <div><b>J−1</b><span><strong>Rappel</strong> avec le QR code d'entrée</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+<script src="_backoffice.js"></script>
+<script src="_icons.js"></script>
+</body>
+</html>

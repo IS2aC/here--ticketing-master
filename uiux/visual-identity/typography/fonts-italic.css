@@ -1,0 +1,5 @@
+/* Italique de communication (piste « Ambiance ») — maintenu à la main, non généré.
+   Réservé aux accroches de campagne : affiches, réseaux sociaux. Jamais dans l'interface. */
+@font-face { font-family: "Poppins"; font-weight: 800; font-style: italic; font-display: swap; src: url("fonts/Poppins-ExtraBoldItalic.ttf") format("truetype"); }
+/* Italique des modèles de cartes Cérémonie et Hommage (formules d'invitation). Jamais dans l'interface. */
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; font-display: swap; src: url("fonts/PlayfairDisplay-Italic.ttf") format("truetype"); }

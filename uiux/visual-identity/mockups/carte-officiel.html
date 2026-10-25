@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="720">
+<head>
+<meta charset="utf-8">
+<title>Carte d'invitation — modèle Officiel</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_carte.css">
+<style>
+  /* Modèle Officiel : réunion, séminaire, assemblée, gala d'entreprise.
+     --c-accent = couleur de l'hôte (ici l'entreprise fictive « Groupe Akwaba »), contrôlée en contraste. */
+  :root { --c-bg: var(--color-white); --c-text: var(--color-ink); --c-accent: #0E6B4F; }
+  .band { position: absolute; top: 0; left: 0; width: 14px; bottom: 0; background: var(--c-accent); }
+  .content { align-items: flex-start; text-align: left; padding: 60px 64px 24px 74px; }
+  .org { display: flex; align-items: center; gap: 14px; }
+  .org .logo { width: 52px; height: 52px; border-radius: 12px; background: var(--c-accent); color: var(--color-white); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading); font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+  .org b { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 18px; }
+  .org small { font-size: 13px; color: var(--color-gray-600); }
+  .kind { margin-top: 56px; font-size: 13px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--c-accent); }
+  .title { font-family: var(--font-heading); font-weight: 800; font-size: 50px; line-height: 1.04; letter-spacing: -0.025em; margin: 10px 0 14px; }
+  .lead { font-size: 17px; line-height: 1.5; color: var(--color-gray-600); max-width: 520px; }
+  .lead b { color: var(--color-ink); font-weight: 600; }
+  .agenda { margin-top: 30px; display: grid; gap: 10px; width: 100%; }
+  .agenda div { display: grid; grid-template-columns: 74px 1fr; gap: 14px; font-size: 15px; align-items: baseline; }
+  .agenda b { font-family: var(--font-data); font-weight: 600; color: var(--c-accent); font-variant-numeric: tabular-nums; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; margin-top: auto; width: 100%; padding-top: 22px; border-top: 1px solid var(--color-gray-300); }
+  .grid div { display: flex; gap: 12px; font-size: 15px; line-height: 1.4; }
+  .grid i { width: 22px; height: 22px; color: var(--c-accent); }
+  .grid b { display: block; font-weight: 600; }
+  .grid span span { color: var(--color-gray-600); }
+</style>
+</head>
+<body>
+  <div class="band"></div>
+  <div class="content">
+    <div class="org"><span class="logo">GA</span><div><b>Groupe Akwaba</b><small>Direction générale</small></div></div>
+    <div class="kind">Séminaire annuel 2026</div>
+    <div class="title">Cap 2030 :<br>grandir ensemble</div>
+    <div class="lead">La Direction générale a le plaisir de convier <b>Monsieur Serge N'Guessan</b>, Directeur commercial, à son séminaire annuel.</div>
+    <div class="agenda">
+      <div><b>8 h 30</b><span>Accueil des participants</span></div>
+      <div><b>9 h 00</b><span>Ouverture par le Directeur général</span></div>
+      <div><b>12 h 30</b><span>Déjeuner</span></div>
+      <div><b>14 h 00</b><span>Ateliers par direction et clôture</span></div>
+    </div>
+    <div class="grid">
+      <div><i data-icon="calendrier"></i><span><b>Jeudi 3 décembre 2026</b><span>8 h 30 – 17 h</span></span></div>
+      <div><i data-icon="lieu"></i><span><b>Hôtel du Golfe</b><span>Riviera Golf, Cocody</span></span></div>
+      <div><i data-icon="reunion"></i><span><b>Tenue de ville</b><span>Déjeuner offert</span></span></div>
+      <div><i data-icon="horloge"></i><span><b>Réponse attendue</b><span>avant le 20 novembre</span></span></div>
+    </div>
+  </div>
+
+  <div class="sceau">
+    <div class="qr"><img src="qr-invitation.svg" alt="QR code de l'invitation"></div>
+    <div class="who"><small>Invitation personnelle</small><b>Serge N'Guessan</b><span><em>1 personne</em> · Direction</span></div>
+    <div class="here"><img src="../logo/svg/favicon.svg" alt=""><b>Invitation<br>vérifiée par Here!</b><span class="code">INV-GA26-0219</span></div>
+  </div>
+  <script src="_icons.js"></script>
+</body>
+</html>

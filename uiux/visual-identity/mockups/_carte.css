@@ -1,0 +1,35 @@
+/* Cartes d'invitation Here! — format 4:5 (720 × 900, export ×2 = 1440 × 1800).
+   Étage « hôte » : variables --c-* définies par chaque modèle.
+   Étage « Here! » : le sceau en pied de carte, identique sur tous les modèles. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 720px; height: 900px; overflow: hidden; }
+body { position: relative; background: var(--c-bg); color: var(--c-text); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+i[data-icon] { display: inline-flex; width: 20px; height: 20px; flex-shrink: 0; }
+i[data-icon] svg { width: 100%; height: 100%; }
+
+.content { position: absolute; left: 0; right: 0; top: 0; bottom: 196px; padding: 56px 64px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+/* Photo : emplacement provisoire, registre « jour » (lumière chaude) ou « nuit » (rouge) */
+.photo { position: relative; background-color: var(--color-ink); background-size: cover; background-position: center; }
+.photo.jour { background-image: radial-gradient(circle at 30% 30%, rgba(255,226,180,.85), transparent 55%), linear-gradient(160deg, #C9A27A 0%, #7A5536 100%); }
+.photo.nuit { background-image: radial-gradient(circle at 70% 25%, rgba(225,6,0,.6), transparent 46%), linear-gradient(160deg, #2a0a08 0%, #0B0B0B 72%); }
+.photo.sobre { background-image: linear-gradient(160deg, #C9C6BF 0%, #8C8880 100%); filter: grayscale(1); }
+.photo:not(.loaded)::after { content: attr(data-brief); position: absolute; left: 10px; right: 10px; bottom: 8px; font: 500 9px/1.3 var(--font-body);
+  letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.7); text-align: center; }
+
+/* ---------- Le sceau Here! (pied de carte, non modifiable par l'hôte) ---------- */
+.sceau { position: absolute; left: 28px; right: 28px; bottom: 28px; height: 152px; border-radius: var(--radius-lg); background: var(--color-white);
+  color: var(--color-ink); display: grid; grid-template-columns: 124px 1fr auto; gap: 22px; align-items: center; padding: 14px 24px 14px 14px;
+  box-shadow: 0 0 0 1px rgba(11,11,11,.08); }
+.sceau .qr { width: 124px; height: 124px; padding: 6px; background: var(--color-white); }
+.sceau .qr img { width: 100%; height: 100%; display: block; }
+.sceau .who small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--color-gray-600); }
+.sceau .who b { display: block; font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 1.2; margin: 4px 0 6px; }
+.sceau .who span { font-size: 13px; color: var(--color-gray-600); }
+.sceau .who em { font-style: normal; font-weight: 600; color: var(--color-ink); }
+.sceau .here { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; text-align: right; border-left: 1px solid var(--color-gray-300); padding-left: 22px; height: 100%; justify-content: center; }
+.sceau .here img { width: 34px; height: 34px; border-radius: 8px; }
+.sceau .here b { font-size: 12px; font-weight: 600; line-height: 1.3; }
+.sceau .here .code { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--color-gray-600); }
+/* Modèle Hommage : sceau monochrome, aucun rouge */
+.sceau.mono .here img { filter: grayscale(1); }

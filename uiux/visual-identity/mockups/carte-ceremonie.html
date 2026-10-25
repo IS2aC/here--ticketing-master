@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="720">
+<head>
+<meta charset="utf-8">
+<title>Carte d'invitation — modèle Cérémonie</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../typography/fonts-italic.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_carte.css">
+<style>
+  /* Modèle Cérémonie : mariage, dot, baptême */
+  :root { --c-bg: var(--color-ivory); --c-text: var(--color-ink); --c-accent: var(--color-gold); }
+  .frame { position: absolute; inset: 20px 20px 196px; border: 1.5px solid var(--c-accent); border-radius: 6px; pointer-events: none; }
+  .frame::after { content: ""; position: absolute; inset: 6px; border: 1px solid var(--c-accent); border-radius: 3px; opacity: .55; }
+  .kind { font-size: 13px; font-weight: 600; letter-spacing: .4em; text-transform: uppercase; color: var(--c-accent); margin-top: 4px; }
+  .orn { display: flex; align-items: center; gap: 12px; color: var(--c-accent); margin: 14px 0 10px; }
+  .orn span { width: 56px; height: 1px; background: var(--c-accent); }
+  .orn i { width: 22px; height: 22px; }
+  .couple { width: 176px; height: 176px; border-radius: 50%; box-shadow: 0 0 0 4px var(--color-white), 0 0 0 5.5px var(--c-accent); margin: 6px 0 16px; }
+  .couple::after { font-size: 8px !important; bottom: 66px !important; }
+  .formula { font-family: var(--font-accent); font-style: italic; font-size: 19px; line-height: 1.4; }
+  .names { font-family: var(--font-accent); font-weight: 600; font-size: 64px; line-height: 1.05; margin: 6px 0 10px; letter-spacing: -0.01em; }
+  .names em { font-style: italic; font-weight: 400; color: var(--c-accent); }
+  .guest { font-size: 15px; line-height: 1.5; }
+  .guest b { display: block; font-family: var(--font-heading); font-weight: 600; font-size: 19px; }
+  .prog { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 20px; width: 100%; }
+  .prog div { font-size: 14px; line-height: 1.45; }
+  .prog b { display: block; font-family: var(--font-accent); font-weight: 600; font-size: 20px; margin-bottom: 2px; }
+  .prog .when { font-weight: 600; }
+  .rsvp { margin-top: auto; font-size: 13px; color: var(--color-stone-600); }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="content">
+    <div class="kind">Mariage</div>
+    <div class="orn"><span></span><i data-icon="mariage"></i><span></span></div>
+    <div class="couple photo jour" data-src="../imagery/mariage-couple.jpg" data-brief="mariage-couple.jpg"></div>
+    <div class="formula">ont la joie de vous inviter à célébrer leur union</div>
+    <div class="names">Aya <em>&amp;</em> Koffi</div>
+    <div class="guest">Une invitation pour<b>Monsieur et Madame Konan</b></div>
+    <div class="prog">
+      <div><b>Cérémonie</b><span class="when">Samedi 13 décembre 2026 · 15 h</span><br>Église Saint-Jacques, Cocody</div>
+      <div><b>Réception</b><span class="when">Samedi 13 décembre 2026 · 19 h</span><br>Espace Les Jardins, Riviera 3</div>
+    </div>
+    <div class="rsvp">Merci de confirmer votre présence avant le 30 novembre.</div>
+  </div>
+
+  <div class="sceau">
+    <div class="qr"><img src="qr-invitation.svg" alt="QR code de l'invitation"></div>
+    <div class="who"><small>Invitation personnelle</small><b>M. et Mme Konan</b><span><em>2 personnes</em> · Table 4</span></div>
+    <div class="here"><img src="../logo/svg/favicon.svg" alt=""><b>Invitation<br>vérifiée par Here!</b><span class="code">INV-AK26-0142</span></div>
+  </div>
+  <script src="_icons.js"></script>
+</body>
+</html>

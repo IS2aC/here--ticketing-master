@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="834">
+<head>
+<meta charset="utf-8">
+<title>Here! — Tableau de bord sur tablette (834 px)</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_backoffice.css">
+<style>
+  td { padding: 8px var(--space-3); }
+  main { gap: var(--space-4); }
+  .hero { padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: 1fr 300px; gap: var(--space-6); align-items: center; }
+  .big { display: flex; align-items: baseline; gap: var(--space-3); }
+  .big b { font-family: var(--font-data); font-weight: 600; font-size: 40px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .big span { font-size: 15px; color: var(--color-text-muted); }
+  .big span strong { color: var(--color-text); font-weight: 600; }
+  .seg { height: 14px; margin: var(--space-3) 0 var(--space-3); }
+  .seg span:first-child { border-radius: 7px 0 0 7px; } .seg span:last-child { border-radius: 0 7px 7px 0; }
+  .legend { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+  .legend .st b { font-family: var(--font-data); color: var(--color-text); font-weight: 600; margin-left: 2px; }
+  .people { border-left: 1px solid var(--color-border); padding-left: var(--space-6); display: grid; gap: var(--space-3); }
+  .people div { display: flex; justify-content: space-between; font-size: 13px; }
+  .people b { font-family: var(--font-data); font-weight: 600; }
+  .people .tot { padding-top: var(--space-3); border-top: 1px solid var(--color-border); font-weight: 600; }
+
+  .row { display: grid; grid-template-columns: 1fr 400px; gap: var(--space-4); }
+  .chart { position: relative; height: 205px; }
+  .chart svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .chart .grid line { stroke: var(--color-border); }
+  .chart text { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-data); }
+  .chart .ev text { fill: var(--color-text); font-weight: 600; font-family: var(--font-body); }
+  .tip { position: absolute; transform: translate(-50%, -100%); margin-top: -12px; background: var(--color-ink); color: var(--color-white); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; white-space: nowrap; pointer-events: none; }
+  .tip small { display: block; color: var(--color-gray-500); font-size: 11px; }
+
+  .rel { display: grid; gap: var(--space-2); }
+  .rel .r { display: grid; grid-template-columns: 30px 1fr auto; gap: var(--space-3); align-items: center; padding: 8px var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); }
+  .rel .r > i { width: 30px; height: 30px; padding: 7px; border-radius: 50%; background: var(--color-background); }
+  .rel b { display: block; font-size: 13px; font-weight: 600; }
+  .rel small { font-size: 12px; color: var(--color-text-muted); font-family: var(--font-data); }
+  .rel .v { text-align: right; font-family: var(--font-data); font-weight: 600; font-size: 15px; line-height: 1.2; }
+  .rel .v small { display: block; font-weight: 400; }
+  .rel .next { background: var(--color-ink); color: var(--color-white); }
+  .rel .next small { color: var(--color-gray-500); }
+  .rel .next > i { background: var(--color-ink-800); color: var(--color-red-bright); }
+
+  .lock { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-muted); }
+  .lock i { width: 14px; height: 14px; }
+  .cats { display: grid; gap: var(--space-2); }
+  .cats div { display: grid; grid-template-columns: 90px 1fr 70px; gap: var(--space-3); align-items: center; font-size: 13px; }
+  .cats .bar span { background: var(--color-ink); border-radius: 0 4px 4px 0; }
+  .cats .v { text-align: right; font-family: var(--font-data); font-weight: 600; }
+  .cats .v small { color: var(--color-text-muted); font-weight: 400; }
+
+  /* ---- Tablette (768–1023 px) : barre latérale en rail d'icônes, une colonne ---- */
+  html, body { width: 834px; height: auto; min-height: 900px; overflow: visible; }
+  body { grid-template-columns: 72px 1fr; }
+  aside { padding: var(--space-5) var(--space-3); align-items: center; }
+  aside .lb, aside .sep, aside nav a em { display: none; }
+  aside .logo { width: 36px; height: 36px; margin: 0 0 var(--space-5); align-self: center; border-radius: 9px; }
+  aside .ev { padding: 0; box-shadow: none; margin-bottom: var(--space-4); }
+  aside nav a { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  aside nav + nav { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+  aside .help { padding: 10px; display: flex; }
+  aside .help b, aside .help small, aside .ev .lb { display: none; }
+  main { padding: var(--space-5); }
+  .topbar { flex-wrap: wrap; }
+  .topbar .ttl { flex-basis: 100%; }
+  .topbar .btn.ghost { padding: 0 var(--space-3); }
+  .hero { grid-template-columns: 1fr; gap: var(--space-4); }
+  .people { border-left: 0; padding-left: 0; border-top: 1px solid var(--color-border); padding-top: var(--space-3); grid-template-columns: 1fr 1fr 1.4fr; }
+  .people .tot { border-top: 0; padding-top: 0; }
+  .people div { flex-direction: column; gap: 2px; }
+  .row { grid-template-columns: 1fr; }
+  th:nth-child(5), td:nth-child(5) { display: none; }
+</style>
+</head>
+<body>
+  <aside data-active="tableau"></aside>
+  <main>
+    <div class="topbar">
+      <div class="ttl">
+        <div class="crumb">Mes événements · Mariage</div>
+        <h1>Mariage Aya &amp; Koffi</h1>
+        <div class="sub">Samedi 13 décembre 2026 · Église Saint-Jacques puis Espace Les Jardins, Riviera 3</div>
+      </div>
+      <span class="btn ghost"><i data-icon="oeil"></i>Voir la carte</span>
+      <span class="btn ghost"><i data-icon="telecharger"></i>Exporter la liste</span>
+      <span class="btn"><i data-icon="ajouter"></i>Ajouter des invités</span>
+    </div>
+
+    <section class="panel hero">
+      <div>
+        <div class="big"><b>212</b><span>invités ont confirmé sur <strong>320</strong>. Il reste 70 réponses à obtenir : nous les relançons demain à 10&nbsp;h.</span></div>
+        <div class="bar seg">
+          <span style="width:66.25%;background:var(--color-status-confirmed)"></span>
+          <span style="width:21.9%;background:var(--color-status-pending)"></span>
+          <span style="width:6.9%;background:var(--color-gray-500)"></span>
+          <span style="width:3.75%;background:var(--color-status-unreachable)"></span>
+          <span style="width:1.25%;background:var(--color-gray-300)"></span>
+        </div>
+        <div class="legend">
+          <span class="st ok"><i data-icon="valide"></i>Confirmés <b>212</b></span>
+          <span class="st wait"><i data-icon="horloge"></i>En attente <b>70</b></span>
+          <span class="st no"><i data-icon="decline"></i>Déclinés <b>22</b></span>
+          <span class="st ko"><i data-icon="alerte"></i>Injoignables <b>12</b></span>
+          <span class="st no"><i data-icon="modifier"></i>Numéros à corriger <b>4</b></span>
+        </div>
+      </div>
+      <div class="people">
+        <div><span>Invités confirmés</span><b>212</b></div>
+        <div><span>Accompagnants</span><b>+ 177</b></div>
+        <div class="tot"><span>Personnes attendues</span><b>389 / 450 places</b></div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="panel">
+        <div class="ph"><h2>Confirmations jour après jour</h2><span class="note">Depuis l'envoi des invitations, le 4 octobre</span></div>
+        <div class="chart" id="chart"><svg id="svg" role="img" aria-label="Confirmations cumulées du 4 au 25 octobre"></svg><div class="tip" id="tip"></div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>Relances</h2><span class="note">Gérées par Here!</span></div>
+        <div class="rel">
+          <div class="r"><i data-icon="message"></i><div><b>Relance WhatsApp 1</b><small>11 oct · 195 envoyées · 181 lues</small></div><div class="v">71<small>réponses</small></div></div>
+          <div class="r"><i data-icon="message"></i><div><b>Relance WhatsApp 2</b><small>18 oct · 124 envoyées · 112 lues</small></div><div class="v">39<small>réponses</small></div></div>
+          <div class="r"><i data-icon="telephone"></i><div><b>Appels de Mariam</b><small>depuis le 22 oct · 58 appels · 31 joints</small></div><div class="v">13<small>confirmés</small></div></div>
+          <div class="r next"><i data-icon="relance"></i><div><b>Prochaine relance</b><small>Demain, 10 h · 70 invités en attente</small></div><div class="v"><small>WhatsApp</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="panel">
+        <div class="ph"><h2>Dernières réponses</h2><span class="lock"><i data-icon="cadenas"></i>Liste privée · visible par vous et votre conseillère</span></div>
+        <table>
+          <thead><tr><th>Invité</th><th>Catégorie</th><th>Téléphone</th><th class="r">Personnes</th><th>Réponse par</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td><b>M. et Mme Konan</b></td><td><span class="tag dark">VIP</span></td><td class="num">07 •• •• 34 56</td><td class="r num">2</td><td>WhatsApp</td><td><span class="st ok"><i data-icon="valide"></i>Confirmé</span></td></tr>
+            <tr><td><b>Fatou Bamba</b></td><td><span class="tag">Amis</span></td><td class="num">05 •• •• 81 07</td><td class="r num">1</td><td>Appel · Mariam</td><td><span class="st ok"><i data-icon="valide"></i>Confirmé</span></td></tr>
+            <tr><td><b>Famille Ouattara</b></td><td><span class="tag">Famille</span></td><td class="num">01 •• •• 12 90</td><td class="r num">4</td><td>—</td><td><span class="st wait"><i data-icon="horloge"></i>En attente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>Catégories</h2><span class="note">Confirmés / invités</span></div>
+        <div class="cats">
+          <div><span>VIP</span><span class="bar"><span style="width:90%"></span></span><span class="v">36 <small>/ 40</small></span></div>
+          <div><span>Famille</span><span class="bar"><span style="width:70%"></span></span><span class="v">84 <small>/ 120</small></span></div>
+          <div><span>Amis</span><span class="bar"><span style="width:58%"></span></span><span class="v">64 <small>/ 110</small></span></div>
+          <div><span>Collègues</span><span class="bar"><span style="width:56%"></span></span><span class="v">28 <small>/ 50</small></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="_backoffice.js"></script>
+<script>document.querySelector('aside .logo').src = '../logo/svg/favicon.svg';</script>
+<script src="_icons.js"></script>
+<script>
+  // Série unique : confirmations cumulées (4 → 25 octobre 2026), avec les relances en repères
+  const daily = [38,31,18,9,6,4,3,22,19,9,5,3,2,2,14,8,4,2,4,3,4,2];
+  const data = daily.reduce((a, v) => (a.push((a.at(-1) || 0) + v), a), []);
+  const start = new Date(2026, 9, 4);
+  const day = i => { const d = new Date(start); d.setDate(d.getDate() + i); return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); };
+  const marks = [[0, 'Envoi'], [7, 'Relance 1'], [14, 'Relance 2'], [18, 'Appels']];
+  const svg = document.getElementById('svg'), tip = document.getElementById('tip'), box = document.getElementById('chart');
+  const W = box.clientWidth, H = box.clientHeight, L = 34, R = 8, T = 18, B = 22, max = 250;
+  const x = i => L + i * (W - L - R) / (data.length - 1), y = v => T + (H - T - B) * (1 - v / max);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let g = '<g class="grid">', a = '<g>';
+  for (const v of [0, 100, 200]) { g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`; a += `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`; }
+  [0, 7, 14, 21].forEach(i => a += `<text x="${x(i)}" y="${H - 4}" text-anchor="middle">${day(i)}</text>`);
+  let m = '<g class="ev">';
+  marks.forEach(([i, t]) => m += `<line x1="${x(i)}" x2="${x(i)}" y1="${T - 4}" y2="${H - B}" stroke="${css('--color-gray-500')}" stroke-dasharray="2 3"/><text x="${x(i) + 5}" y="${T - 6}">${t}</text>`);
+  const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  svg.innerHTML = `<defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${css('--color-red')}" stop-opacity=".14"/><stop offset="1" stop-color="${css('--color-red')}" stop-opacity="0"/></linearGradient></defs>`
+    + g + '</g>' + a + '</g>' + m + '</g>'
+    + `<path d="M${x(0)},${y(0)}L${pts.join('L')}L${x(data.length - 1)},${y(0)}Z" fill="url(#f)"/>`
+    + `<path d="M${pts.join('L')}" fill="none" stroke="${css('--color-primary')}" stroke-width="2" stroke-linejoin="round"/>`
+    + `<circle id="dot" r="5" fill="${css('--color-primary')}" stroke="${css('--color-white')}" stroke-width="2"/>`;
+  const dot = svg.querySelector('#dot');
+  function show(i) {
+    dot.setAttribute('cx', x(i)); dot.setAttribute('cy', y(data[i]));
+    tip.style.left = x(i) + 'px'; tip.style.top = y(data[i]) + 'px';
+    tip.innerHTML = `<b>${data[i]} confirmés</b><small>${day(i)} · +${daily[i]} ce jour-là</small>`;
+  }
+  box.addEventListener('mousemove', e => { const r = box.getBoundingClientRect(); show(Math.max(0, Math.min(data.length - 1, Math.round((e.clientX - r.left - L) / (W - L - R) * (data.length - 1))))); });
+  box.addEventListener('mouseleave', () => show(12));
+  show(12);
+</script>
+</body>
+</html>

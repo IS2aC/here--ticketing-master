@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Tableau de bord sur mobile</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_mobile.css">
+<style>
+  body { background: var(--color-surface); }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-5) var(--space-4); }
+  .top img { height: 26px; }
+  .top .av { width: 38px; height: 38px; border-radius: 50%; background: var(--color-ivory); color: var(--color-gold); display: flex; align-items: center; justify-content: center; }
+  .top .av i { width: 20px; height: 20px; }
+  .ev { margin: 0 var(--space-5); }
+  .ev .eyebrow { margin-bottom: 2px; }
+  .ev h1 { font-family: var(--font-heading); font-weight: 700; font-size: 24px; letter-spacing: -0.01em; }
+  .card { margin: var(--space-4) var(--space-5) 0; padding: var(--space-5); border-radius: var(--radius-lg); background: var(--color-background); box-shadow: var(--shadow-sm); }
+  .big { display: flex; align-items: baseline; gap: 8px; }
+  .big b { font-family: var(--font-data); font-weight: 600; font-size: 40px; letter-spacing: -0.02em; }
+  .big span { color: var(--color-text-muted); font-size: 15px; }
+  .seg { display: flex; gap: 2px; height: 10px; margin: var(--space-3) 0; border-radius: 5px; overflow: hidden; }
+  .lg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .st i { width: 15px; height: 15px; }
+  .st b { font-family: var(--font-data); color: var(--color-text); margin-left: auto; }
+  .st.ok { color: var(--color-status-confirmed); } .st.wait { color: var(--color-status-pending); } .st.no { color: var(--color-status-declined); } .st.ko { color: var(--color-status-unreachable); }
+  .att { display: flex; justify-content: space-between; margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--color-border); font-size: 14px; }
+  .att b { font-family: var(--font-data); font-weight: 600; }
+  .next { margin: var(--space-3) var(--space-5) 0; padding: var(--space-4); border-radius: var(--radius-lg); background: var(--color-ink); color: var(--color-white); display: flex; gap: var(--space-3); align-items: center; }
+  .next > i { width: 40px; height: 40px; padding: 10px; border-radius: 50%; background: var(--color-ink-800); color: var(--color-red-bright); }
+  .next b { display: block; font-size: 14px; font-weight: 600; }
+  .next small { font-size: 13px; color: var(--color-gray-500); }
+  .list { margin: var(--space-3) var(--space-5) 0; border-radius: var(--radius-lg); background: var(--color-background); overflow: hidden; }
+  .list .h { display: flex; justify-content: space-between; padding: var(--space-4) var(--space-4) var(--space-2); font-family: var(--font-heading); font-weight: 600; font-size: 15px; }
+  .list .h a { font-family: var(--font-body); font-size: 13px; color: var(--color-accent-text); }
+  .list .r { display: flex; justify-content: space-between; align-items: center; padding: 12px var(--space-4); border-top: 1px solid var(--color-border); font-size: 14px; }
+  .list .r small { display: block; font-size: 12px; color: var(--color-text-muted); }
+</style>
+</head>
+<body>
+  <div class="status"><span>9:41</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+  <div class="top"><img src="../logo/svg/logo-horizontal.svg" alt="Here!"><span class="av"><i data-icon="mariage"></i></span></div>
+  <div class="ev"><div class="eyebrow">Mariage · J−49</div><h1>Aya &amp; Koffi</h1></div>
+
+  <div class="card">
+    <div class="big"><b>212</b><span>confirmés sur 320</span></div>
+    <div class="seg">
+      <span style="width:66.25%;background:var(--color-status-confirmed)"></span>
+      <span style="width:21.9%;background:var(--color-status-pending)"></span>
+      <span style="width:6.9%;background:var(--color-gray-500)"></span>
+      <span style="width:3.75%;background:var(--color-status-unreachable)"></span>
+      <span style="width:1.25%;background:var(--color-gray-300)"></span>
+    </div>
+    <div class="lg">
+      <span class="st ok"><i data-icon="valide"></i>Confirmés<b>212</b></span>
+      <span class="st wait"><i data-icon="horloge"></i>En attente<b>70</b></span>
+      <span class="st no"><i data-icon="decline"></i>Déclinés<b>22</b></span>
+      <span class="st ko"><i data-icon="alerte"></i>Injoignables<b>12</b></span>
+    </div>
+    <div class="att"><span>Personnes attendues</span><b>389 / 450</b></div>
+  </div>
+
+  <div class="next"><i data-icon="relance"></i><div><b>Relance demain à 10 h</b><small>70 invités · puis appels de Mariam</small></div></div>
+
+  <div class="list">
+    <div class="h">Dernières réponses<a>Tout voir</a></div>
+    <div class="r"><div>M. et Mme Konan<small>2 personnes · VIP</small></div><span class="st ok"><i data-icon="valide"></i>Confirmé</span></div>
+    <div class="r"><div>Fatou Bamba<small>Par appel de Mariam</small></div><span class="st ok"><i data-icon="valide"></i>Confirmé</span></div>
+    <div class="r"><div>Serge N'Guessan<small>Collègues</small></div><span class="st no"><i data-icon="decline"></i>Décliné</span></div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="on"><i data-icon="accueil"></i>Accueil</div>
+    <div><i data-icon="participants"></i>Invités</div>
+    <div><i data-icon="relance"></i>Relances</div>
+    <div><i data-icon="scanner"></i>Entrée</div>
+  </nav>
+  <span class="home-ind"></span>
+  <script src="_icons.js"></script>
+</body>
+</html>

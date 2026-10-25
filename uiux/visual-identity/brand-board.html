@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1600">
+<head>
+<meta charset="utf-8">
+<title>Planche de marque — Here!</title>
+<!--
+  Planche de marque Here! · Ticketing Master — v2 invitations (25/10/2026)
+  Structure : hero (3 panneaux) → fondamentaux (logo, palette, typo, éléments) → voix, statuts, sceau
+  → applications (cartes d'invitation, tableau de bord, parcours invité, supports).
+  Couleurs : uniquement les tokens de tokens/tokens.css (sauf dégradés des emplacements photo).
+  Photos : chargées depuis imagery/ si présentes, sinon emplacement provisoire + brief (voir imagery/BRIEFS.md).
+  La planche v1 (billetterie) est archivée dans mockups/archive-billetterie/.
+-->
+<link rel="stylesheet" href="typography/fonts.css">
+<link rel="stylesheet" href="typography/fonts-italic.css">
+<link rel="stylesheet" href="tokens/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1600px; background: var(--color-gray-300); font-family: var(--font-body); color: var(--color-text); padding: 16px; -webkit-font-smoothing: antialiased; }
+  .board { display: grid; gap: 16px; }
+  .card { background: var(--color-background); border-radius: var(--radius-lg); padding: var(--space-6); overflow: hidden; position: relative; }
+  .label { font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-4); }
+  .dark { background: var(--color-ink); color: var(--color-white); }
+  .dark .label { color: var(--color-gray-500); }
+  i[data-icon] { display: inline-flex; width: 24px; height: 24px; flex-shrink: 0; }
+  i[data-icon] svg { width: 100%; height: 100%; }
+  .slash { position: absolute; background: var(--color-red); transform: skewX(-18deg); }
+  .caption { font-size: 12px; font-weight: 600; text-align: center; margin-top: var(--space-3); }
+  .caption small { display: block; font-weight: 400; color: var(--color-text-muted); }
+
+  .photo { position: relative; background-color: var(--color-ink); background-size: cover; background-position: center; }
+  .photo.nuit { background-image: radial-gradient(circle at 70% 25%, rgba(225,6,0,.55), transparent 45%), radial-gradient(circle at 20% 80%, rgba(225,6,0,.35), transparent 40%), linear-gradient(160deg, #2a0a08 0%, #0B0B0B 70%); }
+  .photo.jour { background-image: radial-gradient(circle at 30% 25%, rgba(255,226,180,.9), transparent 50%), radial-gradient(circle at 80% 80%, rgba(225,6,0,.25), transparent 40%), linear-gradient(160deg, #C9A27A 0%, #6B4A2E 100%); }
+  .photo:not(.loaded)::after { content: attr(data-brief); position: absolute; right: 16px; bottom: 14px; max-width: 70%; text-align: right;
+    font-size: 10px; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55); z-index: 0; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,11,0) 35%, rgba(11,11,11,.9) 100%); }
+
+  .phone { background: var(--color-ink); border-radius: 34px; padding: 7px; box-shadow: var(--shadow-lg), inset 0 0 0 1px var(--color-ink-700); flex-shrink: 0; }
+  .phone img { display: block; width: 100%; border-radius: 28px; }
+  .invite { border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-lg); flex-shrink: 0; }
+  .invite img { display: block; width: 100%; }
+
+  /* ---------- HERO ---------- */
+  .hero { display: grid; grid-template-columns: 520px 1fr 400px; gap: 16px; height: 580px; }
+  .hero-a { display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-10); }
+  .hero-a h1 { font-family: var(--font-heading); font-size: 34px; font-weight: 800; line-height: 1.05; letter-spacing: -0.025em; }
+  .hero-a .lead { color: var(--color-text-muted); font-size: 16px; line-height: 1.5; margin-top: var(--space-3); }
+  .hero-a .lead b { color: var(--color-text); }
+  .values { display: grid; gap: var(--space-3); }
+  .values div { display: flex; gap: var(--space-3); align-items: center; font-size: 14px; color: var(--color-text-muted); }
+  .values b { display: block; color: var(--color-text); font-family: var(--font-heading); font-weight: 600; font-size: 15px; }
+  .values i { width: 36px; height: 36px; padding: 7px; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-red); }
+  .hero-b { padding: 0; display: flex; align-items: center; justify-content: center; }
+  .hero-b .invite { width: 300px; transform: rotate(-5deg) translateX(30px); z-index: 1; }
+  .hero-b .phone { width: 236px; transform: rotate(3deg); z-index: 2; }
+  .hero-c { display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-10); }
+  .hero-c > *:not(.slash) { position: relative; z-index: 1; }
+  .hero-c h2 { font-family: var(--font-heading); font-size: 30px; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; }
+  .hero-c .slash { right: 30px; top: -20px; width: 48px; height: 200px; }
+  .hero-c .slash.thin { right: 100px; top: -20px; width: 6px; height: 140px; }
+  .cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 8px; text-align: center; font-size: 12px; color: var(--color-gray-300); }
+  .cats i { width: 30px; height: 30px; color: var(--color-white); display: block; margin: 0 auto 8px; }
+
+  /* ---------- FONDAMENTAUX ---------- */
+  .basics { display: grid; grid-template-columns: 1.15fr 1fr 1.05fr 1fr; gap: 16px; }
+  .logos { display: grid; grid-template-columns: 1fr 1fr 112px; grid-template-rows: repeat(3, 1fr); gap: 10px; height: 300px; }
+  .logos > div { border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .logos img { max-width: 100%; max-height: 64px; }
+  .logos .sym { grid-row: span 3; background: var(--color-surface); flex-direction: column; gap: 14px; font-size: 10px; letter-spacing: .14em; color: var(--color-text-muted); text-align: center; }
+  .logos .sym img { width: 72px; }
+  .logos .sym .fav { width: 32px; }
+  .swatches { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sw { height: 62px; border-radius: var(--radius-md); }
+  .sw-meta { font-size: 11px; line-height: 1.45; margin-top: 6px; color: var(--color-text-muted); }
+  .sw-meta b { color: var(--color-text); font-size: 12px; }
+  .ext { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
+  .ext .sw { height: 30px; border-radius: var(--radius-sm); }
+  .ext .sw-meta { font-size: 10px; }
+  .ext-l { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--color-text-muted); grid-column: 1 / -1; }
+  .fams { display: grid; gap: var(--space-3); }
+  .fam { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); }
+  .fam:last-child { border-bottom: 0; padding-bottom: 0; }
+  .fam .s { font-size: 30px; line-height: 1; white-space: nowrap; }
+  .fam .r { text-align: right; font-size: 10px; color: var(--color-text-muted); line-height: 1.4; }
+  .fam .r b { display: block; font-size: 12px; color: var(--color-text); }
+  .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 6px; text-align: center; font-size: 10px; color: var(--color-text-muted); }
+  .icons i { width: 26px; height: 26px; color: var(--color-red); display: block; margin: 0 auto 5px; }
+  .shapes { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-4); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--color-ink); height: 80px; overflow: hidden; }
+  .shapes img { height: 52px; }
+  .shapes span { font-size: 10px; color: var(--color-gray-500); line-height: 1.4; margin-left: auto; text-align: right; }
+
+  /* ---------- VOIX, STATUTS, SCEAU ---------- */
+  .voice { display: grid; grid-template-columns: 1.15fr 1fr 0.9fr 1fr; gap: 16px; }
+  .voice .dark { display: flex; flex-direction: column; justify-content: space-between; min-height: 250px; }
+  .voice .dark .big { font-family: var(--font-heading); font-weight: 800; font-size: 46px; line-height: 1; letter-spacing: -0.03em; position: relative; z-index: 1; }
+  .voice .dark .big em { font-style: normal; color: var(--color-red-bright); }
+  .voice .dark .slash { right: 50px; top: -30px; width: 48px; height: 320px; }
+  .voice .dark p { font-size: 13px; color: var(--color-gray-500); position: relative; z-index: 1; max-width: 400px; }
+  .voices { display: grid; gap: var(--space-3); font-size: 13px; line-height: 1.45; }
+  .voices b { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 2px; }
+  .voices .acc { font-family: var(--font-accent); font-style: italic; font-size: 15px; }
+  .stl { display: grid; gap: 10px; }
+  .stl div { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+  .stl i { width: 18px; height: 18px; }
+  .stl span { margin-left: auto; font-size: 11px; font-weight: 400; color: var(--color-text-muted); }
+  .seal-demo { border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 0 0 1px var(--color-border); height: 92px; position: relative; }
+  .seal-demo img { display: block; width: 100%; position: absolute; bottom: 0; }
+  .seal-txt { font-size: 12px; line-height: 1.5; color: var(--color-text-muted); margin-top: var(--space-3); }
+  .seal-txt b { color: var(--color-text); }
+
+  /* ---------- APPLICATIONS ---------- */
+  .cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; }
+  .cards .invite { box-shadow: var(--shadow-md); }
+  .dash { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+  .dash > .card:first-child { display: flex; flex-direction: column; }
+  .dash .laptop { margin: auto 0; }
+  .laptop .scr { background: var(--color-ink); border-radius: 16px 16px 4px 4px; padding: 10px 10px 12px; }
+  .laptop .scr img { display: block; width: 100%; border-radius: 6px; }
+  .laptop .base { height: 14px; margin: 0 -24px; background: linear-gradient(180deg, var(--color-gray-300), var(--color-gray-500)); border-radius: 0 0 14px 14px; }
+  .thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .thumbs img { display: block; width: 100%; border-radius: 8px; box-shadow: 0 0 0 1px var(--color-border), var(--shadow-sm); }
+  .thumbs .caption { margin-top: 6px; }
+  .journey { display: flex; gap: 22px; justify-content: center; align-items: flex-start; }
+  .journey figure { width: 240px; }
+  .journey .step { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: var(--space-3); font-size: 12px; font-weight: 600; }
+  .journey .step b { width: 22px; height: 22px; border-radius: 50%; background: var(--color-red); color: var(--color-white); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+  .journey .step.org b { background: var(--color-ink); }
+
+  .supports { display: grid; grid-template-columns: 300px 1fr 1fr 1fr; gap: 16px; }
+  .badge-staff { width: 210px; margin: 0 auto; position: relative; }
+  .lanyard { width: 34px; height: 70px; margin: 0 auto; background: var(--color-red); position: relative; }
+  .lanyard::after { content: ""; position: absolute; bottom: -12px; left: 9px; width: 16px; height: 18px; border-radius: 4px; background: var(--color-gray-500); }
+  .bdg { margin-top: 8px; height: 300px; border-radius: var(--radius-md); background: var(--color-ink); color: var(--color-white); padding: 20px 18px; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .bdg > *:not(.slash) { position: relative; z-index: 1; }
+  .bdg .slash { width: 40px; right: 22px; top: -20px; height: 104px; }
+  .bdg img.l { width: 110px; }
+  .bdg .role { font-family: var(--font-heading); font-weight: 800; font-size: 34px; line-height: 1; margin-top: auto; }
+  .bdg .who { font-size: 13px; font-weight: 600; margin-top: 6px; }
+  .bdg small { font-size: 10px; color: var(--color-gray-500); }
+  .post { aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; position: relative; color: var(--color-white); box-shadow: var(--shadow-md); background: var(--color-red); }
+  .post .ph { position: absolute; inset: 0; clip-path: polygon(46% 0, 100% 0, 100% 100%, 20% 100%); }
+  .post .txt { position: absolute; inset: 22px; display: flex; flex-direction: column; z-index: 1; }
+  .post .txt img { width: 90px; }
+  .post .t { font-family: var(--font-heading); font-style: italic; font-weight: 800; font-size: 32px; line-height: .95; text-transform: uppercase; letter-spacing: -0.02em; margin-top: auto; max-width: 70%; }
+  .post .d { font-size: 12px; font-weight: 600; margin-top: 12px; }
+  .post .d span { background: var(--color-ink); padding: 4px 8px; border-radius: var(--radius-sm); }
+  .poster { height: 100%; min-height: 380px; border-radius: var(--radius-md); overflow: hidden; position: relative; color: var(--color-white); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; box-shadow: var(--shadow-md); }
+  .poster > *:not(.shade):not(.slash) { position: relative; z-index: 1; }
+  .poster > img { position: absolute !important; top: 24px; left: 24px; width: 140px; }
+  .poster .slash { width: 48px; right: 40px; top: 90px; height: 200px; }
+  .poster h3 { font-family: var(--font-heading); font-style: italic; font-weight: 800; font-size: 30px; line-height: 1; text-transform: uppercase; letter-spacing: -0.02em; }
+  .poster p { font-size: 12px; color: var(--color-gray-300); margin: 10px 0 14px; }
+  .poster .cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: var(--radius-full); background: var(--color-red); font-family: var(--font-heading); font-weight: 600; font-size: 13px; }
+  .poster .cta i { width: 16px; height: 16px; }
+  .print { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 380px; background: var(--color-surface); border-radius: var(--radius-md); position: relative; }
+  .print .invite { width: 210px; transform: rotate(-4deg) translateX(-40px); }
+  .print .invite + .invite { position: absolute; width: 190px; transform: rotate(6deg) translate(70px, 30px); }
+  .states { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+  .states .shot { display: block; width: 100%; border-radius: 10px; box-shadow: 0 0 0 1px var(--color-border), var(--shadow-sm); }
+  .tablet { background: var(--color-ink); border-radius: 26px; padding: 12px; box-shadow: var(--shadow-lg); }
+  .tablet img { display: block; width: 100%; border-radius: 14px; }
+  .sjourney { display: flex; gap: 22px; justify-content: center; }
+  .sjourney figure { width: 220px; }
+  .bp { display: flex; gap: 8px; justify-content: center; margin-top: var(--space-3); }
+  .bp span { font-family: var(--font-data); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--color-surface); }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="card hero-a">
+      <img src="logo/svg/logo-principal.svg" alt="Here! Ticketing Master" style="width:290px">
+      <div>
+        <h1>Vos événements méritent plus qu'un simple billet.</h1>
+        <p class="lead">Organisez votre cérémonie.<br>Les relances, on s'en charge. <b>Here!</b></p>
+      </div>
+      <div class="values">
+        <div><i data-icon="invitation"></i><span><b>Invitez</b>une carte personnalisée par invité, sur WhatsApp</span></div>
+        <div><i data-icon="relance"></i><span><b>Relancez</b>sans y penser : WhatsApp, puis notre équipe appelle</span></div>
+        <div><i data-icon="scanner"></i><span><b>Accueillez</b>chaque invité avec son QR code, le jour J</span></div>
+      </div>
+    </div>
+
+    <div class="card hero-b photo jour" data-src="imagery/invites-telephone.jpg" data-brief="invites-telephone.jpg · invitée qui sourit en lisant son téléphone">
+      <div class="invite"><img src="mockups/carte-ceremonie.png" alt="Carte d'invitation Cérémonie"></div>
+      <div class="phone"><img src="mockups/mobile-message.png" alt="Invitation reçue par message"></div>
+    </div>
+
+    <div class="card hero-c dark">
+      <span class="slash"></span><span class="slash thin"></span>
+      <img src="logo/svg/logo-negatif.svg" alt="Here!" style="width:200px">
+      <h2>Du brunch entre amis au festival, chaque invité compte.</h2>
+      <div class="cats">
+        <div><i data-icon="mariage"></i>Mariages</div>
+        <div><i data-icon="brunch"></i>Brunchs</div>
+        <div><i data-icon="retrouvailles"></i>Retrouvailles</div>
+        <div><i data-icon="reunion"></i>Réunions</div>
+        <div><i data-icon="hommage"></i>Hommages</div>
+        <div><i data-icon="festival"></i>Festivals</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FONDAMENTAUX ===== -->
+  <section class="basics">
+    <div class="card">
+      <div class="label">Variations du logo</div>
+      <div class="logos">
+        <div style="background:var(--color-surface)"><img src="logo/svg/logo-principal.svg" alt=""></div>
+        <div style="background:var(--color-ink)"><img src="logo/svg/logo-negatif.svg" alt=""></div>
+        <div class="sym"><img src="logo/svg/symbole.svg" alt="">ICÔNE<br>D'APP<img class="fav" src="logo/svg/favicon.svg" alt="">FAVICON</div>
+        <div style="background:var(--color-red)"><img src="logo/svg/logo-blanc.svg" alt=""></div>
+        <div style="background:var(--color-white);box-shadow:inset 0 0 0 1px var(--color-border)"><img src="logo/svg/logo-mono-noir.svg" alt=""></div>
+        <div style="background:var(--color-surface)"><img src="logo/svg/logo-horizontal.svg" alt="" style="max-height:44px"></div>
+        <div style="background:var(--color-ink)"><img src="logo/svg/logo-negatif-horizontal.svg" alt="" style="max-height:44px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:var(--color-red)"></div><div class="sw-meta"><b>#E10600</b><br>Rouge Here · action · 10 %</div></div>
+        <div><div class="sw" style="background:var(--color-ink)"></div><div class="sw-meta"><b>#0B0B0B</b><br>Noir graphite · 25 %</div></div>
+        <div><div class="sw" style="background:var(--color-white);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#FFFFFF</b><br>Blanc · tableau de bord · 50 %</div></div>
+        <div><div class="sw" style="background:var(--color-gray-100);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#F4F4F4</b><br>Gris clair · 15 %</div></div>
+      </div>
+      <div class="ext">
+        <div><div class="sw" style="background:var(--color-red-bright)"></div><div class="sw-meta"><b>#FF4D3D</b><br>Rouge sur noir</div></div>
+        <div><div class="sw" style="background:var(--color-red-dark)"></div><div class="sw-meta"><b>#B30500</b><br>Survol</div></div>
+        <div><div class="sw" style="background:var(--color-gray-500)"></div><div class="sw-meta"><b>#8A8A8A</b><br>Texte sur noir</div></div>
+        <div><div class="sw" style="background:var(--color-green)"></div><div class="sw-meta"><b>#1A7F37</b><br>Confirmé</div></div>
+      </div>
+      <div class="ext">
+        <span class="ext-l">Modèles de cartes uniquement</span>
+        <div><div class="sw" style="background:var(--color-ivory);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#F7F1E8</b><br>Ivoire</div></div>
+        <div><div class="sw" style="background:var(--color-gold)"></div><div class="sw-meta"><b>#A8823C</b><br>Or sourd</div></div>
+        <div><div class="sw" style="background:var(--color-stone-50);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#F3F1EC</b><br>Blanc pierre</div></div>
+        <div><div class="sw" style="background:var(--color-stone-600)"></div><div class="sw-meta"><b>#5E5A53</b><br>Gris pierre</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Typographie</div>
+      <div class="fams">
+        <div class="fam"><span class="s" style="font-family:var(--font-heading);font-weight:800;letter-spacing:-0.03em">Poppins</span><span class="r"><b>Marque et interface</b>ExtraBold · Bold · SemiBold · Medium · Regular</span></div>
+        <div class="fam"><span class="s" style="font-family:var(--font-heading);font-weight:800;font-style:italic;text-transform:uppercase;font-size:24px">Ce soir !</span><span class="r"><b>Poppins ExtraBold Italic</b>Campagnes, modèle Soirée</span></div>
+        <div class="fam"><span class="s" style="font-family:var(--font-accent);font-weight:600">Aya <em style="font-weight:400;color:var(--color-gold)">&amp;</em> Koffi</span><span class="r"><b>Playfair Display</b>Cartes Cérémonie et Hommage</span></div>
+        <div class="fam"><span class="s" style="font-family:var(--font-data);font-weight:600;font-size:24px">212 / 320</span><span class="r"><b>Inter</b>Chiffres du tableau de bord</span></div>
+        <div class="fam"><span class="s" style="font-family:var(--font-mono);font-weight:500;font-size:18px;letter-spacing:.04em">INV-AK26-0142</span><span class="r"><b>DM Mono</b>Codes d'invitation</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Éléments de marque</div>
+      <div class="icons">
+        <div><i data-icon="invitation"></i>Invitation</div>
+        <div><i data-icon="importer"></i>Importer</div>
+        <div><i data-icon="message"></i>Message</div>
+        <div><i data-icon="telephone"></i>Appel</div>
+        <div><i data-icon="relance"></i>Relance</div>
+        <div><i data-icon="qr-code"></i>QR code</div>
+        <div><i data-icon="etiquette"></i>Catégorie</div>
+        <div><i data-icon="table"></i>Table</div>
+        <div><i data-icon="signature"></i>Signature</div>
+        <div><i data-icon="cadenas"></i>Confidentialité</div>
+        <div><i data-icon="support"></i>Conseillère</div>
+        <div><i data-icon="statistiques"></i>Suivi</div>
+      </div>
+      <div class="shapes">
+        <img src="elements/slash-fin.svg" alt=""><img src="elements/slash-epais.svg" alt=""><img src="elements/asterisque.svg" alt="" style="height:40px">
+        <span>Slash à 18°<br>marque et Soirée<br>uniquement</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VOIX, STATUTS, SCEAU ===== -->
+  <section class="voice">
+    <div class="card dark">
+      <span class="slash"></span>
+      <div class="label">Promesse</div>
+      <div class="big">Vous invitez.<br><em>On s'occupe<br>du reste.</em></div>
+      <p>Direct, chaleureux, rythmé. Vouvoiement léger, aucun jargon. On ne dit jamais « RSVP » à un invité.</p>
+    </div>
+    <div class="card">
+      <div class="label">Trois voix</div>
+      <div class="voices">
+        <div><b>Here!, le maître de cérémonie</b>« Organisez votre cérémonie. Les relances, on s'en charge. »</div>
+        <div><b>L'hôte, sur la carte</b><span class="acc">« Aya &amp; Koffi ont la joie de vous inviter à célébrer leur union. »</span></div>
+        <div><b>L'équipe, au téléphone</b>« Bonjour, ici Mariam, de l'équipe Here! J'appelle de la part d'Aya et Koffi. »</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Statuts de confirmation</div>
+      <div class="stl">
+        <div style="color:var(--color-status-confirmed)"><i data-icon="valide"></i>Confirmé<span>a répondu oui</span></div>
+        <div style="color:var(--color-status-pending)"><i data-icon="horloge"></i>En attente<span>pas encore de réponse</span></div>
+        <div><i data-icon="message"></i>Relancé<span>message envoyé</span></div>
+        <div><i data-icon="telephone"></i>Appel prévu<span>par la conseillère</span></div>
+        <div style="color:var(--color-status-declined)"><i data-icon="decline"></i>Décliné<span>ne viendra pas</span></div>
+        <div style="color:var(--color-status-unreachable)"><i data-icon="alerte"></i>Injoignable<span>autre contact requis</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Le sceau Here!</div>
+      <div class="seal-demo"><img src="mockups/carte-officiel.png" alt=""></div>
+      <div class="seal-txt"><b>La carte appartient à l'hôte, la confiance appartient à Here!</b> Chaque carte porte le même sceau : QR code unique, nom de l'invité, places, vérification. Il accueillera la signature électronique de l'hôte.</div>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : CARTES ===== -->
+  <section class="card">
+    <div class="label">Cartes d'invitation · cinq modèles, un seul sceau</div>
+    <div class="cards">
+      <figure><div class="invite"><img src="mockups/carte-ceremonie.png" alt=""></div><figcaption class="caption">Cérémonie<small>Mariage, dot, baptême</small></figcaption></figure>
+      <figure><div class="invite"><img src="mockups/carte-rendez-vous.png" alt=""></div><figcaption class="caption">Rendez-vous<small>Brunch, anniversaire, retrouvailles</small></figcaption></figure>
+      <figure><div class="invite"><img src="mockups/carte-officiel.png" alt=""></div><figcaption class="caption">Officiel<small>Réunion, séminaire, gala</small></figcaption></figure>
+      <figure><div class="invite"><img src="mockups/carte-hommage.png" alt=""></div><figcaption class="caption">Hommage<small>Funérailles · sans rouge ni slash</small></figcaption></figure>
+      <figure><div class="invite"><img src="mockups/carte-soiree.png" alt=""></div><figcaption class="caption">Soirée<small>Concert privé, festival</small></figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : TABLEAU DE BORD ===== -->
+  <section class="dash">
+    <div class="card">
+      <div class="label">Tableau de bord organisateur</div>
+      <div class="laptop"><div class="scr"><img src="mockups/backoffice-tableau-de-bord.png" alt=""></div><div class="base"></div></div>
+      <div class="caption">Confirmations, relances et appels en temps réel</div>
+    </div>
+    <div class="card">
+      <div class="label">Créer, importer, personnaliser, relancer</div>
+      <div class="thumbs">
+        <figure><img src="mockups/backoffice-creation.png" alt=""><figcaption class="caption">1 · L'événement</figcaption></figure>
+        <figure><img src="mockups/backoffice-import.png" alt=""><figcaption class="caption">2 · La liste d'invités</figcaption></figure>
+        <figure><img src="mockups/backoffice-carte.png" alt=""><figcaption class="caption">3 · La carte</figcaption></figure>
+        <figure><img src="mockups/backoffice-relances.png" alt=""><figcaption class="caption">4 · Les relances et appels</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : PARCOURS ===== -->
+  <section class="card">
+    <div class="label">Parcours de l'invité, sans application</div>
+    <div class="journey">
+      <figure><div class="step"><b>1</b>Il reçoit sa carte</div><div class="phone"><img src="mockups/mobile-message.png" alt=""></div></figure>
+      <figure><div class="step"><b>2</b>Il confirme en un geste</div><div class="phone"><img src="mockups/mobile-invite.png" alt=""></div></figure>
+      <figure><div class="step"><b>3</b>Il garde son QR code</div><div class="phone"><img src="mockups/mobile-invite-qr.png" alt=""></div></figure>
+      <figure><div class="step"><b>4</b>Il est accueilli</div><div class="phone"><img src="mockups/mobile-scan.png" alt=""></div></figure>
+      <figure><div class="step org"><b>!</b>L'hôte suit tout</div><div class="phone"><img src="mockups/mobile-tableau-de-bord.png" alt=""></div></figure>
+    </div>
+  </section>
+
+  <!-- ===== ÉTATS ET RESPONSIVE ===== -->
+  <section class="states">
+    <div class="card">
+      <div class="label">États des écrans · vide, chargement, erreur, en cours, résultat, confirmation</div>
+      <img class="shot" src="mockups/backoffice-etats.png" alt="">
+    </div>
+    <div class="card">
+      <div class="label">Tablette · rail d'icônes</div>
+      <div class="tablet"><img src="mockups/backoffice-tablette.png" alt=""></div>
+      <div class="bp"><span>&lt; 768 onglets</span><span>768–1023 rail</span><span>≥ 1024 menu</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="label">États mobiles · à l'entrée et côté invité</div>
+    <div class="sjourney">
+      <figure><div class="phone"><img src="mockups/mobile-scan.png" alt=""></div><figcaption class="caption">Invité attendu</figcaption></figure>
+      <figure><div class="phone"><img src="mockups/mobile-scan-deja-entre.png" alt=""></div><figcaption class="caption">Déjà entré</figcaption></figure>
+      <figure><div class="phone"><img src="mockups/mobile-scan-inconnu.png" alt=""></div><figcaption class="caption">Invitation non reconnue</figcaption></figure>
+      <figure><div class="phone"><img src="mockups/mobile-scan-hors-connexion.png" alt=""></div><figcaption class="caption">Hors connexion</figcaption></figure>
+      <figure><div class="phone"><img src="mockups/mobile-invite-reponse-non.png" alt=""></div><figcaption class="caption">Réponse « non » enregistrée</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : SUPPORTS ===== -->
+  <section class="supports">
+    <div class="card">
+      <div class="label">Badge d'accueil</div>
+      <div class="badge-staff">
+        <div class="lanyard"></div>
+        <div class="bdg">
+          <span class="slash"></span>
+          <img class="l" src="logo/svg/logo-negatif.svg" alt="">
+          <div class="role">ACCUEIL</div>
+          <div class="who">Moussa Diallo</div>
+          <small>Mariage Aya &amp; Koffi · Entrée réception</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Carte imprimée (A6)</div>
+      <div class="print">
+        <div class="invite"><img src="mockups/carte-ceremonie.png" alt=""></div>
+        <div class="invite"><img src="mockups/carte-hommage.png" alt=""></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Réseaux sociaux</div>
+      <div class="post">
+        <div class="ph photo jour" data-src="imagery/mariage-couple.jpg" data-brief="mariage-couple.jpg"></div>
+        <div class="txt">
+          <img src="logo/svg/logo-blanc.svg" alt="">
+          <div class="t">Organisez votre cérémonie.</div>
+          <div class="d"><span>Les relances, on s'en charge.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="label">Affichage urbain</div>
+      <div class="poster photo nuit" data-src="imagery/foule-mains.jpg" data-brief="foule-mains.jpg" style="flex:1">
+        <span class="shade"></span>
+        <span class="slash"></span>
+        <img src="logo/svg/logo-negatif.svg" alt="">
+        <h3>Vous invitez. On s'occupe du reste.</h3>
+        <p>Cartes personnalisées. Relances WhatsApp. Accueil au QR code.</p>
+        <span class="cta">Créez votre événement<i data-icon="fleche-droite"></i></span>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="mockups/_icons.js"></script>
+</body>
+</html>

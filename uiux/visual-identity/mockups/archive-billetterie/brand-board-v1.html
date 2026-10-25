@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1600">
+<head>
+<meta charset="utf-8">
+<title>Planche de marque — Here!</title>
+<!--
+  Planche de marque Here! · Ticketing Master
+  Structure : hero (3 panneaux) → fondamentaux (logo, palette, typo, éléments) → voix et proportions
+  → applications (écrans, supports d'accès, communication).
+  Couleurs : uniquement les tokens de tokens/tokens.css (sauf dégradés des emplacements photo).
+  Photos : chargées depuis imagery/ si présentes, sinon emplacement provisoire + brief (voir imagery/BRIEFS.md).
+-->
+<link rel="stylesheet" href="../../typography/fonts.css">
+<link rel="stylesheet" href="../../typography/fonts-italic.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1600px; background: var(--color-gray-300); font-family: var(--font-body); color: var(--color-text); padding: 16px; -webkit-font-smoothing: antialiased; }
+  .board { display: grid; gap: 16px; }
+  .card { background: var(--color-background); border-radius: var(--radius-lg); padding: var(--space-6); overflow: hidden; position: relative; }
+  .label { font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: var(--space-4); }
+  .dark { background: var(--color-ink); color: var(--color-white); }
+  .dark .label { color: var(--color-gray-500); }
+  .red { background: var(--color-red); color: var(--color-white); }
+  i[data-icon] { display: inline-flex; width: 24px; height: 24px; flex-shrink: 0; }
+  i[data-icon] svg { width: 100%; height: 100%; }
+  .slash { position: absolute; background: var(--color-red); transform: skewX(-18deg); }
+
+  /* Emplacement photo : remplacé automatiquement par imagery/<fichier> quand il existe */
+  .photo { position: relative; background-color: var(--color-ink); background-size: cover; background-position: center;
+    background-image:
+      radial-gradient(circle at 70% 25%, rgba(225,6,0,.55), transparent 45%),
+      radial-gradient(circle at 20% 80%, rgba(225,6,0,.35), transparent 40%),
+      linear-gradient(160deg, #2a0a08 0%, #0B0B0B 70%); }
+  .photo:not(.loaded)::after { content: attr(data-brief); position: absolute; right: 16px; bottom: 14px; max-width: 70%; text-align: right;
+    font-size: 10px; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.42); z-index: 0; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,11,0) 35%, rgba(11,11,11,.9) 100%); }
+
+  .phone { background: var(--color-ink); border-radius: 34px; padding: 7px; box-shadow: var(--shadow-lg), inset 0 0 0 1px var(--color-ink-700); flex-shrink: 0; }
+  .phone img { display: block; width: 100%; border-radius: 28px; }
+
+  /* ---------- HERO ---------- */
+  .hero { display: grid; grid-template-columns: 520px 1fr 400px; gap: 16px; height: 560px; }
+  .hero-a { display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-10); }
+  .hero-a h1 { font-family: var(--font-heading); font-size: 35px; font-weight: 800; line-height: 1.05; letter-spacing: -0.025em; }
+  .hero-a .lead { color: var(--color-text-muted); font-size: 16px; line-height: 1.5; margin-top: var(--space-3); }
+  .hero-a .lead b { color: var(--color-text); }
+  .values { display: grid; gap: var(--space-3); }
+  .values div { display: flex; gap: var(--space-3); align-items: center; font-size: 14px; color: var(--color-text-muted); }
+  .values b { display: block; color: var(--color-text); font-family: var(--font-heading); font-weight: 600; font-size: 15px; }
+  .values i { width: 36px; height: 36px; padding: 7px; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-red); }
+  .hero-b { padding: 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+  .hero-b .phone { width: 232px; position: relative; z-index: 1; }
+  .hero-c { display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-10); }
+  .hero-c > *:not(.slash) { position: relative; z-index: 1; }
+  .hero-c h2 { font-family: var(--font-heading); font-size: 30px; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; }
+  .hero-c .slash { right: 30px; top: -20px; width: 48px; height: 200px; }
+  .hero-c .slash.thin { right: 100px; top: -20px; width: 6px; height: 140px; }
+  .cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; text-align: center; font-size: 11px; color: var(--color-gray-300); }
+  .cats i { width: 30px; height: 30px; color: var(--color-white); display: block; margin: 0 auto 8px; }
+
+  /* ---------- FONDAMENTAUX ---------- */
+  .basics { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 16px; }
+  .logos { display: grid; grid-template-columns: 1fr 1fr 112px; grid-template-rows: repeat(3, 1fr); gap: 10px; height: 300px; }
+  .logos > div { border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .logos img { max-width: 100%; max-height: 64px; }
+  .logos .sym { grid-row: span 3; background: var(--color-surface); flex-direction: column; gap: 14px; font-size: 10px; letter-spacing: .14em; color: var(--color-text-muted); text-align: center; }
+  .logos .sym img { width: 72px; }
+  .logos .sym .fav { width: 32px; }
+  .swatches { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sw { height: 70px; border-radius: var(--radius-md); }
+  .sw-meta { font-size: 11px; line-height: 1.45; margin-top: 6px; color: var(--color-text-muted); }
+  .sw-meta b { color: var(--color-text); font-size: 12px; }
+  .ext { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+  .ext .sw { height: 34px; border-radius: var(--radius-sm); }
+  .ext .sw-meta { font-size: 10px; }
+  .typo { display: flex; gap: var(--space-5); align-items: flex-start; }
+  .typo .aa { font-family: var(--font-heading); font-size: 112px; font-weight: 800; line-height: .82; letter-spacing: -0.04em; }
+  .typo .fam { font-family: var(--font-heading); font-size: 26px; font-weight: 600; }
+  .typo .weights { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 13px; margin: 6px 0 8px; }
+  .typo .chars { font-size: 12px; white-space: nowrap; line-height: 1.6; color: var(--color-text-muted); }
+  .scale { margin-top: var(--space-4); }
+  .scale > div { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--color-border); padding: 8px 0; gap: 8px; }
+  .scale span:last-child { font-size: 10px; color: var(--color-text-muted); font-family: var(--font-mono); white-space: nowrap; }
+  .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; text-align: center; font-size: 10px; color: var(--color-text-muted); }
+  .icons i { width: 28px; height: 28px; color: var(--color-red); display: block; margin: 0 auto 6px; }
+  .shapes { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-5); padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-ink); height: 92px; overflow: hidden; }
+  .shapes img { height: 60px; }
+  .shapes span { font-size: 10px; color: var(--color-gray-500); line-height: 1.4; margin-left: auto; text-align: right; }
+
+  /* ---------- VOIX & PROPORTIONS ---------- */
+  .voice { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 16px; }
+  .voice .dark { display: flex; flex-direction: column; justify-content: space-between; min-height: 230px; }
+  .voice .dark .big { font-family: var(--font-heading); font-weight: 800; font-size: 56px; line-height: .98; letter-spacing: -0.03em; position: relative; z-index: 1; }
+  .voice .dark .big em { font-style: normal; color: var(--color-red-bright); }
+  .voice .dark .slash { right: 60px; top: -30px; width: 48px; height: 300px; }
+  .voice .dark p { font-size: 13px; color: var(--color-gray-500); position: relative; z-index: 1; max-width: 440px; }
+  .say { display: grid; gap: var(--space-3); font-size: 13px; }
+  .say div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; line-height: 1.4; }
+  .say .y { color: var(--color-success); } .say .n { color: var(--color-red-dark); }
+  .say i { width: 18px; height: 18px; }
+  .prop { display: flex; height: 64px; border-radius: var(--radius-md); overflow: hidden; }
+  .prop div { display: flex; align-items: flex-end; padding: 8px; font-size: 11px; font-weight: 600; }
+  .ctx { display: grid; gap: var(--space-2); margin-top: var(--space-4); font-size: 12px; }
+  .ctx div { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding-top: var(--space-2); border-top: 1px solid var(--color-border); }
+  .ctx b { font-weight: 600; }
+  .ctx span { color: var(--color-text-muted); }
+
+  /* ---------- APPLICATIONS ---------- */
+  .apps { display: grid; grid-template-columns: 820px 1fr; gap: 16px; }
+  .phones { display: flex; gap: 22px; justify-content: center; }
+  .phones .phone { width: 236px; }
+  .phones figcaption, .caption { font-size: 12px; font-weight: 600; text-align: center; margin-top: var(--space-3); }
+  .laptop { margin: 18px auto 0; width: 100%; }
+  .laptop .scr { background: var(--color-ink); border-radius: 16px 16px 4px 4px; padding: 10px 10px 12px; }
+  .laptop .scr img { display: block; width: 100%; border-radius: 6px; }
+  .laptop .base { height: 14px; margin: 0 -24px; background: linear-gradient(180deg, var(--color-gray-300), var(--color-gray-500)); border-radius: 0 0 14px 14px; }
+
+  .supports { display: grid; grid-template-columns: 560px 300px 1fr 1fr; gap: 16px; }
+  .ticket { display: flex; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-md); height: 196px; margin-top: var(--space-2); }
+  .ticket .main { flex: 1; background: var(--color-white); position: relative; overflow: hidden; display: flex; }
+  .ticket .main .img { width: 130px; flex-shrink: 0; }
+  .ticket .main .txt { padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; flex: 1; }
+  .ticket .main .txt img { width: 76px; }
+  .ticket h4 { font-family: var(--font-heading); font-size: 24px; font-weight: 800; text-transform: uppercase; line-height: 1; letter-spacing: -0.01em; }
+  .ticket .main small { display: block; font-size: 11px; color: var(--color-text-muted); margin-top: 4px; }
+  .ticket .cat { display: inline-flex; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--color-ink); color: var(--color-white); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+  .ticket .num { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); }
+  .ticket .stub { width: 150px; background: var(--color-red); color: var(--color-white); border-left: 2px dashed rgba(255,255,255,.7); padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
+  .ticket .stub .qr { width: 104px; height: 104px; background: var(--color-white); border-radius: var(--radius-sm); padding: 7px; position: relative; z-index: 1; }
+  .ticket .stub .qr img { width: 100%; display: block; }
+  .ticket .stub b { font-family: var(--font-heading); font-size: 13px; position: relative; z-index: 1; }
+  .ticket .stub .num { color: var(--color-white); position: relative; z-index: 1; font-size: 10px; }
+  .band { height: 58px; border-radius: 29px; display: flex; align-items: center; gap: 22px; padding: 0 26px; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+  .band img { height: 26px; position: relative; z-index: 1; }
+  .band b { font-family: var(--font-heading); font-weight: 800; font-size: 18px; letter-spacing: .06em; position: relative; z-index: 1; }
+  .band .clip { margin-left: auto; width: 54px; height: 34px; border-radius: 8px; background: var(--color-gray-300); box-shadow: inset 0 -4px 0 var(--color-gray-500); position: relative; z-index: 1; }
+  .band .sl { display: inline-block; width: 12px; height: 80px; margin: 0 -6px; background: var(--color-red); transform: skewX(-18deg); flex-shrink: 0; }
+  .band .sl.ink { background: var(--color-ink); }
+  .band .sl.thin { width: 4px; margin-left: -14px; }
+
+  .badge-staff { width: 210px; margin: 0 auto; position: relative; }
+  .lanyard { width: 34px; height: 86px; margin: 0 auto; background: var(--color-red); position: relative; }
+  .lanyard::after { content: ""; position: absolute; bottom: -12px; left: 9px; width: 16px; height: 18px; border-radius: 4px; background: var(--color-gray-500); }
+  .bdg { margin-top: 8px; height: 300px; border-radius: var(--radius-md); background: var(--color-ink); color: var(--color-white); padding: 20px 18px; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .bdg > *:not(.slash) { position: relative; z-index: 1; }
+  .bdg .slash { width: 40px; right: 22px; top: -20px; height: 104px; }
+  .bdg img.l { width: 110px; }
+  .bdg .role { font-family: var(--font-heading); font-weight: 800; font-size: 40px; line-height: 1; margin-top: auto; }
+  .bdg .who { font-size: 13px; font-weight: 600; margin-top: 6px; }
+  .bdg small { font-size: 10px; color: var(--color-gray-500); }
+  .bdg .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px; }
+  .bdg .qr { width: 56px; height: 56px; background: var(--color-white); padding: 4px; border-radius: 4px; }
+  .bdg .qr img { width: 100%; display: block; }
+
+  .post { aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; position: relative; color: var(--color-white); box-shadow: var(--shadow-md); }
+  .post .ph { position: absolute; inset: 0; clip-path: polygon(38% 0, 100% 0, 100% 100%, 12% 100%); }
+  .post .txt { position: absolute; left: 20px; top: 20px; bottom: 20px; right: 20px; display: flex; flex-direction: column; z-index: 1; }
+  .post .txt img { width: 90px; }
+  .post .t { font-family: var(--font-heading); font-style: italic; font-weight: 800; font-size: 42px; line-height: .92; text-transform: uppercase; letter-spacing: -0.02em; margin-top: auto; }
+  .post .d { font-size: 12px; font-weight: 600; margin-top: 10px; display: flex; gap: 8px; align-items: center; }
+  .post .d span { background: var(--color-ink); padding: 4px 8px; border-radius: var(--radius-sm); }
+
+  .poster { height: 100%; min-height: 420px; border-radius: var(--radius-md); overflow: hidden; position: relative; color: var(--color-white); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; box-shadow: var(--shadow-md); }
+  .poster > *:not(.shade):not(.slash) { position: relative; z-index: 1; }
+  .poster > img { position: absolute !important; top: 24px; left: 24px; width: 150px; }
+  .poster .slash { width: 48px; right: 40px; top: 90px; height: 230px; }
+  .poster h3 { font-family: var(--font-heading); font-style: italic; font-weight: 800; font-size: 29px; line-height: 1; text-transform: uppercase; letter-spacing: -0.02em; }
+  .poster p { font-size: 12px; color: var(--color-gray-300); margin: 10px 0 14px; }
+  .poster .cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: var(--radius-full); background: var(--color-red); font-family: var(--font-heading); font-weight: 600; font-size: 13px; }
+  .poster .cta i { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="card hero-a">
+      <img src="../../logo/svg/logo-principal.svg" alt="Here! Ticketing Master" style="width:290px">
+      <div>
+        <h1>Vos événements méritent plus qu'un simple billet.</h1>
+        <p class="lead">Billetterie. Contrôle. Expérience.<br>Tout en un, avec <b>Here!</b></p>
+      </div>
+      <div class="values">
+        <div><i data-icon="billet"></i><span><b>Vendez</b>vos billets en quelques minutes</span></div>
+        <div><i data-icon="scanner"></i><span><b>Contrôlez</b>chaque entrée, même hors connexion</span></div>
+        <div><i data-icon="courbe"></i><span><b>Suivez</b>ventes et participants en temps réel</span></div>
+      </div>
+    </div>
+
+    <div class="card hero-b photo" data-src="../../imagery/hero-public.jpg" data-brief="hero-public.jpg · jeune femme qui rit en concert, lumière rouge">
+      <div class="phone"><img src="mobile-accueil.png" alt="Accueil"></div>
+      <div class="phone" style="margin-top:60px"><img src="mobile-evenement.png" alt="Détail d'un événement"></div>
+    </div>
+
+    <div class="card hero-c dark">
+      <span class="slash"></span><span class="slash thin"></span>
+      <img src="../../logo/svg/logo-negatif.svg" alt="Here!" style="width:200px">
+      <h2>Des événements qui rapprochent les talents et le public.</h2>
+      <div class="cats">
+        <div><i data-icon="concert"></i>Concerts</div>
+        <div><i data-icon="spectacle"></i>Spectacles</div>
+        <div><i data-icon="conference"></i>Conférences</div>
+        <div><i data-icon="festival"></i>Festivals</div>
+        <div><i data-icon="sport"></i>Sport</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FONDAMENTAUX ===== -->
+  <section class="basics">
+    <div class="card">
+      <div class="label">Variations du logo</div>
+      <div class="logos">
+        <div style="background:var(--color-surface)"><img src="../../logo/svg/logo-principal.svg" alt=""></div>
+        <div style="background:var(--color-ink)"><img src="../../logo/svg/logo-negatif.svg" alt=""></div>
+        <div class="sym"><img src="../../logo/svg/symbole.svg" alt="">ICÔNE<br>D'APP<img class="fav" src="../../logo/svg/favicon.svg" alt="">FAVICON</div>
+        <div style="background:var(--color-red)"><img src="../../logo/svg/logo-blanc.svg" alt=""></div>
+        <div style="background:var(--color-white);box-shadow:inset 0 0 0 1px var(--color-border)"><img src="../../logo/svg/logo-mono-noir.svg" alt=""></div>
+        <div style="background:var(--color-surface)"><img src="../../logo/svg/logo-horizontal.svg" alt="" style="max-height:44px"></div>
+        <div style="background:var(--color-ink)"><img src="../../logo/svg/logo-negatif-horizontal.svg" alt="" style="max-height:44px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Palette de couleurs</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:var(--color-red)"></div><div class="sw-meta"><b>#E10600</b><br>Rouge Here · énergie · 10 %</div></div>
+        <div><div class="sw" style="background:var(--color-ink)"></div><div class="sw-meta"><b>#0B0B0B</b><br>Noir graphite · confiance · 45 %</div></div>
+        <div><div class="sw" style="background:var(--color-white);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#FFFFFF</b><br>Blanc · clarté · 30 %</div></div>
+        <div><div class="sw" style="background:var(--color-gray-100);box-shadow:inset 0 0 0 1px var(--color-border)"></div><div class="sw-meta"><b>#F4F4F4</b><br>Gris clair · équilibre · 15 %</div></div>
+      </div>
+      <div class="ext">
+        <div><div class="sw" style="background:var(--color-red-bright)"></div><div class="sw-meta"><b>#FF4D3D</b><br>Rouge sur noir</div></div>
+        <div><div class="sw" style="background:var(--color-red-dark)"></div><div class="sw-meta"><b>#B30500</b><br>Survol</div></div>
+        <div><div class="sw" style="background:var(--color-gray-500)"></div><div class="sw-meta"><b>#8A8A8A</b><br>Texte sur noir</div></div>
+        <div><div class="sw" style="background:var(--color-green)"></div><div class="sw-meta"><b>#1A7F37</b><br>Billet validé</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Typographie</div>
+      <div class="typo">
+        <div class="aa">Aa</div>
+        <div>
+          <div class="fam">Poppins</div>
+          <div class="weights"><b style="font-weight:800">ExtraBold</b><b>Bold</b><span style="font-weight:600">SemiBold</span><span style="font-weight:500">Medium</span><span>Regular</span></div>
+          <div class="chars">Aa Bb Cc Dd Ee Ff Gg<br>0 1 2 3 4 5 6 7 8 9 « ! »</div>
+        </div>
+      </div>
+      <div class="scale">
+        <div><span style="font-family:var(--font-heading);font-weight:800;font-size:22px;letter-spacing:-0.02em">Titre display</span><span>Poppins 64/800</span></div>
+        <div><span style="font-family:var(--font-heading);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase">Accroche de campagne</span><span>ExtraBold Italic</span></div>
+        <div><span style="font-size:14px">Texte courant de l'interface</span><span>Poppins 16/400</span></div>
+        <div><span style="font-family:var(--font-data);font-weight:600;font-size:15px">37 470 000 FCFA</span><span>Inter · back-office</span></div>
+        <div><span style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:.04em">N° HF26-4587-VIP</span><span>DM Mono · codes</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Éléments de marque</div>
+      <div class="icons">
+        <div><i data-icon="billet"></i>Billetterie</div>
+        <div><i data-icon="qr-code"></i>QR code</div>
+        <div><i data-icon="scanner"></i>Contrôle</div>
+        <div><i data-icon="statistiques"></i>Statistiques</div>
+        <div><i data-icon="securite"></i>Sécurité</div>
+        <div><i data-icon="participants"></i>Participants</div>
+        <div><i data-icon="mobile-money"></i>Mobile money</div>
+        <div><i data-icon="bracelet"></i>Bracelet</div>
+        <div><i data-icon="badge"></i>Badge staff</div>
+        <div><i data-icon="calendrier"></i>Agenda</div>
+        <div><i data-icon="lieu"></i>Lieu</div>
+        <div><i data-icon="paiement-carte"></i>Carte</div>
+      </div>
+      <div class="shapes">
+        <img src="../../elements/slash-fin.svg" alt=""><img src="../../elements/slash-epais.svg" alt=""><img src="../../elements/asterisque.svg" alt="" style="height:44px">
+        <span>Slash à 18°<br>fin 6 · épais 48<br>Astérisque</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VOIX & PROPORTIONS ===== -->
+  <section class="voice">
+    <div class="card dark">
+      <span class="slash"></span>
+      <div class="label">Ton de voix</div>
+      <div class="big">Vivez.<br>Partagez.<br><em>Accédez.</em></div>
+      <p>Direct, chaleureux, rythmé. Phrases courtes, vouvoiement léger, aucun jargon.</p>
+    </div>
+    <div class="card">
+      <div class="label">On dit / on ne dit pas</div>
+      <div class="say">
+        <div><i class="y" data-icon="valide"></i><span>« Votre billet est prêt. Rendez-vous à l'entrée. »</span></div>
+        <div><i class="n" data-icon="ajouter" style="transform:rotate(45deg)"></i><span class="muted">« Votre transaction a été traitée avec succès. »</span></div>
+        <div><i class="y" data-icon="valide"></i><span>« Plus que 12 places en VIP. »</span></div>
+        <div><i class="n" data-icon="ajouter" style="transform:rotate(45deg)"></i><span class="muted">« Stock limité ! Dépêche-toi !!! »</span></div>
+        <div><i class="y" data-icon="valide"></i><span>« Le paiement n'est pas passé. Réessayez ou changez de moyen. »</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Proportions et usages</div>
+      <div class="prop">
+        <div style="flex:45;background:var(--color-ink);color:var(--color-white)">45 %</div>
+        <div style="flex:30;background:var(--color-white);box-shadow:inset 0 0 0 1px var(--color-border)">30 %</div>
+        <div style="flex:15;background:var(--color-gray-100)">15 %</div>
+        <div style="flex:10;background:var(--color-red);color:var(--color-white)">10 %</div>
+      </div>
+      <div class="ctx">
+        <div><b>App &amp; billets</b><span>Noir pour découvrir, blanc pour acheter. Slash fin, rare.</span></div>
+        <div><b>Communication</b><span>Aplats rouges, slash épais, titres en italique.</span></div>
+        <div><b>Back-office</b><span>Fond clair, rouge pour l'action seulement, chiffres en Inter.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : ÉCRANS ===== -->
+  <section class="apps">
+    <div class="card">
+      <div class="label">Application public et organisateur</div>
+      <div class="phones">
+        <figure><div class="phone"><img src="mobile-billets.png" alt=""></div><figcaption>Mes billets</figcaption></figure>
+        <figure><div class="phone"><img src="mobile-organisateur.png" alt=""></div><figcaption>Profil organisateur</figcaption></figure>
+        <figure><div class="phone"><img src="../mobile-scan.png" alt=""></div><figcaption>Contrôle d'accès</figcaption></figure>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="label">Back-office organisateurs</div>
+      <div class="laptop" style="margin-top:auto;margin-bottom:auto"><div class="scr"><img src="backoffice-tableau-de-bord.png" alt=""></div><div class="base"></div></div>
+      <div class="caption">Tableau de bord · ventes et accès en temps réel</div>
+    </div>
+  </section>
+
+  <!-- ===== APPLICATIONS : SUPPORTS ===== -->
+  <section class="supports">
+    <div class="card">
+      <div class="label">Billet imprimé et bracelets d'accès</div>
+      <div class="ticket">
+        <div class="main">
+          <div class="img photo" data-src="../../imagery/evt-afrofest.jpg"></div>
+          <div class="txt">
+            <img src="../../logo/svg/logo-horizontal.svg" alt="">
+            <div><h4>Afro Fest 2026</h4><small>Sam. 12 déc 2026 · 18:00 · Palais de la Culture, Abidjan</small></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span class="cat">VIP · PORTE B</span><span class="num">15 000 FCFA</span></div>
+          </div>
+        </div>
+        <div class="stub">
+          <span class="slash" style="width:40px;right:-6px;top:-10px;height:90px"></span>
+          <b>Billet 1 / 2</b>
+          <div class="qr"><img src="../qr-billet.svg" alt=""></div>
+          <span class="num">HF26-4587-VIP</span>
+        </div>
+      </div>
+      <div style="display:grid;gap:14px;margin-top:22px">
+        <div class="band red" style="transform:rotate(-2deg)"><img src="../../logo/svg/logo-blanc.svg" alt=""><b>VIP</b><span class="sl ink"></span><span class="sl ink thin"></span><span style="font-size:11px;font-weight:600;position:relative;z-index:1">AFRO FEST 2026 · 12.12</span><span class="clip"></span></div>
+        <div class="band dark" style="transform:rotate(1deg)"><img src="../../logo/svg/logo-negatif-horizontal.svg" alt=""><b>ACCÈS</b><span class="sl"></span><span style="font-size:11px;font-weight:600;color:var(--color-gray-500);position:relative;z-index:1">STANDARD · PORTE A</span><span class="clip"></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Badge staff</div>
+      <div class="badge-staff">
+        <div class="lanyard"></div>
+        <div class="bdg">
+          <span class="slash"></span>
+          <img class="l" src="../../logo/svg/logo-negatif.svg" alt="">
+          <div class="role">STAFF</div>
+          <div class="who">Moussa Diallo</div>
+          <small>Contrôle d'accès · Porte B</small>
+          <div class="foot"><small>AFRO FEST 2026</small><div class="qr"><img src="../qr-billet.svg" alt=""></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Réseaux sociaux</div>
+      <div class="post red">
+        <div class="ph photo" data-src="../../imagery/hero-artiste.jpg" data-brief="hero-artiste.jpg"></div>
+        <div class="txt">
+          <img src="../../logo/svg/logo-blanc.svg" alt="">
+          <div class="t">Afro<br>Fest<br>2026</div>
+          <div class="d"><span>12.12 · Abidjan</span>Billets sur Here!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="label">Affichage urbain</div>
+      <div class="poster photo" data-src="../../imagery/foule-mains.jpg" data-brief="foule-mains.jpg" style="flex:1">
+        <span class="shade"></span>
+        <span class="slash"></span>
+        <img src="../../logo/svg/logo-negatif.svg" alt="">
+        <h3>Les plus beaux événements commencent ici.</h3>
+        <p>Billetterie simple. Contrôle fiable. Expérience mémorable.</p>
+        <span class="cta">Téléchargez l'app<i data-icon="fleche-droite"></i></span>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="../_icons.js"></script>
+</body>
+</html>

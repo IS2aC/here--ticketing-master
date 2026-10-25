@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1440">
+<head>
+<meta charset="utf-8">
+<title>Here! — Relances et appels</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_backoffice.css">
+<style>
+  .wrap { display: grid; grid-template-columns: 1fr 420px; gap: var(--space-4); }
+  .tl { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; margin: var(--space-2) 0 var(--space-5); }
+  .tl::before { content: ""; position: absolute; left: 8%; right: 8%; top: 17px; height: 2px; background: linear-gradient(90deg, var(--color-ink) 0 56%, var(--color-gray-300) 56% 100%); }
+  .tl > div { text-align: center; position: relative; font-size: 12px; padding: 0 6px; }
+  .tl .dot { width: 36px; height: 36px; margin: 0 auto 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--color-ink); color: var(--color-white); position: relative; z-index: 1; }
+  .tl .dot i { width: 18px; height: 18px; }
+  .tl .now .dot { background: var(--color-primary); box-shadow: 0 0 0 6px rgba(225,6,0,.14); }
+  .tl .todo .dot { background: var(--color-background); color: var(--color-text-muted); box-shadow: inset 0 0 0 1.5px var(--color-gray-300); }
+  .tl b { display: block; font-size: 13px; font-weight: 600; }
+  .tl .d { color: var(--color-text-muted); font-family: var(--font-data); }
+  .tl .k { display: block; margin-top: 6px; font-family: var(--font-data); font-weight: 600; font-size: 12px; }
+  .tl .k.muted { font-weight: 400; }
+  .msg { display: grid; grid-template-columns: 1fr 300px; gap: var(--space-5); align-items: start; }
+  .bubble { background: var(--color-surface); border-radius: 4px 18px 18px 18px; padding: var(--space-4); font-size: 14px; line-height: 1.55; max-width: 520px; }
+  .bubble .var { background: var(--color-background); box-shadow: inset 0 0 0 1px var(--color-border); border-radius: 4px; padding: 0 4px; font-family: var(--font-mono); font-size: 12px; }
+  .choices { display: grid; gap: 6px; margin-top: var(--space-3); max-width: 520px; }
+  .choices span { display: flex; align-items: center; justify-content: center; height: 40px; border-radius: var(--radius-md); background: var(--color-background); box-shadow: inset 0 0 0 1px var(--color-border); font-weight: 600; font-size: 13px; }
+  .opts { display: grid; gap: var(--space-3); }
+  .opt { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); }
+  .opt b { font-weight: 600; }
+  .sw { width: 38px; height: 22px; border-radius: 11px; background: var(--color-ink); position: relative; }
+  .sw::after { content: ""; position: absolute; right: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-white); }
+  .agent { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-ink); color: var(--color-white); margin-bottom: var(--space-4); }
+  .agent .av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(160deg, #C9A27A, #7A5536); }
+  .agent b { display: block; font-size: 14px; }
+  .agent small { color: var(--color-gray-500); font-size: 12px; }
+  .agent .st { margin-left: auto; color: var(--color-green-light); }
+  .kp { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); margin-bottom: var(--space-4); }
+  .kp div { padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); text-align: center; }
+  .kp b { display: block; font-family: var(--font-data); font-weight: 600; font-size: 20px; }
+  .kp small { font-size: 11px; color: var(--color-text-muted); }
+  .calls { display: grid; gap: 0; }
+  .call { display: grid; grid-template-columns: 1fr auto; gap: 4px var(--space-3); padding: 10px 0; border-top: 1px solid var(--color-border); font-size: 13px; }
+  .call b { font-weight: 600; }
+  .call small { grid-column: 1 / -1; font-size: 12px; color: var(--color-text-muted); }
+  .script { margin-top: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); font-size: 12px; line-height: 1.5; }
+  .script b { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 4px; }
+</style>
+</head>
+<body>
+  <aside data-active="relances"></aside>
+  <main>
+    <div class="topbar">
+      <div class="ttl">
+        <div class="crumb">Mariage Aya &amp; Koffi</div>
+        <h1>Relances et appels</h1>
+        <div class="sub">Organisez votre cérémonie. Les relances, on s'en charge.</div>
+      </div>
+      <span class="btn ghost"><i data-icon="modifier"></i>Modifier le calendrier</span>
+      <span class="btn"><i data-icon="envoyer"></i>Programmer la relance 3</span>
+    </div>
+
+    <div class="wrap">
+      <div style="display:grid;gap:var(--space-4)">
+        <section class="panel">
+          <div class="ph"><h2>Calendrier</h2><span class="note">Les relances ne partent qu'aux invités qui n'ont pas encore répondu</span></div>
+          <div class="tl">
+            <div><div class="dot"><i data-icon="invitation"></i></div><b>Invitations</b><span class="d">4 oct</span><span class="k">316 envoyées</span></div>
+            <div><div class="dot"><i data-icon="message"></i></div><b>Relance 1</b><span class="d">11 oct</span><span class="k">71 réponses</span></div>
+            <div><div class="dot"><i data-icon="message"></i></div><b>Relance 2</b><span class="d">18 oct</span><span class="k">39 réponses</span></div>
+            <div class="now"><div class="dot"><i data-icon="telephone"></i></div><b>Appels</b><span class="d">depuis le 22 oct</span><span class="k">en cours</span></div>
+            <div class="todo"><div class="dot"><i data-icon="message"></i></div><b>Relance 3</b><span class="d">26 oct · 10 h</span><span class="k muted">70 invités</span></div>
+            <div class="todo"><div class="dot"><i data-icon="qr-code"></i></div><b>Rappel du jour J</b><span class="d">12 déc · 18 h</span><span class="k muted">avec le QR code</span></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="ph"><h2>Message de la relance 3</h2><span class="note">Envoyé au nom d'Aya &amp; Koffi, depuis le compte WhatsApp vérifié de Here!</span></div>
+          <div class="msg">
+            <div>
+              <div class="bubble">Bonjour <span class="var">Prénom</span>,<br>Aya &amp; Koffi n'ont pas encore reçu votre réponse pour leur mariage du <b>samedi 13 décembre</b>. Serez-vous des nôtres ?<br>Votre invitation personnelle est ci-dessus.</div>
+              <div class="choices"><span>Je serai présent(e)</span><span>Je ne pourrai pas venir</span></div>
+            </div>
+            <div class="opts">
+              <div class="opt"><span><b>Joindre la carte</b><br><span class="muted">Image personnalisée de l'invité</span></span><span class="sw"></span></div>
+              <div class="opt"><span><b>Heure d'envoi</b><br><span class="muted">Dimanche 26 octobre, 10 h</span></span><i data-icon="horloge"></i></div>
+              <div class="opt"><span><b>Ensuite</b><br><span class="muted">Appel de Mariam 48 h plus tard</span></span><i data-icon="telephone"></i></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="ph"><h2>Appels de votre conseillère</h2><span class="note">Aujourd'hui</span></div>
+        <div class="agent"><span class="av"></span><div><b>Mariam Diabaté</b><small>Équipe Here! · vos invités l'entendent se présenter</small></div><span class="st"><i data-icon="telephone"></i>En ligne</span></div>
+        <div class="kp">
+          <div><b>58</b><small>appels</small></div>
+          <div><b>31</b><small>joints</small></div>
+          <div><b>13</b><small>confirmés</small></div>
+          <div><b>12</b><small>injoignables</small></div>
+        </div>
+        <div class="calls">
+          <div class="call"><b>Dr Hamed Koné</b><span class="st ok"><i data-icon="valide"></i>Confirmé · 2 pers.</span><small>Appelé à 11 h 42 · « Avec plaisir, nous serons là. »</small></div>
+          <div class="call"><b>Famille Ouattara</b><span class="st wait"><i data-icon="horloge"></i>Rappel à 14 h</span><small>2<sup>e</sup> tentative · a demandé à être rappelée</small></div>
+          <div class="call"><b>Paul Assi</b><span class="st neutral"><i data-icon="telephone"></i>À appeler</span><small>Numéro corrigé par vous ce matin</small></div>
+          <div class="call"><b>Tante Adjoua</b><span class="st ko"><i data-icon="alerte"></i>Injoignable</span><small>3 tentatives · nous vous demanderons un autre contact</small></div>
+        </div>
+        <div class="script"><b>Ce que dit Mariam</b>« Bonjour, ici Mariam, de l'équipe Here! J'appelle de la part d'Aya et Koffi pour leur mariage du 13 décembre. Pourrez-vous être présent ? »</div>
+      </section>
+    </div>
+  </main>
+<script src="_backoffice.js"></script>
+<script src="_icons.js"></script>
+</body>
+</html>

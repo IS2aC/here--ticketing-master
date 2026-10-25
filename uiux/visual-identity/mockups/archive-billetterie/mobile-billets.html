@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Mes billets</title>
+<link rel="stylesheet" href="../../typography/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../_mobile.css">
+<style>
+  body { background: var(--color-surface); }
+  .head { padding: 0 var(--space-5) var(--space-4); }
+  .head h1 { font-family: var(--font-heading); font-weight: 800; font-size: 28px; letter-spacing: -0.02em; }
+  .seg { display: flex; padding: 4px; border-radius: var(--radius-full); background: var(--color-gray-300); margin-top: var(--space-4); }
+  .seg span { flex: 1; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-full); font-weight: 600; font-size: 13px; color: var(--color-text-muted); }
+  .seg .on { background: var(--color-background); color: var(--color-text); box-shadow: var(--shadow-sm); }
+
+  .ticket { margin: 0 var(--space-5); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-background); box-shadow: var(--shadow-md); position: relative; }
+  .t-top { height: 128px; padding: var(--space-5); color: var(--color-white); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+  .t-top > *:not(.shade):not(.slash):not(.badge) { position: relative; z-index: 1; }
+  .t-top .slash { width: 8px; top: -20px; height: 110px; right: 44px; }
+  .t-top .title-xl { font-size: 24px; }
+  .t-top small { font-size: 12px; color: var(--color-gray-300); margin-top: 4px; }
+  .t-top .badge { position: absolute; top: var(--space-4); left: var(--space-4); }
+  .cut { position: relative; height: 0; border-top: 2px dashed var(--color-border); margin: 0 var(--space-5); }
+  .cut::before, .cut::after { content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface); }
+  .cut::before { left: -33px; } .cut::after { right: -33px; }
+  .t-body { padding: var(--space-5); text-align: center; }
+  .qr { width: 164px; height: 164px; margin: 0 auto; padding: 10px; border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--color-border); position: relative; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .qr .mark { position: absolute; left: 50%; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 10px; background: var(--color-white); padding: 3px; }
+  .qr .mark img { border-radius: 8px; }
+  .code { margin-top: var(--space-3); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); margin-top: var(--space-4); text-align: left; }
+  .grid small { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); }
+  .grid b { font-size: 13px; font-weight: 600; }
+  .hint { display: flex; gap: var(--space-2); align-items: center; justify-content: center; margin: var(--space-4) var(--space-5) 0; font-size: 12px; color: var(--color-text-muted); }
+  .hint i { width: 16px; height: 16px; color: var(--color-success); }
+  .next { margin: var(--space-4) var(--space-5) 0; padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-background); display: flex; gap: var(--space-3); align-items: center; }
+  .next .photo { width: 52px; height: 52px; border-radius: var(--radius-sm); flex-shrink: 0; }
+  .next .photo::before { display: none; }
+  .next b { font-family: var(--font-heading); font-size: 14px; font-weight: 600; display: block; }
+  .next small { font-size: 12px; color: var(--color-text-muted); }
+  .next .badge { margin-left: auto; }
+</style>
+</head>
+<body>
+  <div class="status"><span>9:41</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+  <div class="head">
+    <h1>Mes billets</h1>
+    <div class="seg"><span class="on">À venir · 3</span><span>Passés</span></div>
+  </div>
+
+  <div class="ticket">
+    <div class="t-top photo" data-src="../../imagery/evt-afrofest.jpg" data-brief="evt-afrofest.jpg">
+      <span class="shade"></span><span class="slash"></span>
+      <span class="badge red">VIP</span>
+      <div class="title-xl">Afro Fest 2026</div>
+      <small>Sam. 12 déc 2026 · 18:00 · Palais de la Culture</small>
+    </div>
+    <div class="t-body">
+      <div class="qr"><img src="../qr-billet.svg" alt="QR code du billet"><span class="mark"><img src="../../logo/svg/favicon.svg" alt=""></span></div>
+      <div class="code mono">N° HF26-4587-VIP</div>
+      <div class="grid">
+        <div><small>Titulaire</small><b>Aya Kouassi</b></div>
+        <div><small>Billet</small><b>1 sur 2</b></div>
+        <div><small>Porte</small><b>B · VIP</b></div>
+      </div>
+    </div>
+    <div class="cut"></div>
+    <div class="t-body" style="padding-top:var(--space-4);padding-bottom:var(--space-4)">
+      <div class="between"><span class="btn ghost sm">Transférer</span><span class="btn inverse sm">Ajouter au Wallet</span></div>
+    </div>
+  </div>
+
+  <div class="hint"><i data-icon="valide"></i>Disponible même sans connexion</div>
+
+  <div class="next">
+    <span class="photo" data-src="../../imagery/evt-jazz.jpg"></span>
+    <div><b>Jazz Night</b><small>Ven. 20 nov · 20:00</small></div>
+    <span class="badge">Standard</span>
+  </div>
+
+  <nav class="tabbar">
+    <div><i data-icon="accueil"></i>Accueil</div>
+    <div><i data-icon="recherche"></i>Explorer</div>
+    <div class="on"><i data-icon="billet"></i>Billets</div>
+    <div><i data-icon="profil"></i>Profil</div>
+  </nav>
+  <span class="home-ind"></span>
+  <script src="../_icons.js"></script>
+</body>
+</html>

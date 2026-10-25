@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="1440">
+<head>
+<meta charset="utf-8">
+<title>Here! — Personnaliser la carte d'invitation</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_backoffice.css">
+<style>
+  .wrap { display: grid; grid-template-columns: 420px 1fr; gap: var(--space-4); flex: 1; min-height: 0; }
+  .q { font-family: var(--font-heading); font-size: 14px; font-weight: 600; margin: var(--space-4) 0 var(--space-2); }
+  .q:first-child { margin-top: 0; }
+  .tpls { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-2); }
+  .tpls div { text-align: center; font-size: 11px; color: var(--color-text-muted); }
+  .tpls img { width: 100%; display: block; border-radius: 6px; box-shadow: 0 0 0 1px var(--color-border); margin-bottom: 4px; }
+  .tpls .on img { box-shadow: 0 0 0 2px var(--color-primary); }
+  .tpls .on { color: var(--color-text); font-weight: 600; }
+  .pal { display: flex; gap: var(--space-3); }
+  .pal div { white-space: nowrap; display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: var(--radius-full); box-shadow: inset 0 0 0 1px var(--color-border); font-size: 12px; font-weight: 500; }
+  .pal div.on { box-shadow: inset 0 0 0 2px var(--color-primary); }
+  .pal span { width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(11,11,11,.12); }
+  .up { display: flex; gap: var(--space-3); align-items: center; }
+  .up .ph2 { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(160deg, #C9A27A, #7A5536); }
+  .up small { font-size: 12px; color: var(--color-text-muted); display: block; }
+  .soon { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); font-size: 12px; color: var(--color-text-muted); }
+  .soon i { width: 20px; height: 20px; color: var(--color-text); }
+  .soon b { color: var(--color-text); display: block; font-size: 13px; }
+  .soon .tag { margin-left: auto; }
+  .stage { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); display: grid; grid-template-columns: 1fr 260px; gap: var(--space-6); align-items: center; padding: var(--space-6) var(--space-8); }
+  .stage .card { width: 100%; max-width: 470px; justify-self: center; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .stage .card img { width: 100%; display: block; }
+  .info { display: grid; gap: var(--space-4); }
+  .info .field .input { background: var(--color-background); }
+  .seal { padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-background); font-size: 12px; line-height: 1.5; color: var(--color-text-muted); }
+  .seal b { display: flex; align-items: center; gap: 8px; color: var(--color-text); font-size: 13px; margin-bottom: 4px; }
+  .seal b img { width: 22px; border-radius: 5px; }
+</style>
+</head>
+<body>
+  <aside data-active="cartes"></aside>
+  <main>
+    <div class="topbar">
+      <div class="ttl">
+        <div class="crumb">Mariage Aya &amp; Koffi · Nouveau</div>
+        <h1>Votre carte d'invitation</h1>
+      </div>
+      <div class="steps">
+        <span class="done"><b>1</b>L'événement</span><span class="line"></span>
+        <span class="done"><b>2</b>Les invités</span><span class="line"></span>
+        <span class="on"><b>3</b>La carte</span><span class="line"></span>
+        <span><b>4</b>Les relances</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="panel">
+        <div class="q">Modèle</div>
+        <div class="tpls">
+          <div class="on"><img src="carte-ceremonie.png" alt="">Cérémonie</div>
+          <div><img src="carte-rendez-vous.png" alt="">Rendez-vous</div>
+          <div><img src="carte-officiel.png" alt="">Officiel</div>
+          <div><img src="carte-hommage.png" alt="">Hommage</div>
+          <div><img src="carte-soiree.png" alt="">Soirée</div>
+        </div>
+        <div class="q">Couleurs</div>
+        <div class="pal">
+          <div class="on"><span style="background:linear-gradient(135deg,var(--color-ivory) 50%,var(--color-gold) 50%)"></span>Ivoire &amp; or</div>
+          <div><span style="background:linear-gradient(135deg,var(--color-white) 50%,var(--color-ink) 50%)"></span>Noir &amp; blanc</div>
+          <div><span style="background:linear-gradient(135deg,var(--color-white) 50%,var(--color-red) 50%)"></span>Rouge Here!</div>
+        </div>
+        <div class="q">Photo</div>
+        <div class="up"><span class="ph2"></span><div><b style="font-size:13px">aya-koffi-dot.jpg</b><small>Recadrée en cercle · Remplacer</small></div></div>
+        <div class="q">Textes</div>
+        <div class="field" style="margin-bottom:var(--space-3)"><label>Formule d'invitation</label><div class="input focus">ont la joie de vous inviter à célébrer leur union</div></div>
+        <div class="field"><label>Message de fin</label><div class="input">Merci de confirmer votre présence avant le 30 novembre.</div></div>
+        <div class="soon"><i data-icon="signature"></i><div><b>Signature des mariés</b>Authentifie chaque carte avant la confirmation.</div><span class="tag">Bientôt</span></div>
+      </section>
+
+      <section class="panel stage">
+        <div class="card"><img src="carte-ceremonie.png" alt="Aperçu de la carte de M. et Mme Konan"></div>
+        <div class="info">
+          <div class="field"><label>Aperçu pour</label><div class="input"><i data-icon="profil"></i>M. et Mme Konan · VIP</div></div>
+          <div class="seal"><b><img src="../logo/svg/favicon.svg" alt="">Le sceau Here!</b>Ajouté sur chaque carte : nom de l'invité, QR code unique, nombre de personnes et vérification. Il ne peut pas être modifié.</div>
+          <span class="btn ghost"><i data-icon="message"></i>Voir sur WhatsApp</span>
+          <span class="btn">Continuer : les relances<i data-icon="fleche-droite"></i></span>
+        </div>
+      </section>
+    </div>
+  </main>
+<script src="_backoffice.js"></script>
+<script src="_icons.js"></script>
+</body>
+</html>

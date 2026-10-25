@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="720">
+<head>
+<meta charset="utf-8">
+<title>Carte d'invitation — modèle Rendez-vous</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_carte.css">
+<style>
+  /* Modèle Rendez-vous : brunch, anniversaire, retrouvailles d'anciens */
+  :root { --c-bg: var(--color-red); --c-text: var(--color-white); }
+  .pic { position: absolute; top: 0; left: 0; right: 0; height: 400px; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); }
+  .content { align-items: flex-start; text-align: left; padding: 0 56px 24px; justify-content: flex-end; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: var(--radius-full); background: var(--color-white); color: var(--color-red);
+    font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; position: absolute; top: 28px; left: 28px; z-index: 1; }
+  .tag i { width: 18px; height: 18px; }
+  .host { font-size: 18px; font-weight: 500; }
+  .title { font-family: var(--font-heading); font-weight: 800; font-size: 92px; line-height: .9; letter-spacing: -0.035em; text-transform: uppercase; margin: 6px 0 4px; }
+  .sub { font-family: var(--font-heading); font-weight: 600; font-size: 24px; }
+  .guest { margin-top: 18px; font-size: 16px; }
+  .guest b { font-weight: 600; }
+  .facts { display: flex; gap: 28px; margin-top: 18px; font-size: 15px; line-height: 1.4; }
+  .facts div { display: flex; gap: 10px; align-items: flex-start; }
+  .facts i { width: 22px; height: 22px; margin-top: 1px; }
+  .facts b { display: block; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="pic photo jour" data-src="../imagery/brunch.jpg" data-brief="brunch.jpg — amis autour d'une table, lumière du matin"></div>
+  <span class="tag"><i data-icon="brunch"></i>Brunch</span>
+  <div class="content">
+    <div class="host">Mariam vous invite à fêter ses</div>
+    <div class="title">30 ans</div>
+    <div class="sub">autour d'un brunch entre amis</div>
+    <div class="guest">Pour <b>Fatou Bamba</b>, on compte sur vous !</div>
+    <div class="facts">
+      <div><i data-icon="calendrier"></i><span><b>Dimanche 22 novembre</b>à partir de 11 h</span></div>
+      <div><i data-icon="lieu"></i><span><b>La Terrasse</b>Zone 4, Marcory</span></div>
+    </div>
+  </div>
+
+  <div class="sceau">
+    <div class="qr"><img src="qr-invitation.svg" alt="QR code de l'invitation"></div>
+    <div class="who"><small>Invitation personnelle</small><b>Fatou Bamba</b><span><em>1 personne</em> · Amis</span></div>
+    <div class="here"><img src="../logo/svg/favicon.svg" alt=""><b>Invitation<br>vérifiée par Here!</b><span class="code">INV-MB30-0057</span></div>
+  </div>
+  <script src="_icons.js"></script>
+</body>
+</html>

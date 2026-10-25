@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr" data-theme="dark" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Scan : hors connexion</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_mobile.css">
+<style>
+  .top { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) var(--space-5); }
+  .top b { font-family: var(--font-heading); font-weight: 600; font-size: 15px; display: block; }
+  .top small { font-size: 12px; color: var(--color-text-muted); }
+  .count { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+  .count b { font-family: var(--font-data); font-size: 18px; }
+  .viewfinder { margin: var(--space-4) var(--space-5) 0; height: 330px; border-radius: var(--radius-xl); position: relative; overflow: hidden; }
+  .viewfinder::before { display: none; }
+  .frame { position: absolute; left: 50%; top: 50%; width: 210px; height: 210px; margin: -105px 0 0 -105px; }
+  .frame span { position: absolute; width: 44px; height: 44px; border-color: var(--color-green-light); border-style: solid; border-width: 0; }
+  .frame span:nth-child(1) { top: 0; left: 0; border-top-width: 5px; border-left-width: 5px; border-top-left-radius: 18px; }
+  .frame span:nth-child(2) { top: 0; right: 0; border-top-width: 5px; border-right-width: 5px; border-top-right-radius: 18px; }
+  .frame span:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 5px; border-left-width: 5px; border-bottom-left-radius: 18px; }
+  .frame span:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 5px; border-right-width: 5px; border-bottom-right-radius: 18px; }
+  .frame .qr { position: absolute; inset: 30px; background: var(--color-white); border-radius: var(--radius-md); padding: 10px; opacity: .9; }
+  .frame .qr img { width: 100%; height: 100%; display: block; }
+  .result { margin: calc(var(--space-6) * -1) var(--space-5) 0; position: relative; z-index: 2; border-radius: var(--radius-lg); background: var(--color-surface);
+    padding: var(--space-5); box-shadow: inset 0 0 0 2px var(--color-green-light), var(--shadow-lg); }
+  .result .ok { display: flex; align-items: center; gap: var(--space-3); color: var(--color-green-light); font-family: var(--font-heading); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: -0.01em; }
+  .result .ok i { width: 34px; height: 34px; }
+  .result .who { margin-top: var(--space-3); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .result small { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); }
+  .result b { font-size: 14px; font-weight: 600; }
+  .result .mono { margin-top: var(--space-3); color: var(--color-text-muted); }
+  .next { margin: var(--space-5) var(--space-5) 0; }
+  .next .btn { width: 100%; }
+  .gates { display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4); font-size: 12px; color: var(--color-text-muted); }
+  .gates span { display: inline-flex; align-items: center; gap: 6px; }
+  .gates span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-green-light); }
+  /* État « hors connexion » */
+  .frame span { border-color: var(--color-green-light); }
+  .result { box-shadow: inset 0 0 0 2px var(--color-green-light), var(--shadow-lg); }
+  .result .ok { color: var(--color-green-light); font-size: 21px; }
+  .offline { margin: 0 var(--space-5) var(--space-2); display: flex; gap: 8px; align-items: center; padding: 10px var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-amber-light); font-size: 12px; }
+  .offline i { width: 16px; height: 16px; color: var(--color-amber-light); }
+</style>
+</head>
+<body>
+  <div class="status"><span>19:08</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+  <div class="offline"><i data-icon="alerte"></i><span><b>Mode hors connexion.</b> Le scan continue ; 23 entrées seront synchronisées au retour du réseau.</span></div>
+  <div class="top">
+    <div><b>Mariage Aya &amp; Koffi</b><small>Entrée de la réception</small></div>
+    <div class="count"><b>184</b><small style="display:block" class="muted">arrivés / 389 attendus</small></div>
+  </div>
+
+  <div class="viewfinder photo" data-src="../imagery/controle-acces.jpg">
+    <div class="frame"><span></span><span></span><span></span><span></span><div class="qr"><img src="qr-invitation.svg" alt=""></div></div>
+  </div>
+
+  <div class="result">
+    <div class="ok"><i data-icon="valide"></i>Invité attendu</div>
+    <div class="who">
+      <div><small>Invité</small><b>Dr Hamed Koné</b></div>
+      <div><small>Placement</small><b>VIP · Table 1</b></div>
+    </div>
+    <div class="mono">INV-AK26-0007 · enregistré sur l'appareil</div>
+  </div>
+
+  <div class="next"><span class="btn">Accueillir le suivant</span></div>
+  <div class="gates"><span style="--x:0">Liste des 320 invités sur l'appareil</span></div>
+
+  <nav class="tabbar">
+    <div><i data-icon="accueil"></i>Accueil</div>
+    <div><i data-icon="participants"></i>Invités</div>
+    <div class="on"><i data-icon="scanner"></i>Entrée</div>
+    <div><i data-icon="table"></i>Tables</div>
+  </nav>
+  <span class="home-ind"></span>
+  <script src="_icons.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr" data-theme="dark" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Accueil</title>
+<link rel="stylesheet" href="../../typography/fonts.css">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="stylesheet" href="../_mobile.css">
+<style>
+  .top { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) var(--space-5) var(--space-4); }
+  .top img { height: 30px; }
+  .bell { position: relative; width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface); display: flex; align-items: center; justify-content: center; }
+  .bell i { width: 20px; height: 20px; }
+  .bell::after { content: ""; position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); box-shadow: 0 0 0 2px var(--color-surface); }
+  .hello { padding: 0 var(--space-5) var(--space-4); }
+  .hello h1 { font-family: var(--font-heading); font-weight: 700; font-size: 24px; line-height: 1.15; letter-spacing: -0.01em; }
+
+  .feature { margin: var(--space-5) var(--space-5) 0; height: 262px; border-radius: var(--radius-lg); overflow: hidden; padding: var(--space-5);
+    display: flex; flex-direction: column; justify-content: flex-end; color: var(--color-white); }
+  .feature > *:not(.shade):not(.slash):not(.badge) { position: relative; z-index: 1; }
+  .feature .slash { width: 10px; top: -20px; height: 150px; right: 64px; }
+  .feature .meta { font-size: 12px; color: var(--color-gray-300); margin: 6px 0 var(--space-4); display: flex; gap: var(--space-3); }
+  .feature .meta span { display: inline-flex; gap: 4px; align-items: center; }
+  .feature .meta i { width: 14px; height: 14px; }
+  .feature .badge { position: absolute; top: var(--space-4); left: var(--space-4); }
+
+  .rail { display: flex; gap: var(--space-3); padding-left: var(--space-5); }
+  .card { width: 158px; flex-shrink: 0; }
+  .card .photo { height: 200px; border-radius: var(--radius-md); overflow: hidden; padding: var(--space-3); display: flex; flex-direction: column; justify-content: flex-end; color: var(--color-white); }
+  .card .photo h3 { position: relative; z-index: 1; font-family: var(--font-heading); font-weight: 800; font-size: 18px; line-height: 1; text-transform: uppercase; }
+  .card .photo small { position: relative; z-index: 1; font-size: 11px; color: var(--color-gray-300); margin-top: 4px; }
+  .card .price { margin-top: var(--space-2); font-size: 12px; color: var(--color-text-muted); }
+  .date-tag { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 1; width: 40px; padding: 4px 0; border-radius: var(--radius-sm);
+    background: var(--color-white); color: var(--color-ink); text-align: center; font-family: var(--font-heading); line-height: 1; }
+  .date-tag b { display: block; font-size: 16px; font-weight: 800; }
+  .date-tag span { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--color-red); }
+</style>
+</head>
+<body>
+  <div class="status"><span>9:41</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+
+  <div class="top">
+    <img src="../../logo/svg/logo-negatif-horizontal.svg" alt="Here!">
+    <div class="bell"><i data-icon="notification"></i></div>
+  </div>
+
+  <div class="hello">
+    <div class="eyebrow">Abidjan · Ce week-end</div>
+    <h1>Bonsoir Aya,<br>où sortez-vous ?</h1>
+  </div>
+
+  <div class="pad">
+    <div class="search"><i data-icon="recherche"></i>Artiste, événement, lieu…</div>
+    <div class="chips" style="margin-top:var(--space-3)">
+      <span class="chip on"><i data-icon="concert"></i>Concerts</span>
+      <span class="chip"><i data-icon="festival"></i>Festivals</span>
+      <span class="chip"><i data-icon="spectacle"></i>Spectacles</span>
+      <span class="chip"><i data-icon="sport"></i>Sport</span>
+    </div>
+  </div>
+
+  <div class="feature photo" data-src="../../imagery/evt-afrofest.jpg" data-brief="evt-afrofest.jpg — artiste afrobeats sur grande scène, contre-jour rouge">
+    <span class="shade"></span>
+    <span class="slash"></span>
+    <span class="badge red">À la une</span>
+    <div class="title-xl">Afro Fest<br>2026</div>
+    <div class="meta"><span><i data-icon="calendrier"></i>Sam. 12 déc · 18:00</span><span><i data-icon="lieu"></i>Palais de la Culture</span></div>
+    <div class="between">
+      <span style="font-size:13px">Dès <b style="font-family:var(--font-heading);font-size:16px">5 000 FCFA</b></span>
+      <span class="btn sm glow">Réserver</span>
+    </div>
+  </div>
+
+  <div class="pad section-head"><span class="title-m">Cette semaine</span><a>Voir tout</a></div>
+  <div class="rail">
+    <div class="card">
+      <div class="photo" data-src="../../imagery/evt-jazz.jpg" data-brief="evt-jazz.jpg">
+        <span class="shade"></span>
+        <span class="date-tag"><b>20</b><span>nov</span></span>
+        <h3>Jazz Night</h3><small>Institut Français</small>
+      </div>
+      <div class="price">Dès <b>5 000 FCFA</b></div>
+    </div>
+    <div class="card">
+      <div class="photo" data-src="../../imagery/evt-urban.jpg" data-brief="evt-urban.jpg">
+        <span class="shade"></span>
+        <span class="date-tag"><b>05</b><span>déc</span></span>
+        <h3>Urban Vibes</h3><small>Parc des Expositions</small>
+      </div>
+      <div class="price">Dès <b>7 500 FCFA</b></div>
+    </div>
+    <div class="card">
+      <div class="photo" data-src="../../imagery/evt-spectacle.jpg" data-brief="evt-spectacle.jpg">
+        <span class="shade"></span>
+        <span class="date-tag"><b>28</b><span>nov</span></span>
+        <h3>Rire d'Abidjan</h3><small>Ciné Ivoire</small>
+      </div>
+      <div class="price">Dès <b>3 000 FCFA</b></div>
+    </div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="on"><i data-icon="accueil"></i>Accueil</div>
+    <div><i data-icon="recherche"></i>Explorer</div>
+    <div><i data-icon="billet"></i>Billets</div>
+    <div><i data-icon="profil"></i>Profil</div>
+  </nav>
+  <span class="home-ind"></span>
+  <script src="../_icons.js"></script>
+</body>
+</html>

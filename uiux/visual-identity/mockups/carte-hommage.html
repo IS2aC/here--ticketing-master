@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="720">
+<head>
+<meta charset="utf-8">
+<title>Carte d'invitation — modèle Hommage</title>
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../typography/fonts-italic.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_carte.css">
+<style>
+  /* Modèle Hommage : funérailles, hommage, messe de souvenir. Aucun rouge, aucun slash, sceau monochrome. */
+  :root { --c-bg: var(--color-stone-50); --c-text: var(--color-ink); --c-accent: var(--color-stone-600); }
+  .frame { position: absolute; inset: 20px 20px 196px; border: 1px solid var(--c-accent); opacity: .5; }
+  .portrait { width: 176px; height: 216px; border-radius: 88px 88px 8px 8px; margin: 4px 0 18px; box-shadow: 0 0 0 5px var(--color-white), 0 0 0 6px var(--c-accent); }
+  .portrait::after { bottom: 90px !important; }
+  .comfort { font-family: var(--font-accent); font-style: italic; font-size: 17px; color: var(--c-accent); margin-top: 26px; }
+  .fam { font-size: 15px; line-height: 1.5; color: var(--c-accent); max-width: 520px; }
+  .formula { font-family: var(--font-accent); font-style: italic; font-size: 19px; line-height: 1.4; margin-top: 10px; }
+  .name { font-family: var(--font-accent); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 8px 0 4px; }
+  .dates { font-size: 15px; letter-spacing: .2em; color: var(--c-accent); }
+  .prog { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: auto; width: 100%; padding-top: 18px; border-top: 1px solid rgba(94,90,83,.35); text-align: center; }
+  .prog b { display: block; font-family: var(--font-accent); font-weight: 600; font-size: 18px; margin-bottom: 2px; }
+  .prog div { font-size: 13px; line-height: 1.45; }
+  .prog span { color: var(--c-accent); }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="content">
+    <div class="portrait photo sobre" data-src="../imagery/hommage-portrait.jpg" data-brief="hommage-portrait.jpg"></div>
+    <div class="fam">Les familles Kouadio, Yao et alliées, à Abidjan, Assikoi et en France</div>
+    <div class="formula">ont la profonde douleur de vous annoncer le rappel à Dieu de</div>
+    <div class="name">Jean-Baptiste Kouadio Yao</div>
+    <div class="dates">1941 — 2026</div>
+    <div class="comfort">Votre présence sera un réconfort pour la famille.</div>
+    <div class="prog">
+      <div><b>Veillée</b>Vendredi 4 décembre · 20 h<br><span>Domicile familial, Angré</span></div>
+      <div><b>Levée du corps</b>Samedi 5 décembre · 8 h<br><span>Centre funéraire, Treichville</span></div>
+      <div><b>Inhumation</b>Samedi 5 décembre · 15 h<br><span>Assikoi</span></div>
+    </div>
+  </div>
+
+  <div class="sceau mono">
+    <div class="qr"><img src="qr-invitation.svg" alt="QR code de l'invitation"></div>
+    <div class="who"><small>Invitation personnelle</small><b>Famille Ouattara</b><span><em>4 personnes</em> · Proches</span></div>
+    <div class="here"><img src="../logo/svg/favicon.svg" alt=""><b>Invitation<br>vérifiée par Here!</b><span class="code">INV-JK26-0388</span></div>
+  </div>
+  <script src="_icons.js"></script>
+</body>
+</html>

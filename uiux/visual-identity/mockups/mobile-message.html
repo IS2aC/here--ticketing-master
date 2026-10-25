@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-export-width="390">
+<head>
+<meta charset="utf-8">
+<title>Here! — Invitation reçue sur WhatsApp</title>
+<!-- Aperçu générique d'une conversation : ne reprend ni l'interface ni le logo de WhatsApp. -->
+<link rel="stylesheet" href="../typography/fonts.css">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="_mobile.css">
+<style>
+  body { background: var(--color-gray-300); }
+  .head { display: flex; align-items: center; gap: var(--space-3); padding: 4px var(--space-4) var(--space-3); background: var(--color-background); border-bottom: 1px solid var(--color-border); }
+  .head .back { width: 22px; height: 22px; transform: rotate(180deg); }
+  .head img { width: 40px; height: 40px; border-radius: 50%; }
+  .head b { display: flex; align-items: center; gap: 4px; font-family: var(--font-heading); font-size: 16px; font-weight: 600; }
+  .head b i { width: 16px; height: 16px; color: var(--color-success); }
+  .head small { font-size: 12px; color: var(--color-text-muted); }
+  .day { text-align: center; margin: var(--space-4) 0 var(--space-3); }
+  .day span { font-size: 12px; font-weight: 500; background: var(--color-background); padding: 4px 10px; border-radius: var(--radius-sm); color: var(--color-text-muted); }
+  .msg { margin: 0 96px 0 var(--space-3); background: var(--color-background); border-radius: 4px 16px 16px 16px; padding: 6px; box-shadow: var(--shadow-sm); }
+  .msg img { display: block; width: 100%; border-radius: 12px; }
+  .msg p { font-size: 15px; line-height: 1.45; padding: 10px 8px 4px; }
+  .msg .t { display: block; text-align: right; font-size: 11px; color: var(--color-text-muted); padding: 0 6px 2px; }
+  .btns { margin: 6px 96px 0 var(--space-3); display: grid; gap: 6px; }
+  .btns span { height: 44px; border-radius: 12px; background: var(--color-background); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; color: var(--color-text); box-shadow: var(--shadow-sm); }
+  .btns span i { width: 18px; height: 18px; }
+  .btns .yes { color: var(--color-success); }
+  .safe { display: flex; gap: 8px; align-items: flex-start; margin: var(--space-4) var(--space-6) 0; font-size: 12px; line-height: 1.45; color: var(--color-text-muted); background: var(--color-background); padding: var(--space-3); border-radius: var(--radius-md); }
+  .safe i { width: 16px; height: 16px; color: var(--color-success); margin-top: 1px; }
+  .compose { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; padding: 10px var(--space-3) 0; background: var(--color-background); display: flex; gap: var(--space-2); align-items: flex-start; }
+  .compose span { flex: 1; height: 42px; border-radius: var(--radius-full); background: var(--color-surface); display: flex; align-items: center; padding: 0 var(--space-4); color: var(--color-text-muted); font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="status" style="background:var(--color-background)"><span>10:02</span><span class="sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 27 12"><rect x="0" y="0" width="23" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5"/><rect x="24.5" y="4" width="2" height="4" rx="1" opacity=".4"/></svg></span></div>
+  <div class="head">
+    <i class="back" data-icon="fleche-droite"></i>
+    <img src="../logo/svg/symbole.svg" alt="">
+    <div><b>Here! Invitations<i data-icon="valide"></i></b><small>Compte professionnel vérifié</small></div>
+  </div>
+
+  <div class="day"><span>Aujourd'hui</span></div>
+  <div class="msg">
+    <img src="carte-ceremonie.png" alt="Carte d'invitation de M. et Mme Konan">
+    <p>Bonjour Monsieur et Madame Konan,<br><b>Aya &amp; Koffi</b> ont la joie de vous inviter à leur mariage, le <b>samedi 13 décembre</b>.<br>Serez-vous des nôtres ?</p>
+    <span class="t">10:00</span>
+  </div>
+  <div class="btns">
+    <span class="yes"><i data-icon="valide"></i>Je serai présent(e)</span>
+    <span>Je ne pourrai pas venir</span>
+    <span><i data-icon="oeil"></i>Voir mon invitation</span>
+  </div>
+  <div class="safe"><i data-icon="securite"></i><span>Message envoyé par Here! au nom d'Aya &amp; Koffi. Votre réponse n'est vue que par les mariés.</span></div>
+
+  <div class="compose"><span>Message</span></div>
+  <span class="home-ind"></span>
+  <script src="_icons.js"></script>
+</body>
+</html>
