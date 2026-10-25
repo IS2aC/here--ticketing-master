@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 
 // Boutons et champs selon uiux/visual-identity/DESIGN.md (pilule, 52 px, un seul bouton rouge par écran).
 const button =
@@ -19,40 +19,4 @@ export function Button({ variant = "primary", className = "", ...props }: Compon
 
 export function ButtonLink({ variant = "primary", className = "", ...props }: ComponentProps<typeof Link> & { variant?: Variant }) {
   return <Link className={`${button} ${variants[variant]} ${className}`} {...props} />;
-}
-
-export function Field({
-  label,
-  name,
-  error,
-  hint,
-  ...input
-}: { label: string; name: string; error?: string; hint?: ReactNode } & ComponentProps<"input">) {
-  const describedBy = error ? `${name}-error` : hint ? `${name}-hint` : undefined;
-  return (
-    <div className="grid min-w-0 gap-1.5">
-      <label htmlFor={name} className="text-[13px] font-medium tracking-[0.02em] text-text-muted">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy}
-        className={`h-[52px] w-full min-w-0 rounded-md bg-background px-4 text-[16px] text-text outline-none placeholder:text-gray-500 focus:shadow-[inset_0_0_0_2px_var(--color-primary)] ${
-          error ? "shadow-[inset_0_0_0_1.5px_var(--color-error)]" : "shadow-[inset_0_0_0_1px_var(--color-border)]"
-        }`}
-        {...input}
-      />
-      {error ? (
-        <p id={`${name}-error`} className="text-[13px] text-error">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${name}-hint`} className="text-[13px] text-text-muted">
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  );
 }

@@ -22,6 +22,14 @@ L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilise
 - Mots de passe hachés avec Argon2. Sessions dans la table `sessions` : jeton aléatoire remis au client, seule son empreinte SHA-256 est stockée ; 30 jours ; la déconnexion révoque la session.
 - Web : le frontend garde le jeton dans un cookie httpOnly et appelle l'API côté serveur. Mobile : le même jeton, envoyé dans `Authorization: Bearer`.
 
+## Événements
+
+- Création (étape 1 de l'assistant « L'événement ») : type (11 types de la maquette + « Autre »), nom, date et heure, lieu et adresse, invités prévus, durée, dress code, description, catégories d'invités (VIP et Normal par défaut, 1 à 10, sans doublon). Seuls le type, le nom et la date sont obligatoires ; la date doit être à venir.
+- Un événement créé est un **brouillon**. Il n'est visible que par son organisateur (un autre compte reçoit « introuvable »).
+- Vue de l'événement : compteurs Invités / Confirmés / En attente / Déclinés, catégories avec leur nombre d'invités, informations de l'événement. Prochaine étape : l'import de la liste.
+- Modification : mêmes champs. Une catégorie qui a déjà des invités ne peut pas être retirée.
+- Dates saisies et affichées à l'heure d'Abidjan (UTC+0), stockées en UTC.
+
 ## Base de données
 
 PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).

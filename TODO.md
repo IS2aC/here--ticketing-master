@@ -8,3 +8,5 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Scan à l'entrée** : le créateur de l'événement envoie un lien de scan, ouvrable sur n'importe quel smartphone, pour vérifier les invités et les faire entrer. Détails : [docs/SPECIFICATIONS.md](docs/SPECIFICATIONS.md#scan-à-lentrée-contrôle-daccès).
 - [ ] **Limiter les tentatives de connexion** (par numéro et par IP) contre la recherche de mots de passe.
 - [ ] **Mot de passe oublié** (réinitialisation par WhatsApp ou e-mail).
+- [ ] **Plusieurs lieux par événement** (Cérémonie, Réception… comme dans la maquette `backoffice-creation`) : aujourd'hui un seul lieu.
+- [ ] **Fuseau horaire par événement** (Cotonou, Lomé…) : aujourd'hui tout est à l'heure d'Abidjan.

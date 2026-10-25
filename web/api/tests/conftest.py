@@ -54,3 +54,22 @@ def client() -> Iterator[TestClient]:
 
     with TestClient(app) as test_client:
         yield test_client
+
+
+_phones = iter(range(700_000_100, 799_999_999))
+
+
+@pytest.fixture
+def organizer(client: TestClient) -> dict[str, str]:
+    """Un nouvel organisateur connecté ; renvoie l'en-tête Authorization."""
+    response = client.post(
+        "/v1/auth/register",
+        json={
+            "first_name": "Test",
+            "last_name": "Organisateur",
+            "phone": f"0{next(_phones)}",
+            "password": "mot-de-passe",
+        },
+    )
+    assert response.status_code == 201, response.text
+    return {"Authorization": f"Bearer {response.json()['access_token']}"}

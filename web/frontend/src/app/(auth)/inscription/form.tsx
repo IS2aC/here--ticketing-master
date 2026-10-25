@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Button, Field } from "@/components/ui";
+import { Field } from "@/components/field";
+import { Button } from "@/components/ui";
 import { register, type FormState } from "../actions";
 
 export function RegisterForm() {
