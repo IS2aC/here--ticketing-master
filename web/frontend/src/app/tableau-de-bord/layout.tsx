@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Icon } from "@/components/icons";
 import { getCurrentUser } from "@/lib/auth";
 import { logout } from "../(auth)/actions";
+import { Nav, NavLinks } from "./nav";
 
 export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-bord">) {
   return (
@@ -12,16 +13,9 @@ export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-b
         <Link href="/tableau-de-bord" className="mx-3 self-start">
           <Image src="/brand/logo-horizontal.svg" alt="Here! · Ticketing Master" width={110} height={37} priority />
         </Link>
-        <nav className="grid gap-0.5" aria-label="Navigation principale">
-          <Link
-            href="/tableau-de-bord"
-            aria-current="page"
-            className="flex h-10 items-center gap-3 rounded-md bg-surface px-3 text-[14px] font-semibold text-text shadow-[inset_3px_0_0_var(--color-primary)]"
-          >
-            <Icon name="statistiques" className="text-primary" />
-            Tableau de bord
-          </Link>
-        </nav>
+        <Suspense fallback={<NavLinks />}>
+          <Nav />
+        </Suspense>
         <div className="mt-auto hidden rounded-md bg-ink p-4 text-white md:block">
           <Icon name="support" className="text-red-bright" />
           <p className="mt-2 font-heading text-[14px] font-semibold">Une question ?</p>

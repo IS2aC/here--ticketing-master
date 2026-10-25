@@ -35,6 +35,7 @@ export type ImportOut = {
 
 export type GuestOut = {
   id: string;
+  invitation_token: string | null;
   display_name: string;
   phone: string | null;
   phone_valid: boolean;

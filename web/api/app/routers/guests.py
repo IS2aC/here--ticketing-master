@@ -24,7 +24,14 @@ from app.guest_import import (
     rows_from_json,
     rows_to_json,
 )
-from app.models import Event, Guest, GuestCategory, GuestImport, ImportStatus
+from app.models import (
+    Event,
+    Guest,
+    GuestCategory,
+    GuestImport,
+    ImportStatus,
+    Invitation,
+)
 from app.routers.events import owned_event
 from app.schemas import (
     GuestOut,
@@ -220,19 +227,24 @@ async def list_guests(
 ) -> list[GuestOut]:
     event = await owned_event(db, event_id, auth.user.id)
     rows = await db.execute(
-        select(Guest, GuestCategory.name)
+        select(Guest, GuestCategory.name, Invitation.token)
         .join(GuestCategory, GuestCategory.id == Guest.category_id)
+        .outerjoin(Invitation, Invitation.guest_id == Guest.id)
         .where(Guest.event_id == event.id)
         .order_by(Guest.phone_valid, Guest.display_name)
     )
+    fields = [
+        k for k in GuestOut.model_fields if k not in {"category", "invitation_token"}
+    ]
     return [
         GuestOut.model_validate(
             {
-                **{k: getattr(g, k) for k in GuestOut.model_fields if k != "category"},
+                **{k: getattr(g, k) for k in fields},
                 "category": name,
+                "invitation_token": token,
             }
         )
-        for g, name in rows
+        for g, name, token in rows
     ]
 
 

@@ -65,10 +65,16 @@ async function EventView({
             {formatDate(event.starts_at)} · {formatTime(event.starts_at)}
           </p>
         </div>
-        <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/modifier`} variant="ghost" className="h-10 shrink-0 text-[14px]">
-          <Icon name="modifier" width={18} height={18} />
-          Modifier
-        </ButtonLink>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/carte`} variant="ghost" className="h-10 text-[14px]">
+            <Icon name="invitation" width={18} height={18} />
+            Carte d&apos;invitation
+          </ButtonLink>
+          <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/modifier`} variant="ghost" className="h-10 text-[14px]">
+            <Icon name="modifier" width={18} height={18} />
+            Modifier
+          </ButtonLink>
+        </div>
       </header>
 
       <section aria-label="Réponses" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -174,7 +180,7 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
         <table className="w-full min-w-[560px] border-collapse text-[13px]">
           <thead>
             <tr className="text-left text-[12px] text-text-muted">
-              {["Invité", "Numéro", "Catégorie", "Position", "Réponse"].map((h) => (
+              {["Invité", "Numéro", "Catégorie", "Position", "Réponse", "Carte"].map((h) => (
                 <th key={h} className="border-b border-border px-3 pb-2 font-medium whitespace-nowrap">
                   {h}
                 </th>
@@ -208,6 +214,20 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
                       <Icon name={rsvp.icon} width={15} height={15} />
                       {rsvp.label}
                     </span>
+                  </td>
+                  <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">
+                    {g.invitation_token ? (
+                      <a
+                        href={`/i/${g.invitation_token}/carte.png`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-semibold text-accent-text hover:underline"
+                      >
+                        Voir
+                      </a>
+                    ) : (
+                      <span className="text-text-muted">—</span>
+                    )}
                   </td>
                 </tr>
               );

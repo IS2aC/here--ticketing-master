@@ -194,3 +194,53 @@ class Guest(Base):
         server_default=ContactStatus.none.value,
     )
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class CardTemplate(Base):
+    __tablename__ = "card_templates"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    code: Mapped[str] = mapped_column(String, unique=True)
+    name: Mapped[str]
+    default_palette: Mapped[dict[str, str]] = mapped_column(JSONB, server_default="{}")
+    owner_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
+    is_active: Mapped[bool] = mapped_column(server_default="true")
+
+
+class EventCard(Base):
+    __tablename__ = "event_cards"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("events.id", ondelete="CASCADE")
+    )
+    category_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("guest_categories.id", ondelete="CASCADE")
+    )
+    template_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("card_templates.id"))
+    palette: Mapped[dict[str, str]] = mapped_column(JSONB, server_default="{}")
+    invitation_text: Mapped[str | None]
+    photo_url: Mapped[str | None]
+
+
+class Invitation(Base):
+    __tablename__ = "invitations"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    guest_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("guests.id", ondelete="CASCADE"), unique=True
+    )
+    event_card_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("event_cards.id"))
+    token: Mapped[str] = mapped_column(String, unique=True)
+    image_url: Mapped[str | None]
+    sent_at: Mapped[datetime | None]
+    opened_at: Mapped[datetime | None]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

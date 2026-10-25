@@ -145,3 +145,51 @@ def test_template(client: TestClient) -> None:
     response = client.get("/v1/guests/import-template")
     assert response.status_code == 200
     assert response.headers["content-type"] == XLSX
+
+
+def test_generate_invitations_and_public_card(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    event_id = new_event(client, organizer, ["VIP"])
+    url = f"/v1/events/{event_id}/invitations"
+    assert client.post(url, headers=organizer).status_code == 409  # aucun invité
+
+    preview = upload(client, organizer, event_id, FILE).json()
+    client.post(
+        f"/v1/events/{event_id}/imports/{preview['id']}/confirm", headers=organizer
+    )
+    first = client.post(url, headers=organizer)
+    assert first.status_code == 200, first.text
+    assert first.json() == {"total": 3, "created": 3, "without_phone": 2}
+    assert client.post(url, headers=organizer).json()["created"] == 0  # pas de doublon
+
+    guests = client.get(f"/v1/events/{event_id}/guests", headers=organizer).json()
+    jean = next(g for g in guests if g["display_name"] == "Jean Konan")
+    card = client.get(
+        f"/v1/invitations/{jean['invitation_token']}"
+    )  # public : sans en-tête
+    assert card.status_code == 200, card.text
+    body = card.json()
+    assert body["guest_name"] == "Jean Konan"
+    assert body["category"] == "VIP"
+    assert body["seat"] == "Table 1"
+    assert body["event_type"] == "mariage"
+    assert body["code"].startswith("INV-")
+    assert "phone" not in body
+    assert client.get("/v1/invitations/jeton-inconnu").status_code == 404
+
+    other = client.post(
+        "/v1/auth/register",
+        json={
+            "first_name": "A",
+            "last_name": "B",
+            "phone": "0713131313",
+            "password": "mot-de-passe",
+        },
+    ).json()
+    assert (
+        client.post(
+            url, headers={"Authorization": f"Bearer {other['access_token']}"}
+        ).status_code
+        == 404
+    )

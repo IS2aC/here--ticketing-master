@@ -54,6 +54,8 @@ services:
     restart: unless-stopped
     environment:
       API_URL: http://api:8000
+      # Adresse publique du site : lien porté par le QR code des cartes (/i/<jeton>).
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
     expose:
       - "3000"
     depends_on:

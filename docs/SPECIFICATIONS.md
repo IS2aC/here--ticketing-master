@@ -58,6 +58,23 @@ L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilise
 - Numéros ramenés au format `+225…`, y compris quand Excel a supprimé le 0 initial d'un numéro saisi comme nombre. La catégorie « Normal » est créée si elle n'existe pas encore dans l'événement.
 - Liste des invités sur la vue de l'événement : numéros masqués (`07 •• •• 34 56`), numéros à vérifier en tête.
 
+## Cartes d'invitation
+
+- **Une carte par type d'événement**, générée automatiquement : pas d'éditeur. La bibliothèque (`/tableau-de-bord/cartes`) montre les 12 cartes, sur les 5 modèles de l'identité :
+
+  | Modèle | Types |
+  |---|---|
+  | Cérémonie (ivoire et or, Playfair) | Mariage, Dot, Baptême |
+  | Rendez-vous (rouge Here, pictogramme) | Anniversaire, Brunch, Retrouvailles, Autre |
+  | Officiel (blanc, bandeau noir) | Réunion, Séminaire |
+  | Soirée (nuit, slash rouge) | Concert privé, Festival |
+  | Hommage (pierre, sobre, aucun rouge) | Funérailles |
+
+- Contenu : type, formule propre au type, nom de l'événement (titre), nom de l'invité, date, heure, durée, lieu, dress code, message de fin.
+- **Sceau Here!** en pied de chaque carte, non modifiable : QR code unique, « Invitation personnelle », nom de l'invité, nombre de personnes, catégorie et position (en petit), symbole « ! », « Invitation vérifiée par Here! », code `INV-XXXX-XXXX` (dérivé du jeton sans le révéler). Monochrome sur la carte Hommage.
+- Étape 3 « La carte » : aperçu pour l'invité choisi, puis « Préparer les cartes » : une invitation (jeton aléatoire de 32 caractères) par invité qui n'en a pas. Rien n'est envoyé.
+- Image PNG 1080 × 1350 (4:5, optimal dans WhatsApp), publique à `/i/<jeton>/carte.png` ; le QR code mène à la page invité `/i/<jeton>` (pour l'instant : la carte ; la confirmation de présence viendra ensuite).
+
 ## Base de données
 
 PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).

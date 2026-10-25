@@ -204,6 +204,7 @@ class ImportOut(BaseModel):
 
 class GuestOut(BaseModel):
     id: uuid.UUID
+    invitation_token: str | None = None
     display_name: str
     last_name: str | None
     first_names: str | None
@@ -214,3 +215,31 @@ class GuestOut(BaseModel):
     seat: str | None
     rsvp_status: RsvpStatus
     contact_status: ContactStatus
+
+
+# --- Cartes d'invitation ----------------------------------------------------------------
+# La carte est choisie automatiquement selon le type d'événement (bibliothèque du frontend) :
+# l'API fournit les données de l'événement et de l'invité.
+
+
+class InvitationsResult(BaseModel):
+    total: int  # invités ayant une invitation
+    created: int  # invitations créées par cet appel
+    without_phone: int  # invitations qui ne pourront pas partir par WhatsApp
+
+
+class PublicCard(BaseModel):
+    """Données d'une carte, lues avec le jeton de l'invitation (QR code, image WhatsApp)."""
+
+    code: str
+    event_type: EventType
+    title: str
+    starts_at: datetime
+    duration_minutes: int | None
+    location_name: str | None
+    location_address: str | None
+    dress_code: str | None
+    guest_name: str
+    category: str
+    seat: str | None
+    seats: int

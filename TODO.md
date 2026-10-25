@@ -12,3 +12,5 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Fuseau horaire par événement** (Cotonou, Lomé…) : aujourd'hui tout est à l'heure d'Abidjan.
 - [ ] **Corriger une ligne dans l'aperçu d'import** (lien « Corriger » de la maquette) et **modifier ou ajouter un invité à la main** : aujourd'hui, on corrige le fichier et on réimporte.
 - [ ] **Nombre de personnes par invité** (colonne « Nb pers. » de la maquette, accompagnants) : aujourd'hui 1 par défaut.
+- [ ] **Personnaliser la carte** : photo, textes, couleurs, carte par catégorie (maquette `backoffice-carte`) ; import d'un modèle de carte. Aujourd'hui : une carte automatique par type d'événement.
+- [ ] **Page invité** (`/i/<jeton>`) : confirmer sa présence, décliner (maquettes `mobile-invite*`). Aujourd'hui : affichage de la carte.

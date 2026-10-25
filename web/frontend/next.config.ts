@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Image Docker minimale : .next/standalone + server.js (voir Dockerfile).
   output: "standalone",
+  // Polices lues à l'exécution pour dessiner les cartes d'invitation (src/lib/card/fonts.ts).
+  outputFileTracingIncludes: { "/**": ["./src/styles/brand/fonts/*.ttf"] },
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {
