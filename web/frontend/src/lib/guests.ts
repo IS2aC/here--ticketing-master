@@ -42,6 +42,8 @@ export type GuestOut = {
   category: string;
   seat: string | null;
   rsvp_status: "pending" | "confirmed" | "declined";
+  attending_seats: number | null;
+  rsvp_message: string | null;
   contact_status: "none" | "reminded" | "call_scheduled" | "unreachable";
 };
 

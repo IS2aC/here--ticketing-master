@@ -192,7 +192,15 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
               const rsvp = RSVP[g.rsvp_status];
               return (
                 <tr key={g.id}>
-                  <td className="border-b border-border px-3 py-2.5 font-semibold">{g.display_name}</td>
+                  <td className="border-b border-border px-3 py-2.5">
+                    <span className="font-semibold">{g.display_name}</span>
+                    {g.rsvp_message ? (
+                      <span className="mt-0.5 flex max-w-[280px] items-start gap-1 text-[12px] text-text-muted">
+                        <Icon name="message" width={13} height={13} className="mt-0.5 shrink-0" />
+                        <span className="line-clamp-2 italic">« {g.rsvp_message} »</span>
+                      </span>
+                    ) : null}
+                  </td>
                   <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">
                     {g.phone && g.phone_valid ? (
                       <span className="font-data tabular-nums">{maskPhone(g.phone)}</span>
@@ -213,6 +221,9 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
                     <span className="inline-flex items-center gap-1.5">
                       <Icon name={rsvp.icon} width={15} height={15} />
                       {rsvp.label}
+                      {g.rsvp_status === "confirmed" && g.attending_seats && g.attending_seats > 1 ? (
+                        <span className="font-data font-normal tabular-nums">· {g.attending_seats}</span>
+                      ) : null}
                     </span>
                   </td>
                   <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">

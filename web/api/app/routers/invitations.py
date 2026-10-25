@@ -2,6 +2,7 @@ import base64
 import hashlib
 import secrets
 import uuid
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
@@ -12,13 +13,15 @@ from app.models import (
     CardTemplate,
     Event,
     EventCard,
+    EventStatus,
     EventType,
     Guest,
     GuestCategory,
     Invitation,
+    RsvpStatus,
 )
 from app.routers.events import owned_event
-from app.schemas import InvitationsResult, PublicCard
+from app.schemas import InvitationResponse, InvitationsResult, PublicCard
 
 router = APIRouter(tags=["invitations"])
 
@@ -98,21 +101,29 @@ async def generate_invitations(
     )
 
 
-@router.get("/invitations/{token}")
-async def public_card(token: str, db: DbSession) -> PublicCard:
-    """Public : le jeton (long et aléatoire) est la seule clé. Ne renvoie que ce qui figure sur la carte."""
+def _responses_open(event: Event) -> bool:
+    return event.status != EventStatus.cancelled and event.starts_at > datetime.now(UTC)
+
+
+async def _by_token(
+    db: AsyncSession, token: str, *, lock: bool = False
+) -> tuple[Event, Guest, str]:
+    query = (
+        select(Event, Guest, GuestCategory.name)
+        .join(Guest, Guest.event_id == Event.id)
+        .join(GuestCategory, GuestCategory.id == Guest.category_id)
+        .join(Invitation, Invitation.guest_id == Guest.id)
+        .where(Invitation.token == token)
+    )
     row = (
-        await db.execute(
-            select(Event, Guest, GuestCategory.name)
-            .join(Guest, Guest.event_id == Event.id)
-            .join(GuestCategory, GuestCategory.id == Guest.category_id)
-            .join(Invitation, Invitation.guest_id == Guest.id)
-            .where(Invitation.token == token)
-        )
+        await db.execute(query.with_for_update(of=Guest) if lock else query)
     ).one_or_none()
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Invitation introuvable.")
-    event, guest, category = row
+    return row[0], row[1], row[2]
+
+
+def _public_card(token: str, event: Event, guest: Guest, category: str) -> PublicCard:
     return PublicCard(
         code=invitation_code(token),
         event_type=event.type,
@@ -126,4 +137,48 @@ async def public_card(token: str, db: DbSession) -> PublicCard:
         category=category,
         seat=guest.seat,
         seats=guest.seats,
+        rsvp_status=guest.rsvp_status,
+        attending_seats=guest.attending_seats,
+        rsvp_message=guest.rsvp_message,
+        responses_open=_responses_open(event),
     )
+
+
+@router.get("/invitations/{token}")
+async def public_card(token: str, db: DbSession) -> PublicCard:
+    """Public : le jeton (long et aléatoire) est la seule clé. Ne renvoie que ce qui concerne cet invité."""
+    return _public_card(token, *await _by_token(db, token))
+
+
+@router.post("/invitations/{token}/response")
+async def respond(token: str, body: InvitationResponse, db: DbSession) -> PublicCard:
+    """Réponse de l'invité depuis sa page. Il peut changer d'avis jusqu'au début de l'événement."""
+    event, guest, category = await _by_token(db, token, lock=True)
+    if not _responses_open(event):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail={"message": "Les réponses sont closes pour cet événement."},
+        )
+    if body.attending:
+        seats = body.seats or guest.seats
+        if seats > guest.seats:
+            raise HTTPException(
+                status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=[
+                    {
+                        "loc": ["body", "seats"],
+                        "msg": f"Votre invitation compte {guest.seats} place(s).",
+                    }
+                ],
+            )
+        guest.rsvp_status = RsvpStatus.confirmed
+        guest.attending_seats = seats
+    else:
+        guest.rsvp_status = RsvpStatus.declined
+        guest.attending_seats = 0
+    # Un message vide ne remplace pas un mot déjà laissé (ex. : « Finalement, je viendrai »).
+    if body.message is not None:
+        guest.rsvp_message = body.message
+    guest.responded_at = datetime.now(UTC)
+    await db.commit()
+    return _public_card(token, event, guest, category)

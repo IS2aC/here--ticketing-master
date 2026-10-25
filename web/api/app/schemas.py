@@ -214,6 +214,8 @@ class GuestOut(BaseModel):
     category: str
     seat: str | None
     rsvp_status: RsvpStatus
+    attending_seats: int | None
+    rsvp_message: str | None
     contact_status: ContactStatus
 
 
@@ -242,4 +244,16 @@ class PublicCard(BaseModel):
     guest_name: str
     category: str
     seat: str | None
-    seats: int
+    seats: int  # places de l'invitation
+    rsvp_status: RsvpStatus
+    attending_seats: int | None
+    rsvp_message: str | None
+    responses_open: bool  # jusqu'au début de l'événement, sauf s'il est annulé
+
+
+class InvitationResponse(BaseModel):
+    attending: bool
+    seats: int | None = Field(
+        default=None, ge=1, le=100
+    )  # personnes qui viennent ; toutes les places par défaut
+    message: Annotated[_text(500) | None, AfterValidator(_blank_to_none)] = None

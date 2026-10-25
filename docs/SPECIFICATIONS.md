@@ -73,7 +73,17 @@ L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilise
 - Contenu : type, formule propre au type, nom de l'événement (titre), nom de l'invité, date, heure, durée, lieu, dress code, message de fin.
 - **Sceau Here!** en pied de chaque carte, non modifiable : QR code unique, « Invitation personnelle », nom de l'invité, nombre de personnes, catégorie et position (en petit), symbole « ! », « Invitation vérifiée par Here! », code `INV-XXXX-XXXX` (dérivé du jeton sans le révéler). Monochrome sur la carte Hommage.
 - Étape 3 « La carte » : aperçu pour l'invité choisi, puis « Préparer les cartes » : une invitation (jeton aléatoire de 32 caractères) par invité qui n'en a pas. Rien n'est envoyé.
-- Image PNG 1080 × 1350 (4:5, optimal dans WhatsApp), publique à `/i/<jeton>/carte.png` ; le QR code mène à la page invité `/i/<jeton>` (pour l'instant : la carte ; la confirmation de présence viendra ensuite).
+- Image PNG 1080 × 1350 (4:5, optimal dans WhatsApp), publique à `/i/<jeton>/carte.png` ; le QR code mène à la page invité `/i/<jeton>`.
+
+## Page invité
+
+Web mobile, sans compte ni application : le jeton de l'adresse (`/i/<jeton>`, aussi porté par le QR code) est la seule clé. Textes en 17 px minimum, boutons de 56 px. Maquettes `mobile-invite`, `mobile-invite-qr`, `mobile-invite-reponse-non`.
+
+- **Question** : bandeau aux couleurs de la carte, « Bonjour <invité>, Serez-vous des nôtres ? » (« Pourrez-vous venir ? » pour un hommage), « Oui, je serai là / nous serons là » et « Non, je ne pourrai pas / nous ne pourrons pas venir ». Sélecteur de personnes si l'invitation compte plusieurs places, plafonné à ce nombre. Date, durée, lieu avec « Itinéraire », tenue, « Ajouter à mon agenda » (fichier .ics avec rappel la veille), lien vers la carte.
+- **Présent** : écran sombre « Votre présence est confirmée », QR code d'entrée de 220 px avec le symbole Here!, nom, personnes, table, code, « Présentez ce code à l'entrée », « Modifier ma réponse ».
+- **Absent** : « Merci pour votre réponse » (« La famille vous remercie » pour un hommage), date jusqu'à laquelle on peut changer d'avis, mot facultatif pour l'hôte, « Finalement, je viendrai » (le mot déjà laissé est gardé).
+- **Réponses closes** au début de l'événement ou s'il est annulé ; un invité confirmé garde son QR code d'entrée.
+- Côté organisateur : statut, nombre de personnes et mot de l'invité dans la liste ; compteurs mis à jour. « Votre réponse n'est vue que par les mariés / la famille / l'organisateur » selon le type.
 
 ## Base de données
 

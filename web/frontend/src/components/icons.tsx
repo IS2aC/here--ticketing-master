@@ -139,6 +139,20 @@ const paths = {
       <path d="M3.5 6.5l8.5 6.5 8.5-6.5" />
     </>
   ),
+  message: (
+    <>
+      <path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.6L3.5 20.5l1.4-4.4a8.5 8.5 0 1 1 15.6-4.6z" />
+      <path d="M8.5 10h7M8.5 13.5h4.5" />
+    </>
+  ),
+  "qr-code": (
+    <>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <path d="M14 14h3v3h-3zM20 14v.01M20 20h-3M14 20v.01M20 17v3" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;

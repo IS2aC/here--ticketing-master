@@ -21,6 +21,10 @@ export type PublicCard = {
   category: string;
   seat: string | null;
   seats: number;
+  rsvp_status: "pending" | "confirmed" | "declined";
+  attending_seats: number | null;
+  rsvp_message: string | null;
+  responses_open: boolean;
 };
 
 export function fromPublicCard(card: PublicCard, token: string): CardData {

@@ -11,6 +11,7 @@ export type CardStyle = {
   icon: string; // pictogramme de ICON_SVG
   formula: string; // phrase au-dessus du nom de l'événement
   closing: string; // message de fin
+  host: string; // qui reçoit la réponse : « Votre réponse n'est vue que par les mariés »
 };
 
 export const CARD_LIBRARY: Record<EventType, CardStyle> = {
@@ -20,6 +21,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "mariage",
     formula: "Nous avons la joie de vous inviter à célébrer",
     closing: "Merci de confirmer votre présence.",
+    host: "les mariés",
   },
   dot: {
     family: "ceremonie",
@@ -27,6 +29,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "cadeau",
     formula: "Nous avons la joie de vous inviter à la cérémonie de",
     closing: "Merci de confirmer votre présence.",
+    host: "les familles",
   },
   bapteme: {
     family: "ceremonie",
@@ -34,6 +37,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "favori",
     formula: "Nous avons la joie de vous inviter au",
     closing: "Merci de confirmer votre présence.",
+    host: "la famille",
   },
   funerailles: {
     family: "hommage",
@@ -41,6 +45,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "hommage",
     formula: "La famille vous prie de bien vouloir l'accompagner lors de",
     closing: "Votre présence sera un réconfort pour la famille.",
+    host: "la famille",
   },
   anniversaire: {
     family: "rendez_vous",
@@ -48,6 +53,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "anniversaire",
     formula: "Nous vous invitons à fêter",
     closing: "On compte sur vous !",
+    host: "l'organisateur",
   },
   brunch: {
     family: "rendez_vous",
@@ -55,6 +61,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "brunch",
     formula: "Nous vous invitons à partager",
     closing: "On compte sur vous !",
+    host: "l'organisateur",
   },
   retrouvailles: {
     family: "rendez_vous",
@@ -62,6 +69,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "retrouvailles",
     formula: "Nous vous invitons à nous retrouver pour",
     closing: "On compte sur vous !",
+    host: "l'organisateur",
   },
   reunion: {
     family: "officiel",
@@ -69,6 +77,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "reunion",
     formula: "Nous avons le plaisir de vous convier à",
     closing: "Merci de confirmer votre participation.",
+    host: "l'organisateur",
   },
   seminaire: {
     family: "officiel",
@@ -76,6 +85,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "conference",
     formula: "Nous avons le plaisir de vous convier à",
     closing: "Merci de confirmer votre participation.",
+    host: "l'organisateur",
   },
   concert_prive: {
     family: "soiree",
@@ -83,6 +93,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "concert",
     formula: "Une soirée sur invitation",
     closing: "Présentez cette carte à l'entrée.",
+    host: "l'organisateur",
   },
   festival: {
     family: "soiree",
@@ -90,6 +101,7 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "festival",
     formula: "Une invitation pour le festival",
     closing: "Présentez cette carte à l'entrée.",
+    host: "l'organisateur",
   },
   autre: {
     family: "rendez_vous",
@@ -97,5 +109,6 @@ export const CARD_LIBRARY: Record<EventType, CardStyle> = {
     icon: "invitation",
     formula: "Nous avons le plaisir de vous inviter à",
     closing: "Merci de confirmer votre présence.",
+    host: "l'organisateur",
   },
 };

@@ -189,6 +189,8 @@ class Guest(Base):
         server_default=RsvpStatus.pending.value,
     )
     responded_at: Mapped[datetime | None]
+    attending_seats: Mapped[int | None]
+    rsvp_message: Mapped[str | None]
     contact_status: Mapped[ContactStatus] = mapped_column(
         Enum(ContactStatus, name="contact_status", create_type=False),
         server_default=ContactStatus.none.value,
