@@ -24,3 +24,9 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - Aucune valeur ne doit passer à la ligne.
   - L'encadré garde ses dimensions actuelles : il ne doit pas s'allonger.
   - Les données doivent y tenir de façon lisible. Une disposition des rubriques de gauche à droite convient.
+- [ ] **Règles d'entrée au scan** (à réfléchir). Pour l'instant, le scan valide seulement que **la carte est valide** et que **l'invité appartient à l'événement**. À décider ensuite :
+  - invité qui a **décliné** : bloquer, ou laisser l'agent décider (aujourd'hui : entrée avec un avertissement) ;
+  - invité **sans réponse** : entrée autorisée ou non ;
+  - **ouverture du scan** : dès la création du lien, ou seulement le jour J (par exemple 6 h avant le début) ;
+  - **événement annulé** : bloquer le scan ;
+  - **plusieurs personnes** sur une invitation : entrée partielle ou totale au premier scan.
