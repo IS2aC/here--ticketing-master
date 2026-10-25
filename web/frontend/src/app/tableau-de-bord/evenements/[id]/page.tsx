@@ -66,6 +66,10 @@ async function EventView({
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
+          <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/acces`} variant="ghost" className="h-10 text-[14px]">
+            <Icon name="scanner" width={18} height={18} />
+            Contrôle d&apos;accès
+          </ButtonLink>
           <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/carte`} variant="ghost" className="h-10 text-[14px]">
             <Icon name="invitation" width={18} height={18} />
             Carte d&apos;invitation

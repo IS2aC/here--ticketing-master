@@ -246,3 +246,35 @@ class Invitation(Base):
     sent_at: Mapped[datetime | None]
     opened_at: Mapped[datetime | None]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class ScanLink(Base):
+    __tablename__ = "scan_links"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("events.id", ondelete="CASCADE")
+    )
+    label: Mapped[str]
+    token: Mapped[str] = mapped_column(String, unique=True)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    expires_at: Mapped[datetime]
+    revoked_at: Mapped[datetime | None]
+
+
+class Checkin(Base):
+    __tablename__ = "checkins"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    invitation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("invitations.id", ondelete="CASCADE"), unique=True
+    )
+    scan_link_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("scan_links.id", ondelete="SET NULL")
+    )
+    seats: Mapped[int] = mapped_column(server_default="1")
+    scanned_at: Mapped[datetime] = mapped_column(server_default=func.now())

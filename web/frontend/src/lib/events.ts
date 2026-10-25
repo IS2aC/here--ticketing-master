@@ -17,7 +17,7 @@ export type EventOut = {
   dress_code: string | null;
   description: string | null;
   categories: { id: string; name: string; guests: number }[];
-  stats: { guests: number; confirmed: number; declined: number; pending: number };
+  stats: { arrived: number; guests: number; confirmed: number; declined: number; pending: number };
   created_at: string;
 };
 

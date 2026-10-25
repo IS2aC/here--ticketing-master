@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
-from app.models import Event, Guest, GuestCategory, RsvpStatus
+from app.models import Checkin, Event, Guest, GuestCategory, Invitation, RsvpStatus
 from app.schemas import CategoryOut, EventCreate, EventOut, EventStats, EventUpdate
 
 router = APIRouter(prefix="/events", tags=["événements"])
@@ -60,6 +60,15 @@ async def _to_out(db: AsyncSession, events: list[Event]) -> list[EventOut]:
     ).all()
 
     stats: dict[uuid.UUID, EventStats] = defaultdict(EventStats)
+    arrived = await db.execute(
+        select(Guest.event_id, func.count())
+        .join(Invitation, Invitation.guest_id == Guest.id)
+        .join(Checkin, Checkin.invitation_id == Invitation.id)
+        .where(Guest.event_id.in_(ids))
+        .group_by(Guest.event_id)
+    )
+    for event_id, count in arrived:
+        stats[event_id].arrived = count
     per_category: dict[uuid.UUID, int] = defaultdict(int)
     for event_id, category_id, rsvp, count in counts:
         s = stats[event_id]

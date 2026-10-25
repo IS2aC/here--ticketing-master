@@ -8,6 +8,7 @@ Seul service qui accède à la base. Appelée par le frontend web et, plus tard,
 - Événements (ceux de l'utilisateur connecté uniquement) : `GET /v1/events`, `POST /v1/events`, `GET /v1/events/{id}`, `PATCH /v1/events/{id}`. Chaque événement renvoie ses catégories d'invités et ses compteurs de réponses.
 - Invités : `POST /v1/events/{id}/imports` (fichier .xlsx ou .csv → aperçu, rien n'est ajouté), `GET /v1/events/{id}/imports/{import_id}`, `POST /v1/events/{id}/imports/{import_id}/confirm` (ajoute les lignes importables), `GET /v1/events/{id}/guests`, `GET /v1/guests/import-template` (modèle Excel, public). Lecture et vérification des lignes : `app/guest_import.py`.
 - Invitations : `POST /v1/events/{id}/invitations` (une invitation et un jeton de QR code par invité qui n'en a pas), `GET /v1/invitations/{jeton}` (public : la carte et la réponse de cet invité), `POST /v1/invitations/{jeton}/response` (public : présent ou non, nombre de personnes, mot pour l'hôte ; modifiable jusqu'au début de l'événement).
+- Scan à l'entrée : `GET/POST /v1/events/{id}/scan-links`, `POST /v1/events/{id}/scan-links/{link_id}/revoke` (organisateur) ; `GET /v1/scan/{jeton}`, `POST /v1/scan/{jeton}/check` (QR code lu, code `INV-…` ou invité choisi), `GET /v1/scan/{jeton}/guests?q=` (publics, jeton du lien de scan).
 - `GET /docs` : documentation interactive (désactivable avec `DOCS_ENABLED=false`).
 
 Variables : `DATABASE_URL` (obligatoire), `CORS_ORIGINS` (origines navigateur séparées par des virgules), `DOCS_ENABLED`, `SESSION_TTL_DAYS` (30 par défaut).

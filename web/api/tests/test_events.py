@@ -28,7 +28,13 @@ def test_create_list_get(client: TestClient, organizer: dict[str, str]) -> None:
     assert event["status"] == "draft"
     assert event["description"] is None
     assert [c["name"] for c in event["categories"]] == ["Amis", "Famille", "VIP"]
-    assert event["stats"] == {"guests": 0, "confirmed": 0, "declined": 0, "pending": 0}
+    assert event["stats"] == {
+        "arrived": 0,
+        "guests": 0,
+        "confirmed": 0,
+        "declined": 0,
+        "pending": 0,
+    }
 
     listed = client.get("/v1/events", headers=organizer).json()
     assert [e["id"] for e in listed] == [event["id"]]
@@ -154,7 +160,13 @@ def test_cannot_remove_category_with_guests(
 
     asyncio.run(add_guest())
     stats = client.get(f"/v1/events/{event['id']}", headers=organizer).json()
-    assert stats["stats"] == {"guests": 1, "confirmed": 1, "declined": 0, "pending": 0}
+    assert stats["stats"] == {
+        "arrived": 0,
+        "guests": 1,
+        "confirmed": 1,
+        "declined": 0,
+        "pending": 0,
+    }
     assert next(c for c in stats["categories"] if c["name"] == "VIP")["guests"] == 1
 
     response = client.patch(

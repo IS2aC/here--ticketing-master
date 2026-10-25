@@ -153,6 +153,23 @@ const paths = {
       <path d="M14 14h3v3h-3zM20 14v.01M20 20h-3M14 20v.01M20 17v3" />
     </>
   ),
+  scanner: (
+    <>
+      <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
+      <path d="M3 12h18" />
+    </>
+  ),
+  recherche: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20.5 20.5L16 16" />
+    </>
+  ),
+  partager: (
+    <>
+      <path d="M12 3v12M7.5 7.5L12 3l4.5 4.5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;

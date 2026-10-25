@@ -133,29 +133,27 @@ Les six statuts du design se déduisent de deux colonnes de `guests` :
 
 ## Scan à l'entrée (contrôle d'accès)
 
-Statut : **à faire**, non prioritaire pour la première version.
+Maquettes : `mobile-scan.html`, `mobile-scan-deja-entre.html`, `mobile-scan-inconnu.html` dans `uiux/visual-identity/mockups/`.
 
-### Principe
+### Liens de scan (organisateur, page « Contrôle d'accès »)
 
-Le créateur de l'événement génère depuis son tableau de bord un **lien de scan** qu'il partage à ses agents d'accueil. Ce lien s'ouvre sur **n'importe quel smartphone**, dans le navigateur, sans application à installer ni compte à créer. Il permet de scanner le QR code de chaque invité pour savoir s'il est invité ou non, puis de le faire entrer.
+- L'organisateur crée un **lien de scan** par entrée ou par agent (« Porte A », « Entrée de la réception »), le copie et le partage à ses agents d'accueil.
+- Le lien (`/scan/<jeton>`, jeton long et aléatoire) s'ouvre sur **n'importe quel smartphone**, dans le navigateur, sans application ni compte.
+- Il ne donne que le droit de vérifier une invitation et d'enregistrer une entrée : ni tableau de bord, ni numéros de téléphone, ni liste complète des invités (recherche par nom : 2 lettres au moins, 20 résultats au plus).
+- Désactivable à tout moment ; il expire de lui-même **12 h après la fin prévue** de l'événement.
+- Nombre d'entrées par lien et total des invitations scannées.
 
-### Comportement attendu
+### Écran de scan (agents)
 
-- Scan du QR code de la carte d'invitation avec la caméra du téléphone.
-- Résultat immédiat : invité attendu (nom, catégorie VIP / Normal…), déjà entré, ou inconnu.
-- Bouton « Faire entrer » qui enregistre l'entrée (heure, agent).
-- Un même QR code ne peut servir qu'une fois.
+- En-tête : nom de l'événement, nom du lien, compteur « arrivés / attendus » (personnes ; les invités qui ont décliné ne sont pas attendus).
+- Caméra arrière et lecture du QR code dans le navigateur (jsQR). Le QR code de la carte contient l'adresse de la page invité ; le code imprimé (`INV-XXXX-XXXX`) peut être saisi à la main ; « Chercher par nom » si la carte est absente ou illisible.
+- **L'entrée est enregistrée dès la vérification** (heure, lien). Résultats, couleur du cadre et de l'encadré :
 
-### Sécurité (raison d'être du lien dédié)
+  | Résultat | Couleur | Contenu |
+  |---|---|---|
+  | Invité attendu | vert | nom, catégorie et table, code, heure ; avertissement si l'invité avait décliné |
+  | Déjà entré à HH:MM | ambre | nom, personnes, lien de la première entrée |
+  | Invitation non reconnue | rouge | code lu, « Chercher par nom » |
 
-- Lien propre à un événement, avec un jeton long et impossible à deviner.
-- Le lien donne uniquement le droit de scanner : aucun accès au tableau de bord, à la liste complète des invités ni aux numéros de téléphone.
-- Le créateur peut désactiver ou régénérer le lien à tout moment. Le lien est valable seulement autour de la date de l'événement.
-
-### Points à préciser plus tard
-
-- Un lien par agent ou un lien partagé ? Code PIN en plus du lien ?
-- Plusieurs agents en même temps : synchronisation en temps réel pour éviter les doubles entrées.
-- Fonctionnement hors connexion (maquette prévue : `uiux/visual-identity/mockups/mobile-scan-hors-connexion.html`).
-
-Maquettes de référence : `mobile-scan.html`, `mobile-scan-deja-entre.html`, `mobile-scan-inconnu.html`, `mobile-scan-hors-connexion.html` dans `uiux/visual-identity/mockups/`.
+- « Accueillir le suivant » relance la lecture. Un même QR code ne permet d'entrer **qu'une fois**, même si deux agents le scannent en même temps (contrainte unique en base).
+- La caméra n'est accessible qu'en **https** (ou sur localhost) : c'est le cas en production derrière Dokploy.

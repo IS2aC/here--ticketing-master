@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, EmailStr, Field, StringConstraints
 
@@ -138,6 +138,7 @@ class CategoryOut(BaseModel):
 
 
 class EventStats(BaseModel):
+    arrived: int = 0  # invitations scannées à l'entrée
     guests: int = 0
     confirmed: int = 0
     declined: int = 0
@@ -257,3 +258,62 @@ class InvitationResponse(BaseModel):
         default=None, ge=1, le=100
     )  # personnes qui viennent ; toutes les places par défaut
     message: Annotated[_text(500) | None, AfterValidator(_blank_to_none)] = None
+
+
+# --- Scan à l'entrée -------------------------------------------------------------------
+
+
+class ScanLinkIn(BaseModel):
+    label: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=60)
+    ] = "Entrée principale"
+
+
+class ScanLinkOut(BaseModel):
+    id: uuid.UUID
+    label: str
+    token: str
+    created_at: datetime
+    expires_at: datetime
+    revoked_at: datetime | None
+    active: bool
+    checkins: int
+
+
+class ScanEvent(BaseModel):
+    title: str
+    event_type: EventType
+    starts_at: datetime
+    label: str  # nom du lien : « Entrée de la réception »
+    arrived: int  # personnes entrées
+    expected: int  # personnes attendues (hors invités qui ont décliné)
+
+
+class ScanCheckIn(BaseModel):
+    value: (
+        Annotated[
+            str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)
+        ]
+        | None
+    ) = None
+    guest_id: uuid.UUID | None = None  # depuis « Chercher par nom »
+
+
+class ScanGuest(BaseModel):
+    guest_id: uuid.UUID
+    name: str
+    category: str
+    seat: str | None
+    seats: int
+    rsvp_status: RsvpStatus
+    code: str
+    entered_at: datetime | None
+
+
+class ScanResult(BaseModel):
+    result: Literal["admitted", "already", "unknown"]
+    code: str | None  # code lu ou trouvé
+    guest: ScanGuest | None
+    entered_at: datetime | None  # première entrée (déjà entré) ou maintenant (attendu)
+    entered_by: str | None  # lien qui a enregistré l'entrée : « Porte A »
+    event: ScanEvent

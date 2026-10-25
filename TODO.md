@@ -5,7 +5,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 ## Plus tard
 
 - [ ] **Authentification OTP WhatsApp** à l'inscription et à la connexion. Pour l'instant : téléphone ou email + mot de passe. Prévoir une table `otp_codes` (code haché, expiration, nombre d'essais).
-- [ ] **Scan à l'entrée** : le créateur de l'événement envoie un lien de scan, ouvrable sur n'importe quel smartphone, pour vérifier les invités et les faire entrer. Détails : [docs/SPECIFICATIONS.md](docs/SPECIFICATIONS.md#scan-à-lentrée-contrôle-daccès).
+- [ ] **Scan à l'entrée, compléments** : mode hors connexion (liste sur l'appareil, synchronisation au retour du réseau, maquette `mobile-scan-hors-connexion`) ; code PIN en plus du lien ; « Appeler le responsable » (numéro de l'organisateur) ; entrée partielle quand une invitation compte plusieurs personnes.
 - [ ] **Limiter les tentatives de connexion** (par numéro et par IP) contre la recherche de mots de passe.
 - [ ] **Mot de passe oublié** (réinitialisation par WhatsApp ou e-mail).
 - [ ] **Plusieurs lieux par événement** (Cérémonie, Réception… comme dans la maquette `backoffice-creation`) : aujourd'hui un seul lieu.
@@ -14,6 +14,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Nombre de personnes par invité** (colonne « Nb pers. » de la maquette, accompagnants) : aujourd'hui 1 par défaut.
 - [ ] **Personnaliser la carte** : photo, textes, couleurs, carte par catégorie (maquette `backoffice-carte`) ; import d'un modèle de carte. Aujourd'hui : une carte automatique par type d'événement.
 - [ ] **Page invité** : date limite de réponse choisie par l'organisateur (aujourd'hui : jusqu'au début de l'événement) ; savoir si l'invité a ouvert son invitation ; limiter les appels répétés aux adresses publiques `/i/<jeton>`.
+- [ ] **Étape 4 « Les relances » : envoi WhatsApp** (EN ATTENTE : choix en cours entre un prestataire tiers et Diffuz, ta propre solution de diffusion). Envoi des cartes, relances automatiques des invités sans réponse, file d'appels du support. Prévoir un connecteur d'envoi interchangeable (`WHATSAPP_PROVIDER`) pour changer de prestataire sans toucher au reste ; table `messages` déjà prête (statuts programmé / envoyé / reçu / lu / échoué).
 
 ## Ajustements (à traiter une fois le parcours complet terminé)
 
