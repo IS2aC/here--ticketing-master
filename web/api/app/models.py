@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any, ClassVar
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, func
-from sqlalchemy.dialects.postgresql import INET, UUID
+from sqlalchemy.dialects.postgresql import INET, JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -127,9 +127,44 @@ class GuestCategory(Base):
     name: Mapped[str]
 
 
-class Guest(Base):
-    """Colonnes utiles aux compteurs pour l'instant ; complétée avec l'import des invités."""
+class ContactStatus(enum.StrEnum):
+    none = "none"
+    reminded = "reminded"
+    call_scheduled = "call_scheduled"
+    unreachable = "unreachable"
 
+
+class ImportStatus(enum.StrEnum):
+    pending = "pending"  # fichier lu, en attente de confirmation
+    processing = "processing"
+    done = "done"
+    failed = "failed"
+
+
+class GuestImport(Base):
+    __tablename__ = "guest_imports"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("events.id", ondelete="CASCADE")
+    )
+    file_name: Mapped[str]
+    file_url: Mapped[str | None]
+    column_mapping: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB)
+    rows: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
+    total_rows: Mapped[int] = mapped_column(server_default="0")
+    imported_rows: Mapped[int] = mapped_column(server_default="0")
+    error_rows: Mapped[int] = mapped_column(server_default="0")
+    status: Mapped[ImportStatus] = mapped_column(
+        Enum(ImportStatus, name="import_status", create_type=False),
+        server_default=ImportStatus.pending.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class Guest(Base):
     __tablename__ = "guests"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -139,7 +174,23 @@ class Guest(Base):
         ForeignKey("events.id", ondelete="CASCADE")
     )
     category_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("guest_categories.id"))
+    import_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("guest_imports.id", ondelete="SET NULL")
+    )
+    display_name: Mapped[str]
+    last_name: Mapped[str | None]
+    first_names: Mapped[str | None]
+    phone: Mapped[str | None]
+    phone_valid: Mapped[bool] = mapped_column(server_default="false")
+    seat: Mapped[str | None]
+    seats: Mapped[int] = mapped_column(server_default="1")
     rsvp_status: Mapped[RsvpStatus] = mapped_column(
         Enum(RsvpStatus, name="rsvp_status", create_type=False),
         server_default=RsvpStatus.pending.value,
     )
+    responded_at: Mapped[datetime | None]
+    contact_status: Mapped[ContactStatus] = mapped_column(
+        Enum(ContactStatus, name="contact_status", create_type=False),
+        server_default=ContactStatus.none.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

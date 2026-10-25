@@ -28,7 +28,7 @@ def _future(starts_at: datetime) -> None:
         )
 
 
-async def _owned_event(
+async def owned_event(
     db: AsyncSession, event_id: uuid.UUID, user_id: uuid.UUID
 ) -> Event:
     # Un événement d'un autre organisateur répond 404, comme s'il n'existait pas.
@@ -116,7 +116,7 @@ async def create_event(body: EventCreate, auth: CurrentAuth, db: DbSession) -> E
 
 @router.get("/{event_id}")
 async def get_event(event_id: uuid.UUID, auth: CurrentAuth, db: DbSession) -> EventOut:
-    event = await _owned_event(db, event_id, auth.user.id)
+    event = await owned_event(db, event_id, auth.user.id)
     return (await _to_out(db, [event]))[0]
 
 
@@ -124,7 +124,7 @@ async def get_event(event_id: uuid.UUID, auth: CurrentAuth, db: DbSession) -> Ev
 async def update_event(
     event_id: uuid.UUID, body: EventUpdate, auth: CurrentAuth, db: DbSession
 ) -> EventOut:
-    event = await _owned_event(db, event_id, auth.user.id)
+    event = await owned_event(db, event_id, auth.user.id)
     changes = body.model_dump(exclude_unset=True, exclude={"categories"})
     for required in ("title", "type", "starts_at"):
         if required in changes and changes[required] is None:

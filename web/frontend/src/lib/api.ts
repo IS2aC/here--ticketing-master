@@ -29,7 +29,8 @@ export async function apiFetch(path: string, init: RequestInit & { token?: strin
     cache: "no-store",
     signal: AbortSignal.timeout(10_000),
     headers: {
-      "Content-Type": "application/json",
+      // JSON par défaut ; un envoi de fichier (FormData) fixe lui-même son Content-Type.
+      ...(typeof rest.body === "string" ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },

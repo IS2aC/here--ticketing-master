@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.routers import auth, events
+from app.routers import auth, events, guests
 
 # Toutes les routes métier (web et mobile) vivent sous /v1.
 router = APIRouter(prefix="/v1")
@@ -13,3 +13,4 @@ async def root() -> dict[str, str]:
 
 router.include_router(auth.router)
 router.include_router(events.router)
+router.include_router(guests.router)

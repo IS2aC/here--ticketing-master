@@ -4,7 +4,15 @@ from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel, EmailStr, Field, StringConstraints
 
-from app.models import EventStatus, EventType, UserRole
+from app.guest_import import RowStatus
+from app.models import (
+    ContactStatus,
+    EventStatus,
+    EventType,
+    ImportStatus,
+    RsvpStatus,
+    UserRole,
+)
 from app.phone import normalize_phone
 
 
@@ -151,3 +159,58 @@ class EventOut(BaseModel):
     categories: list[CategoryOut]
     stats: EventStats
     created_at: datetime
+
+
+# --- Invités et import ------------------------------------------------------------------
+
+
+class ImportColumnOut(BaseModel):
+    header: str
+    field: str | None
+    label: str | None
+
+
+class ImportRowOut(BaseModel):
+    line: int
+    display_name: str
+    phone: str | None
+    phone_valid: bool
+    category: str | None
+    raw_category: str | None
+    seat: str | None
+    status: RowStatus
+
+
+class ImportSummary(BaseModel):
+    total: int
+    to_import: int  # prêtes + à vérifier
+    to_verify: int  # importées mais numéro manquant ou à corriger
+    not_imported: int  # nom manquant ou catégorie inconnue
+    duplicates: int
+    by_category: dict[str, int]
+
+
+class ImportOut(BaseModel):
+    id: uuid.UUID
+    event_id: uuid.UUID
+    file_name: str
+    status: ImportStatus
+    created_at: datetime
+    columns: list[ImportColumnOut]
+    summary: ImportSummary
+    imported_rows: int
+    rows: list[ImportRowOut]
+
+
+class GuestOut(BaseModel):
+    id: uuid.UUID
+    display_name: str
+    last_name: str | None
+    first_names: str | None
+    phone: str | None
+    phone_valid: bool
+    category_id: uuid.UUID
+    category: str
+    seat: str | None
+    rsvp_status: RsvpStatus
+    contact_status: ContactStatus

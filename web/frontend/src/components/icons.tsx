@@ -121,6 +121,18 @@ const paths = {
       <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M12 17.5v-6M9.5 14L12 11.5l2.5 2.5" />
     </>
   ),
+  alerte: (
+    <>
+      <path d="M12 3.5L2.5 20h19z" />
+      <path d="M12 10v4.5M12 17.5v.01" />
+    </>
+  ),
+  telecharger: (
+    <>
+      <path d="M12 4v11M7.5 10.5L12 15l4.5-4.5" />
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;

@@ -30,6 +30,34 @@ L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilise
 - Modification : mêmes champs. Une catégorie qui a déjà des invités ne peut pas être retirée.
 - Dates saisies et affichées à l'heure d'Abidjan (UTC+0), stockées en UTC.
 
+## Import de la liste d'invités
+
+- Fichier Excel (.xlsx) ou CSV (séparateur `;` ou `,`, UTF-8 ou Windows), 5 Mo et 5 000 invités maximum. Un modèle Excel est téléchargeable.
+- Colonnes, dans n'importe quel ordre, titres reconnus sans tenir compte des accents ni de la casse (une ligne de titre peut précéder l'en-tête) :
+
+  | Colonne | Règle | Titres reconnus (exemples) |
+  |---|---|---|
+  | Nom | Obligatoire, ou les prénoms | Nom, Nom de famille |
+  | Prénoms | Obligatoire, ou le nom | Prénom, Prénoms, Prénom(s) |
+  | Numéro | Facultatif | Numéro, Téléphone, Tél, WhatsApp, Contact |
+  | Catégorie | Facultatif, « Normal » par défaut | Catégorie, Groupe |
+  | Position | Facultatif : table ou place | Position, Table, Place |
+
+- Deux temps : le fichier est d'abord **lu et vérifié** (aperçu, rien n'est ajouté), puis l'organisateur **confirme**. Un nouvel aperçu remplace le précédent ; après confirmation, les lignes du fichier ne sont pas conservées.
+- Vérification de chaque ligne :
+
+  | Statut | Importée ? |
+  |---|---|
+  | Prêt | Oui |
+  | Numéro manquant | Oui (invitation impossible tant qu'il manque) |
+  | Numéro incomplet | Oui, gardé tel quel et signalé « à vérifier » |
+  | Nom manquant | Non |
+  | Catégorie inconnue de l'événement | Non : créer la catégorie ou corriger le fichier, puis réimporter |
+  | Déjà dans la liste (même numéro, ou même nom sans numéro) | Non, retiré automatiquement |
+
+- Numéros ramenés au format `+225…`, y compris quand Excel a supprimé le 0 initial d'un numéro saisi comme nombre. La catégorie « Normal » est créée si elle n'existe pas encore dans l'événement.
+- Liste des invités sur la vue de l'événement : numéros masqués (`07 •• •• 34 56`), numéros à vérifier en tête.
+
 ## Base de données
 
 PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).
