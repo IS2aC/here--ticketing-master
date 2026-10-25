@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Origines autorisées pour le navigateur (frontend web), séparées par des virgules.
     cors_origins: str = ""
     docs_enabled: bool = True
+    session_ttl_days: int = 30
 
     @field_validator("database_url")
     @classmethod

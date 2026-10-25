@@ -15,6 +15,13 @@ Tout est dans [web/](../web/README.md) et se déploie sur Dokploy avec un seul `
 
 L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilisera le domaine de l'API.
 
+## Comptes et connexion
+
+- Inscription : prénom, nom, téléphone (WhatsApp), e-mail facultatif, mot de passe (8 caractères minimum). Le téléphone est ramené au format `+225…` ; un numéro local à 10 chiffres est considéré comme ivoirien.
+- Connexion : téléphone **ou** e-mail, et mot de passe. Message d'erreur identique que le compte existe ou non.
+- Mots de passe hachés avec Argon2. Sessions dans la table `sessions` : jeton aléatoire remis au client, seule son empreinte SHA-256 est stockée ; 30 jours ; la déconnexion révoque la session.
+- Web : le frontend garde le jeton dans un cookie httpOnly et appelle l'API côté serveur. Mobile : le même jeton, envoyé dans `Authorization: Bearer`.
+
 ## Base de données
 
 PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).

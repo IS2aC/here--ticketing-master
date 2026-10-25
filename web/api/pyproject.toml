@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Here! · API (web et mobile)"
 requires-python = ">=3.12"
 dependencies = [
+    "argon2-cffi>=25.1.0",
     "asyncpg>=0.32.0",
+    "email-validator>=2.3.0",
     "fastapi>=0.162.0",
     "pydantic-settings>=2.16.1",
     "sqlalchemy[asyncio]>=2.1.6",
@@ -20,3 +22,4 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+markers = ["db: nécessite une base PostgreSQL (TEST_DATABASE_URL)"]

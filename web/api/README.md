@@ -4,15 +4,17 @@ Seul service qui accède à la base. Appelée par le frontend web et, plus tard,
 
 - `GET /health` : santé (API + base), utilisé par Docker et Dokploy.
 - `GET /v1` : toutes les routes métier sont versionnées sous `/v1`.
+- Comptes : `POST /v1/auth/register`, `POST /v1/auth/login` (téléphone ou e-mail + mot de passe), `POST /v1/auth/logout`, `GET /v1/me`. Authentification par jeton `Authorization: Bearer <jeton>` (même mécanisme pour le web et le mobile).
 - `GET /docs` : documentation interactive (désactivable avec `DOCS_ENABLED=false`).
 
-Variables : `DATABASE_URL` (obligatoire), `CORS_ORIGINS` (origines navigateur séparées par des virgules), `DOCS_ENABLED`.
+Variables : `DATABASE_URL` (obligatoire), `CORS_ORIGINS` (origines navigateur séparées par des virgules), `DOCS_ENABLED`, `SESSION_TTL_DAYS` (30 par défaut).
 
 Le schéma de la base est géré par les migrations SQL de [../db/migrations](../db/migrations), pas par l'API.
 
 ```bash
 uv sync
 DATABASE_URL=postgres://here:changez-moi@localhost:5433/here uv run uvicorn app.main:app --reload
-uv run pytest
+uv run pytest                     # tests unitaires
+TEST_DATABASE_URL=postgres://here:here@localhost:5433/here_test uv run pytest   # + tests avec base (la base est vidée)
 uv run ruff check . && uv run ruff format --check .
 ```
