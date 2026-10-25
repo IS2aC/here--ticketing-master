@@ -1,0 +1,22 @@
+[project]
+name = "here-api"
+version = "0.1.0"
+description = "Here! · API (web et mobile)"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.32.0",
+    "fastapi>=0.162.0",
+    "pydantic-settings>=2.16.1",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.16.0",
+    "pytest>=9.1.1",
+    "ruff>=0.17.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

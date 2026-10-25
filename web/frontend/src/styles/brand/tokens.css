@@ -1,0 +1,162 @@
+/* Design tokens — Here! — généré par build_tokens.py, ne pas éditer à la main */
+:root {
+  --color-red: #E10600;
+  --color-red-dark: #B30500;
+  --color-red-bright: #FF4D3D;
+  --color-ink: #0B0B0B;
+  --color-ink-800: #171717;
+  --color-ink-700: #2A2A2A;
+  --color-white: #FFFFFF;
+  --color-gray-100: #F4F4F4;
+  --color-gray-300: #E2E2E2;
+  --color-gray-500: #8A8A8A;
+  --color-gray-600: #6B6B6B;
+  --color-green: #1A7F37;
+  --color-green-light: #3FB950;
+  --color-amber: #965A00;
+  --color-amber-light: #F2A93B;
+  --color-ivory: #F7F1E8;
+  --color-gold: #A8823C;
+  --color-stone-50: #F3F1EC;
+  --color-stone-600: #5E5A53;
+  --color-background: var(--color-white);
+  --color-surface: var(--color-gray-100);
+  --color-border: var(--color-gray-300);
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-gray-600);
+  --color-primary: var(--color-red);
+  --color-primary-hover: var(--color-red-dark);
+  --color-on-primary: var(--color-white);
+  --color-accent-text: var(--color-red);
+  --color-success: var(--color-green);
+  --color-warning: var(--color-amber);
+  --color-error: var(--color-red-dark);
+  --color-inverse: var(--color-ink);
+  --color-on-inverse: var(--color-white);
+  --color-status-confirmed: var(--color-green);
+  --color-status-pending: var(--color-amber);
+  --color-status-declined: var(--color-gray-600);
+  --color-status-unreachable: var(--color-red-dark);
+  --font-heading: "Poppins", system-ui, sans-serif;
+  --font-body: "Poppins", system-ui, sans-serif;
+  --font-data: "Inter", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+  --font-accent: "Playfair Display", Georgia, serif;
+  --text-display-size: 64px;
+  --text-display-weight: 800;
+  --text-display-line-height: 1.0;
+  --text-display-letter-spacing: -0.03em;
+  --text-h1-size: 44px;
+  --text-h1-weight: 800;
+  --text-h1-line-height: 1.05;
+  --text-h1-letter-spacing: -0.02em;
+  --text-h2-size: 32px;
+  --text-h2-weight: 700;
+  --text-h2-line-height: 1.15;
+  --text-h2-letter-spacing: -0.01em;
+  --text-h3-size: 22px;
+  --text-h3-weight: 600;
+  --text-h3-line-height: 1.25;
+  --text-h3-letter-spacing: 0em;
+  --text-body-size: 16px;
+  --text-body-weight: 400;
+  --text-body-line-height: 1.55;
+  --text-body-letter-spacing: 0em;
+  --text-small-size: 14px;
+  --text-small-weight: 400;
+  --text-small-line-height: 1.5;
+  --text-small-letter-spacing: 0em;
+  --text-caption-size: 12px;
+  --text-caption-weight: 500;
+  --text-caption-line-height: 1.4;
+  --text-caption-letter-spacing: 0.06em;
+  --text-data-size: 14px;
+  --text-data-weight: 500;
+  --text-data-line-height: 1.4;
+  --text-data-letter-spacing: 0em;
+  --text-code-size: 13px;
+  --text-code-weight: 500;
+  --text-code-line-height: 1.4;
+  --text-code-letter-spacing: 0.04em;
+  --text-guest-size: 17px;
+  --text-guest-weight: 400;
+  --text-guest-line-height: 1.55;
+  --text-guest-letter-spacing: 0em;
+  --text-invite-size: 40px;
+  --text-invite-weight: 600;
+  --text-invite-line-height: 1.1;
+  --text-invite-letter-spacing: 0em;
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(11,11,11,.06);
+  --shadow-md: 0 6px 20px rgba(11,11,11,.10);
+  --shadow-lg: 0 24px 60px rgba(11,11,11,.22);
+  --shadow-glow: 0 10px 30px rgba(225,6,0,.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-background: var(--color-ink);
+    --color-surface: var(--color-ink-800);
+    --color-border: var(--color-ink-700);
+    --color-text: var(--color-white);
+    --color-text-muted: var(--color-gray-500);
+    --color-accent-text: var(--color-red-bright);
+    --color-success: var(--color-green-light);
+    --color-warning: var(--color-amber-light);
+    --color-error: var(--color-red-bright);
+    --color-inverse: var(--color-white);
+    --color-on-inverse: var(--color-ink);
+    --color-status-confirmed: var(--color-green-light);
+    --color-status-pending: var(--color-amber-light);
+    --color-status-declined: var(--color-gray-500);
+    --color-status-unreachable: var(--color-red-bright);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-background: var(--color-ink);
+  --color-surface: var(--color-ink-800);
+  --color-border: var(--color-ink-700);
+  --color-text: var(--color-white);
+  --color-text-muted: var(--color-gray-500);
+  --color-accent-text: var(--color-red-bright);
+  --color-success: var(--color-green-light);
+  --color-warning: var(--color-amber-light);
+  --color-error: var(--color-red-bright);
+  --color-inverse: var(--color-white);
+  --color-on-inverse: var(--color-ink);
+  --color-status-confirmed: var(--color-green-light);
+  --color-status-pending: var(--color-amber-light);
+  --color-status-declined: var(--color-gray-500);
+  --color-status-unreachable: var(--color-red-bright);
+}
+
+/* Classes typographiques prêtes à l'emploi */
+.text-display { font-family: var(--font-heading); font-size: var(--text-display-size); font-weight: var(--text-display-weight); line-height: var(--text-display-line-height); letter-spacing: var(--text-display-letter-spacing); }
+.text-h1 { font-family: var(--font-heading); font-size: var(--text-h1-size); font-weight: var(--text-h1-weight); line-height: var(--text-h1-line-height); letter-spacing: var(--text-h1-letter-spacing); }
+.text-h2 { font-family: var(--font-heading); font-size: var(--text-h2-size); font-weight: var(--text-h2-weight); line-height: var(--text-h2-line-height); letter-spacing: var(--text-h2-letter-spacing); }
+.text-h3 { font-family: var(--font-heading); font-size: var(--text-h3-size); font-weight: var(--text-h3-weight); line-height: var(--text-h3-line-height); letter-spacing: var(--text-h3-letter-spacing); }
+.text-body { font-family: var(--font-body); font-size: var(--text-body-size); font-weight: var(--text-body-weight); line-height: var(--text-body-line-height); letter-spacing: var(--text-body-letter-spacing); }
+.text-small { font-family: var(--font-body); font-size: var(--text-small-size); font-weight: var(--text-small-weight); line-height: var(--text-small-line-height); letter-spacing: var(--text-small-letter-spacing); }
+.text-caption { font-family: var(--font-body); font-size: var(--text-caption-size); font-weight: var(--text-caption-weight); line-height: var(--text-caption-line-height); letter-spacing: var(--text-caption-letter-spacing); }
+.text-data { font-family: var(--font-data); font-size: var(--text-data-size); font-weight: var(--text-data-weight); line-height: var(--text-data-line-height); letter-spacing: var(--text-data-letter-spacing); }
+.text-code { font-family: var(--font-mono); font-size: var(--text-code-size); font-weight: var(--text-code-weight); line-height: var(--text-code-line-height); letter-spacing: var(--text-code-letter-spacing); }
+.text-guest { font-family: var(--font-body); font-size: var(--text-guest-size); font-weight: var(--text-guest-weight); line-height: var(--text-guest-line-height); letter-spacing: var(--text-guest-letter-spacing); }
+.text-invite { font-family: var(--font-accent); font-size: var(--text-invite-size); font-weight: var(--text-invite-weight); line-height: var(--text-invite-line-height); letter-spacing: var(--text-invite-letter-spacing); }

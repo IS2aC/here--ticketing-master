@@ -1,0 +1,48 @@
+# Here! · MVP web
+
+Trois services distincts, orchestrés par [docker-compose.yml](docker-compose.yml) :
+
+| Service | Dossier | Rôle | Port interne |
+|---|---|---|---|
+| `db` | — | PostgreSQL 16 (volume `db-data`) | 5432 |
+| `migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées | — |
+| `api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
+| `frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://api:8000`) | 3000 |
+
+Ordre de démarrage : `db` (sain) → `migrate` (terminé) → `api` (saine) → `frontend`.
+
+## Lancer en local
+
+```bash
+cp .env.example .env
+docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+```
+
+- Frontend : http://localhost:3000
+- API : http://localhost:8000/v1 · documentation : http://localhost:8000/docs · santé : http://localhost:8000/health
+- Base : `localhost:5433` (utilisateur et mot de passe de `.env`)
+
+`docker-compose.local.yml` ne fait qu'ouvrir les ports sur la machine ; il ne sert pas sur Dokploy.
+
+## Développer sans Docker
+
+Base seule : `docker compose -f docker-compose.yml -f docker-compose.local.yml up db migrate`, puis :
+
+```bash
+cd api && uv sync && DATABASE_URL=postgres://here:changez-moi@localhost:5433/here uv run uvicorn app.main:app --reload
+```
+
+```bash
+cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
+```
+
+## Déployer sur Dokploy
+
+1. Créer une application **Docker Compose** sur ce dépôt, chemin du fichier : `web/docker-compose.yml`.
+2. Onglet **Environment** : reprendre `.env.example` (au minimum `POSTGRES_PASSWORD`, et `CORS_ORIGINS` avec le domaine du frontend).
+3. Onglet **Domains** : `frontend` sur le port 3000, `api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
+4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
+
+## Ajouter une migration
+
+Créer `db/migrations/AAAAMMJJHHMMSS_description.sql` avec deux sections `-- migrate:up` et `-- migrate:down`. Ne jamais modifier une migration déjà déployée : en ajouter une nouvelle.

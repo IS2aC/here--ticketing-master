@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@config "../../tailwind.config.mjs";
+
+/* Identité Here! (copie de uiux/visual-identity) */
+@import "../styles/brand/fonts.css";
+@import "../styles/brand/tokens.css";
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}

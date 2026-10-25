@@ -1,9 +1,9 @@
+-- migrate:up
 -- Here! · Schéma de base de données (v1 : invitations)
 -- PostgreSQL 15 ou plus (NULLS NOT DISTINCT, gen_random_uuid intégré).
 -- Schéma visuel : docs/base-de-donnees.excalidraw
 -- Plus tard (non inclus) : otp_codes, scan_links, checkins (voir TODO.md).
 
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- Types
@@ -235,4 +235,10 @@ INSERT INTO card_templates (code, name, default_palette) VALUES
   ('soiree',      'Soirée',      '{"background": "#0B0B0B", "accent": "#E10600", "text": "#FFFFFF"}'),
   ('hommage',     'Hommage',     '{"background": "#F3F1EC", "accent": "#5E5A53", "text": "#0B0B0B"}');
 
-COMMIT;
+-- migrate:down
+
+DROP TABLE IF EXISTS calls, messages, invitations, guests, event_cards, card_templates,
+  guest_imports, guest_categories, events, sessions, users CASCADE;
+DROP FUNCTION IF EXISTS set_updated_at();
+DROP TYPE IF EXISTS call_outcome, message_status, message_kind, contact_status, rsvp_status,
+  import_status, event_status, event_type, user_role;

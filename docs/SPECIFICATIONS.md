@@ -2,9 +2,22 @@
 
 Document vivant : les fonctionnalités sont ajoutées au fur et à mesure (voir [TODO.md](../TODO.md)).
 
+## Architecture (MVP web)
+
+Tout est dans [web/](../web/README.md) et se déploie sur Dokploy avec un seul `docker-compose.yml` :
+
+| Service | Technologie | Rôle |
+|---|---|---|
+| `db` | PostgreSQL 16 | Données |
+| `migrate` | dbmate | Applique les migrations SQL au démarrage, avant l'API |
+| `api` | FastAPI (Python 3.12, SQLAlchemy async + asyncpg) | Seul accès à la base. Routes métier versionnées sous `/v1`, pensées pour être appelées aussi par l'app mobile. `/health` pour la supervision |
+| `frontend` | Next.js 16 (TypeScript, Tailwind avec le preset de l'identité Here!) | Interface web. Appelle l'API par le réseau interne |
+
+L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilisera le domaine de l'API.
+
 ## Base de données
 
-PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Script de création : [schema.sql](schema.sql).
+PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).
 
 ### Tables
 
