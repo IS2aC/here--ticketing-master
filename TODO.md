@@ -13,8 +13,33 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Corriger une ligne dans l'aperçu d'import** (lien « Corriger » de la maquette) et **modifier ou ajouter un invité à la main** : aujourd'hui, on corrige le fichier et on réimporte.
 - [ ] **Nombre de personnes par invité** (colonne « Nb pers. » de la maquette, accompagnants) : aujourd'hui 1 par défaut.
 - [ ] **Personnaliser la carte** : photo, textes, couleurs, carte par catégorie (maquette `backoffice-carte`) ; import d'un modèle de carte. Aujourd'hui : une carte automatique par type d'événement.
+- [ ] **Cartes proposées et modifiées par IA** (à commencer simple, avec **1min.ai**) :
+  - **génération** : à partir du type d'événement, des informations et des photos des hôtes (mariés, famille, organisateur), l'IA propose 2 ou 3 cartes ;
+  - **modification** : retouches demandées en langage courant (« plus sobre », « texte plus court », « couleurs plus chaudes ») et ajustements directs (textes, palette, cadrage de la photo) avec aperçu immédiat ;
+  - principe à garder : l'IA propose les réglages de la carte (modèle, palette, formule, textes, cadrage, éventuellement un fond décoratif), et le rendu actuel (Satori, `lib/card/render.tsx`) dessine la carte. Les noms, les dates, le QR code et le sceau Here! ne sont jamais dessinés par l'IA ;
+  - un fond décoratif généré l'est une fois par événement et réutilisé pour tous les invités ;
+  - garde-fous : pas de visages générés ni modifiés, portrait du défunt seulement recadré et en noir et blanc pour un hommage, photos utilisées uniquement pour la carte et supprimées avec l'événement ;
+  - à vérifier avec 1min.ai : accès par API, modèles d'image et de texte disponibles, prix, conditions d'utilisation des photos envoyées ;
+  - plus tard : nombre de propositions limité par événement, ou option payante.
 - [ ] **Page invité** : date limite de réponse choisie par l'organisateur (aujourd'hui : jusqu'au début de l'événement) ; savoir si l'invité a ouvert son invitation ; limiter les appels répétés aux adresses publiques `/i/<jeton>`.
-- [ ] **Étape 4 « Les relances » : envoi WhatsApp** (EN ATTENTE : choix en cours entre un prestataire tiers et Diffuz, ta propre solution de diffusion). Envoi des cartes, relances automatiques des invités sans réponse, file d'appels du support. Prévoir un connecteur d'envoi interchangeable (`WHATSAPP_PROVIDER`) pour changer de prestataire sans toucher au reste ; table `messages` déjà prête (statuts programmé / envoyé / reçu / lu / échoué).
+- [x] **Étape 4 « Les relances » : envoi WhatsApp avec WasenderAPI** (fait le 28/10) : envoi des cartes (image + lien + sondage « Oui / Non »), relances automatiques, appels programmés pour la conseillère, webhooks (statuts, votes, messages des invités), worker avec cadence anti-blocage. Voir docs/SPECIFICATIONS.md.
+- [ ] **Indicatifs pays** : aujourd'hui, un numéro local à 10 chiffres commençant par 0 est considéré comme ivoirien (+225), partout (`api/app/phone.py`) ; l'affichage et le masquage ne savent formater que le +225 (`frontend/src/lib/phone.ts`). À faire :
+  - **inscription** : choix de l'indicatif (Côte d'Ivoire par défaut, puis Sénégal +221, Mali +223, Burkina Faso +226, Niger +227, Togo +228, Bénin +229, Guinée +224, Cameroun +237, France +33…) ;
+  - **événement** : un pays par défaut pour l'import de la liste (un mariage à Dakar : numéros locaux en +221) ; colonne « Indicatif » facultative dans le fichier et le modèle Excel ;
+  - **validation par pays** (longueur et format propres à chaque pays, par exemple avec la bibliothèque `phonenumbers`) au lieu de la seule règle ivoirienne ; garder le cas d'Excel qui supprime le 0 initial ;
+  - **affichage et masquage** des numéros de tous les pays (« +221 77 •• •• 45 67 ») ;
+  - **WhatsApp** : vérifier l'envoi WasenderAPI vers des numéros hors +225, et le rattachement des messages reçus (`cleanedSenderPn`) pour ces numéros ;
+  - lier ce choix au **fuseau horaire par événement** (déjà dans la liste).
+- [ ] **Relances à la demande, option payante** (« Relancer maintenant ») : déjà codée mais désactivée (`WHATSAPP_ON_DEMAND_REMINDERS=false`, bouton masqué, API en 403). Non incluse dans la phase de test. À faire :
+  - **portail admin** : activer ou désactiver l'option par compte (ou par événement), au lieu de la variable globale ;
+  - facturation de l'option (tarif, paiement, suivi des relances consommées).
+- [ ] **Fréquence des relances par événement** : aujourd'hui, le calendrier est global (`WHATSAPP_REMINDER_DAYS_BEFORE`, standard offert : 7 jours avant). Plus tard : le régler depuis le portail admin, et proposer des relances supplémentaires en option.
+- [ ] **WhatsApp, suite** :
+  - plusieurs numéros d'envoi (un worker par numéro) pour aller plus vite ;
+  - écran de la conseillère : file d'appels (table `calls`), résultat de l'appel, messages des invités à traiter (`inbound_messages.handled_at`) ;
+  - lien d'un message libre (« On sera 3 ») vers la fiche de l'invité ;
+  - surveiller la session WasenderAPI (webhook `session.status`) et prévenir si le numéro est déconnecté ;
+  - rappel la veille avec le QR code d'entrée.
 
 ## Ajustements (à traiter une fois le parcours complet terminé)
 

@@ -109,7 +109,7 @@ class Event(Base):
         Enum(EventStatus, name="event_status", create_type=False),
         server_default=EventStatus.draft.value,
     )
-    whatsapp_reminders_enabled: Mapped[bool] = mapped_column(server_default="false")
+    whatsapp_reminders_enabled: Mapped[bool] = mapped_column(server_default="true")
     call_reminders_enabled: Mapped[bool] = mapped_column(server_default="false")
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
@@ -278,3 +278,82 @@ class Checkin(Base):
     )
     seats: Mapped[int] = mapped_column(server_default="1")
     scanned_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class MessageKind(enum.StrEnum):
+    invitation = "invitation"
+    reminder = "reminder"
+
+
+class MessageStatus(enum.StrEnum):
+    scheduled = "scheduled"  # dans la file d'envoi
+    sending = "sending"  # pris par le worker
+    sent = "sent"  # accepté par WhatsApp
+    delivered = "delivered"
+    read = "read"
+    failed = "failed"
+    canceled = "canceled"  # devenu inutile avant l'envoi
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    guest_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("guests.id", ondelete="CASCADE")
+    )
+    kind: Mapped[MessageKind] = mapped_column(
+        Enum(MessageKind, name="message_kind", create_type=False)
+    )
+    provider_message_id: Mapped[str | None] = mapped_column(String, unique=True)
+    whatsapp_id: Mapped[str | None] = mapped_column(String, unique=True)
+    poll_provider_message_id: Mapped[str | None] = mapped_column(String, unique=True)
+    poll_whatsapp_id: Mapped[str | None] = mapped_column(String, unique=True)
+    status: Mapped[MessageStatus] = mapped_column(
+        Enum(MessageStatus, name="message_status", create_type=False),
+        server_default=MessageStatus.scheduled.value,
+    )
+    body: Mapped[str | None]
+    attempts: Mapped[int] = mapped_column(server_default="0")
+    scheduled_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    sent_at: Mapped[datetime | None]
+    delivered_at: Mapped[datetime | None]
+    read_at: Mapped[datetime | None]
+    error: Mapped[str | None]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class InboundMessage(Base):
+    __tablename__ = "inbound_messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    guest_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("guests.id", ondelete="CASCADE")
+    )
+    phone: Mapped[str]
+    body: Mapped[str]
+    whatsapp_id: Mapped[str | None] = mapped_column(String, unique=True)
+    received_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    handled_at: Mapped[datetime | None]
+
+
+class Call(Base):
+    __tablename__ = "calls"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    guest_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("guests.id", ondelete="CASCADE")
+    )
+    agent_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )
+    scheduled_at: Mapped[datetime]
+    called_at: Mapped[datetime | None]
+    notes: Mapped[str | None]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

@@ -8,8 +8,11 @@ Trois services distincts, orchestrés par [docker-compose.yml](docker-compose.ym
 | `migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées | — |
 | `api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
 | `frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://api:8000`) | 3000 |
+| `worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp | — |
 
-Ordre de démarrage : `db` (sain) → `migrate` (terminé) → `api` (saine) → `frontend`.
+Ordre de démarrage : `db` (sain) → `migrate` (terminé) → `api` (saine) et `worker` → `frontend`.
+
+Par défaut, `WHATSAPP_PROVIDER=console` : **aucun message WhatsApp ne part**, ils sont écrits dans les journaux du worker (`docker compose logs -f worker`). Pour envoyer pour de vrai, voir « Envoi WhatsApp » dans [docs/SPECIFICATIONS.md](../docs/SPECIFICATIONS.md).
 
 ## Lancer en local
 
@@ -39,7 +42,7 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 ## Déployer sur Dokploy
 
 1. Créer une application **Docker Compose** sur ce dépôt, chemin du fichier : `web/docker-compose.yml`.
-2. Onglet **Environment** : reprendre `.env.example` (au minimum `POSTGRES_PASSWORD`, et `CORS_ORIGINS` avec le domaine du frontend).
+2. Onglet **Environment** : reprendre `.env.example` (au minimum `POSTGRES_PASSWORD`, `CORS_ORIGINS` et `PUBLIC_APP_URL` avec le domaine du frontend ; pour WhatsApp : `WHATSAPP_PROVIDER=wasender`, `WASENDER_API_KEY`, `WASENDER_WEBHOOK_SECRET`).
 3. Onglet **Domains** : `frontend` sur le port 3000, `api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
 4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
 

@@ -148,7 +148,11 @@ async function CardView({
                     {withCard.toLocaleString("fr-FR")} carte{withCard > 1 ? "s" : ""} prête{withCard > 1 ? "s" : ""}
                   </span>
                   <span className="block text-text-muted">
-                    Chaque invité a sa carte et son QR code. Prochaine étape : l&apos;envoi sur WhatsApp.
+                    Chaque invité a sa carte et son QR code. Prochaine étape :{" "}
+                    <Link href={`/tableau-de-bord/evenements/${event.id}/relances`} className="font-semibold text-accent-text hover:underline">
+                      l&apos;envoi sur WhatsApp
+                    </Link>
+                    .
                   </span>
                 </span>
               </p>

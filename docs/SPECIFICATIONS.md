@@ -12,6 +12,7 @@ Tout est dans [web/](../web/README.md) et se déploie sur Dokploy avec un seul `
 | `migrate` | dbmate | Applique les migrations SQL au démarrage, avant l'API |
 | `api` | FastAPI (Python 3.12, SQLAlchemy async + asyncpg) | Seul accès à la base. Routes métier versionnées sous `/v1`, pensées pour être appelées aussi par l'app mobile. `/health` pour la supervision |
 | `frontend` | Next.js 16 (TypeScript, Tailwind avec le preset de l'identité Here!) | Interface web. Appelle l'API par le réseau interne |
+| `worker` | Même image que l'API (`python -m app.worker`) | Envoi WhatsApp des invitations et relances, un invité à la fois. **Un seul par numéro WhatsApp** |
 
 L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilisera le domaine de l'API.
 
@@ -85,6 +86,66 @@ Web mobile, sans compte ni application : le jeton de l'adresse (`/i/<jeton>`, au
 - **Réponses closes** au début de l'événement ou s'il est annulé ; un invité confirmé garde son QR code d'entrée.
 - Côté organisateur : statut, nombre de personnes et mot de l'invité dans la liste ; compteurs mis à jour. « Votre réponse n'est vue que par les mariés / la famille / l'organisateur » selon le type.
 
+## Envoi WhatsApp : invitations et relances (étape 4)
+
+Prestataire : **WasenderAPI** (session WhatsApp reliée comme appareil connecté, pas l'API officielle de Meta). Le reste de l'application ne connaît qu'un connecteur interchangeable (`app/whatsapp`, variable `WHATSAPP_PROVIDER`) :
+
+| `WHATSAPP_PROVIDER` | Effet |
+|---|---|
+| `console` (défaut) | Rien n'est envoyé : les messages sont écrits dans les journaux du worker. Développement et tests |
+| `wasender` | Envoi réel. Demande `WASENDER_API_KEY` (clé de la session) et `WASENDER_WEBHOOK_SECRET` |
+
+### Ce que reçoit l'invité (maquette `mobile-message`)
+
+1. **La carte** en image (`/i/<jeton>/carte.png`, publique), avec une légende : « Bonjour <invité>, voici votre invitation pour « <événement> », le <date> à <heure>, <lieu>. Votre carte et votre réponse : » puis le lien de la page invité sur sa propre ligne.
+2. **Un sondage** « Serez-vous des nôtres ? » : « Oui, je serai là / nous serons là » ou « Non, je ne pourrai pas / nous ne pourrons pas venir ».
+3. **Relance** : texte « Nous n'avons pas encore votre réponse… » + lien, puis le même sondage.
+4. **Hommage** (funérailles) : texte sobre au nom de la famille, **jamais de sondage**.
+
+Le vote au sondage a le même effet qu'une réponse « Oui / Non » sur la page invité (toutes les places de l'invitation ; l'invité ajuste ensuite sur sa page). Une réponse, par le sondage ou la page, annule les relances encore en file.
+
+### Envoi (organisateur, `/tableau-de-bord/evenements/<id>/relances`)
+
+- « Envoyer N invitations » met en file l'invitation de chaque invité qui a sa carte et un numéro valide, et ne l'a pas encore reçue. Le premier envoi fait passer l'événement de brouillon à actif. Une invitation en échec peut être renvoyée.
+- **Relance standard, offerte** (`events.whatsapp_reminders_enabled`, cochée par défaut) : une relance **7 jours avant l'événement** aux invités sans réponse. Le calendrier est paramétrable (`WHATSAPP_REMINDER_DAYS_BEFORE`, en jours avant l'événement, par exemple `14,7,2`). Une relance n'est envoyée que si l'invitation est partie avant son moment, et jamais dans les 24 h avant l'événement. L'écran affiche la ou les dates prévues.
+- **Relances à la demande** (« Relancer maintenant ») : **option payante**, désactivée (`WHATSAPP_ON_DEMAND_REMINDERS=false`) : le bouton n'apparaît pas et l'API répond 403. Plus tard : activée compte par compte depuis le portail admin (voir TODO).
+- **Appels de la conseillère** (`events.call_reminders_enabled`) : 2 jours (`WHATSAPP_CALL_DELAY_DAYS`) après la dernière relance restée sans réponse, un appel est programmé (table `calls`) et l'invité passe en « Appel prévu ».
+- Suivi : invitations et relances envoyées, lues, en file, en échec ; derniers messages ; messages libres des invités.
+
+### Cadence anti-blocage (worker)
+
+WasenderAPI ne ralentit pas les envois : c'est le worker qui protège le numéro.
+
+| Règle | Valeur par défaut | Variable |
+|---|---|---|
+| Un invité à la fois (carte, puis sondage 3 à 7 s plus tard) | — | — |
+| Pause entre deux invités | 20 à 45 s, aléatoire | `WHATSAPP_MIN_DELAY_SECONDS`, `WHATSAPP_MAX_DELAY_SECONDS` |
+| Longue pause | 30 min tous les 25 invités | `WHATSAPP_BATCH_SIZE`, `WHATSAPP_BATCH_PAUSE_MINUTES` |
+| Heures d'envoi (Abidjan) | 8 h – 20 h | `WHATSAPP_SEND_START_HOUR`, `WHATSAPP_SEND_END_HOUR` |
+| Relances automatiques | 7 jours avant l'événement (offerte) | `WHATSAPP_REMINDER_DAYS_BEFORE` |
+| Appel après la dernière relance | 2 jours | `WHATSAPP_CALL_DELAY_DAYS` |
+| Relances à la demande (payantes) | désactivées | `WHATSAPP_ON_DEMAND_REMINDERS` |
+
+Soit environ 30 invités par heure : 300 invitations prennent une dizaine d'heures d'envoi. Erreur passagère (réseau, 429, 5xx) : nouvel essai 5, 10, 15… min plus tard, 5 essais au maximum. Erreur définitive : message en échec et invité « Injoignable ».
+
+### Webhooks WasenderAPI
+
+À déclarer dans le tableau de bord WasenderAPI (session › Webhook) : `https://<api>/v1/webhooks/wasender`, avec le secret `WASENDER_WEBHOOK_SECRET` (vérifié dans l'en-tête `X-Webhook-Signature`), événements `messages.update`, `poll.results`, `messages.received`.
+
+| Événement | Effet |
+|---|---|
+| `messages.update` | Statut du message : envoyé, livré, lu (ne recule jamais), échec |
+| `poll.results` | Vote au sondage → réponse de l'invité |
+| `messages.received` | Message libre de l'invité (`inbound_messages`), rattaché à l'invité de ce numéro le plus récemment contacté |
+
+L'envoi renvoie un `msgId` interne à WasenderAPI ; les webhooks utilisent l'identifiant WhatsApp (`key.id`). Le worker lit ce dernier avec `GET /messages/{msgId}/info` et le stocke (`messages.whatsapp_id`, `messages.poll_whatsapp_id`).
+
+### Production
+
+- `PUBLIC_APP_URL` doit être l'adresse **publique https** du site : WasenderAPI télécharge l'image de la carte à cette adresse, et le lien envoyé y mène.
+- L'API doit être joignable en https pour les webhooks.
+- Un seul conteneur `worker` par numéro WhatsApp. Plusieurs numéros (pour aller plus vite) : à prévoir (voir TODO).
+
 ## Base de données
 
 PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-donnees.excalidraw). Source de vérité : les migrations SQL de [web/db/migrations](../web/db/migrations) (la première, `20261025000000_schema_v1.sql`, crée ce schéma).
@@ -102,7 +163,8 @@ PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-don
 | | `event_cards` | Carte configurée pour un événement, par catégorie ou par défaut (`category_id` null). |
 | | `invitations` | Carte générée pour un invité (1–1), avec le jeton unique du lien invité et du QR code. |
 | Invités | `guests` | Invité : nom affiché, téléphone, catégorie, nombre de places, réponse et état des relances. |
-| Relances | `messages` | Messages WhatsApp (invitation, relance) et leur état d'envoi. |
+| Relances | `messages` | Messages WhatsApp (invitation, relance) : file d'envoi, texte envoyé, identifiants WasenderAPI et WhatsApp (carte et sondage), statut. |
+| | `inbound_messages` | Messages écrits par les invités sur WhatsApp, à traiter par la conseillère. |
 | | `calls` | Appels de l'équipe support : agent, date prévue, résultat, notes. |
 
 ### Relations

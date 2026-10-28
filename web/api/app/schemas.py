@@ -10,6 +10,8 @@ from app.models import (
     EventStatus,
     EventType,
     ImportStatus,
+    MessageKind,
+    MessageStatus,
     RsvpStatus,
     UserRole,
 )
@@ -317,3 +319,65 @@ class ScanResult(BaseModel):
     entered_at: datetime | None  # première entrée (déjà entré) ou maintenant (attendu)
     entered_by: str | None  # lien qui a enregistré l'entrée : « Porte A »
     event: ScanEvent
+
+
+# ---------------------------------------------------------------------------
+# Envoi WhatsApp : invitations et relances
+# ---------------------------------------------------------------------------
+
+
+class MessageCounts(BaseModel):
+    scheduled: int = 0  # en file (y compris en cours d'envoi)
+    sent: int = 0  # envoyés, ni livrés ni lus
+    delivered: int = 0
+    read: int = 0
+    failed: int = 0
+    canceled: int = 0
+
+
+class MessageOut(BaseModel):
+    id: uuid.UUID
+    guest_name: str
+    kind: MessageKind
+    status: MessageStatus
+    scheduled_at: datetime
+    sent_at: datetime | None
+    error: str | None
+
+
+class InboundOut(BaseModel):
+    id: uuid.UUID
+    guest_name: str | None
+    body: str
+    received_at: datetime
+
+
+class WhatsAppOverview(BaseModel):
+    provider: str  # « wasender » ou « console » (rien n'est envoyé)
+    configured: bool
+    reminders_enabled: bool  # relance standard offerte
+    reminder_days_before: list[
+        int
+    ]  # calendrier des relances, en jours avant l'événement
+    reminder_dates: list[datetime]  # dates correspondantes pour cet événement
+    calls_enabled: bool
+    on_demand_reminders: bool  # « Relancer maintenant » : option payante activée ou non
+    ready: int  # invités qui peuvent recevoir leur invitation maintenant
+    without_phone: int  # cartes prêtes mais numéro manquant ou à vérifier
+    without_card: int  # invités sans carte préparée
+    to_remind: int  # invités sans réponse qui ont reçu leur invitation
+    calls_scheduled: int
+    invitations: MessageCounts
+    reminders: MessageCounts
+    recent: list[MessageOut]
+    inbound: list[InboundOut]
+
+
+class WhatsAppSettingsIn(BaseModel):
+    reminders_enabled: bool | None = None
+    calls_enabled: bool | None = None
+
+
+class QueueResult(BaseModel):
+    queued: int
+    without_phone: int = 0

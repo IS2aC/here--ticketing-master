@@ -3,6 +3,7 @@
 #   migrate   migrations SQL (dbmate), exécutées puis arrêtées avant le démarrage de l'API
 #   api       FastAPI : seule à accéder à la base ; appelée par le frontend et la future app mobile
 #   frontend  Next.js : interface web, appelle l'API par le réseau interne
+#   worker    envoi WhatsApp (WasenderAPI) : invitations et relances, une à la fois, au rythme anti-blocage
 #
 # Dokploy : application de type « Docker Compose », chemin web/docker-compose.yml,
 # variables dans l'onglet Environment (voir .env.example). Domaines à créer dans Dokploy :
@@ -10,6 +11,22 @@
 #   api      → port 8000 (ex. api.here.example.com, utilisé aussi par l'app mobile)
 
 x-database-url: &database-url postgres://${POSTGRES_USER:-here}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}@db:5432/${POSTGRES_DB:-here}
+
+# Envoi WhatsApp, commun à l'API (suivi, webhooks) et au worker (envoi). Voir .env.example.
+x-whatsapp: &whatsapp
+  PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+  WHATSAPP_PROVIDER: ${WHATSAPP_PROVIDER:-console}
+  WASENDER_API_KEY: ${WASENDER_API_KEY:-}
+  WASENDER_WEBHOOK_SECRET: ${WASENDER_WEBHOOK_SECRET:-}
+  WHATSAPP_MIN_DELAY_SECONDS: ${WHATSAPP_MIN_DELAY_SECONDS:-20}
+  WHATSAPP_MAX_DELAY_SECONDS: ${WHATSAPP_MAX_DELAY_SECONDS:-45}
+  WHATSAPP_BATCH_SIZE: ${WHATSAPP_BATCH_SIZE:-25}
+  WHATSAPP_BATCH_PAUSE_MINUTES: ${WHATSAPP_BATCH_PAUSE_MINUTES:-30}
+  WHATSAPP_SEND_START_HOUR: ${WHATSAPP_SEND_START_HOUR:-8}
+  WHATSAPP_SEND_END_HOUR: ${WHATSAPP_SEND_END_HOUR:-20}
+  WHATSAPP_REMINDER_DAYS_BEFORE: ${WHATSAPP_REMINDER_DAYS_BEFORE:-7}
+  WHATSAPP_CALL_DELAY_DAYS: ${WHATSAPP_CALL_DELAY_DAYS:-2}
+  WHATSAPP_ON_DEMAND_REMINDERS: ${WHATSAPP_ON_DEMAND_REMINDERS:-false}
 
 services:
   db:
@@ -40,6 +57,7 @@ services:
     build: ./api
     restart: unless-stopped
     environment:
+      <<: *whatsapp
       DATABASE_URL: *database-url
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
@@ -61,6 +79,20 @@ services:
     depends_on:
       api:
         condition: service_healthy
+
+  # Un seul worker par numéro WhatsApp : ne pas le dupliquer (replicas), sous peine de blocage du numéro.
+  worker:
+    build: ./api
+    restart: unless-stopped
+    command: ["python", "-m", "app.worker"]
+    environment:
+      <<: *whatsapp
+      DATABASE_URL: *database-url
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   db-data:

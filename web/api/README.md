@@ -9,9 +9,11 @@ Seul service qui accède à la base. Appelée par le frontend web et, plus tard,
 - Invités : `POST /v1/events/{id}/imports` (fichier .xlsx ou .csv → aperçu, rien n'est ajouté), `GET /v1/events/{id}/imports/{import_id}`, `POST /v1/events/{id}/imports/{import_id}/confirm` (ajoute les lignes importables), `GET /v1/events/{id}/guests`, `GET /v1/guests/import-template` (modèle Excel, public). Lecture et vérification des lignes : `app/guest_import.py`.
 - Invitations : `POST /v1/events/{id}/invitations` (une invitation et un jeton de QR code par invité qui n'en a pas), `GET /v1/invitations/{jeton}` (public : la carte et la réponse de cet invité), `POST /v1/invitations/{jeton}/response` (public : présent ou non, nombre de personnes, mot pour l'hôte ; modifiable jusqu'au début de l'événement).
 - Scan à l'entrée : `GET/POST /v1/events/{id}/scan-links`, `POST /v1/events/{id}/scan-links/{link_id}/revoke` (organisateur) ; `GET /v1/scan/{jeton}`, `POST /v1/scan/{jeton}/check` (QR code lu, code `INV-…` ou invité choisi), `GET /v1/scan/{jeton}/guests?q=` (publics, jeton du lien de scan).
+- Envoi WhatsApp (organisateur) : `GET /v1/events/{id}/whatsapp` (suivi), `PATCH /v1/events/{id}/whatsapp` (relances automatiques, appels), `POST /v1/events/{id}/whatsapp/invitations` et `POST /v1/events/{id}/whatsapp/reminders` (mise en file, 202). L'envoi est fait par le worker (`python -m app.worker`, `app/worker.py`), via le connecteur `app/whatsapp` (`console` ou `wasender`). Logique : `app/messaging.py`.
+- `POST /v1/webhooks/wasender` : webhooks WasenderAPI (statuts, votes au sondage, messages des invités), protégés par `X-Webhook-Signature`.
 - `GET /docs` : documentation interactive (désactivable avec `DOCS_ENABLED=false`).
 
-Variables : `DATABASE_URL` (obligatoire), `CORS_ORIGINS` (origines navigateur séparées par des virgules), `DOCS_ENABLED`, `SESSION_TTL_DAYS` (30 par défaut).
+Variables : `DATABASE_URL` (obligatoire), `CORS_ORIGINS` (origines navigateur séparées par des virgules), `DOCS_ENABLED`, `SESSION_TTL_DAYS` (30 par défaut), `PUBLIC_APP_URL`, et l'envoi WhatsApp : `WHATSAPP_PROVIDER`, `WASENDER_API_KEY`, `WASENDER_WEBHOOK_SECRET`, `WHATSAPP_*` (cadence, relances ; voir `../.env.example`).
 
 Le schéma de la base est géré par les migrations SQL de [../db/migrations](../db/migrations), pas par l'API.
 

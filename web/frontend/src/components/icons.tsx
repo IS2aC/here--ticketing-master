@@ -170,6 +170,21 @@ const paths = {
       <path d="M12 3v12M7.5 7.5L12 3l4.5 4.5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
     </>
   ),
+  relance: (
+    <>
+      <path d="M19.5 10.5A7.8 7.8 0 0 0 5.6 7.2L4 9" />
+      <path d="M4 4.5V9h4.5" />
+      <path d="M4.5 13.5a7.8 7.8 0 0 0 13.9 3.3L20 15" />
+      <path d="M20 19.5V15h-4.5" />
+    </>
+  ),
+  telephone: <path d="M5 3.5h3.5L10 7.5 8 9a11 11 0 0 0 7 7l1.5-2 4 1.5V19a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3 5.5a2 2 0 0 1 2-2z" />,
+  envoyer: (
+    <>
+      <path d="M21 3L3 10.5l7 2.5 2.5 7.5z" />
+      <path d="M21 3L10 13" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;

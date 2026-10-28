@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
+from app.messaging import cancel_reminders
 from app.models import (
     CardTemplate,
     Event,
@@ -180,5 +181,6 @@ async def respond(token: str, body: InvitationResponse, db: DbSession) -> Public
     if body.message is not None:
         guest.rsvp_message = body.message
     guest.responded_at = datetime.now(UTC)
+    await cancel_reminders(db, guest.id)  # ses relances en attente ne partiront pas
     await db.commit()
     return _public_card(token, event, guest, category)
