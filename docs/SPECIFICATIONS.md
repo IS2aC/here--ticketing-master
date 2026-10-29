@@ -106,7 +106,9 @@ Prestataire : **WasenderAPI** (session WhatsApp reliée comme appareil connecté
 ### Envoi (organisateur, `/tableau-de-bord/evenements/<id>/relances`)
 
 - « Envoyer N invitations » met en file l'invitation de chaque invité qui a sa carte et un numéro valide, et ne l'a pas encore reçue. Le premier envoi fait passer l'événement de brouillon à actif. Une invitation en échec peut être renvoyée.
-- **Relance standard, offerte** (`events.whatsapp_reminders_enabled`, cochée par défaut) : une relance **7 jours avant l'événement** aux invités sans réponse. Le calendrier est paramétrable (`WHATSAPP_REMINDER_DAYS_BEFORE`, en jours avant l'événement, par exemple `14,7,2`). Une relance n'est envoyée que si l'invitation est partie avant son moment, et jamais dans les 24 h avant l'événement. L'écran affiche la ou les dates prévues.
+- **Relance standard, offerte** (`events.whatsapp_reminders_enabled`, cochée par défaut) : une relance **7 jours avant l'événement** aux invités sans réponse. Ce calendrier proposé est paramétrable (`WHATSAPP_REMINDER_DAYS_BEFORE`, en jours avant l'événement, par exemple `14,7,2`) et suit la date de l'événement.
+- **Dates de relance choisies par l'organisateur** (`events.reminder_dates`, décision du 29/10 : gratuites pendant la phase de test) : sur la page Relances, l'organisateur ajoute ou retire des dates (5 au maximum), ou revient au calendrier proposé (`NULL` en base). Une nouvelle date doit être à venir et au plus tard la veille de l'événement ; une date déjà enregistrée peut rester même si elle est passée, ou se retrouve après l'événement quand celui-ci est avancé (elle est alors signalée et ignorée).
+- Une relance part **dès 8 h** le jour prévu (début des heures d'envoi), **seulement aux invités qui n'ont pas encore répondu**, si leur invitation est partie avant ce moment, et jamais dans les 24 h avant l'événement. Si la relance proposée (J-7) est déjà passée, l'écran le dit et invite à choisir une autre date.
 - **Relances à la demande** (« Relancer maintenant ») : **option payante**, désactivée (`WHATSAPP_ON_DEMAND_REMINDERS=false`) : le bouton n'apparaît pas et l'API répond 403. Plus tard : activée compte par compte depuis le portail admin (voir TODO).
 - **Appels de la conseillère** (`events.call_reminders_enabled`) : 2 jours (`WHATSAPP_CALL_DELAY_DAYS`) après la dernière relance restée sans réponse, un appel est programmé (table `calls`) et l'invité passe en « Appel prévu ».
 - Suivi : invitations et relances envoyées, lues, en file, en échec ; derniers messages ; messages libres des invités.
@@ -155,7 +157,7 @@ PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-don
 |---|---|---|
 | Comptes | `users` | Organisateurs, support, admins. Connexion par téléphone ou email + mot de passe. |
 | | `sessions` | Connexions actives (jeton haché, expiration, révocation). |
-| Événement | `events` | Événement d'un organisateur : titre, type, date, durée, lieu, nombre d'invités, dress code, activation des relances WhatsApp et des appels. |
+| Événement | `events` | Événement d'un organisateur : titre, type, date, durée, lieu, nombre d'invités, dress code, activation des relances WhatsApp et des appels, dates de relance choisies. |
 | | `guest_categories` | Catégories d'invités propres à l'événement (VIP, Normal…). |
 | | `guest_imports` | Historique des fichiers Excel/CSV importés : correspondance des colonnes, lignes importées et en erreur. |
 | Cartes | `card_templates` | Les cinq modèles (Cérémonie, Rendez-vous, Officiel, Soirée, Hommage). Plus tard : modèles importés par un organisateur. |

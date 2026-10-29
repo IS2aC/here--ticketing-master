@@ -5,11 +5,11 @@ import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { EVENT_TIME_ZONE } from "@/lib/event-types";
-import { formatDate, getEvent } from "@/lib/events";
+import { formatDate, getEvent, toDateInput } from "@/lib/events";
 import { getWhatsApp, sentTotal, type MessageStatus } from "@/lib/whatsapp";
 import { Steps } from "../../steps";
-import { sendInvitations, sendReminders, updateSettings } from "./actions";
-import { SendButton, SettingsForm } from "./controls";
+import { sendInvitations, sendReminders, updateReminderDates, updateSettings } from "./actions";
+import { ReminderDates, SendButton, SettingsForm } from "./controls";
 
 export const metadata: Metadata = { title: "Les relances · Here!" };
 
@@ -69,6 +69,11 @@ async function RemindersView({
     days.length === 0
       ? "avant l'événement"
       : `${days.length > 1 ? `${days.slice(0, -1).join(", ")} et ${days.at(-1)}` : days[0]} jours avant l'événement`;
+  // Dates de relance (heure d'Abidjan = UTC). Calendrier proposé : seulement les dates à venir,
+  // une date proposée déjà passée n'a pas à être affichée ni gardée.
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDay = new Date(Date.parse(toDateInput(event.starts_at)) - 86_400_000).toISOString().slice(0, 10);
+  const shown = wa.reminder_dates_chosen ? wa.reminder_dates : wa.reminder_dates.filter((day) => day >= today);
 
   return (
     <>
@@ -227,28 +232,29 @@ async function RemindersView({
                 ? `${plural(wa.to_remind, "invité")} n'${wa.to_remind > 1 ? "ont" : "a"} pas encore répondu.`
                 : "Aucun invité à relancer pour l'instant."}
             </p>
-            {wa.reminders_enabled && wa.reminder_dates.length ? (
-              <p className="flex items-start gap-2 text-[13px]">
-                <Icon name="calendrier" width={16} height={16} className="mt-0.5 shrink-0 text-text-muted" />
-                <span>
-                  Relance prévue le{wa.reminder_dates.length > 1 ? "s" : ""}{" "}
-                  <span className="font-semibold">{wa.reminder_dates.map((d) => formatDate(d).toLocaleLowerCase("fr-FR")).join(", ")}</span>
-                </span>
-              </p>
-            ) : wa.reminders_enabled && sentReminders > 0 ? (
-              // Relance déjà partie : plus de date à venir, mais elle n'a pas été annulée.
-              <p className="flex items-start gap-2 text-[13px] text-text-muted">
-                <Icon name="calendrier" width={16} height={16} className="mt-0.5 shrink-0" />
-                <span>Relance gratuite envoyée aux invités sans réponse.</span>
-              </p>
-            ) : wa.reminders_enabled && days.length ? (
-              // Règle : si l'événement a lieu trop tôt, la relance gratuite est annulée (aucune date à venir).
-              <p className="flex items-start gap-2 text-[13px] text-text-muted">
-                <Icon name="calendrier" width={16} height={16} className="mt-0.5 shrink-0" />
-                <span>
-                  Relance gratuite non disponible : l&apos;événement a lieu dans moins de {Math.min(...days)} jours.
-                </span>
-              </p>
+            {wa.reminders_enabled ? (
+              <ReminderDates
+                action={updateReminderDates.bind(null, event.id, shown)}
+                dates={shown.map((day) => ({
+                  value: day,
+                  label: formatDate(day),
+                  state: day < today ? "past" : day > lastDay ? "after" : "upcoming",
+                }))}
+                empty={
+                  wa.reminder_dates_chosen
+                    ? "Aucune date de relance. Ajoutez-en une ci-dessous."
+                    : sentReminders > 0
+                      ? "Relance offerte envoyée aux invités sans réponse."
+                      : !days.length
+                        ? "Aucune date de relance. Ajoutez-en une ci-dessous."
+                        : `La relance offerte (${schedule}) n'est plus possible : l'événement a lieu dans moins de ${Math.min(...days)} jours. Vous pouvez choisir une autre date ci-dessous.`
+                }
+                canAdd={shown.length < wa.max_reminder_dates && today <= lastDay}
+                min={today}
+                max={lastDay}
+                canReset={wa.reminder_dates_chosen}
+                proposed={schedule}
+              />
             ) : null}
             {wa.on_demand_reminders && wa.to_remind > 0 ? (
               <SendButton

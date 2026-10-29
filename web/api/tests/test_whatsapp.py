@@ -5,7 +5,7 @@ Aucun message réel ne part : le worker est appelé avec le prestataire « conso
 
 import asyncio
 from collections.abc import Awaitable, Callable
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 import pytest
@@ -218,11 +218,14 @@ def test_offered_reminder_then_call(
     assert view["reminders_enabled"] is True and view["reminder_days_before"] == [7]
     assert len(view["reminder_dates"]) == 1  # événement dans 30 jours : relance à J-7
 
-    # Événement dans moins de 7 jours : plus de relance gratuite à afficher.
+    assert view["reminder_dates_chosen"] is False
+
+    # Événement dans moins de 7 jours : la date proposée est passée (la page l'indique).
     sql(
         f"UPDATE events SET starts_at = now() + interval '3 days' WHERE id = '{event_id}'"
     )
-    assert overview(client, organizer, event_id)["reminder_dates"] == []
+    (day,) = overview(client, organizer, event_id)["reminder_dates"]
+    assert date.fromisoformat(day) < date.today()
     sql(
         f"UPDATE events SET starts_at = now() + interval '30 days' WHERE id = '{event_id}'"
     )
@@ -311,6 +314,75 @@ def test_reminder_schedule_is_configurable(
     )
     client.post(f"/v1/events/{event_late}/whatsapp/invitations", headers=organizer)
     deliver_next(provider)
+    assert run_db(plan_follow_ups) == (0, 0)
+
+
+@pytest.mark.db
+def test_reminder_dates_chosen_by_organizer(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    event_id, _ = invited(client, organizer)  # événement dans 30 jours
+    url = f"/v1/events/{event_id}/whatsapp"
+    today = datetime.now(UTC).date()
+
+    def choose(days: list[date] | None):
+        return client.patch(
+            url,
+            json={"reminder_dates": None if days is None else [str(d) for d in days]},
+            headers=organizer,
+        )
+
+    in_10, in_20 = today + timedelta(days=10), today + timedelta(days=20)
+    view = choose([in_20, in_10, in_10]).json()
+    assert view["reminder_dates"] == [str(in_10), str(in_20)]  # triées, sans doublon
+    assert view["reminder_dates_chosen"] is True
+
+    # Refusées : date passée, date le jour de l'événement ou après, plus de 5 dates.
+    for days in (
+        [in_10, today - timedelta(days=1)],
+        [today + timedelta(days=30)],
+        [today + timedelta(days=d) for d in range(1, 7)],
+    ):
+        refused = choose(days)
+        assert refused.status_code == 422 and refused.json()["detail"]["message"]
+    assert overview(client, organizer, event_id)["reminder_dates"] == [
+        str(in_10),
+        str(in_20),
+    ]
+
+    # Une date déjà enregistrée et passée peut être gardée quand on en retire une autre.
+    sql(
+        f"UPDATE events SET reminder_dates = ARRAY['{today - timedelta(days=2)}'::date, "
+        f"'{in_10}'::date] WHERE id = '{event_id}'"
+    )
+    assert choose([today - timedelta(days=2)]).status_code == 200
+
+    # Aucune date : pas de relance. null : retour au calendrier proposé (J-7).
+    assert choose([]).json()["reminder_dates"] == []
+    view = choose(None).json()
+    assert view["reminder_dates_chosen"] is False
+    assert view["reminder_dates"] == [str(today + timedelta(days=23))]
+
+    # Le worker relance aux dates choisies : invitation partie il y a 15 jours, dates J-12 et J-1.
+    choose([in_10, in_20])
+    sent = client.post(
+        f"/v1/events/{event_id}/whatsapp/invitations", headers=organizer
+    ).json()["queued"]
+    provider = ConsoleProvider()
+    while deliver_next(provider):
+        pass
+    sql(
+        "UPDATE messages SET sent_at = now() - interval '15 days' WHERE guest_id IN "
+        f"(SELECT id FROM guests WHERE event_id = '{event_id}')"
+    )
+    sql(
+        f"UPDATE events SET starts_at = now() + interval '1 day 12 hours', "
+        f"reminder_dates = ARRAY[current_date - 12, current_date + 5] WHERE id = '{event_id}'"
+    )
+    # Une relance par invité sans réponse (J-12) ; la date après l'événement est ignorée.
+    assert run_db(plan_follow_ups) == (sent, 0)
+    while deliver_next(provider):
+        pass
     assert run_db(plan_follow_ups) == (0, 0)
 
 

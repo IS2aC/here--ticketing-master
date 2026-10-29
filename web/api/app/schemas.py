@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, EmailStr, Field, StringConstraints
@@ -364,9 +364,9 @@ class WhatsAppOverview(BaseModel):
     reminder_days_before: list[
         int
     ]  # calendrier des relances, en jours avant l'événement
-    reminder_dates: list[
-        datetime
-    ]  # dates correspondantes pour cet événement, encore à venir
+    reminder_dates: list[date]  # dates de relance de cet événement, passées comprises
+    reminder_dates_chosen: bool  # sinon : calendrier proposé
+    max_reminder_dates: int
     calls_enabled: bool
     on_demand_reminders: bool  # « Relancer maintenant » : option payante activée ou non
     ready: int  # invités qui peuvent recevoir leur invitation maintenant
@@ -383,6 +383,8 @@ class WhatsAppOverview(BaseModel):
 class WhatsAppSettingsIn(BaseModel):
     reminders_enabled: bool | None = None
     calls_enabled: bool | None = None
+    # Absent : inchangées. null : retour au calendrier proposé. Liste : dates choisies.
+    reminder_dates: list[date] | None = None
 
 
 class QueueResult(BaseModel):

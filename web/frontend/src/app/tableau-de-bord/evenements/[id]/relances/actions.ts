@@ -50,3 +50,43 @@ export async function updateSettings(eventId: string, formData: FormData): Promi
   if (response.status === 401) redirect("/connexion");
   revalidatePath(`/tableau-de-bord/evenements/${eventId}/relances`);
 }
+
+export type DatesState = { message?: string };
+
+/** Ajoute, retire une date de relance, ou revient au calendrier proposé (bouton « intent » du formulaire). */
+export async function updateReminderDates(
+  eventId: string,
+  dates: string[],
+  _previous: DatesState,
+  formData: FormData,
+): Promise<DatesState> {
+  const intent = String(formData.get("intent") ?? "add");
+  let reminderDates: string[] | null;
+  if (intent === "reset") {
+    reminderDates = null;
+  } else if (intent.startsWith("remove:")) {
+    reminderDates = dates.filter((d) => d !== intent.slice("remove:".length));
+  } else {
+    const day = String(formData.get("date") ?? "");
+    if (!day) return { message: "Choisissez une date." };
+    reminderDates = [...dates, day];
+  }
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}/whatsapp`, {
+      method: "PATCH",
+      body: JSON.stringify({ reminder_dates: reminderDates }),
+      token: await getSessionToken(),
+    });
+  } catch {
+    return { message: "Le service est momentanément indisponible. Vos dates n'ont pas été modifiées." };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (response.status === 422) {
+    const { detail } = (await response.json()) as { detail: { message?: string } };
+    return { message: detail.message ?? "Cette date n'est pas valable." };
+  }
+  if (!response.ok) return { message: "Le service est momentanément indisponible. Vos dates n'ont pas été modifiées." };
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}/relances`);
+  return {};
+}

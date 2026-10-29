@@ -19,7 +19,9 @@ export type WhatsAppOverview = {
   configured: boolean;
   reminders_enabled: boolean;
   reminder_days_before: number[];
-  reminder_dates: string[];
+  reminder_dates: string[]; // AAAA-MM-JJ, passées comprises
+  reminder_dates_chosen: boolean; // choisies par l'organisateur (sinon : calendrier proposé)
+  max_reminder_dates: number;
   calls_enabled: boolean;
   on_demand_reminders: boolean;
   ready: number;

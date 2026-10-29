@@ -1,7 +1,7 @@
 """Étape 4 « Les relances » : envoi des invitations sur WhatsApp, relances et suivi."""
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import date, timedelta
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func, select
@@ -9,7 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
 from app.config import get_settings
-from app.messaging import queue_invitations, queue_reminders
+from app.messaging import (
+    MAX_REMINDER_DATES,
+    now,
+    queue_invitations,
+    queue_reminders,
+    reminder_dates,
+    reminder_moment,
+)
 from app.models import (
     Call,
     Event,
@@ -117,12 +124,9 @@ async def _overview(db: AsyncSession, event: Event) -> WhatsAppOverview:
         configured=provider.configured,
         reminders_enabled=event.whatsapp_reminders_enabled,
         reminder_days_before=settings.reminder_days_before,
-        # Seulement les dates encore à venir : un événement dans moins de 7 jours n'a plus de relance gratuite.
-        reminder_dates=[
-            date
-            for d in settings.reminder_days_before
-            if (date := event.starts_at - timedelta(days=d)) > datetime.now(UTC)
-        ],
+        reminder_dates=reminder_dates(event.starts_at, event.reminder_dates),
+        reminder_dates_chosen=event.reminder_dates is not None,
+        max_reminder_dates=MAX_REMINDER_DATES,
         calls_enabled=event.call_reminders_enabled,
         on_demand_reminders=settings.whatsapp_on_demand_reminders,
         ready=ready,
@@ -168,8 +172,34 @@ async def whatsapp_settings(
         event.whatsapp_reminders_enabled = body.reminders_enabled
     if body.calls_enabled is not None:
         event.call_reminders_enabled = body.calls_enabled
+    if "reminder_dates" in body.model_fields_set:
+        event.reminder_dates = _checked_reminder_dates(event, body.reminder_dates)
     await db.commit()
     return await _overview(db, event)
+
+
+def _checked_reminder_dates(event: Event, days: list[date] | None) -> list[date] | None:
+    """Dates de relance choisies : seules les nouvelles sont contrôlées (une date déjà enregistrée
+    peut être passée, ou se retrouver après l'événement s'il a été avancé : on peut la retirer)."""
+    if days is None:
+        return None
+    chosen = sorted(set(days))
+    if len(chosen) > MAX_REMINDER_DATES:
+        raise _refused(f"{MAX_REMINDER_DATES} dates de relance au maximum.")
+    current = set(reminder_dates(event.starts_at, event.reminder_dates))
+    stop = timedelta(hours=get_settings().whatsapp_reminder_stop_hours)
+    for day in set(chosen) - current:
+        if day < now().date():
+            raise _refused("Cette date est passée. Choisissez une date à venir.")
+        if reminder_moment(day) > event.starts_at - stop:
+            raise _refused("Choisissez une date au plus tard la veille de l'événement.")
+    return chosen
+
+
+def _refused(message: str) -> HTTPException:
+    return HTTPException(
+        status.HTTP_422_UNPROCESSABLE_CONTENT, detail={"message": message}
+    )
 
 
 @router.post(

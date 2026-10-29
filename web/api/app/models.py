@@ -2,11 +2,11 @@
 
 import enum
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, ClassVar
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, func
-from sqlalchemy.dialects.postgresql import INET, JSONB, UUID
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, Numeric, String, func
+from sqlalchemy.dialects.postgresql import ARRAY, INET, JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -116,6 +116,8 @@ class Event(Base):
     )
     whatsapp_reminders_enabled: Mapped[bool] = mapped_column(server_default="true")
     call_reminders_enabled: Mapped[bool] = mapped_column(server_default="false")
+    # Dates choisies par l'organisateur ; None : calendrier proposé (voir messaging.reminder_dates).
+    reminder_dates: Mapped[list[date] | None] = mapped_column(ARRAY(Date))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 

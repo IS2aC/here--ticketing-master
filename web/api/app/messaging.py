@@ -8,7 +8,7 @@ import asyncio
 import logging
 import random
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 
 from sqlalchemy import and_, exists, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,6 +53,28 @@ def card_image_url(token: str) -> str:
 
 def now() -> datetime:
     return datetime.now(UTC)
+
+
+MAX_REMINDER_DATES = 5
+
+
+def reminder_dates(starts_at: datetime, chosen: list[date] | None) -> list[date]:
+    """Dates de relance d'un événement : celles choisies par l'organisateur, sinon le calendrier proposé
+    (WHATSAPP_REMINDER_DAYS_BEFORE, « 7 » par défaut), qui suit la date de l'événement."""
+    if chosen is not None:
+        return sorted(set(chosen))
+    # Heure d'Abidjan = UTC : le jour UTC est le jour local.
+    return sorted(
+        {
+            (starts_at - timedelta(days=d)).date()
+            for d in get_settings().reminder_days_before
+        }
+    )
+
+
+def reminder_moment(day: date) -> datetime:
+    """Une relance part le jour prévu, dès l'ouverture des envois (heure d'Abidjan = UTC)."""
+    return datetime.combine(day, time(get_settings().whatsapp_send_start_hour), UTC)
 
 
 # ---------------------------------------------------------------------------
@@ -126,14 +148,12 @@ async def cancel_reminders(db: AsyncSession, guest_id: uuid.UUID) -> None:
 async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
     """Programme les relances dues et, après la dernière, un appel de la conseillère.
 
-    Relances planifiées par rapport à la date de l'événement (WHATSAPP_REMINDER_DAYS_BEFORE, « 7 » par
-    défaut : la relance offerte, 7 jours avant). Une relance n'est due que si l'invitation est partie
-    avant ce moment, que l'invité n'a pas répondu, et jamais dans les WHATSAPP_REMINDER_STOP_HOURS
-    avant l'événement. Appel : WHATSAPP_CALL_DELAY_DAYS après la dernière relance restée sans réponse.
+    Relances aux dates de l'événement (voir reminder_dates : choisies par l'organisateur, sinon
+    7 jours avant). Une relance n'est due que si l'invitation est partie avant ce moment, que l'invité
+    n'a pas répondu, et jamais dans les WHATSAPP_REMINDER_STOP_HOURS avant l'événement. Appel : WHATSAPP_CALL_DELAY_DAYS après la dernière relance restée sans réponse.
     Renvoie (relances programmées, appels programmés)."""
     settings = get_settings()
     current = now()
-    offsets = settings.reminder_days_before
     invited_at = (
         select(func.min(Message.sent_at))
         .where(
@@ -164,6 +184,7 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
                 Guest.id,
                 Guest.contact_status,
                 Event.starts_at,
+                Event.reminder_dates,
                 Event.whatsapp_reminders_enabled,
                 Event.call_reminders_enabled,
                 invited_at,
@@ -194,6 +215,7 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
         guest_id,
         contact,
         starts_at,
+        chosen,
         reminders_on,
         calls_on,
         invited,
@@ -201,11 +223,11 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
         sent,
         called,
     ) in candidates:
-        # Relances prévues pour cet invité : celles dont le moment est postérieur à son invitation.
+        # Relances prévues pour cet invité : après son invitation, et avant l'arrêt des relances.
         planned = [
-            starts_at - timedelta(days=d)
-            for d in offsets
-            if invited < starts_at - timedelta(days=d)
+            moment
+            for day in reminder_dates(starts_at, chosen)
+            if invited < (moment := reminder_moment(day)) <= starts_at - stop
         ]
         due = sum(moment <= current for moment in planned)
         if reminders_on and sent < due and starts_at - current > stop:
