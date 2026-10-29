@@ -54,16 +54,14 @@ export function formatDate(iso: string): string {
 
 const shortDateFormat = new Intl.DateTimeFormat("fr-FR", {
   timeZone: EVENT_TIME_ZONE,
-  weekday: "short",
   day: "numeric",
   month: "short",
   year: "numeric",
 });
 
-/** « Sam. 31 oct. 2026 » : pour les espaces étroits. */
+/** « 31 oct. 2026 » : pour les espaces étroits (sans le jour, dont la longueur varie). */
 export function formatShortDate(iso: string): string {
-  const text = shortDateFormat.format(new Date(iso));
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  return shortDateFormat.format(new Date(iso));
 }
 
 export function formatTime(iso: string): string {

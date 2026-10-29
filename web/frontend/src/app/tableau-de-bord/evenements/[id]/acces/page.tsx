@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BackToEvent } from "@/components/back-link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -49,12 +48,6 @@ async function Access({ params }: { params: Promise<{ id: string }> }) {
     <>
       <header>
         <BackToEvent eventId={event.id} />
-        <p className="text-[12px] text-text-muted">
-          <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
-            {event.title}
-          </Link>{" "}
-          · Contrôle d&apos;accès
-        </p>
         <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Contrôle d&apos;accès</h1>
       </header>
 

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
+import { Toast } from "@/components/toast";
+import { DeleteEvent } from "./delete-event";
+import { deleteEvent } from "./evenements/actions";
 import { ButtonLink } from "@/components/ui";
 import { getCurrentUser } from "@/lib/auth";
 import { eventType } from "@/lib/event-types";
@@ -11,9 +14,12 @@ export const metadata: Metadata = { title: "Tableau de bord · Here!" };
 
 const NEW_EVENT = "/tableau-de-bord/evenements/nouveau";
 
-export default function DashboardPage() {
+export default function DashboardPage({ searchParams }: PageProps<"/tableau-de-bord">) {
   return (
     <>
+      <Suspense fallback={null}>
+        <Deleted searchParams={searchParams} />
+      </Suspense>
       <header>
         <p className="text-[12px] text-text-muted">Tableau de bord</p>
         <Suspense fallback={<div className="mt-1 h-8 w-64 rounded-md bg-background" />}>
@@ -25,6 +31,12 @@ export default function DashboardPage() {
       </Suspense>
     </>
   );
+}
+
+// Notification après la suppression d'un événement (?supprime=1).
+async function Deleted({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const query = await searchParams;
+  return query.supprime ? <Toast title="Événement supprimé" detail="Ses invités, cartes et réponses ont été supprimés." /> : null;
 }
 
 async function Greeting() {
@@ -69,10 +81,10 @@ async function EventList() {
         {events.map((event) => {
           const type = eventType(event.type);
           return (
-            <li key={event.id}>
+            <li key={event.id} className="flex flex-col rounded-lg bg-background shadow-sm transition-shadow hover:shadow-md">
               <Link
                 href={`/tableau-de-bord/evenements/${event.id}`}
-                className="flex h-full flex-col gap-3 rounded-lg bg-background p-5 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary"
+                className="flex flex-1 flex-col gap-3 rounded-t-lg p-5 pb-3 focus-visible:outline-2 focus-visible:outline-primary"
               >
                 <div className="flex items-center gap-3">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-surface text-text-muted">
@@ -91,17 +103,21 @@ async function EventList() {
                     <span className="truncate">{event.location_name}</span>
                   </p>
                 ) : null}
-                <p className="mt-auto flex items-center gap-4 border-t border-border pt-3 text-[13px]">
-                  <span className="font-data tabular-nums">
-                    {event.stats.guests} invité{event.stats.guests > 1 ? "s" : ""}
-                  </span>
-                  <span className="flex items-center gap-1 font-semibold text-status-confirmed">
-                    <Icon name="valide" width={15} height={15} />
-                    <span className="font-data tabular-nums">{event.stats.confirmed}</span> confirmé
-                    {event.stats.confirmed > 1 ? "s" : ""}
-                  </span>
-                </p>
               </Link>
+              {/* Pied de carte hors du lien : le bouton « Supprimer » ne doit pas ouvrir l'événement. */}
+              <div className="mx-5 flex items-center gap-4 border-t border-border py-3 text-[13px]">
+                <span className="font-data tabular-nums">
+                  {event.stats.guests} invité{event.stats.guests > 1 ? "s" : ""}
+                </span>
+                <span className="flex items-center gap-1 font-semibold text-status-confirmed">
+                  <Icon name="valide" width={15} height={15} />
+                  <span className="font-data tabular-nums">{event.stats.confirmed}</span> confirmé
+                  {event.stats.confirmed > 1 ? "s" : ""}
+                </span>
+                <span className="ml-auto">
+                  <DeleteEvent title={event.title} sent={event.status === "active"} action={deleteEvent.bind(null, event.id)} />
+                </span>
+              </div>
             </li>
           );
         })}

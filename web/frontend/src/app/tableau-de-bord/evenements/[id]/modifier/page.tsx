@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BackToEvent } from "@/components/back-link";
 import { Suspense } from "react";
 import { getEvent, toDateInput, toTimeInput } from "@/lib/events";
@@ -37,15 +36,6 @@ async function EditView({ params }: { params: Promise<{ id: string }> }) {
     <>
       <header>
         <BackToEvent eventId={event.id} />
-        <p className="text-[12px] text-text-muted">
-          <Link href="/tableau-de-bord" className="hover:underline">
-            Mes événements
-          </Link>{" "}
-          ·{" "}
-          <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
-            {event.title}
-          </Link>
-        </p>
         <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Modifier l&apos;événement</h1>
       </header>
       <EventForm

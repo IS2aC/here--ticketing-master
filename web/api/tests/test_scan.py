@@ -131,3 +131,72 @@ def test_link_revoked_expired_and_private(
         ).status_code
         == 404
     )
+
+
+def test_delete_event_removes_everything(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    import asyncio
+
+    import asyncpg
+
+    from tests.conftest import TEST_DATABASE_URL
+
+    event_id, guests = invited(client, organizer)
+    porte = link(client, organizer, event_id)
+    jean = guests["Jean Konan"]
+    client.post(
+        f"/v1/scan/{porte['token']}/check",
+        json={"value": f"/i/{jean['invitation_token']}"},
+    )
+    client.post(
+        f"/v1/invitations/{jean['invitation_token']}/response", json={"attending": True}
+    )
+    client.post(
+        f"/v1/events/{event_id}/whatsapp/invitations", headers=organizer
+    )  # messages en file
+
+    stranger = client.post(
+        "/v1/auth/register",
+        json={
+            "first_name": "A",
+            "last_name": "B",
+            "phone": "0715151515",
+            "password": "mot-de-passe",
+        },
+    ).json()
+    assert (
+        client.delete(
+            f"/v1/events/{event_id}",
+            headers={"Authorization": f"Bearer {stranger['access_token']}"},
+        ).status_code
+        == 404
+    )
+    assert client.delete(f"/v1/events/{event_id}").status_code == 401
+
+    assert client.delete(f"/v1/events/{event_id}", headers=organizer).status_code == 204
+    assert client.get(f"/v1/events/{event_id}", headers=organizer).status_code == 404
+    assert client.get(f"/v1/invitations/{jean['invitation_token']}").status_code == 404
+    assert client.get(f"/v1/scan/{porte['token']}").status_code == 404
+
+    async def leftovers() -> dict[str, int]:
+        conn = await asyncpg.connect(TEST_DATABASE_URL)
+        counts = {}
+        for table in (
+            "guests",
+            "guest_categories",
+            "guest_imports",
+            "event_cards",
+            "scan_links",
+        ):
+            counts[table] = await conn.fetchval(
+                f"SELECT count(*) FROM {table} WHERE event_id = $1", event_id
+            )
+        counts["invitations"] = await conn.fetchval(
+            "SELECT count(*) FROM invitations WHERE token = $1",
+            jean["invitation_token"],
+        )
+        await conn.close()
+        return counts
+
+    assert set(asyncio.run(leftovers()).values()) == {0}

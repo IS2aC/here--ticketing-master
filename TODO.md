@@ -49,7 +49,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - Aucune valeur ne doit passer à la ligne.
   - L'encadré garde ses dimensions actuelles : il ne doit pas s'allonger.
   - Les données doivent y tenir de façon lisible. Une disposition des rubriques de gauche à droite convient.
-- [ ] **Supprimer un événement**, depuis l'encadré de l'événement : supprime aussi tout ce qui lui appartient (catégories, invités, imports, cartes, invitations, liens de scan, entrées, messages et appels).
+- [x] **Supprimer un événement** (fait le 29/10, depuis la liste « Mes événements » du tableau de bord ; les envois en file sont supprimés avec l'événement) : supprime aussi tout ce qui lui appartient (catégories, invités, imports, cartes, invitations, liens de scan, entrées, messages et appels).
   - Action irréversible : boîte de dialogue de confirmation, selon DESIGN.md (« Supprimer l'événement Mariage Aya & Koffi ? », conséquence en une phrase, « Garder l'événement » à gauche, bouton rouge « Supprimer l'événement » à droite).
   - Point technique : `invitations.event_card_id` est en `ON DELETE RESTRICT`. Il faut vérifier que la suppression en cascade passe, ou supprimer explicitement dans le bon ordre.
 - [x] **Bouton « Lancer les invitations » en bas de la liste des invités** (fait le 29/10) (vue de l'événement) : aujourd'hui, l'envoi WhatsApp se lance seulement depuis la page « Relances ». Le bouton doit apparaître quand des cartes sont prêtes, et mettre en file l'envoi des invitations (même action que « Envoyer N invitations » de la page Relances).

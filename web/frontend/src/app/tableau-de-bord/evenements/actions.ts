@@ -102,3 +102,17 @@ export async function updateEvent(id: string, _: EventFormState, formData: FormD
   if (typeof result !== "string") return result;
   redirect(`/tableau-de-bord/evenements/${result}`);
 }
+
+export async function deleteEvent(id: string): Promise<EventFormState> {
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/events/${encodeURIComponent(id)}`, { method: "DELETE", token: await getSessionToken() });
+  } catch {
+    return { message: "Le service est momentanément indisponible. L'événement n'a pas été supprimé." };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (!response.ok && response.status !== 404) {
+    return { message: "Le service est momentanément indisponible. L'événement n'a pas été supprimé." };
+  }
+  redirect("/tableau-de-bord?supprime=1");
+}

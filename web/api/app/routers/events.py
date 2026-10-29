@@ -2,8 +2,8 @@ import uuid
 from collections import defaultdict
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, HTTPException, Response, status
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
@@ -149,6 +149,24 @@ async def update_event(
     await db.commit()
     await db.refresh(event)
     return (await _to_out(db, [event]))[0]
+
+
+@router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_event(
+    event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
+) -> Response:
+    """Supprime l'événement et tout ce qui lui appartient. Irréversible.
+
+    Les invités d'abord : leurs invitations, entrées, messages (y compris ceux encore en file : le worker
+    ne les enverra pas), appels et messages reçus partent avec eux. Ensuite l'événement : catégories,
+    imports, cartes et liens de scan. Cet ordre est nécessaire car une invitation empêche la suppression
+    de sa carte (ON DELETE RESTRICT) et un invité celle de sa catégorie.
+    """
+    event = await owned_event(db, event_id, auth.user.id)
+    await db.execute(delete(Guest).where(Guest.event_id == event.id))
+    await db.execute(delete(Event).where(Event.id == event.id))
+    await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 async def _sync_categories(

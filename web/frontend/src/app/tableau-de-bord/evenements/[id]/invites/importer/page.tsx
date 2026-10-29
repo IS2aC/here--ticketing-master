@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BackToEvent } from "@/components/back-link";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
@@ -92,20 +91,7 @@ export default function ImportPage({
 async function Crumb({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const event = await getEvent(id);
-  return (
-    <>
-      <BackToEvent eventId={event.id} />
-      <p className="text-[12px] text-text-muted">
-        <Link
-          href={`/tableau-de-bord/evenements/${event.id}`}
-          className="hover:underline"
-        >
-          {event.title}
-        </Link>{" "}
-        · Invités
-      </p>
-    </>
-  );
+  return <BackToEvent eventId={event.id} />;
 }
 
 async function Upload({ params }: { params: Promise<{ id: string }> }) {
