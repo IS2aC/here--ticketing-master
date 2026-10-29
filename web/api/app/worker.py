@@ -1,4 +1,4 @@
-"""Worker d'envoi WhatsApp : `python -m app.worker` (service `worker` du docker-compose).
+"""Worker d'envoi WhatsApp : `python -m app.worker` (service `here-worker` du docker-compose).
 
 Un seul worker par numéro WhatsApp. Il sert un invité à la fois, comme le ferait une personne :
 - pause aléatoire de WHATSAPP_MIN_DELAY_SECONDS à WHATSAPP_MAX_DELAY_SECONDS entre deux invités ;

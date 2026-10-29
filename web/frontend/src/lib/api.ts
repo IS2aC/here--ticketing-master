@@ -1,6 +1,6 @@
 import "server-only";
 
-// Appels serveur vers l'API Here! (réseau interne Docker : http://api:8000).
+// Appels serveur vers l'API Here! (réseau interne Docker : http://here-api:8000).
 export function apiUrl(path: string): string {
   const base = process.env.API_URL ?? "http://localhost:8000";
   return new URL(path, base).toString();
@@ -24,7 +24,13 @@ export type SessionResponse = {
 
 export async function apiFetch(path: string, init: RequestInit & { token?: string } = {}): Promise<Response> {
   const { token, headers, ...rest } = init;
-  return fetch(apiUrl(path), {
+  const url = apiUrl(path);
+  // L'erreur est écrite dans les journaux du frontend : l'interface n'affiche qu'un message générique.
+  const fail = (error: unknown): never => {
+    console.error(`API injoignable : ${rest.method ?? "GET"} ${url}`, error);
+    throw error;
+  };
+  return fetch(url, {
     ...rest,
     cache: "no-store",
     signal: AbortSignal.timeout(10_000),
@@ -34,5 +40,8 @@ export async function apiFetch(path: string, init: RequestInit & { token?: strin
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-  });
+  }).then((response) => {
+    if (response.status >= 500) console.error(`API en erreur : ${rest.method ?? "GET"} ${url} → ${response.status}`);
+    return response;
+  }, fail);
 }

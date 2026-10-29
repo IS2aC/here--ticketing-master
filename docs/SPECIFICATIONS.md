@@ -8,11 +8,11 @@ Tout est dans [web/](../web/README.md) et se déploie sur Dokploy avec un seul `
 
 | Service | Technologie | Rôle |
 |---|---|---|
-| `db` | PostgreSQL 16 | Données |
-| `migrate` | dbmate | Applique les migrations SQL au démarrage, avant l'API |
-| `api` | FastAPI (Python 3.12, SQLAlchemy async + asyncpg) | Seul accès à la base. Routes métier versionnées sous `/v1`, pensées pour être appelées aussi par l'app mobile. `/health` pour la supervision |
-| `frontend` | Next.js 16 (TypeScript, Tailwind avec le preset de l'identité Here!) | Interface web. Appelle l'API par le réseau interne |
-| `worker` | Même image que l'API (`python -m app.worker`) | Envoi WhatsApp des invitations et relances, un invité à la fois. **Un seul par numéro WhatsApp** |
+| `here-db` | PostgreSQL 16 | Données |
+| `here-migrate` | dbmate | Applique les migrations SQL au démarrage, avant l'API |
+| `here-api` | FastAPI (Python 3.12, SQLAlchemy async + asyncpg) | Seul accès à la base. Routes métier versionnées sous `/v1`, pensées pour être appelées aussi par l'app mobile. `/health` pour la supervision |
+| `here-frontend` | Next.js 16 (TypeScript, Tailwind avec le preset de l'identité Here!) | Interface web. Appelle l'API par le réseau interne |
+| `here-worker` | Même image que l'API (`python -m app.worker`) | Envoi WhatsApp des invitations et relances, un invité à la fois. **Un seul par numéro WhatsApp** |
 
 L'API et le frontend ont chacun leur domaine dans Dokploy ; l'app mobile utilisera le domaine de l'API.
 
@@ -144,7 +144,7 @@ L'envoi renvoie un `msgId` interne à WasenderAPI ; les webhooks utilisent l'ide
 
 - `PUBLIC_APP_URL` doit être l'adresse **publique https** du site : WasenderAPI télécharge l'image de la carte à cette adresse, et le lien envoyé y mène.
 - L'API doit être joignable en https pour les webhooks.
-- Un seul conteneur `worker` par numéro WhatsApp. Plusieurs numéros (pour aller plus vite) : à prévoir (voir TODO).
+- Un seul conteneur `here-worker` par numéro WhatsApp. Plusieurs numéros (pour aller plus vite) : à prévoir (voir TODO).
 
 ## Base de données
 

@@ -4,13 +4,15 @@ Trois services distincts, orchestrés par [docker-compose.yml](docker-compose.ym
 
 | Service | Dossier | Rôle | Port interne |
 |---|---|---|---|
-| `db` | — | PostgreSQL 16 (volume `db-data`) | 5432 |
-| `migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées | — |
-| `api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
-| `frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://api:8000`) | 3000 |
-| `worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp | — |
+| `here-db` | — | PostgreSQL 16 (volume `db-data`) | 5432 |
+| `here-migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées | — |
+| `here-api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
+| `here-frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://here-api:8000`) | 3000 |
+| `here-worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp | — |
 
-Ordre de démarrage : `db` (sain) → `migrate` (terminé) → `api` (saine) et `worker` → `frontend`.
+Ordre de démarrage : `here-db` (sain) → `here-migrate` (terminé) → `here-api` (saine) et `here-worker` → `here-frontend`.
+
+Les services sont préfixés `here-` : sur Dokploy, tous les projets partagent le réseau `dokploy-network`, et un service nommé `api` ou `db` y entrerait en collision avec celui d'un autre projet.
 
 Par défaut, `WHATSAPP_PROVIDER=console` : **aucun message WhatsApp ne part**, ils sont écrits dans les journaux du worker (`docker compose logs -f worker`). Pour envoyer pour de vrai, voir « Envoi WhatsApp » dans [docs/SPECIFICATIONS.md](../docs/SPECIFICATIONS.md).
 
@@ -29,7 +31,7 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 
 ## Développer sans Docker
 
-Base seule : `docker compose -f docker-compose.yml -f docker-compose.local.yml up db migrate`, puis :
+Base seule : `docker compose -f docker-compose.yml -f docker-compose.local.yml up here-db here-migrate`, puis :
 
 ```bash
 cd api && uv sync && DATABASE_URL=postgres://here:changez-moi@localhost:5433/here uv run uvicorn app.main:app --reload
@@ -43,7 +45,7 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 
 1. Créer une application **Docker Compose** sur ce dépôt, chemin du fichier : `web/docker-compose.yml`.
 2. Onglet **Environment** : reprendre `.env.example` (au minimum `POSTGRES_PASSWORD`, `CORS_ORIGINS` et `PUBLIC_APP_URL` avec le domaine du frontend ; pour WhatsApp : `WHATSAPP_PROVIDER=wasender`, `WASENDER_API_KEY`, `WASENDER_WEBHOOK_SECRET`).
-3. Onglet **Domains** : `frontend` sur le port 3000, `api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
+3. Onglet **Domains** : `here-frontend` sur le port 3000, `here-api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
 4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
 
 ## Ajouter une migration

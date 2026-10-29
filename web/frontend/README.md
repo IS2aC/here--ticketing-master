@@ -1,6 +1,6 @@
 # Here! · frontend (Next.js)
 
-Interface web de Here!. Ne parle jamais directement à la base : toutes les données passent par l'API (`API_URL`, `http://api:8000` dans Docker).
+Interface web de Here!. Ne parle jamais directement à la base : toutes les données passent par l'API (`API_URL`, `http://here-api:8000` dans Docker).
 
 - Identité visuelle : copie de `uiux/visual-identity` dans `src/styles/brand/` (tokens, polices, preset Tailwind) et `public/brand/` (logos). Règles : `uiux/visual-identity/DESIGN.md`.
 - Pages : `/` (accueil), `/inscription`, `/connexion`, `/tableau-de-bord` (liste des événements), `/tableau-de-bord/evenements/nouveau`, `/tableau-de-bord/evenements/[id]` (vue de l'événement et liste des invités), `/[id]/modifier`, `/[id]/invites/importer` puis `/[id]/invites/importer/[importId]` (aperçu avant import), `/modele-invites.xlsx` (modèle Excel), `/[id]/carte` (étape 3 : la carte), `/tableau-de-bord/cartes` (bibliothèque), `/i/[jeton]` (page invité : répondre, QR code d'entrée, `/i/[jeton]/agenda.ics`), `/[id]/acces` (liens de scan), `/scan/[jeton]` (écran des agents d'accueil : caméra + jsQR, code saisi, recherche par nom ; la caméra exige https, sauf sur localhost).
