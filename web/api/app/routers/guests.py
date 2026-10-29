@@ -1,4 +1,5 @@
 import io
+import secrets
 import uuid
 from collections import Counter
 
@@ -32,11 +33,14 @@ from app.models import (
     ImportStatus,
     Invitation,
 )
+from app.phone import normalize_phone
 from app.routers.events import owned_event
 from app.schemas import (
+    GuestIn,
     GuestOut,
     ImportColumnOut,
     ImportOut,
+    ImportRowIn,
     ImportRowOut,
     ImportSummary,
 )
@@ -221,31 +225,38 @@ async def confirm_import(
     return _import_out(imp, [])
 
 
+def _guest_query():
+    return (
+        select(Guest, GuestCategory.name, Invitation.token)
+        .join(GuestCategory, GuestCategory.id == Guest.category_id)
+        .outerjoin(Invitation, Invitation.guest_id == Guest.id)
+    )
+
+
+def _guest_out(guest: Guest, category: str, token: str | None) -> GuestOut:
+    fields = [
+        k for k in GuestOut.model_fields if k not in {"category", "invitation_token"}
+    ]
+    return GuestOut.model_validate(
+        {
+            **{k: getattr(guest, k) for k in fields},
+            "category": category,
+            "invitation_token": token,
+        }
+    )
+
+
 @router.get("/events/{event_id}/guests")
 async def list_guests(
     event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
 ) -> list[GuestOut]:
     event = await owned_event(db, event_id, auth.user.id)
     rows = await db.execute(
-        select(Guest, GuestCategory.name, Invitation.token)
-        .join(GuestCategory, GuestCategory.id == Guest.category_id)
-        .outerjoin(Invitation, Invitation.guest_id == Guest.id)
+        _guest_query()
         .where(Guest.event_id == event.id)
         .order_by(Guest.phone_valid, Guest.display_name)
     )
-    fields = [
-        k for k in GuestOut.model_fields if k not in {"category", "invitation_token"}
-    ]
-    return [
-        GuestOut.model_validate(
-            {
-                **{k: getattr(g, k) for k in fields},
-                "category": name,
-                "invitation_token": token,
-            }
-        )
-        for g, name, token in rows
-    ]
+    return [_guest_out(*row) for row in rows]
 
 
 @router.get("/guests/import-template", response_class=Response)
@@ -274,3 +285,192 @@ async def import_template() -> Response:
             "Content-Disposition": 'attachment; filename="modele-invites-here.xlsx"'
         },
     )
+
+
+# --- Invités saisis à la main -------------------------------------------------------------
+
+
+def _refused(field: str, message: str, code: int = status.HTTP_400_BAD_REQUEST):
+    return HTTPException(code, detail={"field": field, "message": message})
+
+
+async def _checked_guest(
+    db: AsyncSession, event: Event, body: GuestIn, guest_id: uuid.UUID | None = None
+) -> dict:
+    """Champs de l'invité, vérifiés : nom, numéro valide ou vide, catégorie de l'événement, pas de doublon."""
+    last_name, first_names = body.last_name or None, body.first_names or None
+    display_name = " ".join(p for p in (first_names, last_name) if p)
+    if not display_name:
+        raise _refused("last_name", "Indiquez au moins un nom ou un prénom.")
+    phone = None
+    if body.phone:
+        phone = normalize_phone(body.phone)
+        if phone is None:
+            raise _refused(
+                "phone", "Ce numéro n'est pas valide. Exemple : 07 07 12 34 56."
+            )
+    category = await db.scalar(
+        select(GuestCategory).where(
+            GuestCategory.id == body.category_id, GuestCategory.event_id == event.id
+        )
+    )
+    if category is None:
+        raise _refused("category_id", "Choisissez une catégorie de l'événement.")
+    others = await db.execute(
+        select(Guest.phone, Guest.display_name).where(
+            Guest.event_id == event.id, Guest.id != guest_id
+        )
+    )
+    key = guest_key(phone, display_name)
+    same = next((name for p, name in others if guest_key(p, name) == key), None)
+    if same:
+        raise _refused(
+            "phone" if phone else "last_name",
+            f"Déjà dans la liste : {same}.",
+            status.HTTP_409_CONFLICT,
+        )
+    return {
+        "last_name": last_name,
+        "first_names": first_names,
+        "display_name": display_name,
+        "phone": phone,
+        "phone_valid": phone is not None,
+        "category_id": category.id,
+        "seat": body.seat or None,
+    }
+
+
+async def _owned_guest(db: AsyncSession, guest_id: uuid.UUID, user_id: uuid.UUID):
+    row = (
+        await db.execute(
+            select(Guest, Event)
+            .join(Event, Event.id == Guest.event_id)
+            .where(Guest.id == guest_id, Event.user_id == user_id)
+        )
+    ).one_or_none()
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Invité introuvable.")
+    return row[0], row[1]
+
+
+async def _guest_by_id(db: AsyncSession, guest_id: uuid.UUID) -> GuestOut:
+    return _guest_out(
+        *(await db.execute(_guest_query().where(Guest.id == guest_id))).one()
+    )
+
+
+@router.post("/events/{event_id}/guests", status_code=status.HTTP_201_CREATED)
+async def add_guest(
+    event_id: uuid.UUID, body: GuestIn, auth: CurrentAuth, db: DbSession
+) -> GuestOut:
+    """Ajoute un invité. Si les cartes de l'événement sont déjà préparées, il reçoit la sienne."""
+    event = await owned_event(db, event_id, auth.user.id)
+    guest = Guest(event_id=event.id, **await _checked_guest(db, event, body))
+    db.add(guest)
+    await db.flush()
+    card_id = await db.scalar(
+        select(Invitation.event_card_id)
+        .join(Guest, Guest.id == Invitation.guest_id)
+        .where(Guest.event_id == event.id)
+        .limit(1)
+    )
+    if card_id is not None:
+        db.add(
+            Invitation(
+                guest_id=guest.id,
+                event_card_id=card_id,
+                token=secrets.token_urlsafe(24),
+            )
+        )
+    await db.commit()
+    return await _guest_by_id(db, guest.id)
+
+
+@router.get("/guests/{guest_id}")
+async def get_guest(guest_id: uuid.UUID, auth: CurrentAuth, db: DbSession) -> GuestOut:
+    guest, _ = await _owned_guest(db, guest_id, auth.user.id)
+    return await _guest_by_id(db, guest.id)
+
+
+@router.patch("/guests/{guest_id}")
+async def update_guest(
+    guest_id: uuid.UUID, body: GuestIn, auth: CurrentAuth, db: DbSession
+) -> GuestOut:
+    """Modifie un invité. Sa réponse et ses envois sont gardés ; sa carte suit les nouvelles informations."""
+    guest, event = await _owned_guest(db, guest_id, auth.user.id)
+    for field, value in (await _checked_guest(db, event, body, guest.id)).items():
+        setattr(guest, field, value)
+    await db.commit()
+    return await _guest_by_id(db, guest.id)
+
+
+@router.delete("/guests/{guest_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_guest(
+    guest_id: uuid.UUID, auth: CurrentAuth, db: DbSession
+) -> Response:
+    """Retire un invité de la liste, avec sa carte, ses envois et son entrée. Irréversible."""
+    guest, _ = await _owned_guest(db, guest_id, auth.user.id)
+    await db.delete(guest)
+    await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# --- Aperçu d'import : corriger ou retirer une ligne ------------------------------------
+
+
+async def _pending_import(
+    db: AsyncSession, event_id: uuid.UUID, import_id: uuid.UUID, user_id: uuid.UUID
+) -> GuestImport:
+    event = await owned_event(db, event_id, user_id)
+    imp = await _owned_import(db, event, import_id, lock=True)
+    if imp.status != ImportStatus.pending:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail={"message": "Cette liste a déjà été importée."},
+        )
+    return imp
+
+
+def _without_line(imp: GuestImport, line: int) -> list[dict]:
+    rows = [r for r in imp.rows if r["line"] != line]
+    if len(rows) == len(imp.rows):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Ligne introuvable.")
+    return rows
+
+
+@router.patch("/events/{event_id}/imports/{import_id}/rows/{line}")
+async def fix_import_row(
+    event_id: uuid.UUID,
+    import_id: uuid.UUID,
+    line: int,
+    body: ImportRowIn,
+    auth: CurrentAuth,
+    db: DbSession,
+) -> ImportOut:
+    """Corrige une ligne de l'aperçu : elle est vérifiée à nouveau, comme celles du fichier."""
+    imp = await _pending_import(db, event_id, import_id, auth.user.id)
+    rows = _without_line(imp, line)
+    rows.append({"line": line, **{k: v or None for k, v in body.model_dump().items()}})
+    imp.rows = sorted(
+        rows, key=lambda r: r["line"]
+    )  # nouvelle liste : JSONB à réécrire
+    await db.commit()
+    await db.refresh(imp)
+    return _import_out(imp, await _check(db, imp))
+
+
+@router.delete("/events/{event_id}/imports/{import_id}/rows/{line}")
+async def drop_import_row(
+    event_id: uuid.UUID,
+    import_id: uuid.UUID,
+    line: int,
+    auth: CurrentAuth,
+    db: DbSession,
+) -> ImportOut:
+    """Retire une ligne de l'aperçu : elle ne sera pas importée."""
+    imp = await _pending_import(db, event_id, import_id, auth.user.id)
+    imp.rows = _without_line(imp, line)
+    imp.total_rows = len(imp.rows)
+    await db.commit()
+    await db.refresh(imp)
+    return _import_out(imp, await _check(db, imp))

@@ -10,7 +10,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [x] **Mot de passe oublié** (fait le 29/10) : code à 6 chiffres par WhatsApp, valable 15 minutes, 5 essais, 3 codes par heure et par compte, 10 demandes par heure et par adresse IP ; tous les appareils déconnectés ensuite. Table `otp_codes`, réutilisable pour l'OTP à l'inscription. Pas d'envoi par e-mail (aucun service d'e-mail sur la plateforme).
 - [ ] **Plusieurs lieux par événement** (Cérémonie, Réception… comme dans la maquette `backoffice-creation`) : aujourd'hui un seul lieu.
 - [ ] **Fuseau horaire par événement** (Cotonou, Lomé…) : aujourd'hui tout est à l'heure d'Abidjan.
-- [ ] **Corriger une ligne dans l'aperçu d'import** (lien « Corriger » de la maquette) et **modifier ou ajouter un invité à la main** : aujourd'hui, on corrige le fichier et on réimporte.
+- [x] **Corriger une ligne dans l'aperçu d'import** et **ajouter, modifier ou retirer un invité à la main** (fait le 29/10) : lien « Corriger » sur chaque ligne de l'aperçu (vérifiée à nouveau, ou retirée) ; « Ajouter un invité » et « Modifier » sur la liste de l'événement, avec « Retirer de la liste » (confirmation). Numéro valide ou vide, doublons refusés ; un invité ajouté après la préparation des cartes reçoit la sienne.
 - [ ] **Nombre de personnes par invité** (colonne « Nb pers. » de la maquette, accompagnants) : aujourd'hui 1 par défaut.
 - [ ] **Personnaliser la carte** : photo, textes, couleurs, carte par catégorie (maquette `backoffice-carte`) ; import d'un modèle de carte. Aujourd'hui : une carte automatique par type d'événement.
 - [ ] **Cartes proposées et modifiées par IA** (à commencer simple, avec **1min.ai**) :

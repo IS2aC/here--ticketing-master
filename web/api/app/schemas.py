@@ -194,6 +194,8 @@ class ImportColumnOut(BaseModel):
 class ImportRowOut(BaseModel):
     line: int
     display_name: str
+    last_name: str | None = None
+    first_names: str | None = None
     phone: str | None
     phone_valid: bool
     category: str | None
@@ -221,6 +223,37 @@ class ImportOut(BaseModel):
     summary: ImportSummary
     imported_rows: int
     rows: list[ImportRowOut]
+
+
+GuestText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=100)]
+
+
+class GuestIn(BaseModel):
+    """Invité saisi ou modifié à la main. Un nom ou un prénom au moins ; numéro valide ou vide."""
+
+    last_name: GuestText | None = None
+    first_names: GuestText | None = None
+    phone: (
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=40)] | None
+    ) = None
+    category_id: uuid.UUID
+    seat: (
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None
+    ) = None
+
+
+class ImportRowIn(BaseModel):
+    """Ligne de l'aperçu d'import corrigée. La catégorie est un nom, comme dans le fichier."""
+
+    last_name: GuestText | None = None
+    first_names: GuestText | None = None
+    phone: (
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=40)] | None
+    ) = None
+    category: GuestText | None = None
+    seat: (
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None
+    ) = None
 
 
 class GuestOut(BaseModel):

@@ -24,6 +24,8 @@ export type ImportOut = {
   rows: {
     line: number;
     display_name: string;
+    last_name: string | null;
+    first_names: string | null;
     phone: string | null;
     phone_valid: boolean;
     category: string | null;
@@ -37,8 +39,11 @@ export type GuestOut = {
   id: string;
   invitation_token: string | null;
   display_name: string;
+  last_name: string | null;
+  first_names: string | null;
   phone: string | null;
   phone_valid: boolean;
+  category_id: string;
   category: string;
   seat: string | null;
   rsvp_status: "pending" | "confirmed" | "declined";
@@ -60,4 +65,8 @@ export function getGuests(eventId: string): Promise<GuestOut[]> {
 
 export function getImport(eventId: string, importId: string): Promise<ImportOut> {
   return getJson(`/v1/events/${encodeURIComponent(eventId)}/imports/${encodeURIComponent(importId)}`);
+}
+
+export function getGuest(guestId: string): Promise<GuestOut> {
+  return getJson(`/v1/guests/${encodeURIComponent(guestId)}`);
 }

@@ -152,6 +152,12 @@ async function EventView({
           title={`${imported.toLocaleString("fr-FR")} invité${imported > 1 ? "s" : ""} importé${imported > 1 ? "s" : ""}`}
           detail="Votre liste est à jour."
         />
+      ) : typeof query.ajoute === "string" ? (
+        <Toast title="Invité ajouté" detail={`${query.ajoute} est dans la liste. Sa carte est prête si celles de l'événement le sont.`} />
+      ) : typeof query.modifie === "string" ? (
+        <Toast title="Invité modifié" detail={`${query.modifie} : sa carte suit les nouvelles informations.`} />
+      ) : typeof query.retire === "string" ? (
+        <Toast title="Invité retiré" detail={`${query.retire} n'est plus dans la liste. Sa carte et sa réponse ont été supprimées.`} />
       ) : null}
     </>
   );
@@ -185,12 +191,18 @@ function GuestList({
             </p>
           ) : null}
         </div>
-        <ButtonLink href={importUrl} variant={ready > 0 ? "ghost" : "primary"} className="h-10 text-[14px]">
-          <Icon name="importer" width={18} height={18} />
-          Importer des invités
-        </ButtonLink>
+        <div className="flex flex-wrap gap-2">
+          <ButtonLink href={`/tableau-de-bord/evenements/${eventId}/invites/nouveau`} variant="ghost" className="h-10 text-[14px]">
+            <Icon name="ajouter" width={18} height={18} />
+            Ajouter un invité
+          </ButtonLink>
+          <ButtonLink href={importUrl} variant={ready > 0 ? "ghost" : "primary"} className="h-10 text-[14px]">
+            <Icon name="importer" width={18} height={18} />
+            Importer des invités
+          </ButtonLink>
+        </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-[13px]">
           <thead>
             <tr className="text-left text-[12px] text-text-muted">
@@ -199,6 +211,9 @@ function GuestList({
                   {h}
                 </th>
               ))}
+              <th className="border-b border-border px-3 pb-2">
+                <span className="sr-only">Modifier</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -253,6 +268,16 @@ function GuestList({
                     ) : (
                       <span className="text-text-muted">—</span>
                     )}
+                  </td>
+                  <td className="border-b border-border px-3 py-2.5 text-right whitespace-nowrap">
+                    <Link
+                      href={`/tableau-de-bord/evenements/${eventId}/invites/${g.id}`}
+                      aria-label={`Modifier ${g.display_name}`}
+                      className="inline-flex items-center gap-1 font-semibold text-text-muted hover:text-text hover:underline"
+                    >
+                      <Icon name="modifier" width={14} height={14} />
+                      {g.phone_valid ? "Modifier" : "Corriger"}
+                    </Link>
                   </td>
                 </tr>
               );

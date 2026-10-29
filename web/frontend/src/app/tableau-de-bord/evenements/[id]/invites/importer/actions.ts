@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { getSessionToken } from "@/lib/session";
@@ -53,4 +54,42 @@ export async function confirmImport(eventId: string, importId: string): Promise<
   if (!response.ok) return { message: UNAVAILABLE };
   const { imported_rows } = (await response.json()) as { imported_rows: number };
   redirect(`/tableau-de-bord/evenements/${eventId}?importes=${imported_rows}`);
+}
+
+export type RowFixState = { message?: string; saved?: number };
+
+async function editRow(eventId: string, importId: string, line: number, method: "PATCH" | "DELETE", body?: unknown): Promise<RowFixState> {
+  let response: Response;
+  try {
+    response = await apiFetch(`${base(eventId)}/${encodeURIComponent(importId)}/rows/${line}`, {
+      method,
+      token: await getSessionToken(),
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    return { message: UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (response.status === 409) redirect(`/tableau-de-bord/evenements/${eventId}`); // déjà importée
+  if (response.status === 422) return { message: "Un champ est trop long. Raccourcissez-le." };
+  if (!response.ok) return { message: UNAVAILABLE };
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}/invites/importer/${importId}`);
+  return { saved: Date.now() };
+}
+
+/** Corrige une ligne de l'aperçu : elle est vérifiée à nouveau. */
+export async function fixImportRow(eventId: string, importId: string, line: number, _: RowFixState, formData: FormData): Promise<RowFixState> {
+  const value = (name: string) => String(formData.get(name) ?? "").trim() || null;
+  return editRow(eventId, importId, line, "PATCH", {
+    last_name: value("last_name"),
+    first_names: value("first_names"),
+    phone: value("phone"),
+    category: value("category"),
+    seat: value("seat"),
+  });
+}
+
+/** Retire une ligne de l'aperçu : elle ne sera pas importée. */
+export async function dropImportRow(eventId: string, importId: string, line: number): Promise<RowFixState> {
+  return editRow(eventId, importId, line, "DELETE");
 }

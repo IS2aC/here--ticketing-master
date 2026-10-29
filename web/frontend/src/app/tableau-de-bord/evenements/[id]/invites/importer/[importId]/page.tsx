@@ -6,10 +6,10 @@ import { Icon, type IconName } from "@/components/icons";
 import { ButtonLink } from "@/components/ui";
 import { getEvent } from "@/lib/events";
 import { getImport, type ImportOut, type RowStatus } from "@/lib/guests";
-import { formatPhone } from "@/lib/phone";
 import { Steps } from "../../../../steps";
-import { confirmImport } from "../actions";
+import { confirmImport, dropImportRow, fixImportRow } from "../actions";
 import { ConfirmButton } from "./confirm-button";
+import { ImportRow } from "./import-row";
 
 export const metadata: Metadata = { title: "Vérifier votre liste · Here!" };
 
@@ -49,6 +49,7 @@ async function Review({ params }: { params: Promise<{ id: string; importId: stri
   const toFix = imp.rows.filter((r) => r.status !== "ready").length;
   const shown = imp.rows.slice(0, PREVIEW_LIMIT);
   const back = `/tableau-de-bord/evenements/${id}/invites/importer`;
+  const categories = event.categories.map((c) => c.name);
 
   return (
     <>
@@ -110,8 +111,8 @@ async function Review({ params }: { params: Promise<{ id: string; importId: stri
                 </p>
               ) : null}
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] border-collapse text-[13px]">
+            <div className="relative overflow-x-auto">
+              <table className="w-full min-w-[720px] border-collapse text-[13px]">
                 <thead>
                   <tr className="text-left text-[12px] text-text-muted">
                     {["Invité", "Numéro WhatsApp", "Catégorie", "Position", "Vérification"].map((h) => (
@@ -119,34 +120,23 @@ async function Review({ params }: { params: Promise<{ id: string; importId: stri
                         {h}
                       </th>
                     ))}
+                    <th className="border-b border-border px-3 pb-2">
+                      <span className="sr-only">Corriger</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {shown.map((row) => {
                     const s = STATUS[row.status];
                     return (
-                      <tr key={row.line} className={s.row}>
-                        <td className="border-b border-border px-3 py-2.5 font-semibold">
-                          {row.display_name || <span className="text-text-muted">Ligne {row.line}</span>}
-                        </td>
-                        <td className="border-b border-border px-3 py-2.5 font-data whitespace-nowrap tabular-nums">
-                          {row.phone ? (row.phone_valid ? formatPhone(row.phone) : row.phone) : "—"}
-                        </td>
-                        <td className="border-b border-border px-3 py-2.5">
-                          {row.category ?? row.raw_category ? (
-                            <span className="inline-flex h-[22px] items-center rounded-sm bg-surface px-2 text-[11px] font-semibold tracking-[0.04em] uppercase">
-                              {row.category ?? row.raw_category}
-                            </span>
-                          ) : null}
-                        </td>
-                        <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">{row.seat ?? "—"}</td>
-                        <td className={`border-b border-border px-3 py-2.5 font-semibold ${s.tone}`}>
-                          <span className="inline-flex items-center gap-1.5">
-                            <Icon name={s.icon} width={15} height={15} className="shrink-0" />
-                            {s.label(row)}
-                          </span>
-                        </td>
-                      </tr>
+                      <ImportRow
+                        key={row.line}
+                        row={row}
+                        status={{ icon: s.icon, label: s.label(row), tone: s.tone, row: s.row }}
+                        categories={categories}
+                        fix={fixImportRow.bind(null, id, importId, row.line)}
+                        drop={dropImportRow.bind(null, id, importId, row.line)}
+                      />
                     );
                   })}
                 </tbody>
@@ -159,7 +149,8 @@ async function Review({ params }: { params: Promise<{ id: string; importId: stri
             ) : null}
             {summary.not_imported ? (
               <p className="text-[13px] text-text-muted">
-                Pour ajouter les lignes non importées, corrigez votre fichier puis cliquez sur « Changer de fichier ».
+                Pour ajouter une ligne non importée, cliquez sur « Corriger » : elle est vérifiée à nouveau. Vous pouvez aussi corriger
+                votre fichier puis cliquer sur « Changer de fichier ».
               </p>
             ) : null}
           </div>
