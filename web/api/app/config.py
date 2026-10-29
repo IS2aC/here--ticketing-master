@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -63,6 +63,33 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
+# Réglages modifiables depuis le portail admin (table platform_settings), sans redéployer.
+# Les autres restent dans l'environnement.
+EDITABLE = (
+    "whatsapp_provider",
+    "whatsapp_reminder_days_before",
+    "whatsapp_min_delay_seconds",
+    "whatsapp_max_delay_seconds",
+    "whatsapp_batch_size",
+    "whatsapp_batch_pause_minutes",
+    "whatsapp_send_start_hour",
+    "whatsapp_send_end_hour",
+)
+
+_current: Settings | None = None
+
+
 @lru_cache
-def get_settings() -> Settings:
+def env_settings() -> Settings:
+    """Réglages de l'environnement seul (valeurs par défaut du portail admin)."""
     return Settings()
+
+
+def get_settings() -> Settings:
+    return _current or env_settings()
+
+
+def apply_overrides(overrides: dict[str, Any]) -> None:
+    """Remplace les réglages de l'environnement par ceux du portail admin (déjà validés)."""
+    global _current
+    _current = env_settings().model_copy(update=overrides) if overrides else None

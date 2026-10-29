@@ -4,6 +4,7 @@ Un seul worker par numéro WhatsApp. Il sert un invité à la fois, comme le fer
 - pause aléatoire de WHATSAPP_MIN_DELAY_SECONDS à WHATSAPP_MAX_DELAY_SECONDS entre deux invités ;
 - longue pause de WHATSAPP_BATCH_PAUSE_MINUTES tous les WHATSAPP_BATCH_SIZE invités ;
 - aucun envoi en dehors de WHATSAPP_SEND_START_HOUR – WHATSAPP_SEND_END_HOUR (heure d'Abidjan).
+Ces réglages et le prestataire peuvent être changés depuis le portail admin, sans redémarrer.
 Il programme aussi les relances automatiques et la file d'appels (app/messaging.plan_follow_ups).
 """
 
@@ -21,6 +22,7 @@ from app.messaging import (
     resolve_whatsapp_ids,
     send_message,
 )
+from app.platform import refresh_settings
 from app.whatsapp import get_provider
 
 log = logging.getLogger("here.worker")
@@ -36,7 +38,8 @@ def in_send_hours(moment: datetime) -> bool:
 
 
 async def run(stop: asyncio.Event) -> None:
-    settings = get_settings()
+    async for db in get_session():
+        await refresh_settings(db)
     provider = get_provider()
     get_engine()
     log.info("Worker WhatsApp démarré (prestataire : %s).", provider.name)
@@ -55,6 +58,19 @@ async def run(stop: asyncio.Event) -> None:
 
     while not stop.is_set():
         try:
+            # Réglages du portail admin (prestataire, calendrier, cadence) : pris en compte sans redémarrer.
+            async for db in get_session():
+                await refresh_settings(db)
+            settings = get_settings()
+            if get_provider() is not provider:
+                provider = get_provider()
+                log.info("Prestataire d'envoi : %s.", provider.name)
+                if not provider.configured:
+                    log.error(
+                        "Prestataire %s non configuré : aucun message ne partira.",
+                        provider.name,
+                    )
+
             if loop.time() - last_plan >= PLAN_EVERY_SECONDS:
                 async for db in get_session():
                     reminders, calls = await plan_follow_ups(db)

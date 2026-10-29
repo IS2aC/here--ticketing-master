@@ -412,3 +412,123 @@ class ProfileUpdate(BaseModel):
 class PasswordChange(BaseModel):
     current_password: str = Field(min_length=1, max_length=128)
     new_password: str = Field(min_length=8, max_length=128)
+
+
+# ---------------------------------------------------------------------------
+# Portail admin (équipe Here!)
+# ---------------------------------------------------------------------------
+
+
+class AdminOverview(BaseModel):
+    organizers: int
+    organizers_last_7_days: int
+    events: dict[EventStatus, int]  # par statut
+    upcoming_events: int  # à venir, non annulés
+    guests: int
+    rsvp: dict[RsvpStatus, int]  # réponses des invités
+    invitations_sent: int
+    reminders_sent: int
+    messages_queued: int
+    messages_failed: int
+    checkins: int
+    calls_scheduled: int
+    provider: str
+    provider_configured: bool
+
+
+class AdminUser(BaseModel):
+    id: uuid.UUID
+    first_name: str
+    last_name: str
+    phone: str
+    email: str | None
+    organization: str | None
+    city: str | None
+    country: str | None
+    role: UserRole
+    on_demand_reminders: bool
+    created_at: datetime
+    last_login_at: datetime | None
+    events: int
+
+
+class AdminUserPage(BaseModel):
+    total: int
+    items: list[AdminUser]
+
+
+class AdminEvent(BaseModel):
+    id: uuid.UUID
+    title: str
+    type: EventType
+    status: EventStatus
+    starts_at: datetime
+    organizer_id: uuid.UUID
+    organizer_name: str
+    guests: int
+    cards: int  # invités dont la carte est préparée
+    invitations_sent: int
+    confirmed: int
+    declined: int
+    pending: int
+    checkins: int
+    messages_failed: int
+
+
+class AdminEventPage(BaseModel):
+    total: int
+    items: list[AdminEvent]
+
+
+class AdminUserDetail(AdminUser):
+    billing_address: str | None
+    tax_id: str | None
+    event_list: list[AdminEvent]
+
+
+class AdminUserUpdate(BaseModel):
+    on_demand_reminders: bool
+
+
+class PlatformValues(BaseModel):
+    """Réglages modifiables depuis le portail admin (mêmes noms que les variables d'environnement)."""
+
+    whatsapp_provider: Literal["console", "wasender"]
+    whatsapp_reminder_days_before: list[int]  # jours avant l'événement
+    whatsapp_min_delay_seconds: float
+    whatsapp_max_delay_seconds: float
+    whatsapp_batch_size: int
+    whatsapp_batch_pause_minutes: float
+    whatsapp_send_start_hour: int  # heure d'Abidjan
+    whatsapp_send_end_hour: int
+
+
+class ProviderOption(BaseModel):
+    value: str
+    label: str
+    available: bool  # connecteur écrit
+    configured: bool  # clés présentes dans l'environnement
+
+
+class PlatformSettingsOut(BaseModel):
+    values: PlatformValues  # en vigueur
+    defaults: PlatformValues  # de l'environnement
+    overridden: list[str]  # réglages modifiés depuis le portail
+    providers: list[ProviderOption]
+    updated_at: datetime | None
+
+
+ReminderDays = Annotated[list[Annotated[int, Field(ge=1, le=90)]], Field(max_length=5)]
+
+
+class PlatformSettingsIn(BaseModel):
+    """Champ absent : inchangé. null : retour à la valeur de l'environnement."""
+
+    whatsapp_provider: Literal["console", "wasender"] | None = None
+    whatsapp_reminder_days_before: ReminderDays | None = None
+    whatsapp_min_delay_seconds: Annotated[float, Field(ge=5, le=600)] | None = None
+    whatsapp_max_delay_seconds: Annotated[float, Field(ge=5, le=600)] | None = None
+    whatsapp_batch_size: Annotated[int, Field(ge=1, le=500)] | None = None
+    whatsapp_batch_pause_minutes: Annotated[float, Field(ge=0, le=240)] | None = None
+    whatsapp_send_start_hour: Annotated[int, Field(ge=0, le=23)] | None = None
+    whatsapp_send_end_hour: Annotated[int, Field(ge=1, le=24)] | None = None

@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -5,12 +6,22 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.db import dispose_engine
+from app.db import dispose_engine, get_session
+from app.platform import refresh_settings
 from app.routers import health, v1
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    try:
+        async for db in get_session():
+            await refresh_settings(db)
+    except (
+        Exception
+    ):  # base indisponible : l'API démarre avec les réglages de l'environnement
+        logging.getLogger("here.api").exception(
+            "Réglages du portail admin non chargés."
+        )
     yield
     await dispose_engine()
 

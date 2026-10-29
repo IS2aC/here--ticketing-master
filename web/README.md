@@ -48,6 +48,17 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 3. Onglet **Domains** : `here-frontend` sur le port 3000, `here-api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
 4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
 
+## Portail admin (équipe Here!)
+
+Un compte devient admin par une commande, depuis le terminal du conteneur `here-api` (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :
+
+```bash
+python -m app.admin 07 07 12 34 56            # donne le rôle admin
+python -m app.admin 07 07 12 34 56 --retirer  # le retire
+```
+
+Les réglages modifiés depuis le portail (prestataire WhatsApp, calendrier proposé des relances, cadence d'envoi) sont gardés en base (`platform_settings`) et remplacent les variables d'environnement du même nom, sans redéployer : l'API les applique tout de suite, le worker à son tour de boucle suivant. Sans réglage en base, la variable d'environnement s'applique.
+
 ## Ajouter une migration
 
 Créer `db/migrations/AAAAMMJJHHMMSS_description.sql` avec deux sections `-- migrate:up` et `-- migrate:down`. Ne jamais modifier une migration déjà déployée : en ajouter une nouvelle.

@@ -27,6 +27,7 @@ from app.models import (
     MessageKind,
     MessageStatus,
     RsvpStatus,
+    User,
 )
 from app.routers.events import owned_event
 from app.schemas import (
@@ -44,7 +45,7 @@ router = APIRouter(tags=["whatsapp"])
 _DONE = (MessageStatus.sent, MessageStatus.delivered, MessageStatus.read)
 
 
-async def _overview(db: AsyncSession, event: Event) -> WhatsAppOverview:
+async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOverview:
     provider = get_provider()
     counts = {
         MessageKind.invitation: MessageCounts(),
@@ -128,7 +129,7 @@ async def _overview(db: AsyncSession, event: Event) -> WhatsAppOverview:
         reminder_dates_chosen=event.reminder_dates is not None,
         max_reminder_dates=MAX_REMINDER_DATES,
         calls_enabled=event.call_reminders_enabled,
-        on_demand_reminders=settings.whatsapp_on_demand_reminders,
+        on_demand_reminders=_on_demand(owner),
         ready=ready,
         without_phone=without_phone,
         without_card=without_card,
@@ -159,7 +160,7 @@ async def _overview(db: AsyncSession, event: Event) -> WhatsAppOverview:
 async def whatsapp_overview(
     event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
 ) -> WhatsAppOverview:
-    return await _overview(db, await owned_event(db, event_id, auth.user.id))
+    return await _overview(db, await owned_event(db, event_id, auth.user.id), auth.user)
 
 
 @router.patch("/events/{event_id}/whatsapp")
@@ -175,7 +176,12 @@ async def whatsapp_settings(
     if "reminder_dates" in body.model_fields_set:
         event.reminder_dates = _checked_reminder_dates(event, body.reminder_dates)
     await db.commit()
-    return await _overview(db, event)
+    return await _overview(db, event, auth.user)
+
+
+def _on_demand(user: User) -> bool:
+    """Relances à la demande : activées sur le compte (portail admin), ou pour tous (WHATSAPP_ON_DEMAND_REMINDERS)."""
+    return user.on_demand_reminders or get_settings().whatsapp_on_demand_reminders
 
 
 def _checked_reminder_dates(event: Event, days: list[date] | None) -> list[date] | None:
@@ -239,8 +245,8 @@ async def send_invitations(
 async def send_reminders(
     event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
 ) -> QueueResult:
-    """Relance à la demande des invités sans réponse. Option payante (WHATSAPP_ON_DEMAND_REMINDERS)."""
-    if not get_settings().whatsapp_on_demand_reminders:
+    """Relance à la demande des invités sans réponse. Option payante, activée par compte (portail admin)."""
+    if not _on_demand(auth.user):
         raise HTTPException(
             status.HTTP_403_FORBIDDEN,
             detail={

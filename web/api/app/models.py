@@ -41,6 +41,8 @@ class User(Base):
         Enum(UserRole, name="user_role", create_type=False),
         server_default=UserRole.organizer.value,
     )
+    # Relances à la demande : option payante, activée par l'équipe Here! (portail admin).
+    on_demand_reminders: Mapped[bool] = mapped_column(server_default="false")
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
@@ -364,3 +366,16 @@ class Call(Base):
     called_at: Mapped[datetime | None]
     notes: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class PlatformSetting(Base):
+    """Réglage modifié depuis le portail admin (remplace la variable d'environnement du même nom)."""
+
+    __tablename__ = "platform_settings"
+
+    key: Mapped[str] = mapped_column(primary_key=True)
+    value: Mapped[Any] = mapped_column(JSONB)
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )

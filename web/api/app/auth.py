@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.db import get_session
-from app.models import Session, User
+from app.models import Session, User, UserRole
 from app.security import hash_token, new_session_token
 
 _bearer = HTTPBearer(auto_error=False)
@@ -78,3 +78,16 @@ async def current_auth(
 
 
 CurrentAuth = Annotated[Authenticated, Depends(current_auth)]
+
+
+async def admin_auth(auth: CurrentAuth) -> Authenticated:
+    """Portail admin : réservé au rôle admin (donné par `python -m app.admin`)."""
+    if auth.user.role != UserRole.admin:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            detail={"message": "Cet espace est réservé à l'équipe Here!."},
+        )
+    return auth
+
+
+AdminAuth = Annotated[Authenticated, Depends(admin_auth)]
