@@ -379,3 +379,41 @@ class PlatformSetting(Base):
     updated_by: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL")
     )
+
+
+class LoginAttempt(Base):
+    """Tentative de connexion (ou de « mot de passe actuel »), pour limiter les essais."""
+
+    __tablename__ = "login_attempts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    identifier: Mapped[str]  # téléphone E.164 ou e-mail en minuscules
+    ip: Mapped[str | None] = mapped_column(INET)
+    succeeded: Mapped[bool]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class OtpPurpose(enum.StrEnum):
+    password_reset = "password_reset"
+
+
+class OtpCode(Base):
+    """Code à usage unique envoyé par WhatsApp. Seule son empreinte est gardée."""
+
+    __tablename__ = "otp_codes"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
+    purpose: Mapped[OtpPurpose] = mapped_column(
+        Enum(OtpPurpose, name="otp_purpose", create_type=False)
+    )
+    code_hash: Mapped[str]
+    attempts: Mapped[int] = mapped_column(server_default="0")
+    expires_at: Mapped[datetime]
+    used_at: Mapped[datetime | None]
+    ip: Mapped[str | None] = mapped_column(INET)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

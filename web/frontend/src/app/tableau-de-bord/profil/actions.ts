@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, clientHeaders } from "@/lib/api";
 import { getSessionToken } from "@/lib/session";
 
 export type ProfileState = { message?: string; errors?: Partial<Record<string, string>> };
@@ -29,7 +29,7 @@ function text(formData: FormData, name: string): string {
 async function send(path: string, method: "PATCH" | "POST", body: unknown): Promise<Response | ProfileState> {
   let response: Response;
   try {
-    response = await apiFetch(path, { method, token: await getSessionToken(), body: JSON.stringify(body) });
+    response = await apiFetch(path, { method, token: await getSessionToken(), body: JSON.stringify(body), headers: await clientHeaders() });
   } catch {
     return { message: UNAVAILABLE };
   }
@@ -46,6 +46,10 @@ async function problems(response: Response): Promise<ProfileState> {
       if (FIELD_MESSAGES[field]) errors[field] = FIELD_MESSAGES[field];
     }
     return { errors };
+  }
+  if (response.status === 429) {
+    const { detail } = (await response.json()) as { detail: { message: string } };
+    return { errors: { current_password: detail.message } };
   }
   if (response.status === 409 || response.status === 400) {
     const { detail } = (await response.json()) as { detail: { field: string; message: string } };

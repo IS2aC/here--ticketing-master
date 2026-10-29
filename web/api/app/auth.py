@@ -18,7 +18,7 @@ _bearer = HTTPBearer(auto_error=False)
 DbSession = Annotated[AsyncSession, Depends(get_session)]
 
 
-def _client_ip(request: Request) -> str | None:
+def client_ip(request: Request) -> str | None:
     host = request.client.host if request.client else None
     try:
         return str(ipaddress.ip_address(host)) if host else None
@@ -35,7 +35,7 @@ async def open_session(
         user_id=user.id,
         token_hash=hash_token(token),
         user_agent=request.headers.get("user-agent"),
-        ip=_client_ip(request),
+        ip=client_ip(request),
         expires_at=datetime.now(UTC) + timedelta(days=get_settings().session_ttl_days),
     )
     db.add(session)

@@ -18,7 +18,12 @@ export function LoginForm() {
         required
         defaultValue={state.values?.identifier}
       />
-      <Field label="Mot de passe" name="password" type="password" autoComplete="current-password" required />
+      <div className="grid gap-1.5">
+        <Field label="Mot de passe" name="password" type="password" autoComplete="current-password" required />
+        <Link href="/mot-de-passe-oublie" className="justify-self-end text-[13px] font-semibold text-accent-text hover:underline">
+          Mot de passe oublié ?
+        </Link>
+      </div>
       {state.message ? (
         <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
           {state.message}

@@ -47,10 +47,12 @@ export default function DashboardPage({ searchParams }: PageProps<"/tableau-de-b
   );
 }
 
-// Notification après la suppression d'un événement (?supprime=1).
+// Notifications : événement supprimé (?supprime=1), mot de passe changé (?mot-de-passe=change).
 async function Deleted({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
-  return query.supprime ? <Toast title="Événement supprimé" detail="Ses invités, cartes et réponses ont été supprimés." /> : null;
+  if (query.supprime) return <Toast title="Événement supprimé" detail="Ses invités, cartes et réponses ont été supprimés." />;
+  if (query["mot-de-passe"]) return <Toast title="Mot de passe changé" detail="Vos autres appareils ont été déconnectés." />;
+  return null;
 }
 
 async function Greeting() {

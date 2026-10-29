@@ -6,8 +6,8 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 
 - [ ] **Authentification OTP WhatsApp** à l'inscription et à la connexion. Pour l'instant : téléphone ou email + mot de passe. Prévoir une table `otp_codes` (code haché, expiration, nombre d'essais).
 - [ ] **Scan à l'entrée, compléments** : mode hors connexion (liste sur l'appareil, synchronisation au retour du réseau, maquette `mobile-scan-hors-connexion`) ; code PIN en plus du lien ; « Appeler le responsable » (numéro de l'organisateur) ; entrée partielle quand une invitation compte plusieurs personnes.
-- [ ] **Limiter les tentatives de connexion** (par numéro et par IP) contre la recherche de mots de passe.
-- [ ] **Mot de passe oublié** (réinitialisation par WhatsApp ou e-mail).
+- [x] **Limiter les tentatives de connexion** (fait le 29/10) : 5 échecs sur un compte ou 20 depuis une adresse IP en 15 minutes : suspension 15 minutes (aussi pour le « mot de passe actuel » du profil). Table `login_attempts`, gardée 24 h. Le frontend transmet l'adresse IP et le navigateur du visiteur à l'API.
+- [x] **Mot de passe oublié** (fait le 29/10) : code à 6 chiffres par WhatsApp, valable 15 minutes, 5 essais, 3 codes par heure et par compte, 10 demandes par heure et par adresse IP ; tous les appareils déconnectés ensuite. Table `otp_codes`, réutilisable pour l'OTP à l'inscription. Pas d'envoi par e-mail (aucun service d'e-mail sur la plateforme).
 - [ ] **Plusieurs lieux par événement** (Cérémonie, Réception… comme dans la maquette `backoffice-creation`) : aujourd'hui un seul lieu.
 - [ ] **Fuseau horaire par événement** (Cotonou, Lomé…) : aujourd'hui tout est à l'heure d'Abidjan.
 - [ ] **Corriger une ligne dans l'aperçu d'import** (lien « Corriger » de la maquette) et **modifier ou ajouter un invité à la main** : aujourd'hui, on corrige le fichier et on réimporte.

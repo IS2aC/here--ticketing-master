@@ -1,4 +1,5 @@
 import "server-only";
+import { headers } from "next/headers";
 
 // Appels serveur vers l'API Here! (réseau interne Docker : http://here-api:8000).
 export function apiUrl(path: string): string {
@@ -26,6 +27,17 @@ export type SessionResponse = {
   expires_at: string;
   user: User;
 };
+
+/**
+ * Adresse IP et navigateur du visiteur, à transmettre à l'API pour la connexion et le mot de passe :
+ * sans eux, l'API ne voit que le serveur Next.js (limite des tentatives par adresse IP, sessions).
+ */
+export async function clientHeaders(): Promise<Record<string, string>> {
+  const incoming = await headers();
+  const ip = incoming.get("x-forwarded-for")?.split(",")[0]?.trim() || incoming.get("x-real-ip");
+  const agent = incoming.get("user-agent");
+  return { ...(ip ? { "X-Forwarded-For": ip } : {}), ...(agent ? { "User-Agent": agent } : {}) };
+}
 
 export async function apiFetch(path: string, init: RequestInit & { token?: string } = {}): Promise<Response> {
   const { token, headers, ...rest } = init;

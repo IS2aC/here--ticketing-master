@@ -428,6 +428,23 @@ class PasswordChange(BaseModel):
     new_password: str = Field(min_length=8, max_length=128)
 
 
+class PasswordResetRequest(BaseModel):
+    # Téléphone ou adresse e-mail du compte.
+    identifier: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+    ]
+
+
+class PasswordResetConfirm(BaseModel):
+    identifier: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+    ]
+    code: Annotated[
+        str, StringConstraints(strip_whitespace=True, pattern=r"^\d{3} ?\d{3}$")
+    ]
+    password: str = Field(min_length=8, max_length=128)
+
+
 # ---------------------------------------------------------------------------
 # Portail admin (équipe Here!)
 # ---------------------------------------------------------------------------

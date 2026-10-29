@@ -48,6 +48,12 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 3. Onglet **Domains** : `here-frontend` sur le port 3000, `here-api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
 4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
 
+## Sécurité de la connexion
+
+- **Tentatives limitées** : 5 échecs sur un même compte, ou 20 depuis une même adresse IP, en 15 minutes : suspension de 15 minutes (« Trop de tentatives. Réessayez dans … minutes. »). Pour lever une suspension à la main (base de données) : `DELETE FROM login_attempts WHERE identifier = '+2250700000000';`.
+- **Mot de passe oublié** (`/mot-de-passe-oublie`) : un code à 6 chiffres est envoyé par WhatsApp au numéro du compte. En mode test (`WHATSAPP_PROVIDER=console`), rien ne part : le code apparaît dans les journaux de `here-api` (« WhatsApp (console, non envoyé) »).
+- Le frontend transmet à l'API l'adresse IP et le navigateur du visiteur (en-têtes `X-Forwarded-For` et `User-Agent`). L'API étant aussi joignable sur son propre domaine, cet en-tête peut y être falsifié : la limite par compte, elle, ne dépend pas de l'adresse.
+
 ## Portail admin (équipe Here!)
 
 Un compte devient admin par une commande, depuis le terminal du conteneur `here-api` (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :

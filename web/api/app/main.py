@@ -26,6 +26,17 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     await dispose_engine()
 
 
+# Journaux de l'application (« here.* ») : uvicorn n'affiche que les siens. En mode test (console),
+# c'est là qu'apparaissent les messages WhatsApp simulés, dont les codes de mot de passe oublié.
+_log = logging.getLogger("here")
+if not _log.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(
+        logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
+    )
+    _log.addHandler(_handler)
+    _log.setLevel(logging.INFO)
+
 settings = get_settings()
 
 app = FastAPI(
