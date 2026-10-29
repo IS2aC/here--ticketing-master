@@ -1,7 +1,7 @@
-"""Portail admin (équipe Here!, rôle admin) : suivi des utilisateurs et des événements, réglages."""
+"""Portail admin (équipe Here!, rôle admin) : tableau de bord, suivi des comptes et des événements, réglages."""
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query, status
@@ -29,17 +29,22 @@ from app.models import (
 )
 from app.platform import refresh_settings
 from app.schemas import (
+    Activity,
+    AdminDashboard,
     AdminEvent,
     AdminEventPage,
-    AdminOverview,
+    AdminProvider,
     AdminUser,
     AdminUserDetail,
     AdminUserPage,
     AdminUserUpdate,
+    DayPoint,
     PlatformSettingsIn,
     PlatformSettingsOut,
     PlatformValues,
     ProviderOption,
+    SendStats,
+    Trend,
 )
 from app.whatsapp import get_provider
 
@@ -47,6 +52,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 _DONE = (MessageStatus.sent, MessageStatus.delivered, MessageStatus.read)
 _QUEUED = (MessageStatus.scheduled, MessageStatus.sending)
+PERIODS = (7, 30, 90)  # jours, tableau de bord
 
 
 def _like(q: str) -> str:
@@ -55,19 +61,181 @@ def _like(q: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Vue d'ensemble
+# Tableau de bord
 # ---------------------------------------------------------------------------
 
 
-@router.get("/overview")
-async def overview(_: AdminAuth, db: DbSession) -> AdminOverview:
+def _day(column: Any) -> Any:
+    # Heure d'Abidjan = UTC : le jour UTC est le jour local.
+    return func.date(func.timezone("UTC", column))
+
+
+def _plural(n: int, one: str, many: str | None = None) -> str:
+    return f"{n} {one if n == 1 else many or one + 's'}"
+
+
+async def _trend(
+    db: AsyncSession, query: Select[Any], column: Any, since: datetime
+) -> Trend:
+    total = await db.scalar(query) or 0
+    new = await db.scalar(query.where(column >= since)) or 0
+    before = total - new
+    return Trend(
+        total=total, new=new, trend_pct=round(100 * new / before, 1) if before else None
+    )
+
+
+async def _sends(db: AsyncSession, kind: MessageKind, since: datetime) -> SendStats:
+    query = select(func.count()).where(Message.kind == kind, Message.status.in_(_DONE))
+    trend = await _trend(db, query, Message.sent_at, since)
+    delivered = await db.scalar(
+        query.where(Message.status.in_((MessageStatus.delivered, MessageStatus.read)))
+    )
+    read = await db.scalar(query.where(Message.status == MessageStatus.read))
+    return SendStats(**trend.model_dump(), delivered=delivered or 0, read=read or 0)
+
+
+async def _series(db: AsyncSession, since: datetime, days: int) -> list[DayPoint]:
+    async def per_day(column: Any, *where: Any) -> dict[date, int]:
+        day = _day(column)
+        rows = await db.execute(
+            select(day, func.count()).where(column >= since, *where).group_by(day)
+        )
+        return {d: n for d, n in rows.all()}
+
+    organizers = await per_day(User.created_at, User.role == UserRole.organizer)
+    guests = await per_day(Guest.created_at)
+    sent = await per_day(Message.sent_at, Message.status.in_(_DONE))
+    failed = await per_day(Message.scheduled_at, Message.status == MessageStatus.failed)
+    first = since.date()
+    return [
+        DayPoint(
+            day=d,
+            organizers=organizers.get(d, 0),
+            guests=guests.get(d, 0),
+            sent=sent.get(d, 0),
+            failed=failed.get(d, 0),
+        )
+        for d in (first + timedelta(days=i) for i in range(days))
+    ]
+
+
+async def _activity(db: AsyncSession, limit: int = 8) -> list[Activity]:
+    """Dernières activités, reconstituées à partir des données (pas de journal à part).
+    Les envois et les réponses sont regroupés par événement et par jour."""
+    items: list[Activity] = []
+    for first, last, at in (
+        await db.execute(
+            select(User.first_name, User.last_name, User.created_at)
+            .where(User.role == UserRole.organizer)
+            .order_by(User.created_at.desc())
+            .limit(limit)
+        )
+    ).all():
+        items.append(
+            Activity(
+                kind="organizer",
+                title="Nouvel organisateur",
+                detail=f"Inscription de {first} {last}",
+                at=at,
+            )
+        )
+    for title, at in (
+        await db.execute(
+            select(Event.title, Event.created_at)
+            .order_by(Event.created_at.desc())
+            .limit(limit)
+        )
+    ).all():
+        items.append(
+            Activity(kind="event", title="Nouvel événement", detail=title, at=at)
+        )
+
+    async def grouped(
+        column: Any, *where: Any, counts: tuple[Any, ...] = ()
+    ) -> list[Any]:
+        day = _day(column)
+        return (
+            await db.execute(
+                select(Event.title, func.max(column), *(counts or (func.count(),)))
+                .select_from(Guest)
+                .join(Event, Event.id == Guest.event_id)
+                .where(column.is_not(None), *where)
+                .group_by(Event.id, Event.title, day)
+                .order_by(func.max(column).desc())
+                .limit(limit)
+            )
+        ).all()
+
+    sent = await grouped(
+        Message.sent_at,
+        Message.guest_id == Guest.id,
+        Message.kind == MessageKind.invitation,
+        Message.status.in_(_DONE),
+    )
+    for title, at, n in sent:
+        items.append(
+            Activity(
+                kind="invitations",
+                title="Invitations envoyées",
+                detail=f"{_plural(n, 'invitation')} ({title})",
+                at=at,
+            )
+        )
+    failed = await grouped(
+        Message.scheduled_at,
+        Message.guest_id == Guest.id,
+        Message.status == MessageStatus.failed,
+    )
+    for title, at, n in failed:
+        items.append(
+            Activity(
+                kind="failures",
+                title="Échecs d'envoi",
+                detail=f"{_plural(n, 'message')} en échec ({title})",
+                at=at,
+            )
+        )
+    responses = await grouped(
+        Guest.responded_at,
+        Guest.rsvp_status != RsvpStatus.pending,
+        counts=(
+            func.count().filter(Guest.rsvp_status == RsvpStatus.confirmed),
+            func.count().filter(Guest.rsvp_status == RsvpStatus.declined),
+        ),
+    )
+    for title, at, confirmed, declined in responses:
+        parts = [
+            _plural(confirmed, "confirmation") if confirmed else "",
+            _plural(declined, "refus", "refus") if declined else "",
+        ]
+        items.append(
+            Activity(
+                kind="responses",
+                title="Réponses reçues",
+                detail=f"{', '.join(p for p in parts if p)} ({title})",
+                at=at,
+            )
+        )
+    return sorted(items, key=lambda a: a.at, reverse=True)[:limit]
+
+
+@router.get("/dashboard")
+async def dashboard(
+    _: AdminAuth,
+    db: DbSession,
+    days: int = 30,
+) -> AdminDashboard:
+    """Tableau de bord de la plateforme. Les tendances et les courbes portent sur les `days` derniers jours."""
+    if days not in PERIODS:
+        raise _refused("Période : 7, 30 ou 90 jours.")
     now = datetime.now(UTC)
-    organizers = select(func.count()).where(User.role == UserRole.organizer)
-    events = dict.fromkeys(EventStatus, 0)
+    since = datetime.combine(now.date() - timedelta(days=days - 1), time(), UTC)
+    events_by_status = dict.fromkeys(EventStatus, 0)
     for state, n in (
         await db.execute(select(Event.status, func.count()).group_by(Event.status))
     ).all():
-        events[state] = n
+        events_by_status[state] = n
     rsvp = dict.fromkeys(RsvpStatus, 0)
     for state, n in (
         await db.execute(
@@ -76,45 +244,57 @@ async def overview(_: AdminAuth, db: DbSession) -> AdminOverview:
     ).all():
         rsvp[state] = n
 
-    def messages(*where: Any) -> Select[tuple[int]]:
-        return select(func.count()).select_from(Message).where(*where)
-
+    settings = get_settings()
     provider = get_provider()
-    return AdminOverview(
-        organizers=await db.scalar(organizers) or 0,
-        organizers_last_7_days=await db.scalar(
-            organizers.where(User.created_at >= now - timedelta(days=7))
-        )
-        or 0,
-        events=events,
+    return AdminDashboard(
+        period_days=days,
+        organizers=await _trend(
+            db,
+            select(func.count()).where(User.role == UserRole.organizer),
+            User.created_at,
+            since,
+        ),
+        events=await _trend(
+            db, select(func.count()).select_from(Event), Event.created_at, since
+        ),
+        events_by_status=events_by_status,
         upcoming_events=await db.scalar(
             select(func.count()).where(
                 Event.starts_at > now, Event.status != EventStatus.cancelled
             )
         )
         or 0,
-        guests=sum(rsvp.values()),
+        guests=await _trend(
+            db, select(func.count()).select_from(Guest), Guest.created_at, since
+        ),
         rsvp=rsvp,
-        invitations_sent=await db.scalar(
-            messages(Message.kind == MessageKind.invitation, Message.status.in_(_DONE))
+        invitations=await _sends(db, MessageKind.invitation, since),
+        reminders=await _sends(db, MessageKind.reminder, since),
+        messages_queued=await db.scalar(
+            select(func.count()).where(Message.status.in_(_QUEUED))
         )
         or 0,
-        reminders_sent=await db.scalar(
-            messages(Message.kind == MessageKind.reminder, Message.status.in_(_DONE))
-        )
-        or 0,
-        messages_queued=await db.scalar(messages(Message.status.in_(_QUEUED))) or 0,
-        messages_failed=await db.scalar(
-            messages(Message.status == MessageStatus.failed)
-        )
-        or 0,
+        messages_failed=await _trend(
+            db,
+            select(func.count()).where(Message.status == MessageStatus.failed),
+            Message.scheduled_at,
+            since,
+        ),
         checkins=await db.scalar(select(func.count()).select_from(Checkin)) or 0,
         calls_scheduled=await db.scalar(
             select(func.count()).where(Call.called_at.is_(None))
         )
         or 0,
-        provider=provider.name,
-        provider_configured=provider.configured,
+        series=await _series(db, since, days),
+        activity=await _activity(db),
+        provider=AdminProvider(
+            name=provider.name,
+            configured=provider.configured,
+            min_delay_seconds=settings.whatsapp_min_delay_seconds,
+            max_delay_seconds=settings.whatsapp_max_delay_seconds,
+            send_start_hour=settings.whatsapp_send_start_hour,
+            send_end_hour=settings.whatsapp_send_end_hour,
+        ),
     )
 
 

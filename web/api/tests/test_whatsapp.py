@@ -167,7 +167,10 @@ def test_send_invitations_and_webhooks(
     assert overview(client, organizer, event_id)["invitations"]["read"] == 1
 
     # Vote « Oui » à un sondage déjà envoyé (avant leur suppression) : l'invité est confirmé.
-    sql("UPDATE messages SET poll_whatsapp_id = 'WA-POLL-ANCIEN'")
+    sql(
+        "UPDATE messages SET poll_whatsapp_id = 'WA-POLL-ANCIEN' WHERE guest_id IN "
+        f"(SELECT id FROM guests WHERE event_id = '{event_id}')"
+    )
     vote = {
         "event": "poll.results",
         "data": {

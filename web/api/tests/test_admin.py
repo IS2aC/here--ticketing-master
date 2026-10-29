@@ -1,6 +1,8 @@
 """Portail admin : accès réservé, suivi des comptes et des événements, réglages sans redéploiement."""
 
 import asyncio
+import uuid
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,7 +10,9 @@ from fastapi.testclient import TestClient
 from app.admin import set_role
 from app.config import get_settings
 from app.models import UserRole
+from app.whatsapp.console import ConsoleProvider
 from tests.test_guest_response import invited, sql
+from tests.test_whatsapp import deliver_next
 
 pytestmark = pytest.mark.db
 
@@ -27,15 +31,15 @@ def test_set_role_refuses_an_invalid_number() -> None:
 
 
 def test_admin_only(client: TestClient, organizer: dict[str, str]) -> None:
-    for path in ("overview", "users", "events", "settings"):
+    for path in ("dashboard", "users", "events", "settings"):
         refused = client.get(f"/v1/admin/{path}", headers=organizer)
         assert refused.status_code == 403
         assert refused.json()["detail"]["message"]
-    assert client.get("/v1/admin/overview").status_code == 401
+    assert client.get("/v1/admin/dashboard").status_code == 401
 
 
 def test_follow_users_and_events(client: TestClient, organizer: dict[str, str]) -> None:
-    event_id, _ = invited(client, organizer)
+    event_id, guests = invited(client, organizer)
     owner = client.get("/v1/me", headers=organizer).json()
     admin_headers = client.post(
         "/v1/auth/register",
@@ -49,10 +53,40 @@ def test_follow_users_and_events(client: TestClient, organizer: dict[str, str]) 
     admin_headers = {"Authorization": f"Bearer {admin_headers}"}
     make_admin(client, admin_headers)
 
-    view = client.get("/v1/admin/overview", headers=admin_headers).json()
-    assert view["organizers"] >= 1 and view["events"]["draft"] >= 1
-    assert view["guests"] == sum(view["rsvp"].values())
-    assert view["provider"] == "console"
+    # Invitations envoyées, une réponse, un échec : visibles sur le tableau de bord.
+    jean = guests["Jean Konan"]
+    client.post(f"/v1/events/{event_id}/whatsapp/invitations", headers=organizer)
+    provider = ConsoleProvider()
+    while deliver_next(provider):
+        pass
+    client.post(
+        f"/v1/invitations/{jean['invitation_token']}/response",
+        json={"attending": True},
+    )
+    sql(
+        "INSERT INTO messages (guest_id, kind, status) "
+        "SELECT id, 'reminder', 'failed' FROM guests WHERE event_id = $1 LIMIT 1",
+        uuid.UUID(event_id),
+    )
+
+    url = "/v1/admin/dashboard"
+    assert (
+        client.get(url, params={"days": 12}, headers=admin_headers).status_code == 422
+    )
+    view = client.get(url, params={"days": 7}, headers=admin_headers).json()
+    assert view["period_days"] == 7 and len(view["series"]) == 7
+    assert view["series"][-1]["day"] == str(datetime.now(UTC).date())
+    assert view["organizers"]["new"] >= 2 and view["organizers"]["total"] >= 2
+    assert view["events_by_status"]["active"] >= 1  # invitations parties
+    assert view["upcoming_events"] >= 1
+    assert view["guests"]["total"] == sum(view["rsvp"].values())
+    assert view["invitations"]["total"] >= 1 and view["messages_failed"]["new"] >= 1
+    assert view["series"][-1]["sent"] >= 1 and view["series"][-1]["failed"] >= 1
+    assert view["provider"]["name"] == "console"
+    kinds = {a["kind"] for a in view["activity"]}
+    assert kinds >= {"organizer"}  # les plus récentes : celles de ce test
+    details = [a["detail"] for a in view["activity"]]
+    assert any("1 confirmation" in d for d in details)
 
     # Recherche par numéro (avec ou sans espaces), par nom.
     for q in (owner["phone"][-8:], "Test Organisateur"):
@@ -63,12 +97,13 @@ def test_follow_users_and_events(client: TestClient, organizer: dict[str, str]) 
     detail = client.get(f"/v1/admin/users/{owner['id']}", headers=admin_headers).json()
     assert detail["events"] == 1 and detail["last_login_at"] is not None
     (event,) = detail["event_list"]
-    assert event["id"] == event_id and event["guests"] == event["pending"] > 0
-    assert event["cards"] > 0 and event["invitations_sent"] == 0
+    assert event["id"] == event_id and event["confirmed"] == 1
+    assert event["guests"] == event["pending"] + event["confirmed"] + event["declined"]
+    assert event["cards"] > 0 and event["invitations_sent"] >= 1
 
     events = client.get(
         "/v1/admin/events",
-        params={"status": "draft", "period": "upcoming"},
+        params={"status": "active", "period": "upcoming"},
         headers=admin_headers,
     ).json()
     assert event_id in [e["id"] for e in events["items"]]
@@ -88,7 +123,7 @@ def test_follow_users_and_events(client: TestClient, organizer: dict[str, str]) 
     assert updated["on_demand_reminders"] is True
     whatsapp = client.get(f"/v1/events/{event_id}/whatsapp", headers=organizer)
     assert whatsapp.json()["on_demand_reminders"] is True
-    # Plus de 403 : 409, car personne n'a encore reçu son invitation.
+    # Plus de 403 : 409, car le seul invité joignable a déjà répondu.
     assert client.post(reminders, headers=organizer).status_code == 409
 
 

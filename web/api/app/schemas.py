@@ -419,21 +419,62 @@ class PasswordChange(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-class AdminOverview(BaseModel):
-    organizers: int
-    organizers_last_7_days: int
-    events: dict[EventStatus, int]  # par statut
+class Trend(BaseModel):
+    """Compteur cumulé : total, nouveaux sur la période, et hausse par rapport au total d'avant."""
+
+    total: int
+    new: int
+    trend_pct: float | None  # None : rien avant la période
+
+
+class SendStats(Trend):
+    delivered: int  # livrés (lus compris)
+    read: int
+
+
+class DayPoint(BaseModel):
+    day: date
+    organizers: int  # inscriptions
+    guests: int  # invités ajoutés
+    sent: int  # messages envoyés (invitations et relances)
+    failed: int
+
+
+class Activity(BaseModel):
+    kind: Literal["organizer", "event", "invitations", "responses", "failures"]
+    title: str
+    detail: str
+    at: datetime
+
+
+class AdminProvider(BaseModel):
+    name: str  # « console » ou « wasender »
+    configured: bool
+    min_delay_seconds: float
+    max_delay_seconds: float
+    send_start_hour: int
+    send_end_hour: int
+
+
+class AdminDashboard(BaseModel):
+    period_days: int
+    organizers: Trend
+    events: Trend
+    events_by_status: dict[EventStatus, int]
     upcoming_events: int  # à venir, non annulés
-    guests: int
-    rsvp: dict[RsvpStatus, int]  # réponses des invités
-    invitations_sent: int
-    reminders_sent: int
+    guests: Trend
+    rsvp: dict[RsvpStatus, int]
+    invitations: SendStats
+    reminders: SendStats
     messages_queued: int
-    messages_failed: int
+    messages_failed: Trend
     checkins: int
     calls_scheduled: int
-    provider: str
-    provider_configured: bool
+    series: list[
+        DayPoint
+    ]  # un point par jour de la période, du plus ancien au plus récent
+    activity: list[Activity]  # les plus récentes d'abord
+    provider: AdminProvider
 
 
 class AdminUser(BaseModel):

@@ -16,6 +16,9 @@ export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-b
         <Suspense fallback={<NavLinks />}>
           <Nav />
         </Suspense>
+        <Suspense fallback={null}>
+          <AdminLink />
+        </Suspense>
         <div className="mt-auto hidden rounded-md bg-ink p-4 text-white md:block">
           <Icon name="support" className="text-red-bright" />
           <p className="mt-2 font-heading text-[14px] font-semibold">Une question ?</p>
@@ -29,6 +32,21 @@ export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-b
       </aside>
       <main className="flex min-w-0 flex-col gap-6 px-4 py-6 sm:px-8">{children}</main>
     </div>
+  );
+}
+
+// Équipe Here! : accès au portail admin.
+async function AdminLink() {
+  const user = await getCurrentUser();
+  if (user.role !== "admin") return null;
+  return (
+    <Link
+      href="/admin"
+      className="-mt-5 flex h-10 items-center gap-3 rounded-md px-3 text-[14px] font-medium text-text-muted hover:bg-surface hover:text-text"
+    >
+      <Icon name="cadenas" />
+      Portail admin
+    </Link>
   );
 }
 
