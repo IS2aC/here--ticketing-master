@@ -1,6 +1,6 @@
 import uuid
 from collections import defaultdict
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 from fastapi import APIRouter, HTTPException, Response, status
 from sqlalchemy import delete, func, select
@@ -8,7 +8,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
 from app.models import Checkin, Event, Guest, GuestCategory, Invitation, RsvpStatus
-from app.schemas import CategoryOut, EventCreate, EventOut, EventStats, EventUpdate
+from app.schemas import (
+    CategoryOut,
+    EventCreate,
+    EventOut,
+    EventStats,
+    EventSummary,
+    EventUpdate,
+    MonthCount,
+)
 
 router = APIRouter(prefix="/events", tags=["événements"])
 
@@ -109,6 +117,39 @@ async def list_events(auth: CurrentAuth, db: DbSession) -> list[EventOut]:
         )
     ).all()
     return await _to_out(db, list(events))
+
+
+@router.get("/summary")
+async def events_summary(auth: CurrentAuth, db: DbSession) -> EventSummary:
+    """Événements créés et invités ajoutés par mois (heure d'Abidjan = UTC), sur 6 mois."""
+    today = datetime.now(UTC).date()
+    months = [
+        date(
+            today.year + (today.month - 1 - i) // 12, (today.month - 1 - i) % 12 + 1, 1
+        )
+        for i in reversed(range(6))
+    ]
+
+    async def per_month(column: object, *where: object) -> dict[date, int]:
+        month = func.date(func.date_trunc("month", func.timezone("UTC", column)))
+        rows = await db.execute(
+            select(month, func.count())
+            .where(column >= months[0], *where)
+            .group_by(month)
+        )
+        return {m: n for m, n in rows.all()}
+
+    events = await per_month(Event.created_at, Event.user_id == auth.user.id)
+    guests = await per_month(
+        Guest.created_at,
+        Guest.event_id.in_(select(Event.id).where(Event.user_id == auth.user.id)),
+    )
+    return EventSummary(
+        months=[
+            MonthCount(month=m, events=events.get(m, 0), guests=guests.get(m, 0))
+            for m in months
+        ]
+    )
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

@@ -152,6 +152,18 @@ class EventStats(BaseModel):
     pending: int = 0
 
 
+class MonthCount(BaseModel):
+    month: date  # premier jour du mois
+    events: int  # événements créés
+    guests: int  # invités ajoutés
+
+
+class EventSummary(BaseModel):
+    """Activité de l'organisateur par mois (tableau de bord) : les 6 derniers mois, mois en cours compris."""
+
+    months: list[MonthCount]
+
+
 class EventOut(BaseModel):
     id: uuid.UUID
     title: str
@@ -167,6 +179,7 @@ class EventOut(BaseModel):
     categories: list[CategoryOut]
     stats: EventStats
     created_at: datetime
+    updated_at: datetime
 
 
 # --- Invités et import ------------------------------------------------------------------

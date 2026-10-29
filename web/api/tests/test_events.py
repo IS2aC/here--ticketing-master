@@ -174,3 +174,42 @@ def test_cannot_remove_category_with_guests(
     )
     assert response.status_code == 409
     assert "VIP" in response.json()["detail"]["message"]
+
+
+def test_summary_by_month(client: TestClient, organizer: dict[str, str]) -> None:
+    from tests.test_guest_response import invited, sql
+
+    event_id, guests = invited(client, organizer)
+    # Un événement créé le mois dernier : compté dans l'avant-dernier mois.
+    sql(
+        "UPDATE events SET created_at = date_trunc('month', now()) - interval '1 day' "
+        f"WHERE id = '{event_id}'"
+    )
+    client.post(
+        "/v1/events",
+        json={
+            "title": "Dot",
+            "type": "dot",
+            "starts_at": (datetime.now(UTC) + timedelta(days=40)).isoformat(),
+        },
+        headers=organizer,
+    )
+    months = client.get("/v1/events/summary", headers=organizer).json()["months"]
+    assert len(months) == 6
+    assert months[-1]["month"] == datetime.now(UTC).date().replace(day=1).isoformat()
+    assert [m["events"] for m in months[-2:]] == [1, 1]
+    assert months[-1]["guests"] == len(guests)  # invités ajoutés ce mois-ci
+    # Les événements des autres organisateurs ne sont pas comptés.
+    other = client.post(
+        "/v1/auth/register",
+        json={
+            "first_name": "Autre",
+            "last_name": "Compte",
+            "phone": "0799999902",
+            "password": "mot-de-passe",
+        },
+    ).json()["access_token"]
+    empty = client.get(
+        "/v1/events/summary", headers={"Authorization": f"Bearer {other}"}
+    ).json()["months"]
+    assert all(m["events"] == 0 and m["guests"] == 0 for m in empty)

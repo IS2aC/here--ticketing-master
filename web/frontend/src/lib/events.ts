@@ -19,6 +19,7 @@ export type EventOut = {
   categories: { id: string; name: string; guests: number }[];
   stats: { arrived: number; guests: number; confirmed: number; declined: number; pending: number };
   created_at: string;
+  updated_at: string;
 };
 
 async function get(path: string): Promise<Response> {
@@ -28,6 +29,15 @@ async function get(path: string): Promise<Response> {
 export async function getEvents(): Promise<EventOut[]> {
   const response = await get("/v1/events");
   if (!response.ok) throw new Error(`API /v1/events : ${response.status}`);
+  return response.json();
+}
+
+export type EventSummary = { months: { month: string; events: number; guests: number }[] };
+
+/** Événements créés et invités ajoutés par mois, sur 6 mois (tableau de bord). */
+export async function getEventsSummary(): Promise<EventSummary> {
+  const response = await get("/v1/events/summary");
+  if (!response.ok) throw new Error(`API /v1/events/summary : ${response.status}`);
   return response.json();
 }
 

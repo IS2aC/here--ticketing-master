@@ -178,6 +178,13 @@ const paths = {
       <path d="M20 19.5V15h-4.5" />
     </>
   ),
+  courbe: (
+    <>
+      <path d="M3 21h18" />
+      <path d="M4 16l5-5 4 3 7-8" />
+      <path d="M15 6h5v5" />
+    </>
+  ),
   parametres: (
     <>
       <circle cx="12" cy="12" r="3" />
