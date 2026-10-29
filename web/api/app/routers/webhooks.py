@@ -1,4 +1,4 @@
-"""Webhooks WasenderAPI : statuts des messages, votes au sondage, messages écrits par les invités.
+"""Webhooks WasenderAPI : statuts des messages, votes aux sondages (envoyés avant le 29/10), messages écrits par les invités.
 
 À configurer dans le tableau de bord WasenderAPI (session › Webhook) :
   URL      https://<api>/v1/webhooks/wasender

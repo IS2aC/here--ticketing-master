@@ -50,12 +50,12 @@ def test_texts() -> None:
     assert invitation.text.startswith("Bonjour M. et Mme Konan,")
     assert "samedi 12 décembre à 15 h, Espace Les Jardins" in invitation.text
     assert invitation.text.endswith(f"\n{link}")  # le lien sur sa propre ligne
-    assert invitation.poll and invitation.poll.yes == "Oui, nous serons là"  # 2 places
+    assert invitation.poll is None  # la carte et le lien, sans sondage
 
     reminder = message_content(MessageKind.reminder, _event(), guest, link)
     assert not reminder.with_card and "pas encore votre réponse" in reminder.text
 
-    # Hommage : texte sobre, jamais de sondage.
+    # Hommage : texte sobre.
     tribute = message_content(
         MessageKind.reminder, _event(EventType.funerailles), guest, link
     )
@@ -142,17 +142,13 @@ def test_send_invitations_and_webhooks(
     provider = ConsoleProvider()
     assert deliver_next(provider) == "sent"
     assert deliver_next(provider) is None  # file vide
-    image, poll = provider.sent
+    [image] = provider.sent  # un seul message : la carte, avec le lien dans la légende
     assert image["type"] == "image" and image["to"] == "+2250707123456"
     assert (
         image["image_url"]
         == f"http://localhost:3000/i/{jean['invitation_token']}/carte.png"
     )
     assert f"http://localhost:3000/i/{jean['invitation_token']}" in str(image["text"])
-    assert poll["type"] == "poll" and poll["options"] == [
-        "Oui, je serai là",
-        "Non, je ne pourrai pas venir",
-    ]
 
     after = overview(client, organizer, event_id)
     assert after["ready"] == 0 and after["to_remind"] == 1
@@ -170,11 +166,12 @@ def test_send_invitations_and_webhooks(
     assert webhook(client, lu).status_code == 200
     assert overview(client, organizer, event_id)["invitations"]["read"] == 1
 
-    # Vote « Oui » au sondage : l'invité est confirmé, pour toutes ses places.
+    # Vote « Oui » à un sondage déjà envoyé (avant leur suppression) : l'invité est confirmé.
+    sql("UPDATE messages SET poll_whatsapp_id = 'WA-POLL-ANCIEN'")
     vote = {
         "event": "poll.results",
         "data": {
-            "key": {"id": poll["id"], "fromMe": True},
+            "key": {"id": "WA-POLL-ANCIEN", "fromMe": True},
             "pollResult": [
                 {"name": "Oui, je serai là", "voters": ["225070712345@s.whatsapp.net"]},
                 {"name": "Non, je ne pourrai pas venir", "voters": []},
@@ -242,8 +239,8 @@ def test_offered_reminder_then_call(
     )
     assert run_db(plan_follow_ups) == (1, 0)
     assert deliver_next(provider) == "sent"
-    assert "pas encore votre réponse" in str(provider.sent[-2]["text"])
-    assert provider.sent[-1]["type"] == "poll"
+    assert "pas encore votre réponse" in str(provider.sent[-1]["text"])
+    assert provider.sent[-1]["type"] == "text"  # pas de sondage
     assert run_db(plan_follow_ups) == (0, 0)
 
     # 2 jours après la relance restée sans réponse : appel de la conseillère, un seul.
@@ -336,3 +333,21 @@ def test_send_failures(client: TestClient, organizer: dict[str, str]) -> None:
         next(g for g in listed if g["display_name"] == "Jean Konan")["contact_status"]
         == "unreachable"
     )
+
+
+@pytest.mark.db
+def test_pending_poll_from_before_is_not_resent(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    """Message en file dont la carte est déjà partie (son sondage attendait une reprise) :
+    il passe à « envoyé » sans rien renvoyer, les sondages n'étant plus envoyés."""
+    event_id, _ = invited(client, organizer)
+    client.post(f"/v1/events/{event_id}/whatsapp/invitations", headers=organizer)
+    sql(
+        "UPDATE messages SET provider_message_id = 'carte-' || id"
+        " WHERE status = 'scheduled' AND provider_message_id IS NULL"
+    )
+
+    provider = ConsoleProvider()
+    assert deliver_next(provider) == "sent"
+    assert provider.sent == []  # ni la carte ni un sondage

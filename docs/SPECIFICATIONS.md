@@ -98,11 +98,10 @@ Prestataire : **WasenderAPI** (session WhatsApp reliée comme appareil connecté
 ### Ce que reçoit l'invité (maquette `mobile-message`)
 
 1. **La carte** en image (`/i/<jeton>/carte.png`, publique), avec une légende : « Bonjour <invité>, voici votre invitation pour « <événement> », le <date> à <heure>, <lieu>. Votre carte et votre réponse : » puis le lien de la page invité sur sa propre ligne.
-2. **Un sondage** « Serez-vous des nôtres ? » : « Oui, je serai là / nous serons là » ou « Non, je ne pourrai pas / nous ne pourrons pas venir ».
-3. **Relance** : texte « Nous n'avons pas encore votre réponse… » + lien, puis le même sondage.
-4. **Hommage** (funérailles) : texte sobre au nom de la famille, **jamais de sondage**.
+2. **Relance** : texte « Nous n'avons pas encore votre réponse… » + lien.
+3. **Hommage** (funérailles) : texte sobre au nom de la famille.
 
-Le vote au sondage a le même effet qu'une réponse « Oui / Non » sur la page invité (toutes les places de l'invitation ; l'invité ajuste ensuite sur sa page). Une réponse, par le sondage ou la page, annule les relances encore en file.
+**Pas de sondage** (décision du 29/10) : un seul message par invité, la carte et le lien. L'invité répond sur sa page. Moitié moins de messages, donc moins de risque de buter sur la limite de débit du prestataire. Les votes aux sondages envoyés avant cette décision restent enregistrés (webhook `poll.results`). Une réponse sur la page annule les relances encore en file.
 
 ### Envoi (organisateur, `/tableau-de-bord/evenements/<id>/relances`)
 
@@ -118,7 +117,7 @@ WasenderAPI ne ralentit pas les envois : c'est le worker qui protège le numéro
 
 | Règle | Valeur par défaut | Variable |
 |---|---|---|
-| Un invité à la fois (carte, puis sondage 3 à 7 s plus tard) | — | — |
+| Un invité à la fois (un seul message : la carte et le lien) | — | — |
 | Pause entre deux invités | 20 à 45 s, aléatoire | `WHATSAPP_MIN_DELAY_SECONDS`, `WHATSAPP_MAX_DELAY_SECONDS` |
 | Longue pause | 30 min tous les 25 invités | `WHATSAPP_BATCH_SIZE`, `WHATSAPP_BATCH_PAUSE_MINUTES` |
 | Heures d'envoi (Abidjan) | 8 h – 20 h | `WHATSAPP_SEND_START_HOUR`, `WHATSAPP_SEND_END_HOUR` |
@@ -135,7 +134,7 @@ Soit environ 30 invités par heure : 300 invitations prennent une dizaine d'heur
 | Événement | Effet |
 |---|---|
 | `messages.update` | Statut du message : envoyé, livré, lu (ne recule jamais), échec |
-| `poll.results` | Vote au sondage → réponse de l'invité |
+| `poll.results` | Vote à un sondage envoyé avant le 29/10 → réponse de l'invité |
 | `messages.received` | Message libre de l'invité (`inbound_messages`), rattaché à l'invité de ce numéro le plus récemment contacté |
 
 L'envoi renvoie un `msgId` interne à WasenderAPI ; les webhooks utilisent l'identifiant WhatsApp (`key.id`). Le worker lit ce dernier avec `GET /messages/{msgId}/info` et le stocke (`messages.whatsapp_id`, `messages.poll_whatsapp_id`).
@@ -163,7 +162,7 @@ PostgreSQL 15 ou plus. Schéma visuel : [base-de-donnees.excalidraw](base-de-don
 | | `event_cards` | Carte configurée pour un événement, par catégorie ou par défaut (`category_id` null). |
 | | `invitations` | Carte générée pour un invité (1–1), avec le jeton unique du lien invité et du QR code. |
 | Invités | `guests` | Invité : nom affiché, téléphone, catégorie, nombre de places, réponse et état des relances. |
-| Relances | `messages` | Messages WhatsApp (invitation, relance) : file d'envoi, texte envoyé, identifiants WasenderAPI et WhatsApp (carte et sondage), statut. |
+| Relances | `messages` | Messages WhatsApp (invitation, relance) : file d'envoi, texte envoyé, identifiants WasenderAPI et WhatsApp (carte, et sondage pour les messages envoyés avant le 29/10), statut. |
 | | `inbound_messages` | Messages écrits par les invités sur WhatsApp, à traiter par la conseillère. |
 | | `calls` | Appels de l'équipe support : agent, date prévue, résultat, notes. |
 

@@ -181,7 +181,7 @@ async function RemindersView({
                 <p className="text-[14px]">
                   <span className="font-semibold">{plural(wa.ready, "invitation prête", "invitations prêtes")}</span>
                   <span className="block text-text-muted">
-                    Chaque invité reçoit sa carte, le lien de sa page et un sondage « Oui / Non ».
+                    Chaque invité reçoit sa carte et le lien de sa page, où il répond.
                   </span>
                 </p>
                 <SendButton

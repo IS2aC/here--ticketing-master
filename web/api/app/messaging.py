@@ -260,7 +260,11 @@ async def send_message(
     *,
     poll_delay: tuple[float, float] = (3, 7),
 ) -> MessageStatus:
-    """Envoie un message pris par `claim_next` : la carte (ou le texte), puis le sondage."""
+    """Envoie un message pris par `claim_next` : la carte avec sa légende (ou le texte d'une relance).
+
+    Un sondage n'est envoyé que si le contenu en prévoit un (plus le cas aujourd'hui). Un message en file
+    dont la carte est déjà partie (sondage en attente d'une reprise) passe donc à « envoyé » sans rien renvoyer.
+    """
     row = (
         await db.execute(
             select(Message, Guest, Event, Invitation)

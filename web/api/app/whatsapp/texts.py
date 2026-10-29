@@ -1,7 +1,8 @@
 """Textes des messages WhatsApp (DESIGN.md › Message WhatsApp, ton de voix « hôte »).
 
-Invitation et relance : la carte (image) ou un texte, avec le lien de la page invité sur sa propre ligne,
-puis un sondage « Oui / Non ». Hommage : texte sobre, pas de sondage.
+Invitation : la carte (image) avec une légende ; relance : un texte. Le lien de la page invité est sur sa
+propre ligne : l'invité y répond. Pas de sondage (un seul message par invité, voir docs/SPECIFICATIONS.md).
+Le sondage reste lisible (`Poll`, `answer_from_option`) pour les votes aux sondages déjà envoyés.
 """
 
 from dataclasses import dataclass
@@ -38,23 +39,11 @@ class Poll:
 class Content:
     text: str  # légende de la carte (invitation) ou texte de la relance
     with_card: bool  # joindre l'image de la carte
-    poll: Poll | None
+    poll: Poll | None  # plus utilisé pour les nouveaux messages : toujours None
 
 
 def is_tribute(event: Event) -> bool:
     return event.type == EventType.funerailles
-
-
-def poll_for(guest: Guest) -> Poll:
-    if guest.seats > 1:
-        return Poll(
-            "Serez-vous des nôtres ?",
-            "Oui, nous serons là",
-            "Non, nous ne pourrons pas venir",
-        )
-    return Poll(
-        "Serez-vous des nôtres ?", "Oui, je serai là", "Non, je ne pourrai pas venir"
-    )
 
 
 def message_content(
@@ -80,12 +69,12 @@ def message_content(
             f"{hello}\nVoici votre invitation pour « {event.title} », le {date}{place}.\n"
             f"Votre carte et votre réponse :\n{link}"
         )
-        return Content(text, with_card=True, poll=poll_for(guest))
+        return Content(text, with_card=True, poll=None)
     text = (
         f"{hello}\nNous n'avons pas encore votre réponse pour « {event.title} », le {date}.\n"
         f"Votre invitation :\n{link}"
     )
-    return Content(text, with_card=False, poll=poll_for(guest))
+    return Content(text, with_card=False, poll=None)
 
 
 def answer_from_option(option: str) -> bool | None:
