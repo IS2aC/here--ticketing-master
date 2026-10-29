@@ -1,13 +1,20 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
-from sqlalchemy import false, func, or_, select
+from sqlalchemy import false, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 
 from app.auth import CurrentAuth, DbSession, open_session
-from app.models import User
+from app.models import Session, User
 from app.phone import normalize_phone
-from app.schemas import LoginIn, RegisterIn, SessionOut, UserOut
+from app.schemas import (
+    LoginIn,
+    PasswordChange,
+    ProfileUpdate,
+    RegisterIn,
+    SessionOut,
+    UserOut,
+)
 from app.security import hash_password, verify_password
 
 router = APIRouter(tags=["comptes"])
@@ -101,3 +108,72 @@ async def logout(auth: CurrentAuth, db: DbSession) -> Response:
 @router.get("/me")
 async def me(auth: CurrentAuth) -> UserOut:
     return UserOut.model_validate(auth.user, from_attributes=True)
+
+
+@router.patch("/me")
+async def update_me(body: ProfileUpdate, auth: CurrentAuth, db: DbSession) -> UserOut:
+    """« Mon profil » : modifie les informations du compte. Le téléphone et l'e-mail restent uniques."""
+    user = auth.user
+    changes = body.model_dump(exclude_unset=True)
+    for required in ("first_name", "last_name", "phone"):
+        if required in changes and changes[required] is None:
+            del changes[required]
+    if changes.get("email"):
+        changes["email"] = changes["email"].lower()
+
+    for field, label in (("phone", "ce numéro"), ("email", "cette adresse e-mail")):
+        value = changes.get(field)
+        if not value or value == getattr(user, field):
+            continue
+        column = User.phone if field == "phone" else func.lower(User.email)
+        if await db.scalar(select(User.id).where(column == value, User.id != user.id)):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                detail={
+                    "field": field,
+                    "message": f"Un autre compte utilise déjà {label}.",
+                },
+            )
+
+    for field, value in changes.items():
+        setattr(user, field, value)
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail={
+                "field": "phone",
+                "message": "Un autre compte utilise déjà ces coordonnées.",
+            },
+        ) from None
+    await db.refresh(user)
+    return UserOut.model_validate(user, from_attributes=True)
+
+
+@router.post("/me/password", status_code=status.HTTP_204_NO_CONTENT)
+async def change_password(
+    body: PasswordChange, auth: CurrentAuth, db: DbSession
+) -> Response:
+    """Change le mot de passe et déconnecte les autres appareils (la session en cours reste ouverte)."""
+    if not verify_password(auth.user.password_hash, body.current_password):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail={
+                "field": "current_password",
+                "message": "Le mot de passe actuel est incorrect.",
+            },
+        )
+    auth.user.password_hash = hash_password(body.new_password)
+    await db.execute(
+        update(Session)
+        .where(
+            Session.user_id == auth.user.id,
+            Session.id != auth.session.id,
+            Session.revoked_at.is_(None),
+        )
+        .values(revoked_at=datetime.now(UTC))
+    )
+    await db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

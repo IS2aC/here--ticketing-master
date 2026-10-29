@@ -13,6 +13,11 @@ export type User = {
   phone: string;
   email: string | null;
   role: "organizer" | "support" | "admin";
+  organization: string | null;
+  city: string | null;
+  country: string | null;
+  billing_address: string | null;
+  tax_id: string | null;
 };
 
 export type SessionResponse = {

@@ -17,3 +17,9 @@ export function maskPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   return digits.length > 4 ? `•• •• ${groups(digits.slice(-4))}` : "•• ••";
 }
+
+/** « 07 00 00 00 09 » : numéro ivoirien tel qu'on le saisit (formulaires) ; les autres restent en +indicatif. */
+export function localPhone(phone: string): string {
+  if (/^\+225\d{10}$/.test(phone)) return groups(phone.slice(4));
+  return phone;
+}

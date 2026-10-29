@@ -92,3 +92,112 @@ def test_login_wrong_password(client: TestClient) -> None:
 def test_me_requires_token(client: TestClient) -> None:
     assert client.get("/v1/me").status_code == 401
     assert client.get("/v1/me", headers=bearer("jeton-inconnu")).status_code == 401
+
+
+def test_profile(client: TestClient, organizer: dict[str, str]) -> None:
+    updated = client.patch(
+        "/v1/me",
+        json={
+            "first_name": "Aya",
+            "phone": "07 00 00 00 55",
+            "email": "AYA.PROFIL@example.com",
+            "organization": "Famille Koffi",
+            "city": "Abidjan",
+            "country": "Côte d'Ivoire",
+            "billing_address": "Rue des Jardins, Cocody",
+            "tax_id": " ",
+        },
+        headers=organizer,
+    )
+    assert updated.status_code == 200, updated.text
+    me = updated.json()
+    assert (
+        me["first_name"] == "Aya" and me["last_name"] == "Organisateur"
+    )  # nom inchangé
+    assert me["phone"] == "+2250700000055"
+    assert me["email"] == "aya.profil@example.com"
+    assert me["organization"] == "Famille Koffi" and me["tax_id"] is None
+    assert client.get("/v1/me", headers=organizer).json()["city"] == "Abidjan"
+
+    # Effacer un champ facultatif ; un champ obligatoire à null est ignoré.
+    cleared = client.patch(
+        "/v1/me", json={"city": None, "last_name": None}, headers=organizer
+    ).json()
+    assert cleared["city"] is None and cleared["last_name"] == "Organisateur"
+
+    # Le nouveau numéro sert à se connecter.
+    login = client.post(
+        "/v1/auth/login", json={"identifier": "0700000055", "password": "mot-de-passe"}
+    )
+    assert login.status_code == 200
+
+    other = client.post(
+        "/v1/auth/register",
+        json={
+            "first_name": "B",
+            "last_name": "C",
+            "phone": "0700000056",
+            "email": "b@example.com",
+            "password": "mot-de-passe",
+        },
+    ).json()
+    taken = client.patch("/v1/me", json={"phone": "0700000056"}, headers=organizer)
+    assert taken.status_code == 409 and taken.json()["detail"]["field"] == "phone"
+    taken = client.patch("/v1/me", json={"email": "B@example.com"}, headers=organizer)
+    assert taken.status_code == 409 and taken.json()["detail"]["field"] == "email"
+    assert (
+        client.patch("/v1/me", json={"phone": "123"}, headers=organizer).status_code
+        == 422
+    )
+    assert other["user"]["phone"] == "+2250700000056"
+
+
+def test_change_password(client: TestClient, organizer: dict[str, str]) -> None:
+    phone = client.get("/v1/me", headers=organizer).json()["phone"]
+    other_device = client.post(
+        "/v1/auth/login", json={"identifier": phone, "password": "mot-de-passe"}
+    ).json()
+    other = {"Authorization": f"Bearer {other_device['access_token']}"}
+
+    wrong = client.post(
+        "/v1/me/password",
+        json={"current_password": "faux", "new_password": "nouveau-mot"},
+        headers=organizer,
+    )
+    assert (
+        wrong.status_code == 400
+        and wrong.json()["detail"]["field"] == "current_password"
+    )
+    assert (
+        client.post(
+            "/v1/me/password",
+            json={"current_password": "mot-de-passe", "new_password": "court"},
+            headers=organizer,
+        ).status_code
+        == 422
+    )
+
+    ok = client.post(
+        "/v1/me/password",
+        json={"current_password": "mot-de-passe", "new_password": "nouveau-mot"},
+        headers=organizer,
+    )
+    assert ok.status_code == 204
+    assert (
+        client.get("/v1/me", headers=organizer).status_code == 200
+    )  # session en cours gardée
+    assert (
+        client.get("/v1/me", headers=other).status_code == 401
+    )  # autres appareils déconnectés
+    assert (
+        client.post(
+            "/v1/auth/login", json={"identifier": phone, "password": "mot-de-passe"}
+        ).status_code
+        == 401
+    )
+    assert (
+        client.post(
+            "/v1/auth/login", json={"identifier": phone, "password": "nouveau-mot"}
+        ).status_code
+        == 200
+    )

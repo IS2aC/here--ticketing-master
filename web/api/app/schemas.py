@@ -52,6 +52,11 @@ class UserOut(BaseModel):
     phone: str
     email: str | None
     role: UserRole
+    organization: str | None = None
+    city: str | None = None
+    country: str | None = None
+    billing_address: str | None = None
+    tax_id: str | None = None
 
 
 class SessionOut(BaseModel):
@@ -383,3 +388,25 @@ class WhatsAppSettingsIn(BaseModel):
 class QueueResult(BaseModel):
     queued: int
     without_phone: int = 0
+
+
+# --- Profil ----------------------------------------------------------------------------
+
+
+class ProfileUpdate(BaseModel):
+    """Champs absents : inchangés. Champs facultatifs à null ou vides : effacés."""
+
+    first_name: Name | None = None
+    last_name: Name | None = None
+    phone: Phone | None = None
+    email: EmailStr | None = None
+    organization: Annotated[_text(120) | None, AfterValidator(_blank_to_none)] = None
+    city: Annotated[_text(80) | None, AfterValidator(_blank_to_none)] = None
+    country: Annotated[_text(80) | None, AfterValidator(_blank_to_none)] = None
+    billing_address: Annotated[_text(300) | None, AfterValidator(_blank_to_none)] = None
+    tax_id: Annotated[_text(40) | None, AfterValidator(_blank_to_none)] = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)

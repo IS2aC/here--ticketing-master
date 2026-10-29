@@ -41,14 +41,19 @@ async function Account() {
         {user.last_name.charAt(0)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-semibold">
+        <Link href="/tableau-de-bord/profil" className="block truncate text-[13px] font-semibold hover:underline">
           {user.first_name} {user.last_name}
-        </p>
-        <form action={logout}>
-          <button type="submit" className="text-[12px] text-text-muted hover:text-text hover:underline">
-            Se déconnecter
-          </button>
-        </form>
+        </Link>
+        <div className="flex gap-3 text-[12px] whitespace-nowrap text-text-muted">
+          <Link href="/tableau-de-bord/profil" className="hover:text-text hover:underline">
+            Mon profil
+          </Link>
+          <form action={logout}>
+            <button type="submit" className="hover:text-text hover:underline">
+              Se déconnecter
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -32,6 +32,11 @@ class User(Base):
     last_name: Mapped[str]
     email: Mapped[str | None]
     password_hash: Mapped[str]
+    organization: Mapped[str | None]  # entreprise, association ou famille
+    city: Mapped[str | None]
+    country: Mapped[str | None]
+    billing_address: Mapped[str | None]
+    tax_id: Mapped[str | None]
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, name="user_role", create_type=False),
         server_default=UserRole.organizer.value,
