@@ -10,7 +10,7 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import case, func, select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +18,7 @@ from app.auth import CurrentAuth, DbSession
 from app.models import (
     Checkin,
     Event,
+    EventStatus,
     Guest,
     GuestCategory,
     Invitation,
@@ -141,6 +142,13 @@ async def _link(db: AsyncSession, token: str) -> tuple[ScanLink, Event]:
                 "message": "Ce lien de scan n'est plus valide. Demandez un nouveau lien à l'organisateur."
             },
         )
+    if row[1].status == EventStatus.cancelled:
+        raise HTTPException(
+            status.HTTP_410_GONE,
+            detail={
+                "message": "Cet événement a été annulé : aucune entrée n'est enregistrée."
+            },
+        )
     return row[0], row[1]
 
 
@@ -151,21 +159,13 @@ async def _scan_event(db: AsyncSession, link: ScanLink, event: Event) -> ScanEve
         .join(Guest, Guest.id == Invitation.guest_id)
         .where(Guest.event_id == event.id)
     )
+    # Attendus : les invités qui ont confirmé (sans réponse ou « non » : comptés absents).
     expected = await db.scalar(
         select(
             func.coalesce(
-                func.sum(
-                    case(
-                        (
-                            Guest.rsvp_status == RsvpStatus.confirmed,
-                            func.coalesce(Guest.attending_seats, Guest.seats),
-                        ),
-                        else_=Guest.seats,
-                    )
-                ),
-                0,
+                func.sum(func.coalesce(Guest.attending_seats, Guest.seats)), 0
             )
-        ).where(Guest.event_id == event.id, Guest.rsvp_status != RsvpStatus.declined)
+        ).where(Guest.event_id == event.id, Guest.rsvp_status == RsvpStatus.confirmed)
     )
     return ScanEvent(
         title=event.title,
@@ -255,6 +255,16 @@ async def check_in(token: str, body: ScanCheckIn, db: DbSession) -> ScanResult:
         )
 
     guest, category, invitation, checkin, entered_by = row
+    if checkin is None and guest.rsvp_status != RsvpStatus.confirmed:
+        # Règle d'entrée : seuls les invités qui ont confirmé entrent. « Non » ou sans réponse : refusé.
+        return ScanResult(
+            result="refused",
+            code=invitation_code(invitation.token),
+            guest=_scan_guest(guest, category, invitation, checkin),
+            entered_at=None,
+            entered_by=None,
+            event=await _scan_event(db, link, event),
+        )
     if checkin is None:
         # Une seule entrée par invitation, même si deux agents scannent en même temps.
         inserted = await db.scalar(

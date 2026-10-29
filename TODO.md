@@ -62,11 +62,6 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - suivre les **événements** (statut, invités, cartes, invitations envoyées, réponses, entrées) ;
   - choisir le **prestataire d'envoi WhatsApp** sans redéployer : WasenderAPI, Diffuz ou l'API officielle Meta. Aujourd'hui, c'est la variable `WHATSAPP_PROVIDER` ; le connecteur est déjà interchangeable ;
   - y regrouper les réglages prévus pour le portail : options payantes par compte (relances à la demande), calendrier des relances, cadence d'envoi.
-- [ ] **Règles d'entrée au scan** (à réfléchir). Pour l'instant, le scan valide seulement que **la carte est valide** et que **l'invité appartient à l'événement**. À décider ensuite :
-  - invité qui a **décliné** : bloquer, ou laisser l'agent décider (aujourd'hui : entrée avec un avertissement) ;
-  - invité **sans réponse** : entrée autorisée ou non ;
-  - **ouverture du scan** : dès la création du lien, ou seulement le jour J (par exemple 6 h avant le début) ;
-  - **événement annulé** : bloquer le scan ;
-  - **plusieurs personnes** sur une invitation : entrée partielle ou totale au premier scan.
+- [x] **Règles d'entrée au scan** (décidées et faites le 29/10) : seuls les invités qui ont **confirmé** entrent. Un invité qui a répondu **non** est refusé (écran rouge « Entrée refusée ») ; un invité **sans réponse** est compté absent et refusé de la même façon ; les « attendus » de l'écran de scan ne comptent que les confirmés. Le scan fonctionne **dès la création du lien**. **Événement annulé** : le scan est bloqué. Reste lié au « Nombre de personnes par invité » : entrée partielle quand une invitation compte plusieurs personnes.
 - [x] **Retours de navigation identiques** (fait le 29/10) : un seul style, celui de « Retour à l'événement » (lien rouge avec flèche, au-dessus du titre). « Retour au tableau de bord » sur la page de l'événement, la création d'un événement, la bibliothèque de cartes et le profil ; « Retour à l'événement » sur les étapes d'un événement. À garder pour tout nouvel écran (`components/back-link.tsx`).
 - [ ] **Ajustement complet du branding de la solution**.

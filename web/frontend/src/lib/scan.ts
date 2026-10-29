@@ -23,7 +23,7 @@ export type ScanGuest = {
 };
 
 export type ScanResult = {
-  result: "admitted" | "already" | "unknown";
+  result: "admitted" | "already" | "unknown" | "refused"; // refused : n'a pas confirmé (« non » ou sans réponse)
   code: string | null;
   guest: ScanGuest | null;
   entered_at: string | null;

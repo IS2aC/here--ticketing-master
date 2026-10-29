@@ -21,6 +21,15 @@ export default function ScanPage({ params }: PageProps<"/scan/[token]">) {
 async function Scan({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const response = await apiFetch(`/v1/scan/${encodeURIComponent(token)}`);
+  if (response.status === 410) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+        <Icon name="decline" width={56} height={56} className="text-red-bright" />
+        <h1 className="font-heading text-[24px] font-bold">Événement annulé</h1>
+        <p className="text-[17px] text-gray-500">Le scan est fermé : aucune entrée n&apos;est enregistrée. En cas de doute, appelez l&apos;organisateur.</p>
+      </div>
+    );
+  }
   if (!response.ok) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">

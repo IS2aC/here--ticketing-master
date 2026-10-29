@@ -25,7 +25,12 @@ def test_scan_flow(client: TestClient, organizer: dict[str, str]) -> None:
 
     start = client.get(f"/v1/scan/{porte_a['token']}").json()
     assert start["label"] == "Porte A"
-    assert start == {**start, "arrived": 0, "expected": 3}
+    # Attendus : seulement les invités qui ont confirmé.
+    assert start == {**start, "arrived": 0, "expected": 0}
+    for name in ("Jean Konan", "Paul Assi"):
+        token = guests[name]["invitation_token"]
+        client.post(f"/v1/invitations/{token}/response", json={"attending": True})
+    assert client.get(f"/v1/scan/{porte_a['token']}").json()["expected"] == 2
 
     # QR code de la carte : l'adresse de la page invité.
     qr = f"http://localhost:3000/i/{jean['invitation_token']}"
@@ -61,11 +66,25 @@ def test_scan_flow(client: TestClient, organizer: dict[str, str]) -> None:
         client.get(f"/v1/scan/{porte_b['token']}/guests", params={"q": "f"}).json()
         == []
     )
-    chosen = client.post(
-        f"/v1/scan/{porte_b['token']}/check", json={"guest_id": found[0]["guest_id"]}
-    ).json()
+    fatou = {"guest_id": found[0]["guest_id"]}
+    fatou_token = guests["Fatou Bamba"]["invitation_token"]
+
+    # Règles d'entrée : sans réponse ou « non » : refusé, aucune entrée enregistrée.
+    pending = client.post(f"/v1/scan/{porte_b['token']}/check", json=fatou).json()
+    assert pending["result"] == "refused"
+    assert pending["guest"]["rsvp_status"] == "pending"
+    assert pending["entered_at"] is None and pending["event"]["arrived"] == 2
+    client.post(f"/v1/invitations/{fatou_token}/response", json={"attending": False})
+    declined = client.post(f"/v1/scan/{porte_b['token']}/check", json=fatou).json()
+    assert declined["result"] == "refused"
+    assert declined["guest"]["rsvp_status"] == "declined"
+
+    # Elle change d'avis et confirme : elle entre.
+    client.post(f"/v1/invitations/{fatou_token}/response", json={"attending": True})
+    chosen = client.post(f"/v1/scan/{porte_b['token']}/check", json=fatou).json()
     assert chosen["result"] == "admitted"
     assert chosen["event"]["arrived"] == 3
+    assert chosen["event"]["expected"] == 3
 
     # Invitation d'un autre événement ou code inconnu.
     unknown = client.post(
@@ -85,6 +104,28 @@ def test_scan_flow(client: TestClient, organizer: dict[str, str]) -> None:
         ]
         == 3
     )
+
+
+def test_cancelled_event_blocks_scan(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    event_id, guests = invited(client, organizer)
+    porte = link(client, organizer, event_id)
+    jean = guests["Jean Konan"]
+    client.post(
+        f"/v1/invitations/{jean['invitation_token']}/response", json={"attending": True}
+    )
+    sql(f"UPDATE events SET status = 'cancelled' WHERE id = '{event_id}'")
+    blocked = client.get(f"/v1/scan/{porte['token']}")
+    assert blocked.status_code == 410
+    assert "annulé" in blocked.json()["detail"]["message"]
+    check = client.post(
+        f"/v1/scan/{porte['token']}/check",
+        json={"value": invitation_code(jean["invitation_token"])},
+    )
+    assert check.status_code == 410
+    links = client.get(f"/v1/events/{event_id}/scan-links", headers=organizer).json()
+    assert links[0]["checkins"] == 0
 
 
 def test_link_revoked_expired_and_private(

@@ -306,7 +306,7 @@ class ScanEvent(BaseModel):
     starts_at: datetime
     label: str  # nom du lien : « Entrée de la réception »
     arrived: int  # personnes entrées
-    expected: int  # personnes attendues (hors invités qui ont décliné)
+    expected: int  # personnes attendues : invités qui ont confirmé
 
 
 class ScanCheckIn(BaseModel):
@@ -331,7 +331,8 @@ class ScanGuest(BaseModel):
 
 
 class ScanResult(BaseModel):
-    result: Literal["admitted", "already", "unknown"]
+    # refused : invitation valide, mais l'invité n'a pas confirmé (« non » ou sans réponse).
+    result: Literal["admitted", "already", "unknown", "refused"]
     code: str | None  # code lu ou trouvé
     guest: ScanGuest | None
     entered_at: datetime | None  # première entrée (déjà entré) ou maintenant (attendu)

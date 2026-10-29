@@ -15,6 +15,8 @@ const STATES: Record<ScanResult["result"], { color: string; border: string; icon
   admitted: { color: "text-green-light", border: "border-green-light", icon: "valide", title: () => "Invité attendu" },
   already: { color: "text-amber-light", border: "border-amber-light", icon: "horloge", title: (r) => `Déjà entré à ${at(r.entered_at)}` },
   unknown: { color: "text-red-bright", border: "border-red-bright", icon: "decline", title: () => "Invitation non reconnue" },
+  // Règle d'entrée : seuls les invités qui ont confirmé entrent.
+  refused: { color: "text-red-bright", border: "border-red-bright", icon: "decline", title: () => "Entrée refusée" },
 };
 
 const big = "flex h-14 w-full items-center justify-center gap-2 rounded-full px-6 font-heading text-[17px] font-semibold disabled:opacity-60";
@@ -146,8 +148,13 @@ export function Scanner({ token, initial }: { token: string; initial: ScanEvent 
               n&apos;appartient pas à {event.title}.
             </p>
           )}
-          {result.guest?.rsvp_status === "declined" ? (
-            <p className="text-[15px] text-amber-light">A répondu qu&apos;il ne viendrait pas : vérifiez auprès de l&apos;organisateur.</p>
+          {result.result === "refused" ? (
+            <p className="text-[17px] text-red-bright">
+              {result.guest?.rsvp_status === "declined"
+                ? "A répondu qu'il ne viendrait pas."
+                : "N'a pas confirmé sa présence : il n'est pas sur la liste des attendus."}
+              <span className="mt-1 block text-[15px] text-gray-300">En cas de doute, appelez l&apos;organisateur.</span>
+            </p>
           ) : null}
           <p className="font-mono text-[14px] text-gray-500">
             {result.code ? `${result.result === "unknown" ? "Code lu : " : ""}${result.code}` : "Code illisible"}

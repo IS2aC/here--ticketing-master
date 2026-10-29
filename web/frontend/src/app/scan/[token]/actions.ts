@@ -14,6 +14,7 @@ export async function checkIn(token: string, input: { value?: string; guestId?: 
       body: JSON.stringify({ value: input.value ?? null, guest_id: input.guestId ?? null }),
     });
     if (response.status === 404) return { ok: false, message: "Ce lien de scan n'est plus valide. Demandez un nouveau lien à l'organisateur." };
+    if (response.status === 410) return { ok: false, message: "Cet événement a été annulé : aucune entrée n'est enregistrée." };
     if (!response.ok) return { ok: false, message: "Vérification impossible. Réessayez." };
     return { ok: true, data: (await response.json()) as ScanResult };
   } catch {
