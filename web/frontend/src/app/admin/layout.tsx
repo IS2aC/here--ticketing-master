@@ -1,21 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Icon, type IconName } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { requireAdmin } from "@/lib/admin";
 import { logout } from "../(auth)/actions";
+import { AdminNav, AdminNavLinks } from "./nav";
 
 // Portail admin (équipe Here!) : maquette Stitch, charte Here!.
-// Les écrans sans page pour l'instant sont affichés, grisés, avec « Bientôt » (jamais de lien mort).
-const LINKS: { label: string; icon: IconName; href?: string }[] = [
-  { label: "Tableau de bord", icon: "statistiques", href: "/admin" },
-  { label: "Utilisateurs", icon: "profil" },
-  { label: "Événements", icon: "calendrier" },
-  { label: "Messages", icon: "envoyer" },
-  { label: "Cartes", icon: "invitation" },
-  { label: "Réglages", icon: "parametres" },
-];
-
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-surface md:grid md:grid-cols-[256px_1fr]">
@@ -23,27 +14,9 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link href="/admin" className="mx-3 self-start">
           <Image src="/brand/logo-horizontal.svg" alt="Here! · Ticketing Master" width={110} height={37} priority />
         </Link>
-        <nav className="grid gap-1.5" aria-label="Navigation du portail admin">
-          {LINKS.map((l) =>
-            l.href ? (
-              <Link
-                key={l.label}
-                href={l.href}
-                aria-current="page"
-                className="flex h-10 items-center gap-3.5 rounded-xl bg-surface px-4 text-[14px] font-semibold text-text"
-              >
-                <Icon name={l.icon} width={18} height={18} className="text-primary" />
-                {l.label}
-              </Link>
-            ) : (
-              <span key={l.label} aria-disabled="true" className="flex h-10 items-center gap-3.5 rounded-xl px-4 text-[14px] font-medium text-text-muted">
-                <Icon name={l.icon} width={18} height={18} />
-                {l.label}
-                <span className="ml-auto rounded-sm bg-surface px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.04em] uppercase">Bientôt</span>
-              </span>
-            ),
-          )}
-        </nav>
+        <Suspense fallback={<AdminNavLinks />}>
+          <AdminNav />
+        </Suspense>
         <div className="mt-auto grid min-w-0 gap-4">
           <div className="hidden rounded-2xl bg-ink p-4 text-white md:block">
             <Icon name="support" className="text-red-bright" />

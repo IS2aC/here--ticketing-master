@@ -7,23 +7,13 @@ import { EVENT_TIME_ZONE, eventType } from "@/lib/event-types";
 import { formatShortDate, formatTime } from "@/lib/events";
 import { maskPhone } from "@/lib/phone";
 import { DailyChart, Donut } from "./charts";
+import { AVATARS, CARD, SeeAll, SeeButton, TONES, type Tone } from "./ui";
 
 export const metadata: Metadata = { title: "Portail admin · Here!" };
 
 // Tableau de bord admin : maquette Google Stitch, adaptée à la charte Here! (tokens, polices, pictogrammes).
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-const CARD = "rounded-2xl border border-border/60 bg-background shadow-sm";
-
-// Pastilles des pictogrammes : teinte légère de la couleur de la charte.
-const TONES = {
-  red: "bg-primary/8 text-primary",
-  green: "bg-status-confirmed/10 text-status-confirmed",
-  amber: "bg-amber-light/20 text-status-pending",
-  neutral: "bg-surface text-text-muted",
-} as const;
-type Tone = keyof typeof TONES;
 
 function plural(n: number, one: string, many: string = `${one}s`): string {
   return `${n.toLocaleString("fr-FR")} ${n > 1 ? many : one}`;
@@ -90,7 +80,7 @@ async function PeriodMenu({ searchParams }: { searchParams: SearchParams }) {
 
 async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   const days = await period(searchParams);
-  const [d, upcoming, users] = await Promise.all([getDashboard(days), getEvents({ period: "upcoming", limit: 4 }), getUsers(5)]);
+  const [d, upcoming, users] = await Promise.all([getDashboard(days), getEvents({ period: "upcoming", limit: 4 }), getUsers({ limit: 5 })]);
   const guests = d.guests.total;
   const confirmed = d.rsvp.confirmed;
   const series = d.series;
@@ -166,18 +156,25 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </section>
 
         <section className={`${CARD} p-6 lg:col-span-4`} aria-label="Événements à venir">
-          <h2 className="font-heading text-[15px] font-semibold">Événements à venir</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-heading text-[15px] font-semibold">Événements à venir</h2>
+            <SeeAll href="/admin/evenements?periode=a-venir" />
+          </div>
           {upcoming.items.length ? (
             <ul className="mt-4 grid gap-1">
               {upcoming.items.map((e) => (
-                <li key={e.id} className="flex items-center gap-3 rounded-xl p-1.5">
+                <li key={e.id} className="relative flex items-center gap-3 rounded-xl p-1.5 hover:bg-surface/60">
                   <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${TONES.red}`}>
                     <Icon name={eventType(e.type).icon} width={18} height={18} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[13px] font-semibold" title={e.title}>
+                    <Link
+                      href={`/admin/utilisateurs/${e.organizer_id}`}
+                      className="block truncate text-[13px] font-semibold after:absolute after:inset-0"
+                      title={`${e.title} · ${e.organizer_name}`}
+                    >
                       {e.title}
-                    </span>
+                    </Link>
                     <span className="block truncate text-[11px] text-text-muted">
                       {formatShortDate(e.starts_at)} · {formatTime(e.starts_at)}
                     </span>
@@ -220,9 +217,12 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
       </div>
 
       <section className={`${CARD} p-6`} aria-label="Derniers organisateurs inscrits">
-        <h2 className="font-heading text-[15px] font-semibold">Derniers organisateurs inscrits</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-heading text-[15px] font-semibold">Derniers organisateurs inscrits</h2>
+          <SeeAll href="/admin/utilisateurs" label="Voir tous" />
+        </div>
         {users.items.length ? (
-          <div className="mt-4 overflow-x-auto">
+          <div className="relative mt-4 overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-[13px]">
               <thead>
                 <tr className="border-b border-border text-[11px] tracking-[0.06em] text-text-muted uppercase">
@@ -231,6 +231,9 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
                       {h}
                     </th>
                   ))}
+                  <th scope="col" className="pb-3 text-right font-medium">
+                    <span className="sr-only">Fiche</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -251,6 +254,9 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
                     <td className="py-3.5 pr-4 text-text-muted">{u.city ?? "—"}</td>
                     <td className="py-3.5 pr-4 text-[12px] whitespace-nowrap text-text-muted">{formatShortDate(u.created_at)}</td>
                     <td className="py-3.5 text-center font-data font-semibold tabular-nums">{u.events.toLocaleString("fr-FR")}</td>
+                    <td className="py-3.5 text-right">
+                      <SeeButton href={`/admin/utilisateurs/${u.id}`} name={`${u.first_name} ${u.last_name}`} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -267,8 +273,6 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     </>
   );
 }
-
-const AVATARS = [TONES.red, TONES.amber, TONES.green, TONES.neutral];
 
 function Kpi({
   tone,

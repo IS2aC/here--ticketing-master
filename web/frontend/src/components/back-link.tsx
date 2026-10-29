@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Icon } from "./icons";
 
 // Lien de retour, le même partout : rouge, bien visible en haut de la page, au-dessus du titre.
-function BackLink({ href, label }: { href: string; label: string }) {
+export function BackLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}

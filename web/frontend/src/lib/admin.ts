@@ -94,7 +94,7 @@ export async function requireAdmin() {
 async function adminFetch<T>(path: string): Promise<T> {
   const response = await apiFetch(`/v1/admin${path}`, { token: await getSessionToken() });
   if (response.status === 401) redirect("/connexion");
-  if (response.status === 403) notFound();
+  if (response.status === 403 || response.status === 404 || response.status === 422) notFound();
   if (!response.ok) throw new Error(`API /v1/admin${path} : ${response.status}`);
   return response.json();
 }
@@ -103,12 +103,53 @@ export function getDashboard(days: number): Promise<AdminDashboard> {
   return adminFetch(`/dashboard?days=${days}`);
 }
 
-export function getUsers(limit: number): Promise<{ total: number; items: AdminUser[] }> {
-  return adminFetch(`/users?limit=${limit}`);
+export type AdminUserDetail = AdminUser & { billing_address: string | null; tax_id: string | null; event_list: AdminEvent[] };
+
+export type PlatformValues = {
+  whatsapp_provider: "console" | "wasender";
+  whatsapp_reminder_days_before: number[];
+  whatsapp_min_delay_seconds: number;
+  whatsapp_max_delay_seconds: number;
+  whatsapp_batch_size: number;
+  whatsapp_batch_pause_minutes: number;
+  whatsapp_send_start_hour: number;
+  whatsapp_send_end_hour: number;
+};
+
+export type PlatformSettings = {
+  values: PlatformValues;
+  defaults: PlatformValues;
+  overridden: (keyof PlatformValues)[];
+  providers: { value: string; label: string; available: boolean; configured: boolean }[];
+  updated_at: string | null;
+};
+
+export const PAGE_SIZE = 50;
+
+export function getUsers(query: { q?: string; limit: number; offset?: number }): Promise<{ total: number; items: AdminUser[] }> {
+  const params = new URLSearchParams({ limit: String(query.limit), offset: String(query.offset ?? 0) });
+  if (query.q) params.set("q", query.q);
+  return adminFetch(`/users?${params}`);
 }
 
-export function getEvents(query: { period?: "upcoming" | "past"; limit: number }): Promise<{ total: number; items: AdminEvent[] }> {
-  const params = new URLSearchParams({ limit: String(query.limit) });
+export function getUser(id: string): Promise<AdminUserDetail> {
+  return adminFetch(`/users/${encodeURIComponent(id)}`);
+}
+
+export function getEvents(query: {
+  q?: string;
+  status?: EventStatus;
+  period?: "upcoming" | "past";
+  limit: number;
+  offset?: number;
+}): Promise<{ total: number; items: AdminEvent[] }> {
+  const params = new URLSearchParams({ limit: String(query.limit), offset: String(query.offset ?? 0) });
+  if (query.q) params.set("q", query.q);
+  if (query.status) params.set("status", query.status);
   if (query.period) params.set("period", query.period);
   return adminFetch(`/events?${params}`);
+}
+
+export function getSettings(): Promise<PlatformSettings> {
+  return adminFetch("/settings");
 }
