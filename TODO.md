@@ -68,3 +68,4 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - **ouverture du scan** : dès la création du lien, ou seulement le jour J (par exemple 6 h avant le début) ;
   - **événement annulé** : bloquer le scan ;
   - **plusieurs personnes** sur une invitation : entrée partielle ou totale au premier scan.
+- [ ] **Ajustement complet du branding de la solution**.
