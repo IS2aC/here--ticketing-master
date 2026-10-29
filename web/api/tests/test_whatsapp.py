@@ -216,6 +216,16 @@ def test_offered_reminder_then_call(
     view = overview(client, organizer, event_id)
     # Relance standard offerte : active par défaut, 7 jours avant l'événement.
     assert view["reminders_enabled"] is True and view["reminder_days_before"] == [7]
+    assert len(view["reminder_dates"]) == 1  # événement dans 30 jours : relance à J-7
+
+    # Événement dans moins de 7 jours : plus de relance gratuite à afficher.
+    sql(
+        f"UPDATE events SET starts_at = now() + interval '3 days' WHERE id = '{event_id}'"
+    )
+    assert overview(client, organizer, event_id)["reminder_dates"] == []
+    sql(
+        f"UPDATE events SET starts_at = now() + interval '30 days' WHERE id = '{event_id}'"
+    )
     assert view["on_demand_reminders"] is False
 
     client.post(f"/v1/events/{event_id}/whatsapp/invitations", headers=organizer)

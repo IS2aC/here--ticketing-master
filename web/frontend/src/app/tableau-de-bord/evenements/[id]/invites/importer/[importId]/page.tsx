@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackToEvent } from "@/components/back-link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
@@ -54,6 +55,7 @@ async function Review({ params }: { params: Promise<{ id: string; importId: stri
     <>
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
+          <BackToEvent eventId={event.id} />
           <p className="text-[12px] text-text-muted">
             <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
               {event.title}

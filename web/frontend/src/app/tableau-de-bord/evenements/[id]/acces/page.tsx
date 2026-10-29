@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackToEvent } from "@/components/back-link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
@@ -47,6 +48,7 @@ async function Access({ params }: { params: Promise<{ id: string }> }) {
   return (
     <>
       <header>
+        <BackToEvent eventId={event.id} />
         <p className="text-[12px] text-text-muted">
           <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
             {event.title}

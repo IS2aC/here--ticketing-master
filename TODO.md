@@ -44,19 +44,25 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 ## Ajustements (à traiter une fois le parcours complet terminé)
 
 - [ ] **Choix de la carte** : ajouter une palette de couleurs, et quelques modifications réalisées à la demande du client.
-- [ ] **Retour vers l'événement** depuis les étapes (carte, import, modification) : un bouton retour simple, ou un lien plus visible (par exemple en rouge) vers l'événement.
-- [ ] **Encadré « L'événement » de la vue événement** : rubriques **Type, Date, Heure de début, Durée, Lieu, Invités prévus, Dress code**.
+- [x] **Retour vers l'événement** (fait le 29/10 : lien rouge « Retour à l'événement » sur la carte, l'import, l'aperçu de l'import, la modification, le contrôle d'accès et les relances) depuis les étapes (carte, import, modification) : un bouton retour simple, ou un lien plus visible (par exemple en rouge) vers l'événement.
+- [x] **Encadré « L'événement » de la vue événement** (fait le 29/10 : grille de deux colonnes, valeurs sur une ligne, texte complet au survol) : rubriques **Type, Date, Heure de début, Durée, Lieu, Invités prévus, Dress code**.
   - Aucune valeur ne doit passer à la ligne.
   - L'encadré garde ses dimensions actuelles : il ne doit pas s'allonger.
   - Les données doivent y tenir de façon lisible. Une disposition des rubriques de gauche à droite convient.
 - [ ] **Supprimer un événement**, depuis l'encadré de l'événement : supprime aussi tout ce qui lui appartient (catégories, invités, imports, cartes, invitations, liens de scan, entrées, messages et appels).
   - Action irréversible : boîte de dialogue de confirmation, selon DESIGN.md (« Supprimer l'événement Mariage Aya & Koffi ? », conséquence en une phrase, « Garder l'événement » à gauche, bouton rouge « Supprimer l'événement » à droite).
   - Point technique : `invitations.event_card_id` est en `ON DELETE RESTRICT`. Il faut vérifier que la suppression en cascade passe, ou supprimer explicitement dans le bon ordre.
-- [ ] **Bouton « Lancer les invitations » en bas de la liste des invités** (vue de l'événement) : aujourd'hui, l'envoi WhatsApp se lance seulement depuis la page « Relances ». Le bouton doit apparaître quand des cartes sont prêtes, et mettre en file l'envoi des invitations (même action que « Envoyer N invitations » de la page Relances).
+- [x] **Bouton « Lancer les invitations » en bas de la liste des invités** (fait le 29/10) (vue de l'événement) : aujourd'hui, l'envoi WhatsApp se lance seulement depuis la page « Relances ». Le bouton doit apparaître quand des cartes sont prêtes, et mettre en file l'envoi des invitations (même action que « Envoyer N invitations » de la page Relances).
 - [ ] **Dates de relance choisies par l'organisateur**, sur chaque événement : aujourd'hui, le calendrier est le même pour tous (`WHATSAPP_REMINDER_DAYS_BEFORE`, 7 jours avant par défaut). L'organisateur doit pouvoir ajouter, modifier et retirer des dates de relance pour son événement, et le worker doit envoyer la relance aux invités sans réponse à chacune de ces dates (dans les heures d'envoi).
   - Proposer des dates par défaut selon la date de l'événement, refuser les dates passées ou postérieures à l'événement.
-  - **Règle décidée (29/10)** : si l'événement a lieu dans moins de 7 jours, la relance gratuite est **annulée**. Le worker ne l'envoie déjà pas (l'invitation est partie après J-7), mais la page Relances l'affiche encore comme prévue (ex. événement le 31/10 : « Relance prévue le 24 octobre ») : afficher à la place « Relance gratuite non disponible : l'événement a lieu dans moins de 7 jours ».
+  - **Règle décidée (29/10), affichage corrigé** : si l'événement a lieu dans moins de 7 jours, la relance gratuite est **annulée**. Le worker ne l'envoie déjà pas (l'invitation est partie après J-7), mais la page Relances l'affiche encore comme prévue (ex. événement le 31/10 : « Relance prévue le 24 octobre ») : afficher à la place « Relance gratuite non disponible : l'événement a lieu dans moins de 7 jours ».
   - Garder la relance standard offerte ; les dates supplémentaires peuvent relever de l'option payante (à décider).
+- [ ] **Vue « Mon profil »** (organisateur) : consulter et modifier ses informations (prénom, nom, téléphone, e-mail, mot de passe), et renseigner les informations du client utiles à la facturation et au support (par exemple : nom de l'entreprise ou de la famille, ville, adresse, informations de facturation, à préciser). Accès depuis le bloc du compte en bas de la barre latérale.
+- [ ] **Portail admin** (équipe Here!, rôle `admin`) :
+  - suivre les **utilisateurs** (comptes, date d'inscription, nombre d'événements, activité) ;
+  - suivre les **événements** (statut, invités, cartes, invitations envoyées, réponses, entrées) ;
+  - choisir le **prestataire d'envoi WhatsApp** sans redéployer : WasenderAPI, Diffuz ou l'API officielle Meta. Aujourd'hui, c'est la variable `WHATSAPP_PROVIDER` ; le connecteur est déjà interchangeable ;
+  - y regrouper les réglages prévus pour le portail : options payantes par compte (relances à la demande), calendrier des relances, cadence d'envoi.
 - [ ] **Règles d'entrée au scan** (à réfléchir). Pour l'instant, le scan valide seulement que **la carte est valide** et que **l'invité appartient à l'événement**. À décider ensuite :
   - invité qui a **décliné** : bloquer, ou laisser l'agent décider (aujourd'hui : entrée avec un avertissement) ;
   - invité **sans réponse** : entrée autorisée ou non ;

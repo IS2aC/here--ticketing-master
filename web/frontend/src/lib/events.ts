@@ -52,6 +52,20 @@ export function formatDate(iso: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+const shortDateFormat = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: EVENT_TIME_ZONE,
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+/** « Sam. 31 oct. 2026 » : pour les espaces étroits. */
+export function formatShortDate(iso: string): string {
+  const text = shortDateFormat.format(new Date(iso));
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export function formatTime(iso: string): string {
   return timeFormat.format(new Date(iso)).replace(":", " h ");
 }

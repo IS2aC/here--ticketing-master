@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackToEvent } from "@/components/back-link";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
 import { getEvent } from "@/lib/events";
@@ -17,15 +18,21 @@ const COLUMNS = [
   ["Position", "Facultatif · table ou place", "Table 4"],
 ];
 
-export default function ImportPage({ params }: PageProps<"/tableau-de-bord/evenements/[id]/invites/importer">) {
+export default function ImportPage({
+  params,
+}: PageProps<"/tableau-de-bord/evenements/[id]/invites/importer">) {
   return (
     <>
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <Suspense fallback={<p className="h-4 w-40 rounded-sm bg-background" />}>
+          <Suspense
+            fallback={<p className="h-4 w-40 rounded-sm bg-background" />}
+          >
             <Crumb params={params} />
           </Suspense>
-          <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Importer vos invités</h1>
+          <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">
+            Importer vos invités
+          </h1>
         </div>
         <Steps current={2} />
       </header>
@@ -38,14 +45,19 @@ export default function ImportPage({ params }: PageProps<"/tableau-de-bord/evene
         </section>
 
         <aside className="grid content-start gap-4 rounded-lg bg-background p-5 shadow-sm">
-          <h2 className="font-heading text-[16px] font-semibold">Votre fichier</h2>
+          <h2 className="font-heading text-[16px] font-semibold">
+            Votre fichier
+          </h2>
           <p className="text-[14px] text-text-muted">
-            Une ligne par invité, avec ces colonnes dans n&apos;importe quel ordre. Les titres sont reconnus même sans
-            accents.
+            Une ligne par invité, avec ces colonnes dans n&apos;importe quel
+            ordre. Les titres sont reconnus même sans accents.
           </p>
           <dl className="grid gap-3 text-[14px]">
             {COLUMNS.map(([name, rule, example]) => (
-              <div key={name} className="grid grid-cols-[96px_1fr] gap-2 border-b border-border pb-3 last:border-0 last:pb-0">
+              <div
+                key={name}
+                className="grid grid-cols-[96px_1fr] gap-2 border-b border-border pb-3 last:border-0 last:pb-0"
+              >
                 <dt className="font-semibold">{name}</dt>
                 <dd>
                   <span className="block text-text-muted">{rule}</span>
@@ -62,9 +74,14 @@ export default function ImportPage({ params }: PageProps<"/tableau-de-bord/evene
             Télécharger notre modèle Excel
           </a>
           <p className="flex items-start gap-2 rounded-md bg-surface p-3 text-[13px] text-text-muted">
-            <Icon name="cadenas" width={18} height={18} className="mt-0.5 shrink-0" />
-            Les numéros de vos invités ne servent qu&apos;à leur envoyer votre invitation. Ils ne sont jamais partagés ni
-            réutilisés.
+            <Icon
+              name="cadenas"
+              width={18}
+              height={18}
+              className="mt-0.5 shrink-0"
+            />
+            Les numéros de vos invités ne servent qu&apos;à leur envoyer votre
+            invitation. Ils ne sont jamais partagés ni réutilisés.
           </p>
         </aside>
       </div>
@@ -76,12 +93,18 @@ async function Crumb({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const event = await getEvent(id);
   return (
-    <p className="text-[12px] text-text-muted">
-      <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
-        {event.title}
-      </Link>{" "}
-      · Invités
-    </p>
+    <>
+      <BackToEvent eventId={event.id} />
+      <p className="text-[12px] text-text-muted">
+        <Link
+          href={`/tableau-de-bord/evenements/${event.id}`}
+          className="hover:underline"
+        >
+          {event.title}
+        </Link>{" "}
+        · Invités
+      </p>
+    </>
   );
 }
 

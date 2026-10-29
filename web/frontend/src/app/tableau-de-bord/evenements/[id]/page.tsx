@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense, type ReactNode } from "react";
+import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { ButtonLink } from "@/components/ui";
 import { eventType } from "@/lib/event-types";
-import { formatDate, formatDuration, formatTime, getEvent, type EventOut } from "@/lib/events";
+import { formatDate, formatDuration, formatShortDate, formatTime, getEvent, type EventOut } from "@/lib/events";
 import { getGuests, type GuestOut } from "@/lib/guests";
+import { getWhatsApp, sentTotal, type WhatsAppOverview } from "@/lib/whatsapp";
 import { maskPhone } from "@/lib/phone";
+import { sendInvitations } from "./relances/actions";
+import { SendButton } from "./relances/controls";
 
 export const metadata: Metadata = { title: "Événement · Here!" };
 
@@ -40,7 +43,13 @@ async function EventView({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-  const [event, guests, query] = await Promise.all([getEvent(id), getGuests(id), searchParams]);
+  const [event, guests, query, wa] = await Promise.all([
+    getEvent(id),
+    getGuests(id),
+    searchParams,
+    // Envoi WhatsApp : sans réponse de l'API, la liste s'affiche quand même, sans le bouton d'envoi.
+    getWhatsApp(id).catch(() => null),
+  ]);
   const type = eventType(event.type);
   const imported = Number(query.importes);
   const importUrl = `/tableau-de-bord/evenements/${event.id}/invites/importer`;
@@ -94,7 +103,7 @@ async function EventView({
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         {guests.length ? (
-          <GuestList guests={guests} importUrl={importUrl} />
+          <GuestList guests={guests} importUrl={importUrl} eventId={event.id} wa={wa} />
         ) : (
           // État vide (DESIGN.md) : la prochaine étape est l'import de la liste.
           <section className="flex flex-col items-center gap-3 rounded-lg bg-background px-6 py-14 text-center shadow-sm">
@@ -114,30 +123,25 @@ async function EventView({
 
         <aside className="grid content-start gap-5 rounded-lg bg-background p-5 shadow-sm">
           <h2 className="font-heading text-[16px] font-semibold">L&apos;événement</h2>
-          <dl className="grid gap-4 text-[14px]">
-            <Info icon={type.icon} label="Type">
-              {type.label}
-            </Info>
-            <Info icon="calendrier" label="Date">
-              {formatDate(event.starts_at)}, {formatTime(event.starts_at)}
-              {event.duration_minutes ? ` · ${formatDuration(event.duration_minutes)}` : null}
-            </Info>
-            {event.location_name || event.location_address ? (
-              <Info icon="lieu" label="Lieu">
-                {event.location_name}
-                {event.location_address ? <span className="block text-text-muted">{event.location_address}</span> : null}
-              </Info>
-            ) : null}
-            {event.expected_guests !== null ? (
-              <Info icon="participants" label="Invités prévus">
-                <span className="font-data tabular-nums">{event.expected_guests.toLocaleString("fr-FR")}</span>
-              </Info>
-            ) : null}
-            {event.dress_code ? (
-              <Info icon="etiquette" label="Dress code">
-                {event.dress_code}
-              </Info>
-            ) : null}
+          {/* Une rubrique par information, sur une seule ligne : une valeur trop longue est coupée (texte complet au survol). */}
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-4 text-[14px]">
+            <Info icon={type.icon} label="Type" value={type.label} />
+            <Info icon="calendrier" label="Date" value={formatShortDate(event.starts_at)} title={formatDate(event.starts_at)} />
+            <Info icon="horloge" label="Heure de début" value={formatTime(event.starts_at)} />
+            <Info icon="horloge" label="Durée" value={event.duration_minutes ? formatDuration(event.duration_minutes) : null} />
+            <Info
+              icon="lieu"
+              label="Lieu"
+              wide
+              value={[event.location_name, event.location_address].filter(Boolean).join(", ") || null}
+            />
+            <Info
+              icon="participants"
+              label="Invités prévus"
+              value={event.expected_guests !== null ? event.expected_guests.toLocaleString("fr-FR") : null}
+              data
+            />
+            <Info icon="etiquette" label="Dress code" wide value={event.dress_code} />
           </dl>
           {event.description ? <p className="text-[14px] whitespace-pre-line text-text-muted">{event.description}</p> : null}
           <div className="grid gap-2 border-t border-border pt-4">
@@ -163,8 +167,20 @@ async function EventView({
   );
 }
 
-function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: string }) {
+function GuestList({
+  guests,
+  importUrl,
+  eventId,
+  wa,
+}: {
+  guests: GuestOut[];
+  importUrl: string;
+  eventId: string;
+  wa: WhatsAppOverview | null;
+}) {
   const toCheck = guests.filter((g) => !g.phone_valid).length;
+  // Un seul bouton rouge par écran : « Lancer les invitations » quand elles sont prêtes, sinon l'import.
+  const ready = wa?.ready ?? 0;
   return (
     <section className="grid min-w-0 content-start gap-4 rounded-lg bg-background p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -179,7 +195,7 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
             </p>
           ) : null}
         </div>
-        <ButtonLink href={importUrl} className="h-10 text-[14px]">
+        <ButtonLink href={importUrl} variant={ready > 0 ? "ghost" : "primary"} className="h-10 text-[14px]">
           <Icon name="importer" width={18} height={18} />
           Importer des invités
         </ButtonLink>
@@ -258,7 +274,56 @@ function GuestList({ guests, importUrl }: { guests: GuestOut[]; importUrl: strin
         <Icon name="cadenas" width={14} height={14} />
         Liste privée : les numéros sont masqués.
       </p>
+      <Launch eventId={eventId} wa={wa} />
     </section>
+  );
+}
+
+// Bas de la liste : lancer l'envoi WhatsApp des invitations (même action que la page Relances).
+function Launch({ eventId, wa }: { eventId: string; wa: WhatsAppOverview | null }) {
+  if (!wa) return null;
+  const relances = `/tableau-de-bord/evenements/${eventId}/relances`;
+  if (wa.ready > 0) {
+    return (
+      <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[14px]">
+          <span className="font-semibold">
+            {wa.ready.toLocaleString("fr-FR")} invitation{wa.ready > 1 ? "s" : ""} prête{wa.ready > 1 ? "s" : ""} à partir sur WhatsApp
+          </span>
+          <span className="block text-[13px] text-text-muted">Chaque invité reçoit sa carte et le lien de sa page. Envoi progressif.</span>
+        </p>
+        <div className="sm:w-auto sm:min-w-[260px]">
+          <SendButton
+            action={sendInvitations.bind(null, eventId)}
+            label={`Lancer ${wa.ready > 1 ? `les ${wa.ready.toLocaleString("fr-FR")} invitations` : "l'invitation"}`}
+            pendingLabel="Mise en file…"
+            icon="envoyer"
+          />
+        </div>
+      </div>
+    );
+  }
+  const sent = sentTotal(wa.invitations) + wa.invitations.scheduled;
+  return (
+    <p className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4 text-[13px] text-text-muted">
+      {wa.without_card > 0 ? (
+        <>
+          <span>
+            {wa.without_card} invité{wa.without_card > 1 ? "s" : ""} sans carte : préparez les cartes avant l&apos;envoi.
+          </span>
+          <Link href={`/tableau-de-bord/evenements/${eventId}/carte`} className="font-semibold text-accent-text hover:underline">
+            Préparer les cartes
+          </Link>
+        </>
+      ) : sent > 0 ? (
+        <>
+          <span>Les invitations sont parties ou en file.</span>
+          <Link href={relances} className="font-semibold text-accent-text hover:underline">
+            Suivre l&apos;envoi
+          </Link>
+        </>
+      ) : null}
+    </p>
   );
 }
 
@@ -274,13 +339,29 @@ function Stat({ icon, label, value, className }: { icon: IconName; label: string
   );
 }
 
-function Info({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
+function Info({
+  icon,
+  label,
+  value,
+  title,
+  wide = false,
+  data = false,
+}: {
+  icon: IconName;
+  label: string;
+  value: string | null;
+  title?: string;
+  wide?: boolean;
+  data?: boolean;
+}) {
   return (
-    <div className="flex gap-3">
+    <div className={`flex min-w-0 gap-2.5 ${wide ? "col-span-2" : ""}`}>
       <Icon name={icon} width={18} height={18} className="mt-0.5 shrink-0 text-text-muted" />
       <div className="min-w-0">
-        <dt className="text-[12px] text-text-muted">{label}</dt>
-        <dd className="break-words">{children}</dd>
+        <dt className="truncate text-[12px] text-text-muted">{label}</dt>
+        <dd className={`truncate ${data ? "font-data tabular-nums" : ""} ${value ? "" : "text-text-muted"}`} title={title ?? value ?? undefined}>
+          {value ?? "—"}
+        </dd>
       </div>
     </div>
   );

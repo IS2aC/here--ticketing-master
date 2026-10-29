@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackToEvent } from "@/components/back-link";
 import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { Toast } from "@/components/toast";
@@ -73,6 +74,7 @@ async function RemindersView({
     <>
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
+          <BackToEvent eventId={event.id} />
           <p className="text-[12px] text-text-muted">
             <Link href={`/tableau-de-bord/evenements/${event.id}`} className="hover:underline">
               {event.title}
@@ -237,6 +239,14 @@ async function RemindersView({
                 <span>
                   Relance prévue le{wa.reminder_dates.length > 1 ? "s" : ""}{" "}
                   <span className="font-semibold">{wa.reminder_dates.map((d) => formatDate(d).toLocaleLowerCase("fr-FR")).join(", ")}</span>
+                </span>
+              </p>
+            ) : wa.reminders_enabled && days.length ? (
+              // Règle : si l'événement a lieu trop tôt, la relance gratuite est annulée (aucune date à venir).
+              <p className="flex items-start gap-2 text-[13px] text-text-muted">
+                <Icon name="calendrier" width={16} height={16} className="mt-0.5 shrink-0" />
+                <span>
+                  Relance gratuite non disponible : l&apos;événement a lieu dans moins de {Math.min(...days)} jours.
                 </span>
               </p>
             ) : null}

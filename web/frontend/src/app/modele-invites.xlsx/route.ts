@@ -1,7 +1,9 @@
+import { connection } from "next/server";
 import { apiFetch } from "@/lib/api";
 
 // Modèle Excel de la liste d'invités, généré par l'API.
 export async function GET() {
+  await connection(); // à la demande : l'API n'est pas joignable pendant le build
   const response = await apiFetch("/v1/guests/import-template");
   if (!response.ok) return new Response("Modèle indisponible", { status: 502 });
   return new Response(response.body, {

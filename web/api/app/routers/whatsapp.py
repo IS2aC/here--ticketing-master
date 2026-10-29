@@ -1,7 +1,7 @@
 """Étape 4 « Les relances » : envoi des invitations sur WhatsApp, relances et suivi."""
 
 import uuid
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func, select
@@ -117,8 +117,11 @@ async def _overview(db: AsyncSession, event: Event) -> WhatsAppOverview:
         configured=provider.configured,
         reminders_enabled=event.whatsapp_reminders_enabled,
         reminder_days_before=settings.reminder_days_before,
+        # Seulement les dates encore à venir : un événement dans moins de 7 jours n'a plus de relance gratuite.
         reminder_dates=[
-            event.starts_at - timedelta(days=d) for d in settings.reminder_days_before
+            date
+            for d in settings.reminder_days_before
+            if (date := event.starts_at - timedelta(days=d)) > datetime.now(UTC)
         ],
         calls_enabled=event.call_reminders_enabled,
         on_demand_reminders=settings.whatsapp_on_demand_reminders,

@@ -359,7 +359,9 @@ class WhatsAppOverview(BaseModel):
     reminder_days_before: list[
         int
     ]  # calendrier des relances, en jours avant l'événement
-    reminder_dates: list[datetime]  # dates correspondantes pour cet événement
+    reminder_dates: list[
+        datetime
+    ]  # dates correspondantes pour cet événement, encore à venir
     calls_enabled: bool
     on_demand_reminders: bool  # « Relancer maintenant » : option payante activée ou non
     ready: int  # invités qui peuvent recevoir leur invitation maintenant
