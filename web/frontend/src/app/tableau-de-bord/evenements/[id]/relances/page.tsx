@@ -235,6 +235,12 @@ async function RemindersView({
                   <span className="font-semibold">{wa.reminder_dates.map((d) => formatDate(d).toLocaleLowerCase("fr-FR")).join(", ")}</span>
                 </span>
               </p>
+            ) : wa.reminders_enabled && sentReminders > 0 ? (
+              // Relance déjà partie : plus de date à venir, mais elle n'a pas été annulée.
+              <p className="flex items-start gap-2 text-[13px] text-text-muted">
+                <Icon name="calendrier" width={16} height={16} className="mt-0.5 shrink-0" />
+                <span>Relance gratuite envoyée aux invités sans réponse.</span>
+              </p>
             ) : wa.reminders_enabled && days.length ? (
               // Règle : si l'événement a lieu trop tôt, la relance gratuite est annulée (aucune date à venir).
               <p className="flex items-start gap-2 text-[13px] text-text-muted">
