@@ -68,4 +68,5 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - **ouverture du scan** : dès la création du lien, ou seulement le jour J (par exemple 6 h avant le début) ;
   - **événement annulé** : bloquer le scan ;
   - **plusieurs personnes** sur une invitation : entrée partielle ou totale au premier scan.
+- [x] **Retours de navigation identiques** (fait le 29/10) : un seul style, celui de « Retour à l'événement » (lien rouge avec flèche, au-dessus du titre). « Retour au tableau de bord » sur la page de l'événement, la création d'un événement, la bibliothèque de cartes et le profil ; « Retour à l'événement » sur les étapes d'un événement. À garder pour tout nouvel écran (`components/back-link.tsx`).
 - [ ] **Ajustement complet du branding de la solution**.

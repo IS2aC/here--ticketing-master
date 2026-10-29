@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/icons";
+import { PHASE_LABELS, type Phase } from "@/lib/event-phase";
 import type { EventFormState } from "./evenements/actions";
 import { DeleteEvent } from "./delete-event";
 
 // « Mes événements » : recherche, filtres par moment et cartes (maquette du tableau de bord organisateur).
-
-export type Phase = "upcoming" | "live" | "done" | "draft" | "cancelled";
 
 export type EventCard = {
   id: string;
@@ -22,12 +21,12 @@ export type EventCard = {
   remove: () => Promise<EventFormState>;
 };
 
-const PHASES: Record<Phase, { label: string; icon: IconName; className: string }> = {
-  live: { label: "En cours", icon: "valide", className: "text-status-confirmed" },
-  upcoming: { label: "À venir", icon: "horloge", className: "text-text" },
-  done: { label: "Terminé", icon: "valide", className: "text-text-muted" },
-  draft: { label: "Brouillon", icon: "modifier", className: "text-text-muted" },
-  cancelled: { label: "Annulé", icon: "decline", className: "text-status-declined" },
+const PHASES: Record<Phase, { icon: IconName; className: string }> = {
+  live: { icon: "valide", className: "text-status-confirmed" },
+  upcoming: { icon: "horloge", className: "text-text" },
+  done: { icon: "valide", className: "text-text-muted" },
+  draft: { icon: "modifier", className: "text-text-muted" },
+  cancelled: { icon: "decline", className: "text-status-declined" },
 };
 
 const FILTERS: { key: "all" | Exclude<Phase, "cancelled">; label: string }[] = [
@@ -131,7 +130,7 @@ function EventCardItem({ event: e }: { event: EventCard }) {
         <img src={e.cover} alt="" width={1080} height={1350} loading="lazy" className="size-full object-cover object-[50%_30%]" />
         <span className={`absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-background/95 px-3 py-1 text-[12px] font-semibold shadow-sm ${phase.className}`}>
           <Icon name={phase.icon} width={15} height={15} />
-          {phase.label}
+          {PHASE_LABELS[e.phase]}
         </span>
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5">

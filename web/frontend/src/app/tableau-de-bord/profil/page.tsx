@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BackToDashboard } from "@/components/back-link";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
 import { Toast } from "@/components/toast";
@@ -12,8 +13,8 @@ export default function ProfilePage({ searchParams }: PageProps<"/tableau-de-bor
   return (
     <>
       <header>
-        <p className="text-[12px] text-text-muted">Compte</p>
-        <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Mon profil</h1>
+        <BackToDashboard />
+        <h1 className="font-heading text-[26px] font-bold tracking-[-0.01em]">Mon profil</h1>
         <p className="mt-1 text-[14px] text-text-muted">Vos informations aident l&apos;équipe Here! à vous accompagner et à établir vos factures.</p>
       </header>
       <Suspense fallback={<div className="h-[640px] rounded-lg bg-background" aria-busy="true" />}>

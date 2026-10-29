@@ -5,9 +5,10 @@ import { Icon, type IconName } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { ButtonLink } from "@/components/ui";
 import { getCurrentUser } from "@/lib/auth";
-import { formatDate, formatTime, getEvents, getEventsSummary, type EventOut } from "@/lib/events";
+import { formatDate, formatTime, getEvents, getEventsSummary } from "@/lib/events";
 import { deleteEvent } from "./evenements/actions";
-import { EventsBrowser, type EventCard, type Phase } from "./events-browser";
+import { phaseOf, type Phase } from "@/lib/event-phase";
+import { EventsBrowser, type EventCard } from "./events-browser";
 
 export const metadata: Metadata = { title: "Tableau de bord · Here!" };
 
@@ -55,16 +56,6 @@ async function Deleted({ searchParams }: { searchParams: Promise<Record<string, 
 async function Greeting() {
   const user = await getCurrentUser();
   return <p className="text-[14px] text-text-muted">Bonjour {user.first_name} 👋</p>;
-}
-
-/** Moment de l'événement. Fin : début + durée, sinon fin de la journée (heure d'Abidjan = UTC). */
-function phaseOf(event: EventOut, now: number): Phase {
-  if (event.status === "cancelled") return "cancelled";
-  if (event.status === "draft") return "draft";
-  if (event.status === "done") return "done";
-  const start = Date.parse(event.starts_at);
-  const end = event.duration_minutes ? start + event.duration_minutes * 60_000 : new Date(start).setUTCHours(24, 0, 0, 0);
-  return now < start ? "upcoming" : now < end ? "live" : "done";
 }
 
 // Ordre d'affichage : en cours, à venir (le plus proche d'abord), brouillons, terminés (le plus récent d'abord), annulés.

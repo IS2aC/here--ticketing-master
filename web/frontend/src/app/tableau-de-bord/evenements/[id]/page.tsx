@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
+import { BackToDashboard } from "@/components/back-link";
 import { Toast } from "@/components/toast";
 import { ButtonLink } from "@/components/ui";
+import { PHASE_LABELS, phaseOf } from "@/lib/event-phase";
 import { eventType } from "@/lib/event-types";
-import { formatDate, formatDuration, formatShortDate, formatTime, getEvent, type EventOut } from "@/lib/events";
+import { formatDate, formatDuration, formatShortDate, formatTime, getEvent } from "@/lib/events";
 import { getGuests, type GuestOut } from "@/lib/guests";
 import { getWhatsApp, sentTotal, type WhatsAppOverview } from "@/lib/whatsapp";
 import { maskPhone } from "@/lib/phone";
@@ -21,13 +23,6 @@ export default function EventPage({ params, searchParams }: PageProps<"/tableau-
     </Suspense>
   );
 }
-
-const STATUS_LABELS: Record<EventOut["status"], string> = {
-  draft: "Brouillon",
-  active: "En cours",
-  done: "Terminé",
-  cancelled: "Annulé",
-};
 
 const RSVP: Record<GuestOut["rsvp_status"], { icon: IconName; label: string; tone: string }> = {
   pending: { icon: "horloge", label: "En attente", tone: "text-status-pending" },
@@ -56,22 +51,17 @@ async function EventView({
 
   return (
     <>
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-[12px] text-text-muted">
-            <Link href="/tableau-de-bord" className="hover:underline">
-              Mes événements
-            </Link>{" "}
-            · {type.label}
-          </p>
-          <div className="mt-1 flex flex-wrap items-center gap-3">
+      <header className="flex flex-col gap-4 2xl:flex-row 2xl:items-end 2xl:justify-between">
+        <div className="min-w-0 flex-1">
+          <BackToDashboard />
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-heading text-[26px] font-bold tracking-[-0.01em] break-words">{event.title}</h1>
             <span className="inline-flex h-[22px] items-center rounded-sm bg-background px-2 text-[11px] font-semibold tracking-[0.04em] uppercase shadow-[inset_0_0_0_1px_var(--color-border)]">
-              {STATUS_LABELS[event.status]}
+              {PHASE_LABELS[phaseOf(event, new Date().getTime())]}
             </span>
           </div>
           <p className="mt-1 text-[14px] text-text-muted">
-            {formatDate(event.starts_at)} · {formatTime(event.starts_at)}
+            {type.label} · {formatDate(event.starts_at)} · {formatTime(event.starts_at)}
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">

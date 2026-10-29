@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BackToDashboard } from "@/components/back-link";
 import { CARD_LIBRARY } from "@/lib/card/library";
 import { EVENT_TYPES } from "@/lib/event-types";
 
@@ -16,8 +17,8 @@ export default function LibraryPage() {
   return (
     <>
       <header>
-        <p className="text-[12px] text-text-muted">Tableau de bord</p>
-        <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Bibliothèque de cartes</h1>
+        <BackToDashboard />
+        <h1 className="font-heading text-[26px] font-bold tracking-[-0.01em]">Bibliothèque de cartes</h1>
         <p className="mt-1 max-w-2xl text-[14px] text-text-muted">
           Une carte par type d&apos;événement, préparée automatiquement avec le nom de chaque invité et son QR code. Le
           sceau Here! garantit à vos invités que l&apos;invitation est authentique.
