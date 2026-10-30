@@ -8,8 +8,9 @@ import { formatDate, formatDuration, formatTime } from "@/lib/events";
 import { cardFonts } from "./fonts";
 import { ICON_SVG } from "./icons";
 import { CARD_LIBRARY, type CardStyle } from "./library";
-import { FONT_FAMILY, QR_BOX, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
+import { FONT_FAMILY, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
 import { paletteOf, type CardColors } from "./palettes";
+import { CompactSeal, HERE_SYMBOL } from "./seal";
 
 // Carte d'invitation en image (1080 × 1350, format 4:5 optimal dans WhatsApp), d'après uiux/visual-identity/mockups/carte-*.
 // Un seul rendu sert à l'aperçu de l'organisateur et à l'image envoyée à l'invité.
@@ -103,9 +104,6 @@ function where(data: CardData): string | null {
 }
 
 // --- Le sceau Here! : identique sur toutes les cartes, non modifiable -----------------------------
-
-const HERE_SYMBOL = (mark: string) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="${C.ink}"/><path fill="${mark}" d="M248.71 70L380.71 70L308.00 318L216.00 318Z"/><circle cx="244.57" cy="400" r="54" fill="${mark}"/></svg>`;
 
 function Seal({
   data,
@@ -273,33 +271,7 @@ function CustomCard({ data, qr }: { data: CardData; qr: string }) {
       <img src={data.background as string} width={CARD_WIDTH} height={CARD_HEIGHT} alt="" style={{ position: "absolute", inset: 0 }} />
       <Placed text={data.guestName} layout={layout.name} />
       {layout.table && table ? <Placed text={table} layout={layout.table} /> : null}
-      {/* Sceau Here! compact : QR code sur blanc, code et vérification. */}
-      <div
-        style={{
-          position: "absolute",
-          left: spot.left,
-          top: spot.top,
-          width: QR_BOX.width,
-          height: QR_BOX.height,
-          borderRadius: 24,
-          background: C.white,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px 20px 14px",
-          boxShadow: "0 0 0 1.5px rgba(11,11,11,.08)",
-        }}
-      >
-        <img src={qr} width={204} height={204} alt="" />
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
-          <img src={svgUri(HERE_SYMBOL(C.red))} width={30} height={30} alt="" />
-          <div style={{ display: "flex", flexDirection: "column", fontSize: 14, fontWeight: 600, lineHeight: 1.15, color: C.ink }}>
-            <span>Invitation vérifiée</span>
-            <span>par Here!</span>
-          </div>
-        </div>
-        <div style={{ fontFamily: "DM Mono", fontSize: 13, letterSpacing: 0.5, color: C.gray600, marginTop: 6 }}>{data.code}</div>
-      </div>
+      <CompactSeal qr={qr} code={data.code} left={spot.left} top={spot.top} />
     </div>
   );
 }

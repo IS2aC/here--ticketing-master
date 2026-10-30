@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "formats": ["whatsapp_4_5", "story_9_16", "square_1_1", "print_a5"],
+  "theme": {
+    "palettes": [
+      {"id": "terre-or", "label": "Terre et or", "colors": {"primary": "#7A2E12", "secondary": "#1F3A2E", "accent": "#8A5F14", "background": "#F6EBDD", "text": "#2A1A12"}},
+      {"id": "indigo", "label": "Indigo", "colors": {"primary": "#1E2A5A", "secondary": "#C2552B", "accent": "#A0431D", "background": "#F3EEE6", "text": "#1A1A2A"}},
+      {"id": "kente", "label": "Kente", "colors": {"primary": "#1F5C3A", "secondary": "#D9A441", "accent": "#B0362B", "background": "#FBF4E4", "text": "#1D2A22"}},
+      {"id": "nuit-or", "label": "Nuit et or", "colors": {"primary": "#E8C77A", "secondary": "#B85A2E", "accent": "#D9A441", "background": "#1A1410", "text": "#F6EBDD"}}
+    ],
+    "fonts": [
+      {"id": "classique", "label": "Classique", "heading": "Playfair Display", "body": "Poppins"},
+      {"id": "moderne", "label": "Moderne", "heading": "Poppins", "body": "Poppins"},
+      {"id": "editoriale", "label": "Éditoriale", "heading": "Playfair Display", "body": "Inter"}
+    ]
+  },
+  "fields": [
+    {"key": "fiances", "label": "Noms des fiancés", "required": true, "max_length": 60, "example": "Aya & Koffi"},
+    {"key": "familles", "label": "Noms des familles", "max_length": 80, "example": "Konan et Yao"},
+    {"key": "date", "label": "Date", "type": "date", "required": true},
+    {"key": "heure", "label": "Heure", "type": "time"},
+    {"key": "lieu", "label": "Lieu (domicile familial)", "required": true, "max_length": 90, "example": "Domicile de la famille Konan, Cocody Angré"},
+    {"key": "programme", "label": "Programme", "type": "multiline", "max_length": 140, "example": "Accueil des familles, présentation de la dot, repas"}
+  ],
+  "field_mapping": {"date": "date", "heure": "time", "lieu": "location_name"},
+  "layers": [
+    {"id": "fond", "type": "image", "asset": "fond", "box": {"x": 0, "y": 0, "w": 100, "h": 100}, "tint": "accent"},
+    {"id": "cadre", "type": "shape", "shape": "rect", "box": {"x": 3.5, "y": 6, "w": 93, "h": 88}, "stroke": "accent", "stroke_width": 2, "opacity": 0.6},
+    {"id": "ornement-haut", "type": "image", "asset": "ornement-haut", "box": {"x": 30, "y": 9, "w": 40, "h": 4.5}, "fit": "contain", "ornament": true, "tint": "accent"},
+    {"id": "invite", "type": "text", "text": "{invite.nom}", "box": {"x": 8, "y": 14.5, "w": 84, "h": 5}, "font": "heading", "italic": true, "size": {"min": 26, "max": 40}, "max_lines": 1, "color": "primary"},
+    {"id": "intro", "type": "text", "text": "Nous avons la joie de vous inviter à la dot de", "box": {"x": 8, "y": 19.5, "w": 84, "h": 4}, "size": {"min": 20, "max": 26}, "max_lines": 1},
+    {"id": "fiances", "type": "text", "text": "{fiances}", "box": {"x": 8, "y": 24, "w": 84, "h": 14}, "font": "heading", "weight": 600, "size": {"min": 56, "max": 104}, "max_lines": 2, "line_height": 1.05, "color": "primary"},
+    {"id": "familles", "type": "text", "text": "Familles {familles}", "box": {"x": 8, "y": 38.5, "w": 84, "h": 4.5}, "uppercase": true, "letter_spacing": 0.18, "weight": 500, "size": {"min": 16, "max": 22}, "max_lines": 2, "color": "accent"},
+    {"id": "photo", "type": "photo", "box": {"x": 37, "y": 44.5, "w": 26, "h": 25}, "mask": "arch", "border": "accent", "border_width": 4, "formats": {"square_1_1": {"hidden": true}}},
+    {"id": "date", "type": "text", "text": "{date}", "box": {"x": 7, "y": 72, "w": 62, "h": 5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 26, "max": 38}, "max_lines": 1, "color": "primary", "formats": {"square_1_1": {"box": {"x": 7, "y": 47, "w": 62, "h": 7}}}},
+    {"id": "heure", "type": "text", "text": "À partir de {heure}", "box": {"x": 7, "y": 77, "w": 62, "h": 3.5}, "align": "left", "weight": 500, "size": {"min": 20, "max": 26}, "max_lines": 1, "formats": {"square_1_1": {"box": {"x": 7, "y": 54, "w": 62, "h": 5}}}},
+    {"id": "lieu", "type": "text", "text": "{lieu}", "box": {"x": 7, "y": 81, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 24}, "max_lines": 2, "formats": {"square_1_1": {"box": {"x": 7, "y": 60, "w": 62, "h": 9}}}},
+    {"id": "programme", "type": "text", "text": "{programme}", "box": {"x": 7, "y": 88, "w": 62, "h": 5}, "align": "left", "size": {"min": 15, "max": 19}, "max_lines": 2, "color": "accent", "formats": {"square_1_1": {"box": {"x": 7, "y": 70, "w": 62, "h": 8}}}},
+    {"id": "qr", "type": "qr", "box": {"x": 72, "y": 70, "w": 22, "h": 23.5}, "formats": {"square_1_1": {"box": {"x": 70, "y": 46, "w": 24, "h": 32}}}}
+  ]
+}

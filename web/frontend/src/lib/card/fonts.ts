@@ -14,10 +14,14 @@ const FONTS = [
   ["Playfair Display", 400, "normal", "PlayfairDisplay-Regular.ttf"],
   ["Playfair Display", 400, "italic", "PlayfairDisplay-Italic.ttf"],
   ["Playfair Display", 600, "normal", "PlayfairDisplay-SemiBold.ttf"],
+  ["Playfair Display", 700, "normal", "PlayfairDisplay-Bold.ttf"],
+  ["Inter", 400, "normal", "Inter-Regular.ttf"],
+  ["Inter", 500, "normal", "Inter-Medium.ttf"],
+  ["Inter", 600, "normal", "Inter-SemiBold.ttf"],
   ["DM Mono", 400, "normal", "DMMono-Regular.ttf"],
 ] as const;
 
-type Font = { name: string; data: ArrayBuffer; weight: 400 | 500 | 600 | 700 | 800; style: "normal" | "italic" };
+export type Font = { name: string; data: ArrayBuffer; weight: 400 | 500 | 600 | 700 | 800; style: "normal" | "italic" };
 
 let loaded: Promise<Font[]> | undefined;
 

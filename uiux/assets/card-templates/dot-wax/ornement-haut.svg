@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60">
+  <!-- Ornement provisoire : losanges et cercle en currentColor. -->
+  <path d="M10 30h120M270 30h120" stroke="currentColor" stroke-width="3"/>
+  <path d="M150 30l14-14 14 14-14 14z M222 30l14-14 14 14-14 14z" fill="currentColor"/>
+  <circle cx="200" cy="30" r="16" fill="none" stroke="currentColor" stroke-width="4"/>
+  <circle cx="200" cy="30" r="6" fill="currentColor"/>
+</svg>

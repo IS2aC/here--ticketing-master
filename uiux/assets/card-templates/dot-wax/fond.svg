@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" preserveAspectRatio="xMidYMid slice">
+  <!-- Fond provisoire (wax) : motif en currentColor, teinté par la palette. À remplacer par le visuel définitif. -->
+  <defs>
+    <pattern id="wax" width="90" height="90" patternUnits="userSpaceOnUse">
+      <circle cx="45" cy="45" r="24" fill="none" stroke="currentColor" stroke-width="5"/>
+      <circle cx="45" cy="45" r="9" fill="currentColor"/>
+      <path d="M0 0h16L0 16zM90 0H74l16 16zM0 90h16L0 74zM90 90H74l16-16z" fill="currentColor"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1350" fill="url(#wax)" opacity="0.07"/>
+  <rect width="1080" height="54" fill="currentColor" opacity="0.18"/>
+  <rect width="1080" height="54" fill="url(#wax)" opacity="0.9"/>
+  <rect y="1296" width="1080" height="54" fill="currentColor" opacity="0.18"/>
+  <rect y="1296" width="1080" height="54" fill="url(#wax)" opacity="0.9"/>
+</svg>
