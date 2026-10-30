@@ -31,6 +31,7 @@ export type ImportOut = {
     category: string | null;
     raw_category: string | null;
     seat: string | null;
+    seats: number;
     status: RowStatus;
   }[];
 };
@@ -46,6 +47,7 @@ export type GuestOut = {
   category_id: string;
   category: string;
   seat: string | null;
+  seats: number;
   rsvp_status: "pending" | "confirmed" | "declined";
   attending_seats: number | null;
   rsvp_message: string | null;

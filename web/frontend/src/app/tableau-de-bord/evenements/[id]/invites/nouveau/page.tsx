@@ -30,7 +30,7 @@ async function NewGuest({ params }: { params: Promise<{ id: string }> }) {
       <section className="max-w-2xl rounded-lg bg-background p-5 shadow-sm sm:p-8">
         <GuestForm
           action={saveGuest.bind(null, event.id, null)}
-          initial={{ last_name: "", first_names: "", phone: "", category_id: fallback?.id ?? "", seat: "" }}
+          initial={{ last_name: "", first_names: "", phone: "", category_id: fallback?.id ?? "", seat: "", seats: "1" }}
           categories={event.categories}
           submitLabel="Ajouter l'invité"
           cancelHref={eventUrl}

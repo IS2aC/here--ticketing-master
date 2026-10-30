@@ -44,6 +44,7 @@ async function EditGuest({ params }: { params: Promise<{ id: string; guestId: st
             phone: guest.phone ? (guest.phone_valid ? localPhone(guest.phone) : guest.phone) : "",
             category_id: guest.category_id,
             seat: guest.seat ?? "",
+            seats: String(guest.seats),
           }}
           categories={event.categories}
           submitLabel="Enregistrer"

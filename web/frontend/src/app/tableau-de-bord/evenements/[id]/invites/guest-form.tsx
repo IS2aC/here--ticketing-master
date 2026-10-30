@@ -7,7 +7,7 @@ import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui";
 import type { GuestFormState } from "./actions";
 
-export type GuestInitial = { last_name: string; first_names: string; phone: string; category_id: string; seat: string };
+export type GuestInitial = { last_name: string; first_names: string; phone: string; category_id: string; seat: string; seats: string };
 
 export function GuestForm({
   action,
@@ -68,6 +68,17 @@ export function GuestForm({
         </div>
         <Field label="Position (facultatif)" name="seat" placeholder="Table 4" autoComplete="off" defaultValue={v("seat")} error={e.seat} />
       </div>
+      <Field
+        label="Nombre de personnes"
+        name="seats"
+        type="number"
+        min={1}
+        max={20}
+        inputMode="numeric"
+        defaultValue={v("seats")}
+        error={e.seats}
+        hint="L'invité compris. Sur sa page, il indique combien viendront ; tous entrent au même scan."
+      />
       {state.message ? (
         <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
           {state.message}

@@ -223,6 +223,7 @@ function GuestList({
                 <tr key={g.id}>
                   <td className="border-b border-border px-3 py-2.5">
                     <span className="font-semibold">{g.display_name}</span>
+                    {g.seats > 1 ? <span className="ml-1.5 font-data text-[12px] text-text-muted tabular-nums">· {g.seats} pers.</span> : null}
                     {g.rsvp_message ? (
                       <span className="mt-0.5 flex max-w-[280px] items-start gap-1 text-[12px] text-text-muted">
                         <Icon name="message" width={13} height={13} className="mt-0.5 shrink-0" />

@@ -201,6 +201,7 @@ class ImportRowOut(BaseModel):
     category: str | None
     raw_category: str | None
     seat: str | None
+    seats: int = 1
     status: RowStatus
 
 
@@ -240,6 +241,7 @@ class GuestIn(BaseModel):
     seat: (
         Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None
     ) = None
+    seats: Annotated[int, Field(ge=1, le=20)] = 1  # l'invité et ses accompagnants
 
 
 class ImportRowIn(BaseModel):
@@ -254,6 +256,7 @@ class ImportRowIn(BaseModel):
     seat: (
         Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None
     ) = None
+    seats: Annotated[int, Field(ge=1, le=20)] | None = None
 
 
 class GuestOut(BaseModel):
@@ -267,6 +270,7 @@ class GuestOut(BaseModel):
     category_id: uuid.UUID
     category: str
     seat: str | None
+    seats: int  # personnes de l'invitation (lui compris)
     rsvp_status: RsvpStatus
     attending_seats: int | None
     rsvp_message: str | None

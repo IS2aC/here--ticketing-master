@@ -203,6 +203,7 @@ async def confirm_import(
             phone=r.phone,
             phone_valid=r.phone_valid,
             seat=r.seat,
+            seats=r.seats,
         )
         for r in rows
         if r.category
@@ -265,16 +266,16 @@ async def import_template() -> Response:
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = "Invités"
-    sheet.append(["Nom", "Prénoms", "Numéro", "Catégorie", "Position"])
-    sheet.append(["Konan", "Kouadio Jean", "07 07 12 34 56", "VIP", "Table 1"])
-    sheet.append(["Bamba", "Fatou", "05 44 81 81 07", "Normal", "Table 4"])
-    sheet.append(["Ouattara", "Famille", "", "", ""])
+    sheet.append(["Nom", "Prénoms", "Numéro", "Catégorie", "Position", "Nb pers."])
+    sheet.append(["Konan", "Kouadio Jean", "07 07 12 34 56", "VIP", "Table 1", 2])
+    sheet.append(["Bamba", "Fatou", "05 44 81 81 07", "Normal", "Table 4", 1])
+    sheet.append(["Ouattara", "Famille", "", "", "", 4])
     for cell in sheet[1]:
         cell.font = Font(bold=True)
     for row in sheet.iter_rows(min_row=2, max_row=500, min_col=3, max_col=3):
         for cell in row:
             cell.number_format = "@"  # texte : Excel garde le 0 initial des numéros
-    for column, width in zip("ABCDE", (20, 24, 18, 14, 14), strict=True):
+    for column, width in zip("ABCDEF", (20, 24, 18, 14, 14, 10), strict=True):
         sheet.column_dimensions[column].width = width
     buffer = io.BytesIO()
     workbook.save(buffer)
@@ -337,6 +338,7 @@ async def _checked_guest(
         "phone_valid": phone is not None,
         "category_id": category.id,
         "seat": body.seat or None,
+        "seats": body.seats,
     }
 
 
@@ -400,6 +402,10 @@ async def update_guest(
     guest, event = await _owned_guest(db, guest_id, auth.user.id)
     for field, value in (await _checked_guest(db, event, body, guest.id)).items():
         setattr(guest, field, value)
+    if guest.attending_seats and guest.attending_seats > guest.seats:
+        guest.attending_seats = (
+            guest.seats
+        )  # réponse donnée pour plus de places qu'il n'en reste
     await db.commit()
     return await _guest_by_id(db, guest.id)
 

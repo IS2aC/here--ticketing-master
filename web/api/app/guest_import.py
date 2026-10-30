@@ -1,7 +1,8 @@
 """Lecture et vérification d'une liste d'invités (Excel .xlsx ou CSV).
 
 Colonnes attendues (dans n'importe quel ordre, en-têtes reconnus sans tenir compte des accents ni de la casse) :
-nom, prénoms, numéro (facultatif), catégorie (facultatif, « Normal » par défaut), position (facultatif : table ou place).
+nom, prénoms, numéro (facultatif), catégorie (facultatif, « Normal » par défaut), position (facultatif : table ou place),
+nombre de personnes (facultatif, 1 par défaut : l'invité et ses accompagnants).
 """
 
 import csv
@@ -59,6 +60,21 @@ _HEADERS = {
         "phone",
     },
     "category": {"categorie", "categories", "groupe", "category", "type"},
+    "seats": {
+        "nb pers",
+        "nb de pers",
+        "nb personnes",
+        "nb de personnes",
+        "nombre de personnes",
+        "nombre personnes",
+        "personnes",
+        "pers",
+        "nb places",
+        "nombre de places",
+        "places",
+        "nb invites",
+        "nombre d invites",
+    },
     "seat": {
         "position",
         "table",
@@ -78,7 +94,10 @@ FIELD_LABELS = {
     "phone": "Numéro",
     "category": "Catégorie",
     "seat": "Position",
+    "seats": "Nb pers.",
 }
+
+MAX_SEATS = 20  # personnes par invitation
 
 
 @dataclass
@@ -95,6 +114,7 @@ class RawRow:
     phone: str | None = None
     category: str | None = None
     seat: str | None = None
+    seats: str | None = None
 
 
 @dataclass
@@ -239,6 +259,16 @@ class CheckedRow:
     seat: str | None
     status: RowStatus
     raw_category: str | None = None
+    seats: int = 1
+
+
+def seats_from(value: str | int | None) -> int:
+    """Nombre de personnes d'une ligne : un entier de 1 à 20 ; vide ou illisible : 1."""
+    try:
+        seats = int(float(str(value).replace(",", ".")))
+    except (TypeError, ValueError):
+        return 1
+    return min(max(seats, 1), MAX_SEATS)
 
 
 def guest_key(phone: str | None, display_name: str) -> str:
@@ -294,6 +324,7 @@ def check_rows(
                 seat=row.seat,
                 status=status,
                 raw_category=raw_category,
+                seats=seats_from(row.seats),
             )
         )
     return checked

@@ -86,6 +86,7 @@ export async function fixImportRow(eventId: string, importId: string, line: numb
     phone: value("phone"),
     category: value("category"),
     seat: value("seat"),
+    seats: Math.min(Math.max(Number(value("seats")) || 1, 1), 20),
   });
 }
 

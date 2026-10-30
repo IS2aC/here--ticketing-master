@@ -14,6 +14,7 @@ const FIELD_MESSAGES: Record<string, string> = {
   first_names: "100 caractères au plus.",
   phone: "Ce numéro n'est pas valide. Exemple : 07 07 12 34 56.",
   seat: "60 caractères au plus.",
+  seats: "Entre 1 et 20 personnes.",
 };
 
 async function call(path: string, method: "POST" | "PATCH" | "DELETE", body?: unknown): Promise<Response | null> {
@@ -30,9 +31,9 @@ async function call(path: string, method: "POST" | "PATCH" | "DELETE", body?: un
 /** Ajoute (guestId null) ou modifie un invité, puis revient à l'événement. */
 export async function saveGuest(eventId: string, guestId: string | null, _: GuestFormState, formData: FormData): Promise<GuestFormState> {
   const values = Object.fromEntries(
-    ["last_name", "first_names", "phone", "category_id", "seat"].map((k) => [k, String(formData.get(k) ?? "").trim()]),
+    ["last_name", "first_names", "phone", "category_id", "seat", "seats"].map((k) => [k, String(formData.get(k) ?? "").trim()]),
   );
-  const body = { ...values, phone: values.phone || null, seat: values.seat || null };
+  const body = { ...values, phone: values.phone || null, seat: values.seat || null, seats: Number(values.seats) || 1 };
   const response = await call(guestId ? `/v1/guests/${encodeURIComponent(guestId)}` : `/v1/events/${encodeURIComponent(eventId)}/guests`, guestId ? "PATCH" : "POST", body);
   if (!response) return { message: UNAVAILABLE, values };
   if (response.status === 400 || response.status === 409) {

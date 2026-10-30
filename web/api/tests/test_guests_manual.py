@@ -182,3 +182,70 @@ def test_fix_and_drop_import_rows(
     assert paul["phone"] == "+2250707123499" and paul["phone_valid"] is True
     # Import terminé : plus de correction possible.
     assert client.delete(f"{rows_url}/1", headers=organizer).status_code == 409
+
+
+def test_number_of_people(client: TestClient, organizer: dict[str, str]) -> None:
+    from tests.test_guest_import import xlsx
+
+    # Import : colonne « Nb pers. » ; vide ou illisible : 1, au plus 20.
+    event_id = new_event(client, organizer, ["VIP"])
+    content = xlsx(
+        [
+            ["Nom", "Prénoms", "Numéro", "Nb pers."],
+            ["Konan", "Jean", "0707123456", 3],
+            ["Bamba", "Fatou", "0544818107", None],
+            ["Assi", "Paul", "0101010101", "beaucoup"],
+            ["Yao", "Famille", "0505050505", 50],
+        ]
+    )
+    preview = upload(client, organizer, event_id, content).json()
+    assert "Nb pers." in [c["label"] for c in preview["columns"]]
+    assert {r["display_name"]: r["seats"] for r in preview["rows"]} == {
+        "Jean Konan": 3,
+        "Fatou Bamba": 1,
+        "Paul Assi": 1,
+        "Famille Yao": 20,
+    }
+    client.post(
+        f"/v1/events/{event_id}/imports/{preview['id']}/confirm", headers=organizer
+    )
+    guests = client.get(f"/v1/events/{event_id}/guests", headers=organizer).json()
+    jean = next(g for g in guests if g["display_name"] == "Jean Konan")
+    assert jean["seats"] == 3
+
+    # À la main : 1 par défaut, 1 à 20.
+    cats = categories(client, organizer, event_id)
+    url = f"/v1/events/{event_id}/guests"
+    alone = client.post(
+        url, json={"last_name": "Koné", "category_id": cats["VIP"]}, headers=organizer
+    ).json()
+    assert alone["seats"] == 1
+    assert (
+        client.post(
+            url,
+            json={"last_name": "Trop", "category_id": cats["VIP"], "seats": 21},
+            headers=organizer,
+        ).status_code
+        == 422
+    )
+
+    # Jean confirme pour 3, puis l'organisateur réduit à 2 places : la réponse suit.
+    client.post(f"/v1/events/{event_id}/invitations", headers=organizer)
+    token = client.get(f"/v1/guests/{jean['id']}", headers=organizer).json()[
+        "invitation_token"
+    ]
+    client.post(
+        f"/v1/invitations/{token}/response", json={"attending": True, "seats": 3}
+    )
+    reduced = client.patch(
+        f"/v1/guests/{jean['id']}",
+        json={
+            "last_name": "Konan",
+            "first_names": "Jean",
+            "phone": "0707123456",
+            "category_id": cats["VIP"],
+            "seats": 2,
+        },
+        headers=organizer,
+    ).json()
+    assert reduced["seats"] == 2 and reduced["attending_seats"] == 2

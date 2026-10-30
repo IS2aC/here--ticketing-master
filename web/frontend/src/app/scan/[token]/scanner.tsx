@@ -148,7 +148,11 @@ export function Scanner({ token, initial }: { token: string; initial: ScanEvent 
               n&apos;appartient pas à {event.title}.
             </p>
           )}
-          {result.result === "refused" ? (
+          {result.result === "admitted" && result.guest && result.guest.seats > 1 ? (
+            // Entrée de toutes les personnes confirmées en une fois (décision du 29/10).
+            <p className="font-heading text-[21px] font-extrabold text-green-light uppercase">{result.guest.seats} personnes entrent</p>
+          ) : null}
+                    {result.result === "refused" ? (
             <p className="text-[17px] text-red-bright">
               {result.guest?.rsvp_status === "declined"
                 ? "A répondu qu'il ne viendrait pas."

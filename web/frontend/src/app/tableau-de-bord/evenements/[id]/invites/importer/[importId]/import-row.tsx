@@ -41,6 +41,7 @@ export function ImportRow({
       <tr className={status.row}>
         <td className="border-b border-border px-3 py-2.5 font-semibold">
           {row.display_name || <span className="text-text-muted">Ligne {row.line}</span>}
+          {row.seats > 1 ? <span className="ml-1.5 font-data text-[12px] font-normal text-text-muted tabular-nums">· {row.seats} pers.</span> : null}
         </td>
         <td className="border-b border-border px-3 py-2.5 font-data whitespace-nowrap tabular-nums">
           {row.phone ? (row.phone_valid ? formatPhone(row.phone) : row.phone) : "—"}
@@ -102,6 +103,10 @@ export function ImportRow({
                 <label className="grid gap-1 text-[12px] font-medium text-text-muted">
                   Position
                   <input name="seat" defaultValue={row.seat ?? ""} className={input} />
+                </label>
+                <label className="grid gap-1 text-[12px] font-medium text-text-muted">
+                  Nombre de personnes
+                  <input name="seats" type="number" min={1} max={20} inputMode="numeric" defaultValue={row.seats} className={`${input} font-data`} />
                 </label>
               </div>
               {message ? (

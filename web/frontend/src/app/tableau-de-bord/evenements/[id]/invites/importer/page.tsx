@@ -15,6 +15,7 @@ const COLUMNS = [
   ["Numéro", "Facultatif · numéro WhatsApp", "07 07 12 34 56"],
   ["Catégorie", "Facultatif · « Normal » par défaut", "VIP"],
   ["Position", "Facultatif · table ou place", "Table 4"],
+  ["Nb pers.", "Facultatif · l'invité et ses accompagnants, 1 par défaut", "2"],
 ];
 
 export default function ImportPage({
