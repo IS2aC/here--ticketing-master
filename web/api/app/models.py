@@ -217,6 +217,26 @@ class Guest(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
+class CardStyle(enum.StrEnum):
+    luxe_gold = "luxe_gold"
+    boho = "boho"
+    minimal = "minimal"
+    wax_afro = "wax_afro"
+    floral = "floral"
+
+
+class CardFormat(enum.StrEnum):
+    whatsapp_4_5 = "whatsapp_4_5"  # 1080 × 1350 : la carte envoyée aux invités
+    story_9_16 = "story_9_16"  # 1080 × 1920
+    square_1_1 = "square_1_1"  # 1080 × 1080
+    print_a5 = "print_a5"  # 148 × 210 mm, fond perdu 3 mm, 300 dpi
+
+
+class CardStatus(enum.StrEnum):
+    draft = "draft"
+    final = "final"
+
+
 class CardTemplate(Base):
     __tablename__ = "card_templates"
 
@@ -230,6 +250,18 @@ class CardTemplate(Base):
         ForeignKey("users.id", ondelete="CASCADE")
     )
     is_active: Mapped[bool] = mapped_column(server_default="true")
+    # Types d'événements pour lesquels le modèle est proposé ; vide : tous.
+    event_types: Mapped[list[EventType]] = mapped_column(
+        ARRAY(Enum(EventType, name="event_type", create_type=False)),
+        server_default="{}",
+    )
+    style: Mapped[CardStyle | None] = mapped_column(
+        Enum(CardStyle, name="card_style", create_type=False)
+    )
+    # Formats, thème, champs et calques ; None : modèle classique (lib/card/render.tsx).
+    definition: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
 class EventCard(Base):
@@ -251,6 +283,18 @@ class EventCard(Base):
     # « Mon propre modèle » : mise en page sur le fond importé ; None : carte automatique.
     layout: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     photo_url: Mapped[str | None]
+    field_values: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    theme_overrides: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    format: Mapped[CardFormat] = mapped_column(
+        Enum(CardFormat, name="card_format", create_type=False),
+        server_default=CardFormat.whatsapp_4_5.value,
+    )
+    status: Mapped[CardStatus] = mapped_column(
+        Enum(CardStatus, name="card_status", create_type=False),
+        server_default=CardStatus.draft.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
 class Invitation(Base):
@@ -493,6 +537,31 @@ class SupportMessage(Base):
         ForeignKey("users.id", ondelete="SET NULL")
     )
     body: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class CardAsset(Base):
+    """Image d'une carte : fond ou ornement d'un modèle, ou photo ajoutée par l'organisateur.
+
+    Le JSON du modèle la désigne par sa clé ; elle appartient soit au modèle, soit à la carte.
+    """
+
+    __tablename__ = "card_assets"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    template_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("card_templates.id", ondelete="CASCADE")
+    )
+    event_card_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("event_cards.id", ondelete="CASCADE")
+    )
+    key: Mapped[str]
+    content_type: Mapped[str]
+    content: Mapped[bytes]
+    width: Mapped[int | None]  # None pour un SVG
+    height: Mapped[int | None]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
