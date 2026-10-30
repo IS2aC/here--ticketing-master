@@ -5,10 +5,8 @@ import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "@/components/icons";
 
 // Maquette « tableau de bord organisateur ». Les écrans sans page pour l'instant sont grisés avec « Bientôt ».
-// `anchor` : lien vers une section de la page d'accueil, jamais marqué actif.
-const LINKS: { label: string; icon: IconName; href?: string; anchor?: boolean }[] = [
+const LINKS: { label: string; icon: IconName; href?: string }[] = [
   { label: "Tableau de bord", icon: "statistiques", href: "/tableau-de-bord" },
-  { label: "Mes événements", icon: "calendrier", href: "/tableau-de-bord#mes-evenements", anchor: true },
   { label: "Cartes", icon: "invitation", href: "/tableau-de-bord/cartes" },
   { label: "Mes invités", icon: "participants" },
   { label: "Messages", icon: "message" },
@@ -20,7 +18,7 @@ export function Nav() {
   // « Tableau de bord » reste actif dans les pages d'un événement.
   return (
     <NavLinks
-      active={LINKS.findLast((l) => l.href && !l.anchor && (pathname === l.href || pathname.startsWith(`${l.href}/`)))?.href}
+      active={LINKS.findLast((l) => l.href && (pathname === l.href || pathname.startsWith(`${l.href}/`)))?.href}
     />
   );
 }
