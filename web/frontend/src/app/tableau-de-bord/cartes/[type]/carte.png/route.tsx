@@ -19,7 +19,7 @@ const SAMPLE_TITLES: Record<EventType, string> = {
   autre: "Inauguration",
 };
 
-export async function GET(_: Request, { params }: RouteContext<"/tableau-de-bord/cartes/[type]/carte.png">) {
+export async function GET(request: Request, { params }: RouteContext<"/tableau-de-bord/cartes/[type]/carte.png">) {
   const { type } = await params;
   if (!(type in CARD_LIBRARY)) return new Response("Type inconnu", { status: 404 });
   const eventType = type as EventType;
@@ -36,6 +36,7 @@ export async function GET(_: Request, { params }: RouteContext<"/tableau-de-bord
       ...SAMPLE_GUEST,
       code: SAMPLE_CODE,
       qrValue: invitationUrl("exemple"),
+      palette: new URL(request.url).searchParams.get("palette"), // couleurs d'une palette (palettes.ts)
     },
     { "Cache-Control": "public, max-age=3600" },
   );

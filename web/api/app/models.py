@@ -247,6 +247,7 @@ class EventCard(Base):
     template_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("card_templates.id"))
     palette: Mapped[dict[str, str]] = mapped_column(JSONB, server_default="{}")
     invitation_text: Mapped[str | None]
+    title: Mapped[str | None]  # intitulé de la carte ; None : le nom de l'événement
     photo_url: Mapped[str | None]
 
 

@@ -27,12 +27,14 @@ export type PublicCard = {
   responses_open: boolean;
   responses_until: string; // date limite de réponse, sinon début de l'événement
   rsvp_deadline: string | null;
+  card_title: string | null; // intitulé choisi par l'organisateur
+  card_palette: string | null;
 };
 
 export function fromPublicCard(card: PublicCard, token: string): CardData {
   return {
     type: card.event_type,
-    title: card.title,
+    title: card.card_title ?? card.title,
     startsAt: card.starts_at,
     durationMinutes: card.duration_minutes,
     locationName: card.location_name,
@@ -44,6 +46,7 @@ export function fromPublicCard(card: PublicCard, token: string): CardData {
     seats: card.seats,
     code: card.code,
     qrValue: invitationUrl(token),
+    palette: card.card_palette,
   };
 }
 

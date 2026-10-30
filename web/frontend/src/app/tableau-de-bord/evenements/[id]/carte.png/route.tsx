@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/api";
 import { SAMPLE_CODE, SAMPLE_GUEST, invitationUrl } from "@/lib/card/data";
 import { renderCard } from "@/lib/card/render";
-import type { EventOut } from "@/lib/events";
+import type { CardSettings, EventOut } from "@/lib/events";
 import type { GuestOut } from "@/lib/guests";
 import { getSessionToken } from "@/lib/session";
 
@@ -12,20 +12,26 @@ export async function GET(request: Request, { params }: RouteContext<"/tableau-d
   const token = await getSessionToken();
   const query = new URL(request.url).searchParams;
   const cover = query.has("couverture");
-  const [eventResponse, guestsResponse] = await Promise.all([
+  const [eventResponse, guestsResponse, cardResponse] = await Promise.all([
     apiFetch(`/v1/events/${encodeURIComponent(id)}`, { token }),
     cover ? null : apiFetch(`/v1/events/${encodeURIComponent(id)}/guests`, { token }),
+    apiFetch(`/v1/events/${encodeURIComponent(id)}/card`, { token }),
   ]);
   if (!eventResponse.ok || (guestsResponse && !guestsResponse.ok)) return new Response("Événement introuvable", { status: 404 });
   const event = (await eventResponse.json()) as EventOut;
   const guests = guestsResponse ? ((await guestsResponse.json()) as GuestOut[]) : [];
+  const saved = cardResponse.ok ? ((await cardResponse.json()) as CardSettings) : null;
+  // Essai avant d'enregistrer (?palette=, ?titre=) : aperçu en direct de la page Carte.
+  const palette = query.get("palette") ?? saved?.palette ?? null;
+  const title = query.get("titre")?.trim() || saved?.title || event.title;
   const wanted = query.get("invite");
   const guest = guests.find((g) => g.id === wanted) ?? guests[0];
 
   return renderCard(
     {
       type: event.type,
-      title: event.title,
+      title,
+      palette,
       startsAt: event.starts_at,
       durationMinutes: event.duration_minutes,
       locationName: event.location_name,

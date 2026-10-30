@@ -6,10 +6,12 @@ import { Icon } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { CARD_LIBRARY } from "@/lib/card/library";
 import { eventType } from "@/lib/event-types";
-import { getEvent } from "@/lib/events";
+import { PALETTES } from "@/lib/card/palettes";
+import { getCardSettings, getEvent } from "@/lib/events";
 import { getGuests } from "@/lib/guests";
 import { Steps } from "../../steps";
-import { generateInvitations } from "./actions";
+import { generateInvitations, saveCard } from "./actions";
+import { CardDesigner } from "./card-designer";
 import { GenerateButton } from "./generate-button";
 
 export const metadata: Metadata = { title: "Votre carte d'invitation · Here!" };
@@ -30,7 +32,7 @@ async function CardView({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-  const [event, guests, query] = await Promise.all([getEvent(id), getGuests(id), searchParams]);
+  const [event, guests, query, settings] = await Promise.all([getEvent(id), getGuests(id), searchParams, getCardSettings(id)]);
   const type = eventType(event.type);
   const style = CARD_LIBRARY[event.type];
   const selected = guests.find((g) => g.id === query.invite) ?? guests[0];
@@ -49,19 +51,16 @@ async function CardView({
         <Steps current={3} />
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="flex items-center justify-center rounded-lg bg-background p-5 shadow-sm sm:p-8">
-          {/* eslint-disable-next-line @next/next/no-img-element -- image générée à la demande, déjà au bon format */}
-          <img
-            src={preview}
-            alt={`Carte d'invitation ${type.label} pour ${selected?.display_name ?? "un invité"}`}
-            width={1080}
-            height={1350}
-            className="h-auto w-full max-w-[480px] rounded-md shadow-lg"
-          />
-        </section>
-
-        <aside className="grid content-start gap-4">
+      <CardDesigner
+        action={saveCard.bind(null, event.id)}
+        preview={preview}
+        alt={`Carte d'invitation ${type.label} pour ${selected?.display_name ?? "un invité"}`}
+        eventTitle={event.title}
+        title={settings.title}
+        palette={settings.palette}
+        palettes={PALETTES[style.family]}
+        locked={settings.locked}
+      >
           <div className="grid gap-3 rounded-lg bg-background p-5 shadow-sm">
             <p className="flex items-center gap-2 font-heading text-[16px] font-semibold">
               <Icon name={type.icon} width={20} height={20} className="text-primary" />
@@ -154,8 +153,7 @@ async function CardView({
               </p>
             )}
           </div>
-        </aside>
-      </div>
+      </CardDesigner>
       {created > 0 ? <Toast title={`${created.toLocaleString("fr-FR")} carte${created > 1 ? "s" : ""} prête${created > 1 ? "s" : ""}`} detail="Chaque invité a son QR code." /> : null}
     </>
   );

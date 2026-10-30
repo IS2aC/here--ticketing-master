@@ -19,10 +19,19 @@ from app.models import (
     Guest,
     GuestCategory,
     Invitation,
+    Message,
+    MessageKind,
+    MessageStatus,
     RsvpStatus,
 )
 from app.routers.events import owned_event
-from app.schemas import InvitationResponse, InvitationsResult, PublicCard
+from app.schemas import (
+    CardSettings,
+    CardSettingsIn,
+    InvitationResponse,
+    InvitationsResult,
+    PublicCard,
+)
 
 router = APIRouter(tags=["invitations"])
 
@@ -49,8 +58,33 @@ def invitation_code(token: str) -> str:
     return f"INV-{digest[:4]}-{digest[4:8]}"
 
 
+async def card_locked(db: AsyncSession, event_id: uuid.UUID) -> bool:
+    """La carte ne change plus dès que des invitations sont parties ou en file (décision du 30/10)."""
+    return bool(
+        await db.scalar(
+            select(Message.id)
+            .join(Guest, Guest.id == Message.guest_id)
+            .where(
+                Guest.event_id == event_id,
+                Message.kind == MessageKind.invitation,
+                Message.status.in_(
+                    (
+                        MessageStatus.scheduled,
+                        MessageStatus.sending,
+                        MessageStatus.sent,
+                        MessageStatus.delivered,
+                        MessageStatus.read,
+                    )
+                ),
+            )
+            .limit(1)
+        )
+    )
+
+
 async def _event_card(db: AsyncSession, event: Event) -> EventCard:
-    """Carte de l'événement (une seule, choisie d'après le type ; mise à jour si le type a changé)."""
+    """Carte de l'événement (une seule, choisie d'après le type ; mise à jour si le type a changé,
+    sauf une fois les invitations parties : la carte est alors figée)."""
     template_id = await db.scalar(
         select(CardTemplate.id).where(CardTemplate.code == TEMPLATE_BY_TYPE[event.type])
     )
@@ -63,9 +97,55 @@ async def _event_card(db: AsyncSession, event: Event) -> EventCard:
         card = EventCard(event_id=event.id, template_id=template_id)
         db.add(card)
         await db.flush()
-    else:
+    elif not await card_locked(db, event.id):
         card.template_id = template_id
     return card
+
+
+def _settings(card: EventCard | None, locked: bool) -> CardSettings:
+    return CardSettings(
+        title=card.title if card else None,
+        palette=(card.palette or {}).get("preset") if card else None,
+        locked=locked,
+    )
+
+
+@router.get("/events/{event_id}/card")
+async def card_settings(
+    event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
+) -> CardSettings:
+    """Intitulé et palette de la carte de l'événement."""
+    event = await owned_event(db, event_id, auth.user.id)
+    card = await db.scalar(
+        select(EventCard).where(
+            EventCard.event_id == event.id, EventCard.category_id.is_(None)
+        )
+    )
+    return _settings(card, await card_locked(db, event.id))
+
+
+@router.patch("/events/{event_id}/card")
+async def update_card(
+    event_id: uuid.UUID, body: CardSettingsIn, auth: CurrentAuth, db: DbSession
+) -> CardSettings:
+    """Personnalise la carte (intitulé, palette). Refusé une fois les invitations parties."""
+    event = await owned_event(db, event_id, auth.user.id)
+    if await card_locked(db, event.id):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail={
+                "message": "Les invitations sont parties : la carte ne peut plus être modifiée."
+            },
+        )
+    card = await _event_card(db, event)
+    if "title" in body.model_fields_set:
+        card.title = body.title
+    if "palette" in body.model_fields_set:
+        card.palette = {"preset": body.palette} if body.palette else {}
+    # La couverture du tableau de bord suit la carte.
+    event.updated_at = datetime.now(UTC)
+    await db.commit()
+    return _settings(card, False)
 
 
 @router.post("/events/{event_id}/invitations")
@@ -115,12 +195,13 @@ def _responses_open(event: Event) -> bool:
 
 async def _by_token(
     db: AsyncSession, token: str, *, lock: bool = False
-) -> tuple[Event, Guest, str]:
+) -> tuple[Event, Guest, str, EventCard]:
     query = (
-        select(Event, Guest, GuestCategory.name)
+        select(Event, Guest, GuestCategory.name, EventCard)
         .join(Guest, Guest.event_id == Event.id)
         .join(GuestCategory, GuestCategory.id == Guest.category_id)
         .join(Invitation, Invitation.guest_id == Guest.id)
+        .join(EventCard, EventCard.id == Invitation.event_card_id)
         .where(Invitation.token == token)
     )
     row = (
@@ -128,10 +209,12 @@ async def _by_token(
     ).one_or_none()
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Invitation introuvable.")
-    return row[0], row[1], row[2]
+    return row[0], row[1], row[2], row[3]
 
 
-def _public_card(token: str, event: Event, guest: Guest, category: str) -> PublicCard:
+def _public_card(
+    token: str, event: Event, guest: Guest, category: str, card: EventCard
+) -> PublicCard:
     return PublicCard(
         code=invitation_code(token),
         event_type=event.type,
@@ -150,6 +233,8 @@ def _public_card(token: str, event: Event, guest: Guest, category: str) -> Publi
         rsvp_message=guest.rsvp_message,
         responses_open=_responses_open(event),
         responses_until=responses_until(event),
+        card_title=card.title,
+        card_palette=(card.palette or {}).get("preset"),
         rsvp_deadline=event.rsvp_deadline,
     )
 
@@ -173,7 +258,7 @@ async def public_card(token: str, db: DbSession, vue: bool = False) -> PublicCar
 @router.post("/invitations/{token}/response")
 async def respond(token: str, body: InvitationResponse, db: DbSession) -> PublicCard:
     """Réponse de l'invité depuis sa page. Il peut changer d'avis jusqu'à la date limite (ou au début)."""
-    event, guest, category = await _by_token(db, token, lock=True)
+    event, guest, category, card = await _by_token(db, token, lock=True)
     if not _responses_open(event):
         raise HTTPException(
             status.HTTP_409_CONFLICT,
@@ -202,4 +287,4 @@ async def respond(token: str, body: InvitationResponse, db: DbSession) -> Public
     guest.responded_at = datetime.now(UTC)
     await cancel_reminders(db, guest.id)  # ses relances en attente ne partiront pas
     await db.commit()
-    return _public_card(token, event, guest, category)
+    return _public_card(token, event, guest, category, card)

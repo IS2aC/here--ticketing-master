@@ -321,6 +321,12 @@ class PublicCard(BaseModel):
     rsvp_message: str | None
     responses_open: bool  # jusqu'à la date limite (ou au début de l'événement), sauf s'il est annulé
     responses_until: datetime  # date limite de réponse, sinon début de l'événement
+    card_title: str | None = (
+        None  # intitulé choisi par l'organisateur (sinon le nom de l'événement)
+    )
+    card_palette: str | None = (
+        None  # palette choisie (identifiant, voir frontend lib/card/palettes)
+    )
     rsvp_deadline: datetime | None  # choisie par l'organisateur
 
 
@@ -773,3 +779,28 @@ class SupportThreadPage(BaseModel):
     waiting: int  # à traiter par l'équipe
     total: int
     items: list[SupportThread]
+
+
+# ---------------------------------------------------------------------------
+# Carte de l'événement : intitulé et palette (cartes automatiques)
+# ---------------------------------------------------------------------------
+
+PaletteId = Annotated[str, StringConstraints(pattern=r"^[a-z0-9_]{1,30}$")]
+
+
+class CardSettings(BaseModel):
+    title: str | None  # intitulé ; None : le nom de l'événement
+    palette: str | None  # None : la palette d'origine du modèle
+    locked: bool  # invitations parties ou en file : plus de modification
+
+
+class CardSettingsIn(BaseModel):
+    """Champ absent : inchangé ; null : retour à la valeur d'origine."""
+
+    title: (
+        Annotated[
+            str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)
+        ]
+        | None
+    ) = None
+    palette: PaletteId | None = None

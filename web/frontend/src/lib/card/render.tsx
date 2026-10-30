@@ -8,6 +8,7 @@ import { formatDate, formatDuration, formatTime } from "@/lib/events";
 import { cardFonts } from "./fonts";
 import { ICON_SVG } from "./icons";
 import { CARD_LIBRARY, type CardStyle } from "./library";
+import { paletteOf, type CardColors } from "./palettes";
 
 // Carte d'invitation en image (1080 × 1350, format 4:5 optimal dans WhatsApp), d'après uiux/visual-identity/mockups/carte-*.
 // Un seul rendu sert à l'aperçu de l'organisateur et à l'image envoyée à l'invité.
@@ -30,10 +31,11 @@ export type CardData = {
   seats: number;
   code: string;
   qrValue: string; // contenu du QR code : lien de l'invitation
+  palette?: string | null; // palette choisie par l'organisateur (voir palettes.ts)
 };
 
 // Couleurs de l'identité (uiux/visual-identity/brand.json) : Satori ne lit pas les variables CSS.
-const C = {
+const C: CardColors = {
   red: "#E10600",
   redBright: "#FF4D3D",
   ink: "#0B0B0B",
@@ -46,6 +48,11 @@ const C = {
   stone50: "#F3F1EC",
   stone600: "#5E5A53",
 };
+
+// Couleurs d'une famille avec la palette choisie (le sceau garde les couleurs d'origine, C).
+function colorsOf(family: CardStyle["family"], palette: string | null | undefined): CardColors {
+  return { ...C, ...paletteOf(family, palette).colors };
+}
 
 const SEAL_TOP = CARD_HEIGHT - 42 - 228;
 
@@ -229,6 +236,7 @@ function Seal({
 const column: CSSProperties = { display: "flex", flexDirection: "column" };
 
 function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
+  const c = colorsOf(style.family, data.palette);
   const { date, time } = when(data);
   const place = where(data);
   return (
@@ -237,8 +245,8 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
         ...column,
         width: "100%",
         height: "100%",
-        background: C.ivory,
-        color: C.ink,
+        background: c.ivory,
+        color: c.ink,
       }}
     >
       <div
@@ -249,7 +257,7 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
           right: 30,
           bottom: 294,
           display: "flex",
-          border: `2px solid ${C.gold}`,
+          border: `2px solid ${c.gold}`,
           borderRadius: 9,
         }}
       >
@@ -261,7 +269,7 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
             right: 9,
             bottom: 9,
             display: "flex",
-            border: `1.5px solid ${C.gold}`,
+            border: `1.5px solid ${c.gold}`,
             borderRadius: 5,
             opacity: 0.55,
           }}
@@ -286,7 +294,7 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
             fontWeight: 600,
             letterSpacing: 7.8,
             textTransform: "uppercase",
-            color: C.gold,
+            color: c.gold,
           }}
         >
           {style.label}
@@ -304,16 +312,16 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
               display: "flex",
               width: 84,
               height: 1.5,
-              background: C.gold,
+              background: c.gold,
             }}
           />
-          <Icon name={style.icon} color={C.gold} size={36} />
+          <Icon name={style.icon} color={c.gold} size={36} />
           <div
             style={{
               display: "flex",
               width: 84,
               height: 1.5,
-              background: C.gold,
+              background: c.gold,
             }}
           />
         </div>
@@ -371,29 +379,30 @@ function Ceremonie({ data, style }: { data: CardData; style: CardStyle }) {
             {place ? <div>{place}</div> : null}
             {data.dressCode ? (
               <div
-                style={{ color: C.stone600 }}
+                style={{ color: c.stone600 }}
               >{`Tenue : ${data.dressCode}`}</div>
             ) : null}
           </div>
         </div>
-        <div style={{ fontSize: 19.5, color: C.stone600 }}>{style.closing}</div>
+        <div style={{ fontSize: 19.5, color: c.stone600 }}>{style.closing}</div>
       </div>
     </div>
   );
 }
 
 function RendezVous({ data, style }: { data: CardData; style: CardStyle }) {
+  const c = colorsOf(style.family, data.palette);
   const { date, time } = when(data);
   // Haut de carte blanc avec le grand pictogramme, coupé en biais par le rouge (à la place de la photo).
-  const top = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 760"><rect width="1080" height="760" fill="${C.white}"/><polygon points="0,760 0,500 1080,370 1080,760" fill="${C.red}"/></svg>`;
+  const top = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 760"><rect width="1080" height="760" fill="${c.white}"/><polygon points="0,760 0,500 1080,370 1080,760" fill="${c.red}"/></svg>`;
   return (
     <div
       style={{
         ...column,
         width: "100%",
         height: "100%",
-        background: C.red,
-        color: C.white,
+        background: c.red,
+        color: c.white,
       }}
     >
       <img
@@ -412,7 +421,7 @@ function RendezVous({ data, style }: { data: CardData; style: CardStyle }) {
           opacity: 0.9,
         }}
       >
-        <Icon name={style.icon} color={C.red} size={250} />
+        <Icon name={style.icon} color={c.red} size={250} />
       </div>
       <div
         style={{
@@ -425,14 +434,14 @@ function RendezVous({ data, style }: { data: CardData; style: CardStyle }) {
           height: 66,
           padding: "0 30px 0 24px",
           borderRadius: 33,
-          background: C.ink,
+          background: c.ink,
           fontSize: 22.5,
           fontWeight: 700,
           letterSpacing: 2,
           textTransform: "uppercase",
         }}
       >
-        <Icon name={style.icon} color={C.redBright} size={30} />
+        <Icon name={style.icon} color={c.redBright} size={30} />
         {style.label}
       </div>
       <div
@@ -480,8 +489,8 @@ function RendezVous({ data, style }: { data: CardData; style: CardStyle }) {
             place: data.locationName,
             sub: data.locationAddress,
           }}
-          color={C.white}
-          textColor={C.white}
+          color={c.white}
+          textColor={c.white}
         />
       </div>
     </div>
@@ -533,6 +542,7 @@ function Details({
 }
 
 function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
+  const c = colorsOf(style.family, data.palette);
   const { date, time } = when(data);
   const items: [string, string, string | null][] = [
     ["calendrier", date, time],
@@ -550,8 +560,8 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
         ...column,
         width: "100%",
         height: "100%",
-        background: C.white,
-        color: C.ink,
+        background: c.white,
+        color: c.ink,
       }}
     >
       <div
@@ -562,7 +572,7 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
           bottom: 0,
           width: 21,
           display: "flex",
-          background: C.ink,
+          background: c.ink,
         }}
       />
       <div
@@ -586,11 +596,11 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
             textTransform: "uppercase",
           }}
         >
-          <Icon name={style.icon} color={C.ink} size={30} />
+          <Icon name={style.icon} color={c.ink} size={30} />
           {style.label}
         </div>
         <div style={{ ...column, flex: 1, justifyContent: "center" }}>
-          <div style={{ fontSize: 30, color: C.gray600 }}>{style.formula}</div>
+          <div style={{ fontSize: 30, color: c.gray600 }}>{style.formula}</div>
           <div
             style={{
               fontWeight: 800,
@@ -609,7 +619,7 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
           >
             {data.title}
           </div>
-          <div style={{ fontSize: 27, color: C.gray600 }}>
+          <div style={{ fontSize: 27, color: c.gray600 }}>
             Une invitation pour
           </div>
           <div style={{ fontSize: 33, fontWeight: 600 }}>{data.guestName}</div>
@@ -618,7 +628,7 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
           style={{
             display: "flex",
             height: 1.5,
-            background: C.gray300,
+            background: c.gray300,
             margin: "0 0 36px",
           }}
         />
@@ -636,10 +646,10 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
                   lineHeight: 1.4,
                 }}
               >
-                <Icon name={icon} color={C.ink} size={36} />
+                <Icon name={icon} color={c.ink} size={36} />
                 <div style={{ ...column, flex: 1 }}>
                   <span style={{ fontWeight: 600 }}>{label}</span>
-                  {sub ? <span style={{ color: C.gray600 }}>{sub}</span> : null}
+                  {sub ? <span style={{ color: c.gray600 }}>{sub}</span> : null}
                 </div>
               </div>
             ))}
@@ -650,6 +660,7 @@ function Officiel({ data, style }: { data: CardData; style: CardStyle }) {
 }
 
 function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
+  const c = colorsOf(style.family, data.palette);
   const { date, time } = when(data);
   const place = where(data);
   return (
@@ -658,8 +669,8 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
         ...column,
         width: "100%",
         height: "100%",
-        background: C.stone50,
-        color: C.ink,
+        background: c.stone50,
+        color: c.ink,
       }}
     >
       <div
@@ -670,7 +681,7 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
           right: 30,
           bottom: 294,
           display: "flex",
-          border: `1.5px solid ${C.gray500}`,
+          border: `1.5px solid ${c.gray500}`,
         }}
       />
       <div
@@ -702,11 +713,11 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
               width: 132,
               height: 132,
               borderRadius: 66,
-              border: `1.5px solid ${C.stone600}`,
+              border: `1.5px solid ${c.stone600}`,
               marginBottom: 48,
             }}
           >
-            <Icon name={style.icon} color={C.stone600} size={60} />
+            <Icon name={style.icon} color={c.stone600} size={60} />
           </div>
           <div
             style={{
@@ -714,7 +725,7 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
               fontStyle: "italic",
               fontSize: 30,
               lineHeight: 1.4,
-              color: C.stone600,
+              color: c.stone600,
             }}
           >
             {style.formula}
@@ -737,7 +748,7 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
           >
             {data.title}
           </div>
-          <div style={{ fontSize: 22.5, color: C.stone600 }}>
+          <div style={{ fontSize: 22.5, color: c.stone600 }}>
             À l&apos;attention de
           </div>
           <div style={{ fontSize: 28.5, fontWeight: 600, marginTop: 4 }}>
@@ -749,7 +760,7 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
             display: "flex",
             width: "100%",
             height: 1.5,
-            background: C.gray300,
+            background: c.gray300,
             margin: "0 0 34px",
           }}
         />
@@ -762,14 +773,14 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
           }}
         >
           <div style={{ fontWeight: 600 }}>{`${date} · ${time}`}</div>
-          {place ? <div style={{ color: C.stone600 }}>{place}</div> : null}
+          {place ? <div style={{ color: c.stone600 }}>{place}</div> : null}
         </div>
         <div
           style={{
             fontFamily: "Playfair Display",
             fontStyle: "italic",
             fontSize: 27,
-            color: C.stone600,
+            color: c.stone600,
             marginTop: 30,
           }}
         >
@@ -781,17 +792,18 @@ function Hommage({ data, style }: { data: CardData; style: CardStyle }) {
 }
 
 function Soiree({ data, style }: { data: CardData; style: CardStyle }) {
+  const c = colorsOf(style.family, data.palette);
   const { date, time } = when(data);
   // Fond de nuit et slash de la marque (18°), à la place de la photo.
-  const bg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350"><defs><radialGradient id="g" cx="0.68" cy="0.18" r="0.55"><stop offset="0" stop-color="${C.red}" stop-opacity="0.62"/><stop offset="1" stop-color="${C.red}" stop-opacity="0"/></radialGradient></defs><rect width="1080" height="1350" fill="${C.ink}"/><rect width="1080" height="1350" fill="url(#g)"/><polygon points="927,0 1008,0 850,495 768,495" fill="${C.red}"/><polygon points="862,0 876,0 754,345 742,345" fill="${C.red}"/></svg>`;
+  const bg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350"><defs><radialGradient id="g" cx="0.68" cy="0.18" r="0.55"><stop offset="0" stop-color="${c.red}" stop-opacity="0.62"/><stop offset="1" stop-color="${c.red}" stop-opacity="0"/></radialGradient></defs><rect width="1080" height="1350" fill="${c.ink}"/><rect width="1080" height="1350" fill="url(#g)"/><polygon points="927,0 1008,0 850,495 768,495" fill="${c.red}"/><polygon points="862,0 876,0 754,345 742,345" fill="${c.red}"/></svg>`;
   return (
     <div
       style={{
         ...column,
         width: "100%",
         height: "100%",
-        background: C.ink,
-        color: C.white,
+        background: c.ink,
+        color: c.white,
       }}
     >
       <img
@@ -818,7 +830,7 @@ function Soiree({ data, style }: { data: CardData; style: CardStyle }) {
             alignSelf: "flex-start",
             padding: "10px 18px",
             borderRadius: 9,
-            background: C.red,
+            background: c.red,
             fontSize: 19.5,
             fontWeight: 800,
             letterSpacing: 4.5,
@@ -848,13 +860,13 @@ function Soiree({ data, style }: { data: CardData; style: CardStyle }) {
         >
           {data.title}
         </div>
-        <div style={{ display: "flex", fontSize: 28.5, color: C.gray300 }}>
+        <div style={{ display: "flex", fontSize: 28.5, color: c.gray300 }}>
           <span>Une invitation pour&nbsp;</span>
-          <span style={{ fontWeight: 600, color: C.white }}>
+          <span style={{ fontWeight: 600, color: c.white }}>
             {data.guestName}
           </span>
         </div>
-        <div style={{ fontSize: 22.5, color: C.gray500, margin: "6px 0 30px" }}>
+        <div style={{ fontSize: 22.5, color: c.gray500, margin: "6px 0 30px" }}>
           {style.closing}
         </div>
         <Details
@@ -864,8 +876,8 @@ function Soiree({ data, style }: { data: CardData; style: CardStyle }) {
             place: data.locationName,
             sub: data.locationAddress,
           }}
-          color={C.redBright}
-          textColor={C.white}
+          color={c.redBright}
+          textColor={c.white}
         />
       </div>
     </div>

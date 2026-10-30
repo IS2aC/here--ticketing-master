@@ -94,3 +94,12 @@ export function formatDuration(minutes: number): string {
   const m = minutes % 60;
   return h ? `${h} h${m ? ` ${String(m).padStart(2, "0")}` : ""}` : `${m} min`;
 }
+
+export type CardSettings = { title: string | null; palette: string | null; locked: boolean };
+
+/** Intitulé et palette de la carte de l'événement ; `locked` : invitations parties, plus de modification. */
+export async function getCardSettings(eventId: string): Promise<CardSettings> {
+  const response = await get(`/v1/events/${encodeURIComponent(eventId)}/card`);
+  if (!response.ok) throw new Error(`API /v1/events/${eventId}/card : ${response.status}`);
+  return response.json();
+}
