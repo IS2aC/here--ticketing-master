@@ -138,6 +138,9 @@ class EventUpdate(EventFields):
     type: EventType | None = None
     starts_at: AwareDatetime | None = None
     categories: Categories | None = None
+    track_entries: bool | None = (
+        None  # « Gérer les entrées et sorties » (contrôle d'accès)
+    )
 
 
 class CategoryOut(BaseModel):
@@ -179,6 +182,7 @@ class EventOut(BaseModel):
     dress_code: str | None
     description: str | None
     rsvp_deadline: datetime | None
+    track_entries: bool
     categories: list[CategoryOut]
     stats: EventStats
     created_at: datetime
@@ -350,6 +354,7 @@ class ScanEvent(BaseModel):
     event_type: EventType
     starts_at: datetime
     label: str  # nom du lien : « Entrée de la réception »
+    track_entries: bool  # entrées gérées : « Déjà entré » au 2e scan
     arrived: int  # personnes entrées
     expected: int  # personnes attendues : invités qui ont confirmé
 

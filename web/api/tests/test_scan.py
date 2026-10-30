@@ -19,6 +19,10 @@ def link(
 
 def test_scan_flow(client: TestClient, organizer: dict[str, str]) -> None:
     event_id, guests = invited(client, organizer)
+    # « Gérer les entrées et sorties » activé : entrées enregistrées, « Déjà entré » au 2e scan.
+    client.patch(
+        f"/v1/events/{event_id}", json={"track_entries": True}, headers=organizer
+    )
     porte_a = link(client, organizer, event_id)
     porte_b = link(client, organizer, event_id, "Porte B")
     jean = guests["Jean Konan"]
@@ -104,6 +108,37 @@ def test_scan_flow(client: TestClient, organizer: dict[str, str]) -> None:
         ]
         == 3
     )
+
+
+def test_without_entry_tracking_scan_only_checks_the_invitation(
+    client: TestClient, organizer: dict[str, str]
+) -> None:
+    """Par défaut, le scan dit seulement que l'invité fait partie de l'événement, à chaque scan."""
+    event_id, guests = invited(client, organizer)
+    assert (
+        client.get(f"/v1/events/{event_id}", headers=organizer).json()["track_entries"]
+        is False
+    )
+    porte = link(client, organizer, event_id)
+    assert client.get(f"/v1/scan/{porte['token']}").json()["track_entries"] is False
+    jean = guests["Jean Konan"]
+    client.post(
+        f"/v1/invitations/{jean['invitation_token']}/response", json={"attending": True}
+    )
+    qr = f"http://localhost:3000/i/{jean['invitation_token']}"
+    url = f"/v1/scan/{porte['token']}/check"
+    first = client.post(url, json={"value": qr}).json()
+    second = client.post(url, json={"value": qr}).json()
+    assert first["result"] == second["result"] == "admitted"  # pas de « Déjà entré »
+    assert second["entered_by"] is None
+    assert (
+        second["event"]["arrived"] == 1
+    )  # compté une fois pour « arrivés / attendus »
+    # Les règles d'entrée restent : sans réponse, refusé.
+    paul = client.post(
+        url, json={"value": invitation_code(guests["Paul Assi"]["invitation_token"])}
+    ).json()
+    assert paul["result"] == "refused"
 
 
 def test_cancelled_event_blocks_scan(

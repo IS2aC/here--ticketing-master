@@ -59,6 +59,14 @@ async function Access({ params }: { params: Promise<{ id: string }> }) {
               Un lien par entrée ou par agent d&apos;accueil. Il s&apos;ouvre sur n&apos;importe quel téléphone, sans
               application, et ne donne accès qu&apos;au scan des invitations.
             </p>
+            <p className="mt-2 flex items-start gap-1.5 text-[13px] text-text-muted">
+              <Icon name="scanner" width={15} height={15} className="mt-0.5 shrink-0" />
+              <span>
+                Entrées et sorties : <span className="font-semibold text-text">{event.track_entries ? "gérées" : "non gérées"}</span>
+                {event.track_entries ? " (« Déjà entré » au 2e scan)" : " (le scan vérifie seulement l'invitation)"}. Modifiable sur la page de
+                l&apos;événement.
+              </span>
+            </p>
           </div>
           <NewLinkForm action={createScanLink.bind(null, event.id)} />
           {links.length ? (

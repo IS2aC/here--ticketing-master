@@ -21,6 +21,7 @@ export type EventOut = {
   created_at: string;
   updated_at: string;
   rsvp_deadline: string | null;
+  track_entries: boolean; // « Gérer les entrées et sorties »
 };
 
 async function get(path: string): Promise<Response> {

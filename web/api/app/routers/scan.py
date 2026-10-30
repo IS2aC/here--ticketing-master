@@ -168,6 +168,7 @@ async def _scan_event(db: AsyncSession, link: ScanLink, event: Event) -> ScanEve
         ).where(Guest.event_id == event.id, Guest.rsvp_status == RsvpStatus.confirmed)
     )
     return ScanEvent(
+        track_entries=event.track_entries,
         title=event.title,
         event_type=event.type,
         starts_at=event.starts_at,
@@ -262,6 +263,28 @@ async def check_in(token: str, body: ScanCheckIn, db: DbSession) -> ScanResult:
             code=invitation_code(invitation.token),
             guest=_scan_guest(guest, category, invitation, checkin),
             entered_at=None,
+            entered_by=None,
+            event=await _scan_event(db, link, event),
+        )
+    if not event.track_entries:
+        # Entrées non gérées : on dit seulement que l'invité fait partie de l'événement, à chaque scan.
+        # Le premier scan est noté pour le compteur « arrivés / attendus ».
+        if checkin is None:
+            await db.execute(
+                insert(Checkin)
+                .values(
+                    invitation_id=invitation.id,
+                    scan_link_id=link.id,
+                    seats=guest.attending_seats or guest.seats,
+                )
+                .on_conflict_do_nothing(index_elements=["invitation_id"])
+            )
+            await db.commit()
+        return ScanResult(
+            result="admitted",
+            code=invitation_code(invitation.token),
+            guest=_scan_guest(guest, category, invitation, None),
+            entered_at=datetime.now(UTC),
             entered_by=None,
             event=await _scan_event(db, link, event),
         )

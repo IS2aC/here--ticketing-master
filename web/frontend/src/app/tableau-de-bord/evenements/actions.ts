@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { EVENT_UTC_OFFSET } from "@/lib/event-types";
@@ -122,4 +123,19 @@ export async function deleteEvent(id: string): Promise<EventFormState> {
     return { message: "Le service est momentanément indisponible. L'événement n'a pas été supprimé." };
   }
   redirect("/tableau-de-bord?supprime=1");
+}
+
+/** « Gérer les entrées et sorties » : activé, le scan enregistre chaque entrée et signale « Déjà entré ». */
+export async function setTrackEntries(eventId: string, enabled: boolean): Promise<void> {
+  try {
+    const response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}`, {
+      method: "PATCH",
+      token: await getSessionToken(),
+      body: JSON.stringify({ track_entries: enabled }),
+    });
+    if (response.status === 401) redirect("/connexion");
+  } catch (error) {
+    if (error instanceof Error && "digest" in error) throw error; // redirect()
+  }
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}`);
 }

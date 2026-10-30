@@ -12,6 +12,7 @@ import { getGuests, type GuestOut } from "@/lib/guests";
 import { getWhatsApp, sentTotal, type WhatsAppOverview } from "@/lib/whatsapp";
 import { maskPhone } from "@/lib/phone";
 import { sendInvitations } from "./relances/actions";
+import { setTrackEntries } from "../actions";
 import { SendButton } from "./relances/controls";
 
 export const metadata: Metadata = { title: "Événement · Here!" };
@@ -111,41 +112,44 @@ async function EventView({
           </section>
         )}
 
-        <aside className="grid content-start gap-5 rounded-lg bg-background p-5 shadow-sm">
-          <h2 className="font-heading text-[16px] font-semibold">L&apos;événement</h2>
-          {/* Une rubrique par information, sur une seule ligne : une valeur trop longue est coupée (texte complet au survol). */}
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-4 text-[14px]">
-            <Info icon={type.icon} label="Type" value={type.label} />
-            <Info icon="calendrier" label="Date" value={formatShortDate(event.starts_at)} title={formatDate(event.starts_at)} />
-            <Info icon="horloge" label="Heure de début" value={formatTime(event.starts_at)} />
-            <Info icon="horloge" label="Durée" value={event.duration_minutes ? formatDuration(event.duration_minutes) : null} />
-            <Info
-              icon="lieu"
-              label="Lieu"
-              wide
-              value={[event.location_name, event.location_address].filter(Boolean).join(", ") || null}
-            />
-            <Info
-              icon="participants"
-              label="Invités prévus"
-              value={event.expected_guests !== null ? event.expected_guests.toLocaleString("fr-FR") : null}
-              data
-            />
-            <Info icon="etiquette" label="Dress code" wide value={event.dress_code} />
-          </dl>
-          {event.description ? <p className="text-[14px] whitespace-pre-line text-text-muted">{event.description}</p> : null}
-          <div className="grid gap-2 border-t border-border pt-4">
-            <h3 className="text-[13px] font-medium text-text-muted">Catégories d&apos;invités</h3>
-            <ul className="flex flex-wrap gap-2">
-              {event.categories.map((c) => (
-                <li key={c.id} className="inline-flex h-8 items-center gap-2 rounded-full bg-surface px-3 text-[13px] font-medium">
-                  {c.name}
-                  <span className="font-data text-[12px] text-text-muted tabular-nums">{c.guests}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </aside>
+        <div className="grid content-start gap-5">
+          <aside className="grid content-start gap-5 rounded-lg bg-background p-5 shadow-sm">
+            <h2 className="font-heading text-[16px] font-semibold">L&apos;événement</h2>
+            {/* Une rubrique par information, sur une seule ligne : une valeur trop longue est coupée (texte complet au survol). */}
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-4 text-[14px]">
+              <Info icon={type.icon} label="Type" value={type.label} />
+              <Info icon="calendrier" label="Date" value={formatShortDate(event.starts_at)} title={formatDate(event.starts_at)} />
+              <Info icon="horloge" label="Heure de début" value={formatTime(event.starts_at)} />
+              <Info icon="horloge" label="Durée" value={event.duration_minutes ? formatDuration(event.duration_minutes) : null} />
+              <Info
+                icon="lieu"
+                label="Lieu"
+                wide
+                value={[event.location_name, event.location_address].filter(Boolean).join(", ") || null}
+              />
+              <Info
+                icon="participants"
+                label="Invités prévus"
+                value={event.expected_guests !== null ? event.expected_guests.toLocaleString("fr-FR") : null}
+                data
+              />
+              <Info icon="etiquette" label="Dress code" wide value={event.dress_code} />
+            </dl>
+            {event.description ? <p className="text-[14px] whitespace-pre-line text-text-muted">{event.description}</p> : null}
+            <div className="grid gap-2 border-t border-border pt-4">
+              <h3 className="text-[13px] font-medium text-text-muted">Catégories d&apos;invités</h3>
+              <ul className="flex flex-wrap gap-2">
+                {event.categories.map((c) => (
+                  <li key={c.id} className="inline-flex h-8 items-center gap-2 rounded-full bg-surface px-3 text-[13px] font-medium">
+                    {c.name}
+                    <span className="font-data text-[12px] text-text-muted tabular-nums">{c.guests}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+          <EntriesCard eventId={event.id} enabled={event.track_entries} />
+        </div>
       </div>
       {imported > 0 ? (
         <Toast
@@ -400,5 +404,38 @@ function EventSkeleton() {
       </div>
       <div className="h-72 rounded-lg bg-background" />
     </div>
+  );
+}
+
+// « Gérer les entrées et sorties » : désactivé par défaut (décision du 30/10).
+function EntriesCard({ eventId, enabled }: { eventId: string; enabled: boolean }) {
+  return (
+    <section className="grid gap-3 rounded-lg bg-background p-5 shadow-sm" aria-label="Entrées et sorties">
+      <div className="flex items-start gap-3">
+        <span className={`flex size-9 shrink-0 items-center justify-center rounded-md ${enabled ? "bg-status-confirmed/10 text-status-confirmed" : "bg-surface text-text-muted"}`}>
+          <Icon name="scanner" width={18} height={18} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-heading text-[15px] font-semibold">Gérer les entrées et sorties</h2>
+          <p className={`mt-0.5 flex items-center gap-1.5 text-[13px] font-semibold ${enabled ? "text-status-confirmed" : "text-text-muted"}`}>
+            <Icon name={enabled ? "valide" : "decline"} width={14} height={14} />
+            {enabled ? "Activé" : "Désactivé"}
+          </p>
+        </div>
+      </div>
+      <p className="text-[13px] text-text-muted">
+        {enabled
+          ? "Chaque entrée est enregistrée au scan : une invitation déjà scannée affiche « Déjà entré »."
+          : "Le scan vérifie seulement que l'invité fait partie de l'événement, autant de fois que nécessaire."}
+      </p>
+      <form action={setTrackEntries.bind(null, eventId, !enabled)}>
+        <button
+          type="submit"
+          className="inline-flex h-10 items-center rounded-full px-4 font-heading text-[14px] font-semibold shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-surface"
+        >
+          {enabled ? "Désactiver" : "Activer"}
+        </button>
+      </form>
+    </section>
   );
 }

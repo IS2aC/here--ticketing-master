@@ -3,6 +3,7 @@ import type { EventType } from "./event-types";
 // Types de l'API de scan (web/api/app/routers/scan.py).
 
 export type ScanEvent = {
+  track_entries: boolean; // entrées gérées : « Déjà entré » au 2e scan
   title: string;
   event_type: EventType;
   starts_at: string;

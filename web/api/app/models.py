@@ -126,6 +126,8 @@ class Event(Base):
     day_before_enabled: Mapped[bool] = mapped_column(
         server_default="true"
     )  # si l'option est active
+    # « Gérer les entrées et sorties » : entrées enregistrées, « Déjà entré » au 2e scan.
+    track_entries: Mapped[bool] = mapped_column(server_default="false")
     # Dates choisies par l'organisateur ; None : calendrier proposé (voir messaging.reminder_dates).
     reminder_dates: Mapped[list[date] | None] = mapped_column(ARRAY(Date))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
