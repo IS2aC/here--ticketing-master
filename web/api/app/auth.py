@@ -91,3 +91,16 @@ async def admin_auth(auth: CurrentAuth) -> Authenticated:
 
 
 AdminAuth = Annotated[Authenticated, Depends(admin_auth)]
+
+
+async def staff_auth(auth: CurrentAuth) -> Authenticated:
+    """Écran de la conseillère (appels, messages des invités) : rôles admin et support."""
+    if auth.user.role not in (UserRole.admin, UserRole.support):
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            detail={"message": "Cet espace est réservé à l'équipe Here!."},
+        )
+    return auth
+
+
+StaffAuth = Annotated[Authenticated, Depends(staff_auth)]

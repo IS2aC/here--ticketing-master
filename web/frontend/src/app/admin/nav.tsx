@@ -5,25 +5,28 @@ import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "@/components/icons";
 
 // Les écrans sans page pour l'instant sont affichés, grisés, avec « Bientôt » (jamais de lien mort).
-const LINKS: { label: string; icon: IconName; href?: string }[] = [
+// support : seulement les entrées marquées `support` (l'écran de la conseillère).
+const LINKS: { label: string; icon: IconName; href?: string; support?: boolean }[] = [
   { label: "Tableau de bord", icon: "statistiques", href: "/admin" },
   { label: "Utilisateurs", icon: "profil", href: "/admin/utilisateurs" },
   { label: "Événements", icon: "calendrier", href: "/admin/evenements" },
-  { label: "Messages", icon: "envoyer" },
+  { label: "Messages", icon: "telephone", href: "/admin/messages", support: true },
   { label: "Cartes", icon: "invitation" },
   { label: "Réglages", icon: "parametres", href: "/admin/reglages" },
 ];
 
-export function AdminNav() {
+export function AdminNav({ role }: { role: "admin" | "support" }) {
   const pathname = usePathname();
-  return <AdminNavLinks active={LINKS.findLast((l) => l.href && (pathname === l.href || pathname.startsWith(`${l.href}/`)))?.href} />;
+  return (
+    <AdminNavLinks role={role} active={LINKS.findLast((l) => l.href && (pathname === l.href || pathname.startsWith(`${l.href}/`)))?.href} />
+  );
 }
 
 /** Sans lien actif : affiché le temps que l'adresse soit connue (dans <Suspense>). */
-export function AdminNavLinks({ active }: { active?: string }) {
+export function AdminNavLinks({ active, role }: { active?: string; role: "admin" | "support" }) {
   return (
     <nav className="grid gap-1.5" aria-label="Navigation du portail admin">
-      {LINKS.map((l) => {
+      {LINKS.filter((l) => role === "admin" || l.support).map((l) => {
         if (!l.href) {
           return (
             <span key={l.label} aria-disabled="true" className="flex h-10 items-center gap-3.5 rounded-xl px-4 text-[14px] font-medium text-text-muted">

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/icons";
-import { getDashboard, getEvents, getUsers, PERIODS, type Activity, type AdminDashboard, type Trend } from "@/lib/admin";
+import { getDashboard, getEvents, getUsers, PERIODS, requireStaff, type Activity, type AdminDashboard, type Trend } from "@/lib/admin";
 import { EVENT_TIME_ZONE, eventType } from "@/lib/event-types";
 import { formatShortDate, formatTime } from "@/lib/events";
 import { maskPhone } from "@/lib/phone";
@@ -79,6 +80,7 @@ async function PeriodMenu({ searchParams }: { searchParams: SearchParams }) {
 }
 
 async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
+  if ((await requireStaff()).role !== "admin") redirect("/admin/messages");
   const days = await period(searchParams);
   const [d, upcoming, users] = await Promise.all([getDashboard(days), getEvents({ period: "upcoming", limit: 4 }), getUsers({ limit: 5 })]);
   const guests = d.guests.total;

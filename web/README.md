@@ -56,10 +56,11 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 
 ## Portail admin (équipe Here!)
 
-Un compte devient admin par une commande, depuis le terminal du conteneur `here-api` (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :
+Un compte devient admin (ou support, pour la conseillère) par une commande, depuis le terminal du conteneur `here-api` (dossier `/app`) (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :
 
 ```bash
 python -m app.admin 07 07 12 34 56            # donne le rôle admin
+python -m app.admin 07 07 12 34 56 --support  # conseillère : seulement « Appels et messages »
 python -m app.admin 07 07 12 34 56 --retirer  # le retire
 ```
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Icon } from "@/components/icons";
-import { requireAdmin } from "@/lib/admin";
+import { requireStaff } from "@/lib/admin";
 import { logout } from "../(auth)/actions";
 import { AdminNav, AdminNavLinks } from "./nav";
 
@@ -14,8 +14,8 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link href="/admin" className="mx-3 self-start">
           <Image src="/brand/logo-horizontal.svg" alt="Here! · Ticketing Master" width={110} height={37} priority />
         </Link>
-        <Suspense fallback={<AdminNavLinks />}>
-          <AdminNav />
+        <Suspense fallback={<AdminNavLinks role="support" />}>
+          <Nav />
         </Suspense>
         <div className="mt-auto grid min-w-0 gap-4">
           <div className="hidden rounded-2xl bg-ink p-4 text-white md:block">
@@ -37,13 +37,18 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   );
 }
 
+async function Nav() {
+  const user = await requireStaff();
+  return <AdminNav role={user.role === "admin" ? "admin" : "support"} />;
+}
+
 async function AdminOnly({ children }: { children: React.ReactNode }) {
-  await requireAdmin();
+  await requireStaff();
   return children;
 }
 
 async function Account() {
-  const user = await requireAdmin();
+  const user = await requireStaff();
   return (
     <div className="flex items-center gap-3 px-2">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface font-heading text-[12px] font-bold">
@@ -54,7 +59,7 @@ async function Account() {
         <p className="truncate font-semibold">
           {user.first_name} {user.last_name}
         </p>
-        <p className="text-text-muted">Administrateur</p>
+        <p className="text-text-muted">{user.role === "admin" ? "Administrateur" : "Conseillère · support"}</p>
         <div className="mt-0.5 flex flex-wrap gap-x-3 text-text-muted">
           <Link href="/tableau-de-bord" className="hover:text-text hover:underline">
             Espace organisateur

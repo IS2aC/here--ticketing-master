@@ -7,6 +7,7 @@ from app.routers import (
     guests,
     invitations,
     scan,
+    support,
     webhooks,
     whatsapp,
 )
@@ -28,3 +29,4 @@ router.include_router(scan.router)
 router.include_router(whatsapp.router)
 router.include_router(webhooks.router)
 router.include_router(admin.router)
+router.include_router(support.router)

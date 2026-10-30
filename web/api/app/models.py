@@ -361,7 +361,16 @@ class InboundMessage(Base):
     handled_at: Mapped[datetime | None]
 
 
+class CallOutcome(enum.StrEnum):
+    confirmed = "confirmed"  # l'invité vient
+    declined = "declined"  # il ne vient pas
+    no_answer = "no_answer"  # pas de réponse
+    wrong_number = "wrong_number"  # mauvais numéro
+
+
 class Call(Base):
+    """Appel de la conseillère, programmé après la dernière relance restée sans réponse."""
+
     __tablename__ = "calls"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -375,6 +384,9 @@ class Call(Base):
     )
     scheduled_at: Mapped[datetime]
     called_at: Mapped[datetime | None]
+    outcome: Mapped[CallOutcome | None] = mapped_column(
+        Enum(CallOutcome, name="call_outcome", create_type=False)
+    )
     notes: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 

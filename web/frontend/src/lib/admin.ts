@@ -92,6 +92,13 @@ export async function requireAdmin() {
   return user;
 }
 
+/** Équipe Here! : admin, ou support (la conseillère : seulement l'écran des appels et des messages). */
+export async function requireStaff() {
+  const user = await getCurrentUser();
+  if (user.role !== "admin" && user.role !== "support") notFound();
+  return user;
+}
+
 async function adminFetch<T>(path: string): Promise<T> {
   const response = await apiFetch(`/v1/admin${path}`, { token: await getSessionToken() });
   if (response.status === 401) redirect("/connexion");
@@ -154,4 +161,48 @@ export function getEvents(query: {
 
 export function getSettings(): Promise<PlatformSettings> {
   return adminFetch("/settings");
+}
+
+export type CallOutcome = "confirmed" | "declined" | "no_answer" | "wrong_number";
+
+export type StaffCall = {
+  id: string;
+  guest_id: string;
+  guest_name: string;
+  phone: string | null;
+  phone_valid: boolean;
+  category: string;
+  seats: number;
+  rsvp_status: RsvpStatus;
+  event_id: string;
+  event_title: string;
+  event_type: EventType;
+  event_starts_at: string;
+  host: string;
+  reminders_sent: number;
+  scheduled_at: string;
+  called_at: string | null;
+  outcome: CallOutcome | null;
+  notes: string | null;
+  agent_name: string | null;
+};
+
+export type StaffMessage = {
+  id: string;
+  body: string;
+  phone: string;
+  received_at: string;
+  handled_at: string | null;
+  guest_id: string | null;
+  guest_name: string | null;
+  rsvp_status: RsvpStatus | null;
+  event_title: string | null;
+};
+
+export function getCalls(done: boolean): Promise<{ to_do: number; done: number; items: StaffCall[] }> {
+  return adminFetch(`/calls?state=${done ? "faits" : "a-faire"}`);
+}
+
+export function getInbound(done: boolean): Promise<{ to_do: number; done: number; items: StaffMessage[] }> {
+  return adminFetch(`/inbound?state=${done ? "traites" : "a-traiter"}`);
 }

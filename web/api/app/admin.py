@@ -1,6 +1,7 @@
-"""Donne ou retire le rôle admin (portail admin de l'équipe Here!).
+"""Donne ou retire le rôle admin ou support (portail admin de l'équipe Here!).
 
     python -m app.admin 07 07 12 34 56            # le compte devient admin
+    python -m app.admin 07 07 12 34 56 --support  # conseillère : appels et messages des invités
     python -m app.admin 07 07 12 34 56 --retirer  # il redevient organisateur
 
 Sur Dokploy : terminal du conteneur here-api. Le compte doit déjà exister (inscription sur le site).
@@ -49,9 +50,22 @@ def main() -> None:
         nargs="+",
         help="numéro du compte (« 07 07 12 34 56 » ou « +2250707123456 »)",
     )
-    parser.add_argument("--retirer", action="store_true", help="retirer le rôle admin")
+    parser.add_argument(
+        "--retirer", action="store_true", help="retirer le rôle admin ou support"
+    )
+    parser.add_argument(
+        "--support",
+        action="store_true",
+        help="rôle support (conseillère) : seulement l'écran des appels et des messages",
+    )
     args = parser.parse_args()
-    role = UserRole.organizer if args.retirer else UserRole.admin
+    role = (
+        UserRole.organizer
+        if args.retirer
+        else UserRole.support
+        if args.support
+        else UserRole.admin
+    )
     ok, message = asyncio.run(set_role(" ".join(args.phone), role))
     print(message)
     if not ok:

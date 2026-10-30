@@ -6,6 +6,7 @@ from pydantic import AfterValidator, BaseModel, EmailStr, Field, StringConstrain
 
 from app.guest_import import RowStatus
 from app.models import (
+    CallOutcome,
     ContactStatus,
     EventStatus,
     EventType,
@@ -666,3 +667,65 @@ class PlatformSettingsIn(BaseModel):
     whatsapp_send_start_hour: Annotated[int, Field(ge=0, le=23)] | None = None
     whatsapp_send_end_hour: Annotated[int, Field(ge=1, le=24)] | None = None
     whatsapp_day_before_hour: Annotated[int, Field(ge=0, le=23)] | None = None
+
+
+# ---------------------------------------------------------------------------
+# Écran de la conseillère (rôles admin et support) : appels et messages des invités
+# ---------------------------------------------------------------------------
+
+
+class StaffCall(BaseModel):
+    id: uuid.UUID
+    guest_id: uuid.UUID
+    guest_name: str
+    phone: str | None  # complet : la conseillère appelle
+    phone_valid: bool
+    category: str
+    seats: int
+    rsvp_status: RsvpStatus
+    event_id: uuid.UUID
+    event_title: str
+    event_type: EventType
+    event_starts_at: datetime
+    host: str  # organisateur (au nom de qui on appelle)
+    reminders_sent: int
+    scheduled_at: datetime
+    called_at: datetime | None
+    outcome: CallOutcome | None
+    notes: str | None
+    agent_name: str | None
+
+
+class StaffCallPage(BaseModel):
+    to_do: int
+    done: int
+    items: list[StaffCall]
+
+
+class CallResultIn(BaseModel):
+    outcome: CallOutcome
+    notes: (
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)] | None
+    ) = None
+
+
+class StaffMessage(BaseModel):
+    id: uuid.UUID
+    body: str
+    phone: str
+    received_at: datetime
+    handled_at: datetime | None
+    guest_id: uuid.UUID | None  # None : numéro inconnu
+    guest_name: str | None
+    rsvp_status: RsvpStatus | None
+    event_title: str | None
+
+
+class StaffMessagePage(BaseModel):
+    to_do: int
+    done: int
+    items: list[StaffMessage]
+
+
+class HandledIn(BaseModel):
+    handled: bool

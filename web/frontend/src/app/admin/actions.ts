@@ -99,3 +99,42 @@ export async function saveSettings(_previous: SettingsState, formData: FormData)
   revalidatePath("/admin", "layout");
   redirect(`/admin/reglages?${intent.startsWith("reset:") ? "retabli" : "enregistre"}=1`);
 }
+
+export type CallState = { message?: string };
+
+/** Résultat d'un appel de la conseillère : la réponse de l'invité est mise à jour par l'API. */
+export async function recordCall(callId: string, _: CallState, formData: FormData): Promise<CallState> {
+  const outcome = String(formData.get("outcome") ?? "");
+  if (!outcome) return { message: "Choisissez le résultat de l'appel." };
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/admin/calls/${encodeURIComponent(callId)}/result`, {
+      method: "POST",
+      token: await getSessionToken(),
+      body: JSON.stringify({ outcome, notes }),
+    });
+  } catch {
+    return { message: UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (response.status === 422) return { message: "La note est trop longue (500 caractères au plus)." };
+  if (!response.ok) return { message: UNAVAILABLE };
+  revalidatePath("/admin/messages");
+  return {};
+}
+
+/** Message d'un invité traité (ou remis à traiter). */
+export async function setHandled(messageId: string, handled: boolean): Promise<void> {
+  try {
+    const response = await apiFetch(`/v1/admin/inbound/${encodeURIComponent(messageId)}/handled`, {
+      method: "POST",
+      token: await getSessionToken(),
+      body: JSON.stringify({ handled }),
+    });
+    if (response.status === 401) redirect("/connexion");
+  } catch (error) {
+    if (error instanceof Error && "digest" in error) throw error;
+  }
+  revalidatePath("/admin/messages");
+}

@@ -36,7 +36,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Fréquence des relances par événement** : aujourd'hui, le calendrier est global (`WHATSAPP_REMINDER_DAYS_BEFORE`, standard offert : 7 jours avant). Plus tard : le régler depuis le portail admin, et proposer des relances supplémentaires en option.
 - [ ] **WhatsApp, suite** :
   - plusieurs numéros d'envoi (un worker par numéro) pour aller plus vite ;
-  - écran de la conseillère : file d'appels (table `calls`), résultat de l'appel, messages des invités à traiter (`inbound_messages.handled_at`) ;
+  - ~~écran de la conseillère~~ (fait le 30/10 : « Messages » du portail admin, rôle `support` ou admin ; file d'appels avec numéro, script et résultat qui met à jour la réponse de l'invité ; messages des invités à traiter) ;
   - lien d'un message libre (« On sera 3 ») vers la fiche de l'invité ;
   - surveiller la session WasenderAPI (webhook `session.status`) et prévenir si le numéro est déconnecté ;
   - ~~rappel la veille avec le QR code d'entrée~~ (fait le 30/10, **option payante** : activée compte par compte dans le portail admin, coupable par événement sur la page Relances ; la carte et le QR code renvoyés la veille à 10 h aux invités confirmés).
@@ -57,7 +57,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - Si l'événement a lieu dans moins de 7 jours, la relance offerte (J-7) n'est plus possible : la page le dit et propose de choisir une autre date.
   - Reste à décider : faire payer les dates au-delà de la relance offerte (voir « Relances à la demande, option payante » et le portail admin).
 - [x] **Vue « Mon profil »** (fait le 29/10 : coordonnées, structure, ville et pays, facturation, changement de mot de passe) (organisateur) : consulter et modifier ses informations (prénom, nom, téléphone, e-mail, mot de passe), et renseigner les informations du client utiles à la facturation et au support (par exemple : nom de l'entreprise ou de la famille, ville, adresse, informations de facturation, à préciser). Accès depuis le bloc du compte en bas de la barre latérale.
-- [ ] **Portail admin** (équipe Here!, rôle `admin`) — côté serveur fait le 29/10 (API `/v1/admin`, commande `python -m app.admin`), tableau de bord fait le 29/10 (`/admin`, maquette de l'équipe) ; écrans Utilisateurs (liste, fiche, option « relances à la demande »), Événements et Réglages faits le 29/10 ; restent Messages et Cartes (« Bientôt ») :
+- [ ] **Portail admin** (équipe Here!, rôle `admin`) — côté serveur fait le 29/10 (API `/v1/admin`, commande `python -m app.admin`), tableau de bord fait le 29/10 (`/admin`, maquette de l'équipe) ; écrans Utilisateurs (liste, fiche, option « relances à la demande »), Événements et Réglages faits le 29/10 ; écran Messages (appels et messages des invités) fait le 30/10 ; reste Cartes (« Bientôt ») :
   - suivre les **utilisateurs** (comptes, date d'inscription, nombre d'événements, activité) ;
   - suivre les **événements** (statut, invités, cartes, invitations envoyées, réponses, entrées) ;
   - choisir le **prestataire d'envoi WhatsApp** sans redéployer : WasenderAPI, Diffuz ou l'API officielle Meta. Aujourd'hui, c'est la variable `WHATSAPP_PROVIDER` ; le connecteur est déjà interchangeable ;
