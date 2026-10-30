@@ -11,15 +11,12 @@ pytestmark = pytest.mark.db
 def test_title_and_palette(client: TestClient, organizer: dict[str, str]) -> None:
     event_id, guests = invited(client, organizer)
     url = f"/v1/events/{event_id}/card"
-    assert client.get(url, headers=organizer).json() == {
-        "title": None,
-        "palette": None,
-        "locked": False,
-    }
+    first = client.get(url, headers=organizer).json()
+    assert (first["title"], first["palette"], first["locked"]) == (None, None, False)
     saved = client.patch(
         url, json={"title": "Anniversaire Ange", "palette": "rose"}, headers=organizer
     ).json()
-    assert saved == {"title": "Anniversaire Ange", "palette": "rose", "locked": False}
+    assert (saved["title"], saved["palette"]) == ("Anniversaire Ange", "rose")
     card = client.get(
         f"/v1/invitations/{guests['Jean Konan']['invitation_token']}"
     ).json()
@@ -31,7 +28,7 @@ def test_title_and_palette(client: TestClient, organizer: dict[str, str]) -> Non
     )
     # null : retour à l'intitulé (nom de l'événement) et à la palette d'origine.
     back = client.patch(url, json={"title": None, "palette": None}, headers=organizer)
-    assert back.json() == {"title": None, "palette": None, "locked": False}
+    assert (back.json()["title"], back.json()["palette"]) == (None, None)
 
 
 def test_card_is_locked_once_invitations_leave(

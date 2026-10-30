@@ -1,4 +1,5 @@
 import "server-only";
+import type { CardLayout } from "./card/layout";
 import { notFound } from "next/navigation";
 import { apiFetch } from "./api";
 import { getSessionToken } from "./session";
@@ -95,7 +96,14 @@ export function formatDuration(minutes: number): string {
   return h ? `${h} h${m ? ` ${String(m).padStart(2, "0")}` : ""}` : `${m} min`;
 }
 
-export type CardSettings = { title: string | null; palette: string | null; locked: boolean };
+export type CardSettings = {
+  title: string | null;
+  palette: string | null;
+  locked: boolean;
+  custom: boolean; // « Mon propre modèle » : fond importé
+  layout: CardLayout | null;
+  cropped: boolean;
+};
 
 /** Intitulé et palette de la carte de l'événement ; `locked` : invitations parties, plus de modification. */
 export async function getCardSettings(eventId: string): Promise<CardSettings> {

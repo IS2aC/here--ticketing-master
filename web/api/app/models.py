@@ -248,6 +248,8 @@ class EventCard(Base):
     palette: Mapped[dict[str, str]] = mapped_column(JSONB, server_default="{}")
     invitation_text: Mapped[str | None]
     title: Mapped[str | None]  # intitulé de la carte ; None : le nom de l'événement
+    # « Mon propre modèle » : mise en page sur le fond importé ; None : carte automatique.
+    layout: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     photo_url: Mapped[str | None]
 
 
@@ -491,4 +493,16 @@ class SupportMessage(Base):
         ForeignKey("users.id", ondelete="SET NULL")
     )
     body: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class CardBackground(Base):
+    """Fond importé par l'organisateur pour sa carte (JPEG 1080 × 1350)."""
+
+    __tablename__ = "card_backgrounds"
+
+    event_card_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("event_cards.id", ondelete="CASCADE"), primary_key=True
+    )
+    content: Mapped[bytes]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())

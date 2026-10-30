@@ -1,5 +1,6 @@
 import "server-only";
 import type { EventType } from "@/lib/event-types";
+import type { CardLayout } from "./layout";
 import type { CardData } from "./render";
 
 // Lien de l'invitation porté par le QR code (page invité).
@@ -29,6 +30,7 @@ export type PublicCard = {
   rsvp_deadline: string | null;
   card_title: string | null; // intitulé choisi par l'organisateur
   card_palette: string | null;
+  card_layout: CardLayout | null; // « Mon propre modèle »
 };
 
 export function fromPublicCard(card: PublicCard, token: string): CardData {
@@ -47,9 +49,17 @@ export function fromPublicCard(card: PublicCard, token: string): CardData {
     code: card.code,
     qrValue: invitationUrl(token),
     palette: card.card_palette,
+    layout: card.card_layout,
   };
 }
 
 // Invité fictif des aperçus, quand la liste est vide.
 export const SAMPLE_GUEST = { guestName: "Monsieur et Madame Konan", category: "VIP", seat: "Table 4", seats: 2 };
 export const SAMPLE_CODE = "INV-APER-CU00";
+
+/** Fond importé (« Mon propre modèle ») en data: URI pour le rendu de la carte ; null s'il manque. */
+export async function backgroundUri(response: Response | null): Promise<string | null> {
+  if (!response?.ok) return null;
+  return `data:image/jpeg;base64,${Buffer.from(await response.arrayBuffer()).toString("base64")}`;
+}
+

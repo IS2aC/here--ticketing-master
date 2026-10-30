@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api";
-import { SAMPLE_CODE, SAMPLE_GUEST, invitationUrl } from "@/lib/card/data";
+import { SAMPLE_CODE, SAMPLE_GUEST, backgroundUri, invitationUrl } from "@/lib/card/data";
 import { renderCard } from "@/lib/card/render";
 import type { CardSettings, EventOut } from "@/lib/events";
 import type { GuestOut } from "@/lib/guests";
@@ -21,6 +21,9 @@ export async function GET(request: Request, { params }: RouteContext<"/tableau-d
   const event = (await eventResponse.json()) as EventOut;
   const guests = guestsResponse ? ((await guestsResponse.json()) as GuestOut[]) : [];
   const saved = cardResponse.ok ? ((await cardResponse.json()) as CardSettings) : null;
+  const background = saved?.custom
+    ? await backgroundUri(await apiFetch(`/v1/events/${encodeURIComponent(id)}/card/background`, { token }))
+    : null;
   // Essai avant d'enregistrer (?palette=, ?titre=) : aperçu en direct de la page Carte.
   const palette = query.get("palette") ?? saved?.palette ?? null;
   const title = query.get("titre")?.trim() || saved?.title || event.title;
@@ -32,6 +35,8 @@ export async function GET(request: Request, { params }: RouteContext<"/tableau-d
       type: event.type,
       title,
       palette,
+      background,
+      layout: saved?.layout ?? null,
       startsAt: event.starts_at,
       durationMinutes: event.duration_minutes,
       locationName: event.location_name,

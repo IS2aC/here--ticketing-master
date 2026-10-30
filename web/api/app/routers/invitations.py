@@ -4,13 +4,15 @@ import secrets
 import uuid
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, UploadFile, status
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
+from app.card_image import BackgroundError, prepare_background
 from app.messaging import cancel_reminders
 from app.models import (
+    CardBackground,
     CardTemplate,
     Event,
     EventCard,
@@ -26,6 +28,7 @@ from app.models import (
 )
 from app.routers.events import owned_event
 from app.schemas import (
+    CardLayout,
     CardSettings,
     CardSettingsIn,
     InvitationResponse,
@@ -102,11 +105,53 @@ async def _event_card(db: AsyncSession, event: Event) -> EventCard:
     return card
 
 
-def _settings(card: EventCard | None, locked: bool) -> CardSettings:
+# Mise en page proposée au premier import : nom au centre, table dessous, QR code en bas à droite.
+DEFAULT_LAYOUT = {
+    "name": {
+        "x": 540,
+        "y": 700,
+        "size": 64,
+        "color": "#0B0B0B",
+        "font": "serif",
+        "bold": False,
+    },
+    "table": {
+        "x": 540,
+        "y": 790,
+        "size": 34,
+        "color": "#0B0B0B",
+        "font": "sans",
+        "bold": False,
+    },
+    "qr": "bas-droite",
+}
+
+LOCKED = HTTPException(
+    status.HTTP_409_CONFLICT,
+    detail={
+        "message": "Les invitations sont parties : la carte ne peut plus être modifiée."
+    },
+)
+
+
+def _settings(
+    card: EventCard | None, locked: bool, cropped: bool = False
+) -> CardSettings:
     return CardSettings(
         title=card.title if card else None,
         palette=(card.palette or {}).get("preset") if card else None,
         locked=locked,
+        custom=bool(card and card.layout),
+        layout=CardLayout.model_validate(card.layout) if card and card.layout else None,
+        cropped=cropped,
+    )
+
+
+async def _default_card(db: AsyncSession, event: Event) -> EventCard | None:
+    return await db.scalar(
+        select(EventCard).where(
+            EventCard.event_id == event.id, EventCard.category_id.is_(None)
+        )
     )
 
 
@@ -116,12 +161,7 @@ async def card_settings(
 ) -> CardSettings:
     """Intitulé et palette de la carte de l'événement."""
     event = await owned_event(db, event_id, auth.user.id)
-    card = await db.scalar(
-        select(EventCard).where(
-            EventCard.event_id == event.id, EventCard.category_id.is_(None)
-        )
-    )
-    return _settings(card, await card_locked(db, event.id))
+    return _settings(await _default_card(db, event), await card_locked(db, event.id))
 
 
 @router.patch("/events/{event_id}/card")
@@ -131,13 +171,15 @@ async def update_card(
     """Personnalise la carte (intitulé, palette). Refusé une fois les invitations parties."""
     event = await owned_event(db, event_id, auth.user.id)
     if await card_locked(db, event.id):
-        raise HTTPException(
-            status.HTTP_409_CONFLICT,
-            detail={
-                "message": "Les invitations sont parties : la carte ne peut plus être modifiée."
-            },
-        )
+        raise LOCKED
     card = await _event_card(db, event)
+    if "layout" in body.model_fields_set and body.layout is not None:
+        if card.layout is None:
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                detail={"message": "Importez d'abord le fond de votre carte."},
+            )
+        card.layout = body.layout.model_dump()
     if "title" in body.model_fields_set:
         card.title = body.title
     if "palette" in body.model_fields_set:
@@ -146,6 +188,78 @@ async def update_card(
     event.updated_at = datetime.now(UTC)
     await db.commit()
     return _settings(card, False)
+
+
+@router.put("/events/{event_id}/card/background")
+async def upload_background(
+    event_id: uuid.UUID, file: UploadFile, auth: CurrentAuth, db: DbSession
+) -> CardSettings:
+    """« Mon propre modèle » : fond importé (JPEG, PNG ou WebP), recadré en 1080 × 1350.
+    Au premier import, une mise en page est proposée ; la carte de l'événement passe sur ce fond."""
+    event = await owned_event(db, event_id, auth.user.id)
+    if await card_locked(db, event.id):
+        raise LOCKED
+    try:
+        content, cropped = prepare_background(await file.read(8 * 1024 * 1024 + 1))
+    except BackgroundError as error:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT, detail={"message": str(error)}
+        ) from None
+    card = await _event_card(db, event)
+    background = await db.get(CardBackground, card.id)
+    if background is None:
+        db.add(CardBackground(event_card_id=card.id, content=content))
+    else:
+        background.content = content
+    card.layout = card.layout or DEFAULT_LAYOUT
+    event.updated_at = datetime.now(UTC)
+    await db.commit()
+    return _settings(card, False, cropped)
+
+
+@router.delete("/events/{event_id}/card/background")
+async def remove_background(
+    event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
+) -> CardSettings:
+    """Retour à la carte automatique (le fond importé est supprimé)."""
+    event = await owned_event(db, event_id, auth.user.id)
+    if await card_locked(db, event.id):
+        raise LOCKED
+    card = await _default_card(db, event)
+    if card is not None:
+        background = await db.get(CardBackground, card.id)
+        if background is not None:
+            await db.delete(background)
+        card.layout = None
+        event.updated_at = datetime.now(UTC)
+        await db.commit()
+    return _settings(card, False)
+
+
+def _jpeg(content: bytes, cache: str) -> Response:
+    return Response(content, media_type="image/jpeg", headers={"Cache-Control": cache})
+
+
+@router.get("/events/{event_id}/card/background")
+async def background(event_id: uuid.UUID, auth: CurrentAuth, db: DbSession) -> Response:
+    event = await owned_event(db, event_id, auth.user.id)
+    card = await _default_card(db, event)
+    found = await db.get(CardBackground, card.id) if card else None
+    if found is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Pas de fond importé.")
+    return _jpeg(found.content, "private, no-store")
+
+
+@router.get("/invitations/{token}/background")
+async def public_background(token: str, db: DbSession) -> Response:
+    """Public (jeton de l'invitation) : fond de la carte, pour dessiner la carte de l'invité."""
+    card_id = await db.scalar(
+        select(Invitation.event_card_id).where(Invitation.token == token)
+    )
+    found = await db.get(CardBackground, card_id) if card_id else None
+    if found is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Pas de fond importé.")
+    return _jpeg(found.content, "public, max-age=300")
 
 
 @router.post("/events/{event_id}/invitations")
@@ -235,6 +349,7 @@ def _public_card(
         responses_until=responses_until(event),
         card_title=card.title,
         card_palette=(card.palette or {}).get("preset"),
+        card_layout=CardLayout.model_validate(card.layout) if card.layout else None,
         rsvp_deadline=event.rsvp_deadline,
     )
 

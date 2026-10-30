@@ -12,7 +12,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [ ] **Fuseau horaire par événement** (Cotonou, Lomé…) : aujourd'hui tout est à l'heure d'Abidjan.
 - [x] **Corriger une ligne dans l'aperçu d'import** et **ajouter, modifier ou retirer un invité à la main** (fait le 29/10) : lien « Corriger » sur chaque ligne de l'aperçu (vérifiée à nouveau, ou retirée) ; « Ajouter un invité » et « Modifier » sur la liste de l'événement, avec « Retirer de la liste » (confirmation). Numéro valide ou vide, doublons refusés ; un invité ajouté après la préparation des cartes reçoit la sienne.
 - [x] **Nombre de personnes par invité** (fait le 30/10) : colonne « Nb pers. » à l'import (1 par défaut, 20 au plus, aussi dans le modèle Excel), champ dans le formulaire d'invité et la correction de l'aperçu, affiché dans la liste. L'invité indique sur sa page combien viendront ; **au scan, toutes les personnes confirmées entrent en une fois** (décision du 30/10), l'agent voit « 3 personnes entrent ».
-- [ ] **Personnaliser la carte** : photo, textes, couleurs, carte par catégorie (maquette `backoffice-carte`) ; import d'un modèle de carte. Aujourd'hui : une carte automatique par type d'événement.
+- [x] **Personnaliser la carte** (fait le 30/10) : cartes automatiques avec **intitulé** et **palette** au choix ; **« Mon propre modèle »** : fond importé (recadré en 1080 × 1350), nom de l'invité et table / catégorie placés au doigt (taille, couleur, police), QR code à l'un des 5 emplacements, sceau Here! compact ; carte figée une fois les invitations parties. Reste : carte par catégorie (VIP…).
 - [ ] **Cartes proposées et modifiées par IA** (à commencer simple, avec **1min.ai**) :
   - **génération** : à partir du type d'événement, des informations et des photos des hôtes (mariés, famille, organisateur), l'IA propose 2 ou 3 cartes ;
   - **modification** : retouches demandées en langage courant (« plus sobre », « texte plus court », « couleurs plus chaudes ») et ajustements directs (textes, palette, cadrage de la photo) avec aperçu immédiat ;
@@ -43,7 +43,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 
 ## Ajustements (à traiter une fois le parcours complet terminé)
 
-- [ ] **Choix de la carte** : ajouter une palette de couleurs, et quelques modifications réalisées à la demande du client.
+- [x] **Choix de la carte** (fait le 30/10) : palettes de couleurs et intitulé modifiable ; import de son propre modèle (voir « Personnaliser la carte »).
 - [x] **Retour vers l'événement** (fait le 29/10 : lien rouge « Retour à l'événement » sur la carte, l'import, l'aperçu de l'import, la modification, le contrôle d'accès et les relances) depuis les étapes (carte, import, modification) : un bouton retour simple, ou un lien plus visible (par exemple en rouge) vers l'événement.
 - [x] **Encadré « L'événement » de la vue événement** (fait le 29/10 : grille de deux colonnes, valeurs sur une ligne, texte complet au survol) : rubriques **Type, Date, Heure de début, Durée, Lieu, Invités prévus, Dress code**.
   - Aucune valeur ne doit passer à la ligne.

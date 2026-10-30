@@ -54,3 +54,79 @@ export async function saveCard(eventId: string, _: CardState, formData: FormData
   revalidatePath(`/tableau-de-bord/evenements/${eventId}/carte`);
   return { saved: Date.now() };
 }
+
+export type BackgroundState = { message?: string };
+
+const CARD_UNAVAILABLE = "Le service est momentanément indisponible. Votre carte n'a pas été modifiée.";
+
+async function cardError(response: Response): Promise<string> {
+  if (response.status === 409 || response.status === 422) {
+    try {
+      const { detail } = (await response.json()) as { detail: { message?: string } | unknown[] };
+      if (!Array.isArray(detail) && detail.message) return detail.message;
+    } catch {
+      // réponse illisible : message générique
+    }
+    return "Cette mise en page n'est pas valable.";
+  }
+  return CARD_UNAVAILABLE;
+}
+
+/** « Mon propre modèle » : envoie le fond (recadré par l'API au format de la carte). */
+export async function uploadBackground(eventId: string, _: BackgroundState, formData: FormData): Promise<BackgroundState> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) return { message: "Choisissez une image." };
+  if (file.size > 8 * 1024 * 1024) return { message: "Cette image dépasse 8 Mo : choisissez une image plus légère." };
+  const body = new FormData();
+  body.append("file", file, file.name || "fond.jpg");
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}/card/background`, {
+      method: "PUT",
+      token: await getSessionToken(),
+      body,
+    });
+  } catch {
+    return { message: CARD_UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (!response.ok) return { message: await cardError(response) };
+  const { cropped } = (await response.json()) as { cropped: boolean };
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}/carte`);
+  redirect(`/tableau-de-bord/evenements/${eventId}/carte?fond=${cropped ? "recadre" : "ok"}`);
+}
+
+/** Enregistre la mise en page (nom, table / catégorie, QR code). */
+export async function saveLayout(eventId: string, layout: unknown): Promise<{ message?: string; saved?: number }> {
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}/card`, {
+      method: "PATCH",
+      token: await getSessionToken(),
+      body: JSON.stringify({ layout }),
+    });
+  } catch {
+    return { message: CARD_UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (!response.ok) return { message: await cardError(response) };
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}/carte`);
+  return { saved: Date.now() };
+}
+
+/** Retour à la carte automatique : le fond importé est supprimé. */
+export async function removeBackground(eventId: string): Promise<{ message?: string }> {
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}/card/background`, {
+      method: "DELETE",
+      token: await getSessionToken(),
+    });
+  } catch {
+    return { message: CARD_UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (!response.ok) return { message: await cardError(response) };
+  revalidatePath(`/tableau-de-bord/evenements/${eventId}/carte`);
+  return {};
+}

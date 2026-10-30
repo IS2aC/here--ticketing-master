@@ -301,6 +301,30 @@ class InvitationsResult(BaseModel):
     without_phone: int  # invitations qui ne pourront pas partir par WhatsApp
 
 
+HexColor = Annotated[str, StringConstraints(pattern=r"^#[0-9A-Fa-f]{6}$")]
+
+
+class TextLayout(BaseModel):
+    """Zone de texte sur le fond importé, en pixels de la carte (1080 × 1350) : centre de la zone."""
+
+    x: Annotated[int, Field(ge=0, le=1080)]
+    y: Annotated[int, Field(ge=0, le=1350)]
+    size: Annotated[int, Field(ge=18, le=160)]
+    color: HexColor
+    font: Literal["sans", "serif"] = "serif"  # Poppins ou Playfair Display
+    bold: bool = False
+
+
+class CardLayout(BaseModel):
+    """« Mon propre modèle » : le nom de l'invité, la table / catégorie (facultative) et le QR code."""
+
+    name: TextLayout
+    table: TextLayout | None = None
+    qr: Literal[
+        "bas-droite", "bas-gauche", "bas-centre", "haut-droite", "haut-gauche"
+    ] = "bas-droite"
+
+
 class PublicCard(BaseModel):
     """Données d'une carte, lues avec le jeton de l'invitation (QR code, image WhatsApp)."""
 
@@ -327,6 +351,7 @@ class PublicCard(BaseModel):
     card_palette: str | None = (
         None  # palette choisie (identifiant, voir frontend lib/card/palettes)
     )
+    card_layout: CardLayout | None = None  # « Mon propre modèle » : mise en page
     rsvp_deadline: datetime | None  # choisie par l'organisateur
 
 
@@ -792,10 +817,15 @@ class CardSettings(BaseModel):
     title: str | None  # intitulé ; None : le nom de l'événement
     palette: str | None  # None : la palette d'origine du modèle
     locked: bool  # invitations parties ou en file : plus de modification
+    custom: bool = False  # « Mon propre modèle » : fond importé
+    layout: CardLayout | None = None
+    cropped: bool = False  # le fond envoyé a été recadré au format de la carte
 
 
 class CardSettingsIn(BaseModel):
     """Champ absent : inchangé ; null : retour à la valeur d'origine."""
+
+    layout: CardLayout | None = None  # seulement avec un fond importé
 
     title: (
         Annotated[

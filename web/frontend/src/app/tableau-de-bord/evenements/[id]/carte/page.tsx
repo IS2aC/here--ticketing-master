@@ -6,12 +6,16 @@ import { Icon } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { CARD_LIBRARY } from "@/lib/card/library";
 import { eventType } from "@/lib/event-types";
+import { SAMPLE_GUEST } from "@/lib/card/data";
+import { tableText } from "@/lib/card/layout";
 import { PALETTES } from "@/lib/card/palettes";
 import { getCardSettings, getEvent } from "@/lib/events";
 import { getGuests } from "@/lib/guests";
 import { Steps } from "../../steps";
-import { generateInvitations, saveCard } from "./actions";
+import { generateInvitations, removeBackground, saveCard, saveLayout, uploadBackground } from "./actions";
 import { CardDesigner } from "./card-designer";
+import { CustomDesigner } from "./custom-designer";
+import { UploadBackground } from "./upload-background";
 import { GenerateButton } from "./generate-button";
 
 export const metadata: Metadata = { title: "Votre carte d'invitation · Here!" };
@@ -41,42 +45,31 @@ async function CardView({
   const created = Number(query.creees);
   const preview = `/tableau-de-bord/evenements/${event.id}/carte.png${selected ? `?invite=${selected.id}` : ""}`;
 
-  return (
+  // Encarts communs aux deux modes (carte automatique, propre modèle).
+  const extras = (
     <>
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <BackToEvent eventId={event.id} />
-          <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Votre carte d&apos;invitation</h1>
-        </div>
-        <Steps current={3} />
-      </header>
-
-      <CardDesigner
-        action={saveCard.bind(null, event.id)}
-        preview={preview}
-        alt={`Carte d'invitation ${type.label} pour ${selected?.display_name ?? "un invité"}`}
-        eventTitle={event.title}
-        title={settings.title}
-        palette={settings.palette}
-        palettes={PALETTES[style.family]}
-        locked={settings.locked}
-      >
           <div className="grid gap-3 rounded-lg bg-background p-5 shadow-sm">
-            <p className="flex items-center gap-2 font-heading text-[16px] font-semibold">
-              <Icon name={type.icon} width={20} height={20} className="text-primary" />
-              Carte « {style.label} »
-            </p>
-            <p className="text-[14px] text-text-muted">
-              Choisie dans la bibliothèque Here! d&apos;après le type de votre événement. Pour une autre carte,{" "}
-              <Link href={`/tableau-de-bord/evenements/${event.id}/modifier`} className="font-semibold text-accent-text hover:underline">
-                changez le type
-              </Link>{" "}
-              ou{" "}
-              <Link href="/tableau-de-bord/cartes" className="font-semibold text-accent-text hover:underline">
-                parcourez la bibliothèque
-              </Link>
-              .
-            </p>
+            {settings.custom ? (
+              <p className="font-heading text-[15px] font-semibold">Aperçu</p>
+            ) : (
+              <>
+                <p className="flex items-center gap-2 font-heading text-[16px] font-semibold">
+                  <Icon name={type.icon} width={20} height={20} className="text-primary" />
+                  Carte « {style.label} »
+                </p>
+                <p className="text-[14px] text-text-muted">
+                  Choisie dans la bibliothèque Here! d&apos;après le type de votre événement. Pour une autre carte,{" "}
+                  <Link href={`/tableau-de-bord/evenements/${event.id}/modifier`} className="font-semibold text-accent-text hover:underline">
+                    changez le type
+                  </Link>{" "}
+                  ou{" "}
+                  <Link href="/tableau-de-bord/cartes" className="font-semibold text-accent-text hover:underline">
+                    parcourez la bibliothèque
+                  </Link>
+                  .
+                </p>
+              </>
+            )}
             {guests.length ? (
               <form className="grid gap-1.5">
                 <label htmlFor="invite" className="text-[13px] font-medium text-text-muted">
@@ -153,7 +146,56 @@ async function CardView({
               </p>
             )}
           </div>
-      </CardDesigner>
+    </>
+  );
+
+  return (
+    <>
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <BackToEvent eventId={event.id} />
+          <h1 className="mt-1 font-heading text-[26px] font-bold tracking-[-0.01em]">Votre carte d&apos;invitation</h1>
+        </div>
+        <Steps current={3} />
+      </header>
+
+      {settings.custom && settings.layout ? (
+        <CustomDesigner
+          background={`/tableau-de-bord/evenements/${event.id}/carte/fond.jpg?v=${encodeURIComponent(event.updated_at)}`}
+          preview={preview}
+          initial={settings.layout}
+          sample={{
+            name: selected?.display_name ?? SAMPLE_GUEST.guestName,
+            table: (selected ? tableText(selected.seat, selected.category) : "") || tableText(SAMPLE_GUEST.seat, SAMPLE_GUEST.category),
+          }}
+          locked={settings.locked}
+          save={saveLayout.bind(null, event.id)}
+          remove={removeBackground.bind(null, event.id)}
+        >
+          {settings.locked ? null : <UploadBackground action={uploadBackground.bind(null, event.id)} replace />}
+          {extras}
+        </CustomDesigner>
+      ) : (
+        <CardDesigner
+          action={saveCard.bind(null, event.id)}
+          preview={preview}
+          alt={`Carte d'invitation ${type.label} pour ${selected?.display_name ?? "un invité"}`}
+          eventTitle={event.title}
+          title={settings.title}
+          palette={settings.palette}
+          palettes={PALETTES[style.family]}
+          locked={settings.locked}
+        >
+          {settings.locked ? null : <UploadBackground action={uploadBackground.bind(null, event.id)} replace={false} />}
+          {extras}
+        </CardDesigner>
+      )}
+      {query.fond ? (
+        <Toast
+          title="Fond importé"
+          detail={query.fond === "recadre" ? "Il a été recadré au format de la carte (portrait 4:5). Placez maintenant le nom et le QR code." : "Placez maintenant le nom de l'invité et le QR code."}
+        />
+      ) : null}
       {created > 0 ? <Toast title={`${created.toLocaleString("fr-FR")} carte${created > 1 ? "s" : ""} prête${created > 1 ? "s" : ""}`} detail="Chaque invité a son QR code." /> : null}
     </>
   );

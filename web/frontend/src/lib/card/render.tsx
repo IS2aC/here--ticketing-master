@@ -8,6 +8,7 @@ import { formatDate, formatDuration, formatTime } from "@/lib/events";
 import { cardFonts } from "./fonts";
 import { ICON_SVG } from "./icons";
 import { CARD_LIBRARY, type CardStyle } from "./library";
+import { FONT_FAMILY, QR_BOX, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
 import { paletteOf, type CardColors } from "./palettes";
 
 // Carte d'invitation en image (1080 × 1350, format 4:5 optimal dans WhatsApp), d'après uiux/visual-identity/mockups/carte-*.
@@ -32,6 +33,9 @@ export type CardData = {
   code: string;
   qrValue: string; // contenu du QR code : lien de l'invitation
   palette?: string | null; // palette choisie par l'organisateur (voir palettes.ts)
+  // « Mon propre modèle » : fond importé (data: URI) et mise en page ; sinon, carte automatique.
+  background?: string | null;
+  layout?: CardLayout | null;
 };
 
 // Couleurs de l'identité (uiux/visual-identity/brand.json) : Satori ne lit pas les variables CSS.
@@ -226,6 +230,75 @@ function Seal({
         >
           {data.code}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// --- « Mon propre modèle » : fond importé + nom, table / catégorie, QR code ------------------------
+
+function Placed({ text, layout }: { text: string; layout: TextLayout }) {
+  const box = textBox(layout);
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: box.left,
+        top: box.top,
+        width: box.width,
+        height: box.height,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        fontFamily: FONT_FAMILY[layout.font],
+        fontWeight: layout.bold ? 600 : 400,
+        fontSize: layout.size,
+        lineHeight: 1.2,
+        color: layout.color,
+        overflow: "hidden",
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+function CustomCard({ data, qr }: { data: CardData; qr: string }) {
+  const layout = data.layout as CardLayout;
+  const spot = qrPosition(layout.qr);
+  const table = tableText(data.seat, data.category);
+  return (
+    <div style={{ display: "flex", position: "absolute", inset: 0 }}>
+      <img src={data.background as string} width={CARD_WIDTH} height={CARD_HEIGHT} alt="" style={{ position: "absolute", inset: 0 }} />
+      <Placed text={data.guestName} layout={layout.name} />
+      {layout.table && table ? <Placed text={table} layout={layout.table} /> : null}
+      {/* Sceau Here! compact : QR code sur blanc, code et vérification. */}
+      <div
+        style={{
+          position: "absolute",
+          left: spot.left,
+          top: spot.top,
+          width: QR_BOX.width,
+          height: QR_BOX.height,
+          borderRadius: 24,
+          background: C.white,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "20px 20px 14px",
+          boxShadow: "0 0 0 1.5px rgba(11,11,11,.08)",
+        }}
+      >
+        <img src={qr} width={204} height={204} alt="" />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+          <img src={svgUri(HERE_SYMBOL(C.red))} width={30} height={30} alt="" />
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 14, fontWeight: 600, lineHeight: 1.15, color: C.ink }}>
+            <span>Invitation vérifiée</span>
+            <span>par Here!</span>
+          </div>
+        </div>
+        <div style={{ fontFamily: "DM Mono", fontSize: 13, letterSpacing: 0.5, color: C.gray600, marginTop: 6 }}>{data.code}</div>
       </div>
     </div>
   );
@@ -918,8 +991,14 @@ export async function renderCard(
         fontFamily: "Poppins",
       }}
     >
-      <Family data={data} style={style} />
-      <Seal data={data} qr={qr} mono={style.family === "hommage"} />
+      {data.layout && data.background ? (
+        <CustomCard data={data} qr={qr} />
+      ) : (
+        <>
+          <Family data={data} style={style} />
+          <Seal data={data} qr={qr} mono={style.family === "hommage"} />
+        </>
+      )}
     </div>,
     {
       width: CARD_WIDTH,
