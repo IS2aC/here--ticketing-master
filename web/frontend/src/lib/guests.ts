@@ -52,6 +52,7 @@ export type GuestOut = {
   attending_seats: number | null;
   rsvp_message: string | null;
   contact_status: "none" | "reminded" | "call_scheduled" | "unreachable";
+  opened_at: string | null; // page de l'invitation ouverte par l'invité
 };
 
 async function getJson<T>(path: string): Promise<T> {

@@ -29,6 +29,7 @@ export type WhatsAppOverview = {
   without_card: number;
   to_remind: number;
   calls_scheduled: number;
+  invitations_opened: number; // pages d'invitation ouvertes par les invités
   invitations: MessageCounts;
   reminders: MessageCounts;
   recent: {

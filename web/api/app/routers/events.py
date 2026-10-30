@@ -23,6 +23,19 @@ router = APIRouter(prefix="/events", tags=["événements"])
 NOT_FOUND = HTTPException(status.HTTP_404_NOT_FOUND, detail="Événement introuvable.")
 
 
+def _deadline_before_start(deadline: datetime | None, starts_at: datetime) -> None:
+    if deadline is not None and deadline > starts_at:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=[
+                {
+                    "loc": ["body", "rsvp_deadline"],
+                    "msg": "La date limite de réponse doit être avant le début de l'événement.",
+                }
+            ],
+        )
+
+
 def _future(starts_at: datetime) -> None:
     if starts_at <= datetime.now(UTC):
         raise HTTPException(
@@ -155,6 +168,7 @@ async def events_summary(auth: CurrentAuth, db: DbSession) -> EventSummary:
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_event(body: EventCreate, auth: CurrentAuth, db: DbSession) -> EventOut:
     _future(body.starts_at)
+    _deadline_before_start(body.rsvp_deadline, body.starts_at)
     event = Event(user_id=auth.user.id, **body.model_dump(exclude={"categories"}))
     db.add(event)
     await db.flush()
@@ -183,6 +197,7 @@ async def update_event(
         _future(changes["starts_at"])
     for field, value in changes.items():
         setattr(event, field, value)
+    _deadline_before_start(event.rsvp_deadline, event.starts_at)
 
     if body.categories is not None:
         await _sync_categories(db, event.id, body.categories)

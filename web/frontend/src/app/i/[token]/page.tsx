@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import QRCode from "qrcode";
@@ -45,8 +46,10 @@ async function Invitation({
   params: Promise<{ token: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ token }, query] = await Promise.all([params, searchParams]);
-  const response = await apiFetch(`/v1/invitations/${encodeURIComponent(token)}`);
+  const [{ token }, query, incoming] = await Promise.all([params, searchParams, headers()]);
+  // Ouverture notée seulement pour une vraie visite : pas pour l'aperçu du lien (WhatsApp, Facebook…).
+  const preview = /whatsapp|facebookexternalhit|facebot|bot|crawler|spider|preview/i.test(incoming.get("user-agent") ?? "");
+  const response = await apiFetch(`/v1/invitations/${encodeURIComponent(token)}${preview ? "" : "?vue=1"}`);
   if (response.status === 404) notFound();
   if (!response.ok) throw new Error(`API /v1/invitations : ${response.status}`);
   const card = (await response.json()) as PublicCard;
@@ -69,6 +72,7 @@ async function Invitation({
         </div>
         <h1 className="font-heading text-[24px] font-bold">Les réponses sont closes</h1>
         <p className="text-[17px] text-text-muted">
+          {card.rsvp_deadline ? `La date limite était le ${formatDate(card.rsvp_deadline).toLowerCase()}. ` : ""}
           Pour toute question, contactez directement {style.host}.
         </p>
       </div>
@@ -85,7 +89,7 @@ async function Invitation({
           </h1>
           <p className="text-[17px] text-text-muted">
             Votre réponse a été transmise {toHost(style.host)}. Vous pouvez changer d&apos;avis jusqu&apos;au{" "}
-            <span className="font-semibold text-text">{formatDate(card.starts_at).toLowerCase()}</span>.
+            <span className="font-semibold text-text">{formatDate(card.responses_until).toLowerCase()}</span>.
           </p>
         </div>
         {query.message === "envoye" ? (
@@ -112,6 +116,14 @@ async function Invitation({
             {hommage ? "Pourrez-vous venir ?" : "Serez-vous des nôtres ?"}
           </h1>
         </div>
+        {card.rsvp_deadline ? (
+          <p className="flex items-center gap-2 rounded-md bg-surface px-4 py-3 text-[17px]">
+            <Icon name="horloge" width={20} height={20} className="shrink-0 text-status-pending" />
+            <span>
+              Merci de répondre avant le <span className="font-semibold">{formatDate(card.rsvp_deadline).toLowerCase()}</span>.
+            </span>
+          </p>
+        ) : null}
         <Question action={action} seats={card.seats} plural={plural} />
         <Details card={card} token={token} />
       </div>

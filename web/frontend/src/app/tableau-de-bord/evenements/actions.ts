@@ -22,6 +22,7 @@ const FIELD_MESSAGES: Record<string, [string, string]> = {
   location_address: ["location_address", "L'adresse est trop longue (300 caractères maximum)."],
   expected_guests: ["expected_guests", "Indiquez un nombre d'invités entre 0 et 100 000."],
   dress_code: ["dress_code", "Le dress code est trop long (100 caractères maximum)."],
+  rsvp_deadline: ["rsvp_deadline", "La date limite de réponse doit être avant le début de l'événement."],
   description: ["description", "La description est trop longue (2 000 caractères maximum)."],
   categories: ["categories", "Gardez entre 1 et 10 catégories, de 40 caractères maximum."],
 };
@@ -40,6 +41,7 @@ function payload(formData: FormData) {
   const date = text(formData, "date");
   const time = text(formData, "time") || "00:00";
   const hours = number(text(formData, "duration"));
+  const deadline = text(formData, "rsvp_deadline");
   return {
     title: text(formData, "title"),
     type: text(formData, "type") || null,
@@ -49,6 +51,8 @@ function payload(formData: FormData) {
     location_address: text(formData, "location_address"),
     expected_guests: number(text(formData, "expected_guests")),
     dress_code: text(formData, "dress_code"),
+    // Date limite : les réponses ferment à la fin de ce jour (heure d'Abidjan).
+    rsvp_deadline: deadline ? `${deadline}T23:59:00${EVENT_UTC_OFFSET}` : null,
     description: text(formData, "description"),
     categories: formData.getAll("categories").map(String).filter(Boolean),
   };
@@ -61,6 +65,9 @@ async function save(method: "POST" | "PATCH", path: string, formData: FormData):
   if (!body.type) errors.type = FIELD_MESSAGES.type[1];
   if (!body.title) errors.title = FIELD_MESSAGES.title[1];
   if (!body.starts_at || !(new Date(body.starts_at) > new Date())) errors.date = FIELD_MESSAGES.starts_at[1];
+  else if (body.rsvp_deadline && body.rsvp_deadline.slice(0, 10) > body.starts_at.slice(0, 10)) {
+    errors.rsvp_deadline = FIELD_MESSAGES.rsvp_deadline[1];
+  }
   if (Object.keys(errors).length) return { errors };
   let response: Response;
   try {

@@ -5,7 +5,7 @@ import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import CurrentAuth, DbSession
@@ -102,8 +102,15 @@ async def generate_invitations(
     )
 
 
+def responses_until(event: Event) -> datetime:
+    """Date limite de réponse : celle de l'organisateur, sinon le début de l'événement."""
+    return event.rsvp_deadline or event.starts_at
+
+
 def _responses_open(event: Event) -> bool:
-    return event.status != EventStatus.cancelled and event.starts_at > datetime.now(UTC)
+    return event.status != EventStatus.cancelled and responses_until(
+        event
+    ) > datetime.now(UTC)
 
 
 async def _by_token(
@@ -142,18 +149,30 @@ def _public_card(token: str, event: Event, guest: Guest, category: str) -> Publi
         attending_seats=guest.attending_seats,
         rsvp_message=guest.rsvp_message,
         responses_open=_responses_open(event),
+        responses_until=responses_until(event),
+        rsvp_deadline=event.rsvp_deadline,
     )
 
 
 @router.get("/invitations/{token}")
-async def public_card(token: str, db: DbSession) -> PublicCard:
-    """Public : le jeton (long et aléatoire) est la seule clé. Ne renvoie que ce qui concerne cet invité."""
-    return _public_card(token, *await _by_token(db, token))
+async def public_card(token: str, db: DbSession, vue: bool = False) -> PublicCard:
+    """Public : le jeton (long et aléatoire) est la seule clé. Ne renvoie que ce qui concerne cet invité.
+
+    `vue` : page ouverte par l'invité dans un navigateur (pas un aperçu de lien) : on note la première ouverture."""
+    card = _public_card(token, *await _by_token(db, token))
+    if vue:
+        await db.execute(
+            update(Invitation)
+            .where(Invitation.token == token, Invitation.opened_at.is_(None))
+            .values(opened_at=datetime.now(UTC))
+        )
+        await db.commit()
+    return card
 
 
 @router.post("/invitations/{token}/response")
 async def respond(token: str, body: InvitationResponse, db: DbSession) -> PublicCard:
-    """Réponse de l'invité depuis sa page. Il peut changer d'avis jusqu'au début de l'événement."""
+    """Réponse de l'invité depuis sa page. Il peut changer d'avis jusqu'à la date limite (ou au début)."""
     event, guest, category = await _by_token(db, token, lock=True)
     if not _responses_open(event):
         raise HTTPException(

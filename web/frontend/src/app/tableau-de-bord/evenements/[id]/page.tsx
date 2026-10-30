@@ -255,6 +255,12 @@ function GuestList({
                         <span className="font-data font-normal tabular-nums">· {g.attending_seats}</span>
                       ) : null}
                     </span>
+                    {g.rsvp_status === "pending" && g.opened_at ? (
+                      <span className="mt-0.5 flex items-center gap-1 text-[12px] font-normal text-text-muted">
+                        <Icon name="oeil" width={13} height={13} />
+                        Ouverte le {formatShortDate(g.opened_at).replace(/ \d{4}$/, "")}
+                      </span>
+                    ) : null}
                   </td>
                   <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">
                     {g.invitation_token ? (

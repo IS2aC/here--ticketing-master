@@ -72,7 +72,9 @@ async function RemindersView({
   // Dates de relance (heure d'Abidjan = UTC). Calendrier proposé : seulement les dates à venir,
   // une date proposée déjà passée n'a pas à être affichée ni gardée.
   const today = new Date().toISOString().slice(0, 10);
-  const lastDay = new Date(Date.parse(toDateInput(event.starts_at)) - 86_400_000).toISOString().slice(0, 10);
+  // Dernier jour possible : la veille de l'événement, ou la date limite de réponse si elle est plus tôt.
+  const dayBefore = new Date(Date.parse(toDateInput(event.starts_at)) - 86_400_000).toISOString().slice(0, 10);
+  const lastDay = event.rsvp_deadline && toDateInput(event.rsvp_deadline) < dayBefore ? toDateInput(event.rsvp_deadline) : dayBefore;
   const shown = wa.reminder_dates_chosen ? wa.reminder_dates : wa.reminder_dates.filter((day) => day >= today);
 
   return (
@@ -107,7 +109,7 @@ async function RemindersView({
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="grid content-start gap-6">
           <section aria-label="Envois" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Stat icon="invitation" label="Invitations" value={sentInvitations} detail={`envoyées · ${plural(wa.invitations.read, "lue")}`} />
+            <Stat icon="invitation" label="Invitations" value={sentInvitations} detail={`envoyées · ${plural(wa.invitations.read, "lue")} · ${plural(wa.invitations_opened, "ouverte")}`} />
             <Stat icon="relance" label="Relances" value={sentReminders} detail={`${plural(wa.to_remind, "invité")} sans réponse`} />
             <Stat icon="horloge" label="En file" value={queued} detail="envoi progressif" className="text-status-pending" />
             <Stat

@@ -25,6 +25,8 @@ export type PublicCard = {
   attending_seats: number | null;
   rsvp_message: string | null;
   responses_open: boolean;
+  responses_until: string; // date limite de réponse, sinon début de l'événement
+  rsvp_deadline: string | null;
 };
 
 export function fromPublicCard(card: PublicCard, token: string): CardData {

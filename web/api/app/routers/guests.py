@@ -2,6 +2,7 @@ import io
 import secrets
 import uuid
 from collections import Counter
+from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Response, UploadFile, status
 from openpyxl import Workbook
@@ -228,21 +229,26 @@ async def confirm_import(
 
 def _guest_query():
     return (
-        select(Guest, GuestCategory.name, Invitation.token)
+        select(Guest, GuestCategory.name, Invitation.token, Invitation.opened_at)
         .join(GuestCategory, GuestCategory.id == Guest.category_id)
         .outerjoin(Invitation, Invitation.guest_id == Guest.id)
     )
 
 
-def _guest_out(guest: Guest, category: str, token: str | None) -> GuestOut:
+def _guest_out(
+    guest: Guest, category: str, token: str | None, opened_at: datetime | None = None
+) -> GuestOut:
     fields = [
-        k for k in GuestOut.model_fields if k not in {"category", "invitation_token"}
+        k
+        for k in GuestOut.model_fields
+        if k not in {"category", "invitation_token", "opened_at"}
     ]
     return GuestOut.model_validate(
         {
             **{k: getattr(guest, k) for k in fields},
             "category": category,
             "invitation_token": token,
+            "opened_at": opened_at,
         }
     )
 

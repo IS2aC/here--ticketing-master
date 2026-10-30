@@ -112,6 +112,9 @@ class Event(Base):
     longitude: Mapped[float | None] = mapped_column(Numeric(9, 6, asdecimal=False))
     expected_guests: Mapped[int | None]
     dress_code: Mapped[str | None]
+    rsvp_deadline: Mapped[
+        datetime | None
+    ]  # date limite de réponse ; None : jusqu'au début
     status: Mapped[EventStatus] = mapped_column(
         Enum(EventStatus, name="event_status", create_type=False),
         server_default=EventStatus.draft.value,

@@ -184,6 +184,7 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
                 Guest.id,
                 Guest.contact_status,
                 Event.starts_at,
+                Event.rsvp_deadline,
                 Event.reminder_dates,
                 Event.whatsapp_reminders_enabled,
                 Event.call_reminders_enabled,
@@ -215,6 +216,7 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
         guest_id,
         contact,
         starts_at,
+        deadline,
         chosen,
         reminders_on,
         calls_on,
@@ -223,14 +225,16 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
         sent,
         called,
     ) in candidates:
-        # Relances prévues pour cet invité : après son invitation, et avant l'arrêt des relances.
+        # Relances prévues pour cet invité : après son invitation, avant l'arrêt des relances
+        # et avant la date limite de réponse (après, il ne peut plus répondre).
+        cutoff = min(starts_at - stop, deadline or starts_at)
         planned = [
             moment
             for day in reminder_dates(starts_at, chosen)
-            if invited < (moment := reminder_moment(day)) <= starts_at - stop
+            if invited < (moment := reminder_moment(day)) <= cutoff
         ]
         due = sum(moment <= current for moment in planned)
-        if reminders_on and sent < due and starts_at - current > stop:
+        if reminders_on and sent < due and current < cutoff:
             due_reminders.append(guest_id)
         elif (
             calls_on

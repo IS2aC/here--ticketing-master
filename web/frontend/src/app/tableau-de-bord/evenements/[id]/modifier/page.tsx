@@ -22,6 +22,7 @@ async function EditView({ params }: { params: Promise<{ id: string }> }) {
     title: event.title,
     type: event.type,
     date: toDateInput(event.starts_at),
+    rsvp_deadline: event.rsvp_deadline ? toDateInput(event.rsvp_deadline) : "",
     time: toTimeInput(event.starts_at),
     duration: event.duration_minutes ? String(event.duration_minutes / 60) : "",
     location_name: event.location_name ?? "",

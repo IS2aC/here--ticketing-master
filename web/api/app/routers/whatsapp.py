@@ -1,7 +1,7 @@
 """Étape 4 « Les relances » : envoi des invitations sur WhatsApp, relances et suivi."""
 
 import uuid
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func, select
@@ -30,6 +30,7 @@ from app.models import (
     User,
 )
 from app.routers.events import owned_event
+from app.routers.invitations import responses_until
 from app.schemas import (
     InboundOut,
     MessageCounts,
@@ -135,6 +136,13 @@ async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOver
         without_card=without_card,
         to_remind=to_remind,
         calls_scheduled=calls or 0,
+        invitations_opened=await db.scalar(
+            select(func.count())
+            .select_from(Invitation)
+            .join(Guest, Guest.id == Invitation.guest_id)
+            .where(Guest.event_id == event.id, Invitation.opened_at.is_not(None))
+        )
+        or 0,
         invitations=counts[MessageKind.invitation],
         reminders=counts[MessageKind.reminder],
         recent=[
@@ -199,6 +207,11 @@ def _checked_reminder_dates(event: Event, days: list[date] | None) -> list[date]
             raise _refused("Cette date est passée. Choisissez une date à venir.")
         if reminder_moment(day) > event.starts_at - stop:
             raise _refused("Choisissez une date au plus tard la veille de l'événement.")
+        if event.rsvp_deadline and reminder_moment(day) > event.rsvp_deadline:
+            raise _refused(
+                "Choisissez une date avant la date limite de réponse : "
+                "après, vos invités ne peuvent plus répondre."
+            )
     return chosen
 
 
@@ -254,6 +267,13 @@ async def send_reminders(
             },
         )
     event = await owned_event(db, event_id, auth.user.id)
+    if responses_until(event) <= datetime.now(UTC):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail={
+                "message": "La date limite de réponse est passée : vos invités ne peuvent plus répondre."
+            },
+        )
     queued = await queue_reminders(db, event)
     if not queued:
         raise HTTPException(

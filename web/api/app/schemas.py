@@ -121,6 +121,8 @@ class EventFields(BaseModel):
     location_address: Text300 = None
     expected_guests: int | None = Field(default=None, ge=0, le=100_000)
     dress_code: Text100 = None
+    # Date limite de réponse des invités ; vide : jusqu'au début de l'événement.
+    rsvp_deadline: AwareDatetime | None = None
 
 
 class EventCreate(EventFields):
@@ -176,6 +178,7 @@ class EventOut(BaseModel):
     expected_guests: int | None
     dress_code: str | None
     description: str | None
+    rsvp_deadline: datetime | None
     categories: list[CategoryOut]
     stats: EventStats
     created_at: datetime
@@ -275,6 +278,9 @@ class GuestOut(BaseModel):
     attending_seats: int | None
     rsvp_message: str | None
     contact_status: ContactStatus
+    opened_at: datetime | None = (
+        None  # page de l'invitation ouverte (navigateur, pas aperçu)
+    )
 
 
 # --- Cartes d'invitation ----------------------------------------------------------------
@@ -306,7 +312,9 @@ class PublicCard(BaseModel):
     rsvp_status: RsvpStatus
     attending_seats: int | None
     rsvp_message: str | None
-    responses_open: bool  # jusqu'au début de l'événement, sauf s'il est annulé
+    responses_open: bool  # jusqu'à la date limite (ou au début de l'événement), sauf s'il est annulé
+    responses_until: datetime  # date limite de réponse, sinon début de l'événement
+    rsvp_deadline: datetime | None  # choisie par l'organisateur
 
 
 class InvitationResponse(BaseModel):
@@ -425,6 +433,7 @@ class WhatsAppOverview(BaseModel):
     without_card: int  # invités sans carte préparée
     to_remind: int  # invités sans réponse qui ont reçu leur invitation
     calls_scheduled: int
+    invitations_opened: int  # invitations dont la page a été ouverte
     invitations: MessageCounts
     reminders: MessageCounts
     recent: list[MessageOut]

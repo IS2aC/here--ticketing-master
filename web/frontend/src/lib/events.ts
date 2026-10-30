@@ -20,6 +20,7 @@ export type EventOut = {
   stats: { arrived: number; guests: number; confirmed: number; declined: number; pending: number };
   created_at: string;
   updated_at: string;
+  rsvp_deadline: string | null;
 };
 
 async function get(path: string): Promise<Response> {

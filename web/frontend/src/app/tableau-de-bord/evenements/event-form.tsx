@@ -17,6 +17,7 @@ export type EventFormValues = {
   location_address: string;
   expected_guests: string;
   dress_code: string;
+  rsvp_deadline: string; // AAAA-MM-JJ, vide : jusqu'au début de l'événement
   description: string;
   categories: string[];
 };
@@ -31,6 +32,7 @@ export const EMPTY_EVENT: EventFormValues = {
   location_address: "",
   expected_guests: "",
   dress_code: "",
+  rsvp_deadline: "",
   description: "",
   categories: ["VIP", "Normal"],
 };
@@ -101,6 +103,17 @@ export function EventForm({ action, initial, submitLabel, pendingLabel }: Props)
         <Field label="Invités prévus" name="expected_guests" type="number" min={0} max={100000} inputMode="numeric" defaultValue={initial.expected_guests} error={e.expected_guests} />
         <Field label="Durée (heures)" name="duration" type="number" min={0.5} max={168} step={0.5} inputMode="decimal" defaultValue={initial.duration} error={e.duration} />
         <Field label="Dress code (facultatif)" name="dress_code" maxLength={100} placeholder="Tenue traditionnelle" defaultValue={initial.dress_code} error={e.dress_code} />
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-3">
+        <Field
+          label="Date limite de réponse (facultatif)"
+          name="rsvp_deadline"
+          type="date"
+          defaultValue={initial.rsvp_deadline}
+          error={e.rsvp_deadline}
+          hint="Après ce jour, vos invités ne peuvent plus répondre. Sans date : jusqu'au début de l'événement."
+        />
       </div>
 
       <div className="grid min-w-0 gap-1.5">
