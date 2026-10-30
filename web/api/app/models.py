@@ -440,3 +440,54 @@ class OtpCode(Base):
     used_at: Mapped[datetime | None]
     ip: Mapped[str | None] = mapped_column(INET)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class SupportStatus(enum.StrEnum):
+    assistant = "assistant"  # l'assistant a répondu
+    waiting = "waiting"  # transmise à l'équipe
+    answered = "answered"  # l'équipe a répondu
+    closed = "closed"
+
+
+class SupportAuthor(enum.StrEnum):
+    organizer = "organizer"
+    assistant = "assistant"
+    staff = "staff"
+
+
+class SupportConversation(Base):
+    """« Une question ? » : discussion d'un organisateur avec l'assistant et l'équipe Here!."""
+
+    __tablename__ = "support_conversations"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
+    status: Mapped[SupportStatus] = mapped_column(
+        Enum(SupportStatus, name="support_status", create_type=False),
+        server_default=SupportStatus.assistant.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class SupportMessage(Base):
+    __tablename__ = "support_messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, server_default=func.gen_random_uuid()
+    )
+    conversation_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("support_conversations.id", ondelete="CASCADE")
+    )
+    author: Mapped[SupportAuthor] = mapped_column(
+        Enum(SupportAuthor, name="support_author", create_type=False)
+    )
+    staff_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )
+    body: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

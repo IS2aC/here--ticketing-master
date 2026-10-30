@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { apiFetch } from "./api";
 import { getCurrentUser } from "./auth";
 import type { EventType } from "./event-types";
+import type { SupportThread } from "./support";
 import { getSessionToken } from "./session";
 
 // Portail admin (équipe Here!) : données de /v1/admin, réservées au rôle admin.
@@ -205,4 +206,8 @@ export function getCalls(done: boolean): Promise<{ to_do: number; done: number; 
 
 export function getInbound(done: boolean): Promise<{ to_do: number; done: number; items: StaffMessage[] }> {
   return adminFetch(`/inbound?state=${done ? "traites" : "a-traiter"}`);
+}
+
+export function getQuestions(all: boolean): Promise<{ waiting: number; total: number; items: SupportThread[] }> {
+  return adminFetch(`/questions?state=${all ? "toutes" : "a-traiter"}`);
 }

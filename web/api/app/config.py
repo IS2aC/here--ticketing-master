@@ -44,6 +44,15 @@ class Settings(BaseSettings):
     # Plus de relance dans les 24 h avant l'événement.
     whatsapp_reminder_stop_hours: int = 24
 
+    # « Une question ? » : assistant qui répond aux organisateurs (sinon l'équipe Here! répond).
+    # none : pas de réponse automatique ; openai : API compatible OpenAI (/chat/completions, par exemple
+    # un agent hébergé avec Nemotron) ; webhook : contrat JSON simple (voir app/assistant).
+    assistant_provider: Literal["none", "openai", "webhook"] = "none"
+    assistant_base_url: str = ""  # openai : …/v1 ; webhook : adresse complète
+    assistant_api_key: str = ""
+    assistant_model: str = ""
+    assistant_timeout_seconds: float = 25
+
     @field_validator("database_url")
     @classmethod
     def use_asyncpg_driver(cls, url: str) -> str:

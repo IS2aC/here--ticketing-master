@@ -5,6 +5,7 @@ import { Icon } from "@/components/icons";
 import { getCurrentUser } from "@/lib/auth";
 import { logout } from "../(auth)/actions";
 import { Nav, NavLinks } from "./nav";
+import { SupportChat } from "./support-chat";
 
 export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-bord">) {
   return (
@@ -19,12 +20,10 @@ export default function DashboardLayout({ children }: LayoutProps<"/tableau-de-b
         <Suspense fallback={null}>
           <AdminLink />
         </Suspense>
-        <div className="mt-auto hidden rounded-md bg-ink p-4 text-white md:block">
-          <Icon name="support" className="text-red-bright" />
-          <p className="mt-2 font-heading text-[14px] font-semibold">Une question ?</p>
-          <p className="mt-0.5 text-[12px] leading-snug text-gray-500">
-            L&apos;équipe Here! vous accompagne pour vos invitations et vos relances.
-          </p>
+        <div className="mt-auto">
+          <Suspense fallback={<div className="h-[104px] rounded-2xl bg-ink" />}>
+            <Support />
+          </Suspense>
         </div>
         <Suspense fallback={<div className="h-[52px] rounded-md bg-surface" />}>
           <Account />
@@ -48,6 +47,12 @@ async function AdminLink() {
       Portail admin
     </Link>
   );
+}
+
+// « Une question ? » : discussion avec l'assistant et l'équipe Here!.
+async function Support() {
+  const user = await getCurrentUser();
+  return <SupportChat firstName={user.first_name} />;
 }
 
 async function Account() {

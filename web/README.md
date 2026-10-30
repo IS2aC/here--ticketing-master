@@ -54,6 +54,20 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 - **Mot de passe oublié** (`/mot-de-passe-oublie`) : un code à 6 chiffres est envoyé par WhatsApp au numéro du compte. En mode test (`WHATSAPP_PROVIDER=console`), rien ne part : le code apparaît dans les journaux de `here-api` (« WhatsApp (console, non envoyé) »).
 - Le frontend transmet à l'API l'adresse IP et le navigateur du visiteur (en-têtes `X-Forwarded-For` et `User-Agent`). L'API étant aussi joignable sur son propre domaine, cet en-tête peut y être falsifié : la limite par compte, elle, ne dépend pas de l'adresse.
 
+## « Une question ? » (assistant et équipe Here!)
+
+Dans l'espace organisateur, la carte « Une question ? » ouvre une discussion. Un assistant répond ; s'il ne sait pas (ou sur demande : « Parler à l'équipe Here! »), la question passe à l'équipe, qui répond depuis le portail admin (Messages › Questions ?). L'organisateur voit la réponse dans la même fenêtre.
+
+L'assistant se branche par variables d'environnement, sans toucher au code (détails dans `api/app/assistant`) :
+
+| `ASSISTANT_PROVIDER` | Usage |
+|---|---|
+| `none` (défaut) | Pas d'assistant : chaque question va à l'équipe. |
+| `openai` | API compatible OpenAI : `ASSISTANT_BASE_URL` (…/v1), `ASSISTANT_API_KEY`, `ASSISTANT_MODEL` (par exemple un agent hébergé qui sert Nemotron). L'agent transmet à l'équipe en commençant sa réponse par `[EQUIPE]`. |
+| `webhook` | `POST ASSISTANT_BASE_URL` avec `{"conversation_id", "organizer", "messages": [{"role", "content"}]}` ; réponse `{"reply": "…", "escalate": false}`. |
+
+Les messages des organisateurs sont envoyés à l'agent configuré : choisissez un hébergement de confiance. 30 messages par heure et par organisateur au plus.
+
 ## Portail admin (équipe Here!)
 
 Un compte devient admin (ou support, pour la conseillère) par une commande, depuis le terminal du conteneur `here-api` (dossier `/app`) (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :

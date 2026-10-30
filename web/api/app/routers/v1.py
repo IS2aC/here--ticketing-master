@@ -6,6 +6,7 @@ from app.routers import (
     events,
     guests,
     invitations,
+    questions,
     scan,
     support,
     webhooks,
@@ -30,3 +31,4 @@ router.include_router(whatsapp.router)
 router.include_router(webhooks.router)
 router.include_router(admin.router)
 router.include_router(support.router)
+router.include_router(questions.router)

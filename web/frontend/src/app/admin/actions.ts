@@ -138,3 +138,40 @@ export async function setHandled(messageId: string, handled: boolean): Promise<v
   }
   revalidatePath("/admin/messages");
 }
+
+export type ReplyState = { message?: string; sent?: number };
+
+/** Réponse de l'équipe à une question d'un organisateur (« Une question ? »). */
+export async function replyQuestion(conversationId: string, _: ReplyState, formData: FormData): Promise<ReplyState> {
+  const body = String(formData.get("body") ?? "").trim();
+  if (!body) return { message: "Écrivez votre réponse." };
+  let response: Response;
+  try {
+    response = await apiFetch(`/v1/admin/questions/${encodeURIComponent(conversationId)}/reply`, {
+      method: "POST",
+      token: await getSessionToken(),
+      body: JSON.stringify({ body }),
+    });
+  } catch {
+    return { message: UNAVAILABLE };
+  }
+  if (response.status === 401) redirect("/connexion");
+  if (response.status === 422) return { message: "Votre réponse est trop longue (2 000 caractères au plus)." };
+  if (!response.ok) return { message: UNAVAILABLE };
+  revalidatePath("/admin/messages");
+  return { sent: Date.now() };
+}
+
+/** Clôt une discussion (« Une question ? »). */
+export async function closeQuestion(conversationId: string): Promise<void> {
+  try {
+    const response = await apiFetch(`/v1/admin/questions/${encodeURIComponent(conversationId)}/close`, {
+      method: "POST",
+      token: await getSessionToken(),
+    });
+    if (response.status === 401) redirect("/connexion");
+  } catch (error) {
+    if (error instanceof Error && "digest" in error) throw error;
+  }
+  revalidatePath("/admin/messages");
+}

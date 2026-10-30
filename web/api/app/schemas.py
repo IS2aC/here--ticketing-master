@@ -14,6 +14,8 @@ from app.models import (
     MessageKind,
     MessageStatus,
     RsvpStatus,
+    SupportAuthor,
+    SupportStatus,
     UserRole,
 )
 from app.phone import normalize_phone
@@ -729,3 +731,45 @@ class StaffMessagePage(BaseModel):
 
 class HandledIn(BaseModel):
     handled: bool
+
+
+# ---------------------------------------------------------------------------
+# « Une question ? » : discussion organisateur ↔ assistant / équipe Here!
+# ---------------------------------------------------------------------------
+
+
+class SupportBody(BaseModel):
+    body: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)
+    ]
+
+
+class SupportMessageOut(BaseModel):
+    id: uuid.UUID
+    author: SupportAuthor
+    body: str
+    created_at: datetime
+    staff_name: str | None = None  # prénom du membre de l'équipe
+
+
+class SupportConversationOut(BaseModel):
+    id: uuid.UUID
+    status: SupportStatus
+    created_at: datetime
+    updated_at: datetime
+    messages: list[SupportMessageOut]
+
+
+class SupportThread(SupportConversationOut):
+    """Vue de l'équipe : la discussion et l'organisateur."""
+
+    organizer_id: uuid.UUID
+    organizer_name: str
+    organizer_phone: str
+    organization: str | None
+
+
+class SupportThreadPage(BaseModel):
+    waiting: int  # à traiter par l'équipe
+    total: int
+    items: list[SupportThread]
