@@ -426,6 +426,9 @@ class WhatsAppOverview(BaseModel):
     reminder_dates: list[date]  # dates de relance de cet événement, passées comprises
     reminder_dates_chosen: bool  # sinon : calendrier proposé
     max_reminder_dates: int
+    day_before_option: bool  # rappel la veille : option payante active pour ce compte
+    day_before_enabled: bool  # activé pour cet événement
+    day_before_at: datetime  # moment de l'envoi (la veille, à l'heure réglée)
     calls_enabled: bool
     on_demand_reminders: bool  # « Relancer maintenant » : option payante activée ou non
     ready: int  # invités qui peuvent recevoir leur invitation maintenant
@@ -436,6 +439,7 @@ class WhatsAppOverview(BaseModel):
     invitations_opened: int  # invitations dont la page a été ouverte
     invitations: MessageCounts
     reminders: MessageCounts
+    day_before: MessageCounts
     recent: list[MessageOut]
     inbound: list[InboundOut]
 
@@ -443,6 +447,7 @@ class WhatsAppOverview(BaseModel):
 class WhatsAppSettingsIn(BaseModel):
     reminders_enabled: bool | None = None
     calls_enabled: bool | None = None
+    day_before_enabled: bool | None = None  # rappel la veille (si l'option est active)
     # Absent : inchangées. null : retour au calendrier proposé. Liste : dates choisies.
     reminder_dates: list[date] | None = None
 
@@ -565,6 +570,7 @@ class AdminUser(BaseModel):
     country: str | None
     role: UserRole
     on_demand_reminders: bool
+    day_before_reminders: bool
     created_at: datetime
     last_login_at: datetime | None
     events: int
@@ -605,7 +611,10 @@ class AdminUserDetail(AdminUser):
 
 
 class AdminUserUpdate(BaseModel):
-    on_demand_reminders: bool
+    """Options payantes du compte. Champ absent : inchangé."""
+
+    on_demand_reminders: bool | None = None
+    day_before_reminders: bool | None = None
 
 
 class PlatformValues(BaseModel):
@@ -619,6 +628,7 @@ class PlatformValues(BaseModel):
     whatsapp_batch_pause_minutes: float
     whatsapp_send_start_hour: int  # heure d'Abidjan
     whatsapp_send_end_hour: int
+    whatsapp_day_before_hour: int  # rappel la veille
 
 
 class ProviderOption(BaseModel):
@@ -650,3 +660,4 @@ class PlatformSettingsIn(BaseModel):
     whatsapp_batch_pause_minutes: Annotated[float, Field(ge=0, le=240)] | None = None
     whatsapp_send_start_hour: Annotated[int, Field(ge=0, le=23)] | None = None
     whatsapp_send_end_hour: Annotated[int, Field(ge=1, le=24)] | None = None
+    whatsapp_day_before_hour: Annotated[int, Field(ge=0, le=23)] | None = None

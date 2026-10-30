@@ -11,6 +11,7 @@ from app.auth import CurrentAuth, DbSession
 from app.config import get_settings
 from app.messaging import (
     MAX_REMINDER_DATES,
+    day_before_moment,
     now,
     queue_invitations,
     queue_reminders,
@@ -51,6 +52,7 @@ async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOver
     counts = {
         MessageKind.invitation: MessageCounts(),
         MessageKind.reminder: MessageCounts(),
+        MessageKind.day_before: MessageCounts(),
     }
     for kind, state, n in (
         await db.execute(
@@ -129,6 +131,9 @@ async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOver
         reminder_dates=reminder_dates(event.starts_at, event.reminder_dates),
         reminder_dates_chosen=event.reminder_dates is not None,
         max_reminder_dates=MAX_REMINDER_DATES,
+        day_before_option=_day_before(owner),
+        day_before_enabled=event.day_before_enabled,
+        day_before_at=day_before_moment(event.starts_at),
         calls_enabled=event.call_reminders_enabled,
         on_demand_reminders=_on_demand(owner),
         ready=ready,
@@ -145,6 +150,7 @@ async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOver
         or 0,
         invitations=counts[MessageKind.invitation],
         reminders=counts[MessageKind.reminder],
+        day_before=counts[MessageKind.day_before],
         recent=[
             MessageOut(
                 id=m.id,
@@ -181,10 +187,17 @@ async def whatsapp_settings(
         event.whatsapp_reminders_enabled = body.reminders_enabled
     if body.calls_enabled is not None:
         event.call_reminders_enabled = body.calls_enabled
+    if body.day_before_enabled is not None:
+        event.day_before_enabled = body.day_before_enabled
     if "reminder_dates" in body.model_fields_set:
         event.reminder_dates = _checked_reminder_dates(event, body.reminder_dates)
     await db.commit()
     return await _overview(db, event, auth.user)
+
+
+def _day_before(user: User) -> bool:
+    """Rappel la veille : activé sur le compte (portail admin), ou pour tous (WHATSAPP_DAY_BEFORE_REMINDERS)."""
+    return user.day_before_reminders or get_settings().whatsapp_day_before_reminders
 
 
 def _on_demand(user: User) -> bool:

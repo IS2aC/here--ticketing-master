@@ -22,6 +22,9 @@ export type WhatsAppOverview = {
   reminder_dates: string[]; // AAAA-MM-JJ, passées comprises
   reminder_dates_chosen: boolean; // choisies par l'organisateur (sinon : calendrier proposé)
   max_reminder_dates: number;
+  day_before_option: boolean; // rappel la veille : option payante active pour ce compte
+  day_before_enabled: boolean;
+  day_before_at: string; // la veille, à l'heure réglée
   calls_enabled: boolean;
   on_demand_reminders: boolean;
   ready: number;
@@ -32,6 +35,7 @@ export type WhatsAppOverview = {
   invitations_opened: number; // pages d'invitation ouvertes par les invités
   invitations: MessageCounts;
   reminders: MessageCounts;
+  day_before: MessageCounts;
   recent: {
     id: string;
     guest_name: string;

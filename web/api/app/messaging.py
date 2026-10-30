@@ -26,6 +26,7 @@ from app.models import (
     MessageKind,
     MessageStatus,
     RsvpStatus,
+    User,
 )
 from app.whatsapp import ProviderError, WhatsAppProvider
 from app.whatsapp.texts import answer_from_option, message_content
@@ -257,6 +258,53 @@ async def plan_follow_ups(db: AsyncSession) -> tuple[int, int]:
     return len(due_reminders), len(due_calls)
 
 
+def day_before_moment(starts_at: datetime) -> datetime:
+    """Rappel la veille : la veille de l'événement, à WHATSAPP_DAY_BEFORE_HOUR (heure d'Abidjan = UTC)."""
+    day = starts_at.astimezone(UTC).date() - timedelta(days=1)
+    return datetime.combine(day, time(get_settings().whatsapp_day_before_hour), UTC)
+
+
+DAY_BEFORE_MIN_NOTICE = timedelta(hours=2)  # trop près du début : on ne l'envoie plus
+
+
+async def plan_day_before(db: AsyncSession) -> int:
+    """Programme le rappel la veille (option payante) des invités confirmés. Un seul par invité.
+    Renvoie le nombre de rappels programmés."""
+    settings = get_settings()
+    current = now()
+    option = (
+        True
+        if settings.whatsapp_day_before_reminders
+        else User.day_before_reminders.is_(True)
+    )
+    rows = (
+        await db.execute(
+            select(Guest.id, Event.starts_at)
+            .join(Event, Event.id == Guest.event_id)
+            .join(User, User.id == Event.user_id)
+            .join(Invitation, Invitation.guest_id == Guest.id)
+            .where(
+                option,
+                Event.day_before_enabled.is_(True),
+                Event.status != EventStatus.cancelled,
+                Event.starts_at > current + DAY_BEFORE_MIN_NOTICE,
+                Event.starts_at <= current + timedelta(days=2),
+                Guest.rsvp_status == RsvpStatus.confirmed,
+                Guest.phone_valid.is_(True),
+                ~_has_message((MessageKind.day_before,), (*_ACTIVE, *_DONE)),
+            )
+        )
+    ).all()
+    due = [
+        guest_id
+        for guest_id, starts_at in rows
+        if day_before_moment(starts_at) <= current
+    ]
+    db.add_all(Message(guest_id=g, kind=MessageKind.day_before) for g in due)
+    await db.commit()
+    return len(due)
+
+
 # ---------------------------------------------------------------------------
 # Envoi (worker)
 # ---------------------------------------------------------------------------
@@ -319,6 +367,11 @@ async def send_message(
         message.kind == MessageKind.reminder and guest.rsvp_status != RsvpStatus.pending
     ):
         reason = "L'invité a déjà répondu."
+    elif (
+        message.kind == MessageKind.day_before
+        and guest.rsvp_status != RsvpStatus.confirmed
+    ):
+        reason = "L'invité n'a plus confirmé sa présence."
     if reason:
         message.status, message.error = MessageStatus.canceled, reason
         await db.commit()

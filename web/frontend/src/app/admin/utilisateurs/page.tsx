@@ -99,6 +99,12 @@ async function Users({ searchParams }: { searchParams: SearchParams }) {
                             Relances à la demande
                           </span>
                         ) : null}
+                        {u.day_before_reminders ? (
+                          <span className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-status-confirmed">
+                            <Icon name="qr-code" width={12} height={12} />
+                            Rappel la veille
+                          </span>
+                        ) : null}
                       </span>
                     </span>
                   </td>

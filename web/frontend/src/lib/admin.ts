@@ -59,6 +59,7 @@ export type AdminUser = {
   country: string | null;
   role: "organizer" | "support" | "admin";
   on_demand_reminders: boolean;
+  day_before_reminders: boolean;
   created_at: string;
   last_login_at: string | null;
   events: number;
@@ -114,6 +115,7 @@ export type PlatformValues = {
   whatsapp_batch_pause_minutes: number;
   whatsapp_send_start_hour: number;
   whatsapp_send_end_hour: number;
+  whatsapp_day_before_hour: number;
 };
 
 export type PlatformSettings = {

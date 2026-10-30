@@ -127,6 +127,7 @@ export function SettingsForm({ settings, action }: { settings: PlatformSettings;
         <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Field label="Début (h)" name="whatsapp_send_start_hour" type="number" min={0} max={23} defaultValue={values.whatsapp_send_start_hour} hint={meta("whatsapp_send_start_hour")} />
           <Field label="Fin (h)" name="whatsapp_send_end_hour" type="number" min={1} max={24} defaultValue={values.whatsapp_send_end_hour} hint={meta("whatsapp_send_end_hour")} />
+          <Field label="Rappel la veille (h)" name="whatsapp_day_before_hour" type="number" min={0} max={23} defaultValue={values.whatsapp_day_before_hour} hint={meta("whatsapp_day_before_hour")} />
         </div>
       </section>
 

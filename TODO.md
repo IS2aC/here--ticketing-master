@@ -39,7 +39,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - écran de la conseillère : file d'appels (table `calls`), résultat de l'appel, messages des invités à traiter (`inbound_messages.handled_at`) ;
   - lien d'un message libre (« On sera 3 ») vers la fiche de l'invité ;
   - surveiller la session WasenderAPI (webhook `session.status`) et prévenir si le numéro est déconnecté ;
-  - rappel la veille avec le QR code d'entrée.
+  - ~~rappel la veille avec le QR code d'entrée~~ (fait le 30/10, **option payante** : activée compte par compte dans le portail admin, coupable par événement sur la page Relances ; la carte et le QR code renvoyés la veille à 10 h aux invités confirmés).
 
 ## Ajustements (à traiter une fois le parcours complet terminé)
 

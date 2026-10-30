@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { Toast } from "@/components/toast";
 import { EVENT_TIME_ZONE } from "@/lib/event-types";
-import { formatDate, getEvent, toDateInput } from "@/lib/events";
+import { formatDate, formatTime, getEvent, toDateInput } from "@/lib/events";
 import { getWhatsApp, sentTotal, type MessageStatus } from "@/lib/whatsapp";
 import { Steps } from "../../steps";
 import { sendInvitations, sendReminders, updateReminderDates, updateSettings } from "./actions";
@@ -272,7 +272,21 @@ async function RemindersView({
               remindersEnabled={wa.reminders_enabled}
               callsEnabled={wa.calls_enabled}
               schedule={schedule}
+              dayBefore={
+                wa.day_before_option
+                  ? { enabled: wa.day_before_enabled, when: `${formatDate(wa.day_before_at).toLocaleLowerCase("fr-FR")} à ${formatTime(wa.day_before_at)}`, sent: sentTotal(wa.day_before) }
+                  : null
+              }
             />
+            {wa.day_before_option ? null : (
+              <p className="flex items-start gap-2 rounded-md bg-surface p-3 text-[13px] text-text-muted">
+                <Icon name="cadenas" width={16} height={16} className="mt-0.5 shrink-0" />
+                <span>
+                  <span className="font-semibold text-text">Rappel la veille · option.</span> La veille, vos invités confirmés reçoivent à
+                  nouveau leur carte avec le QR code d&apos;entrée. Pour l&apos;activer, contactez l&apos;équipe Here!.
+                </span>
+              </p>
+            )}
           </div>
         </aside>
       </div>

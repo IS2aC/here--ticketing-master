@@ -394,13 +394,14 @@ async def user_detail(
 async def update_user(
     user_id: uuid.UUID, body: AdminUserUpdate, _: AdminAuth, db: DbSession
 ) -> AdminUserDetail:
-    """Options du compte : relances à la demande (option payante)."""
+    """Options payantes du compte : relances à la demande, rappel la veille."""
     user = await db.get(User, user_id)
     if user is None:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail={"message": "Compte introuvable."}
         )
-    user.on_demand_reminders = body.on_demand_reminders
+    for field, value in body.model_dump(exclude_none=True).items():
+        setattr(user, field, value)
     await db.commit()
     return await _user_detail(db, user_id)
 

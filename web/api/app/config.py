@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     # Relances à la demande (« Relancer maintenant ») : option payante, désactivée par défaut.
     # Plus tard : activée compte par compte depuis le portail admin (voir TODO).
     whatsapp_on_demand_reminders: bool = False
+    # Rappel la veille (option payante) : heure d'envoi, et activation pour tous les comptes.
+    whatsapp_day_before_hour: int = 10
+    whatsapp_day_before_reminders: bool = False
     # Plus de relance dans les 24 h avant l'événement.
     whatsapp_reminder_stop_hours: int = 24
 
@@ -74,6 +77,7 @@ EDITABLE = (
     "whatsapp_batch_pause_minutes",
     "whatsapp_send_start_hour",
     "whatsapp_send_end_hour",
+    "whatsapp_day_before_hour",
 )
 
 _current: Settings | None = None

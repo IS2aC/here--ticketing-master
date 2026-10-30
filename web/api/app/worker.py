@@ -18,6 +18,7 @@ from app.config import get_settings
 from app.db import dispose_engine, get_engine, get_session
 from app.messaging import (
     claim_next,
+    plan_day_before,
     plan_follow_ups,
     resolve_whatsapp_ids,
     send_message,
@@ -74,10 +75,14 @@ async def run(stop: asyncio.Event) -> None:
             if loop.time() - last_plan >= PLAN_EVERY_SECONDS:
                 async for db in get_session():
                     reminders, calls = await plan_follow_ups(db)
+                    day_before = await plan_day_before(db)
                     await resolve_whatsapp_ids(db, provider)
-                if reminders or calls:
+                if reminders or calls or day_before:
                     log.info(
-                        "Programmé : %s relance(s), %s appel(s).", reminders, calls
+                        "Programmé : %s relance(s), %s appel(s), %s rappel(s) la veille.",
+                        reminders,
+                        calls,
+                        day_before,
                     )
                 last_plan = loop.time()
 

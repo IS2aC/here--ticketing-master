@@ -41,6 +41,8 @@ export async function updateSettings(eventId: string, formData: FormData): Promi
   const body = {
     reminders_enabled: formData.get("reminders_enabled") === "on",
     calls_enabled: formData.get("calls_enabled") === "on",
+    // Rappel la veille : seulement si la case est affichée (option active sur le compte).
+    ...(formData.has("day_before_shown") ? { day_before_enabled: formData.get("day_before_enabled") === "on" } : {}),
   };
   const response = await apiFetch(`/v1/events/${encodeURIComponent(eventId)}/whatsapp`, {
     method: "PATCH",

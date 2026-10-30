@@ -1,6 +1,6 @@
 """Textes des messages WhatsApp (DESIGN.md › Message WhatsApp, ton de voix « hôte »).
 
-Invitation : la carte (image) avec une légende ; relance : un texte. Le lien de la page invité est sur sa
+Invitation : la carte (image) avec une légende ; relance : un texte ; rappel la veille : la carte à nouveau. Le lien de la page invité est sur sa
 propre ligne : l'invité y répond. Pas de sondage (un seul message par invité, voir docs/SPECIFICATIONS.md).
 Le sondage reste lisible (`Poll`, `answer_from_option`) pour les votes aux sondages déjà envoyés.
 """
@@ -52,6 +52,19 @@ def message_content(
     date = when(event.starts_at)
     place = f", {event.location_name}" if event.location_name else ""
     hello = f"Bonjour {guest.display_name},"
+    if kind == MessageKind.day_before:
+        # Rappel la veille : la carte (image) avec son QR code, à présenter à l'entrée.
+        if is_tribute(event):
+            text = (
+                f"{hello}\nLa famille vous rappelle « {event.title} », le {date}{place}.\n"
+                f"Merci de présenter ce QR code à l'entrée.\n{link}"
+            )
+        else:
+            text = (
+                f"{hello}\nÀ très bientôt pour « {event.title} », le {date}{place}.\n"
+                f"Présentez ce QR code à l'entrée. Votre invitation :\n{link}"
+            )
+        return Content(text, with_card=True, poll=None)
     if is_tribute(event):
         if kind == MessageKind.invitation:
             text = (

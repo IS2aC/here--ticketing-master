@@ -22,9 +22,11 @@ async function patch(path: string, body: unknown): Promise<Response | null> {
   }
 }
 
-/** Relances à la demande (option payante) pour un compte. */
-export async function setOnDemand(userId: string, enabled: boolean): Promise<void> {
-  await patch(`/users/${encodeURIComponent(userId)}`, { on_demand_reminders: enabled });
+export type AccountOption = "on_demand_reminders" | "day_before_reminders";
+
+/** Active ou désactive une option payante d'un compte (relances à la demande, rappel la veille). */
+export async function setOption(userId: string, option: AccountOption, enabled: boolean): Promise<void> {
+  await patch(`/users/${encodeURIComponent(userId)}`, { [option]: enabled });
   revalidatePath(`/admin/utilisateurs/${userId}`);
   revalidatePath("/admin/utilisateurs");
 }
@@ -38,6 +40,7 @@ const LABELS: Record<keyof PlatformValues, string> = {
   whatsapp_batch_pause_minutes: "Pause entre deux lots",
   whatsapp_send_start_hour: "Début des envois",
   whatsapp_send_end_hour: "Fin des envois",
+  whatsapp_day_before_hour: "Heure du rappel la veille",
 };
 
 function same(a: unknown, b: unknown): boolean {
@@ -68,6 +71,7 @@ export async function saveSettings(_previous: SettingsState, formData: FormData)
       whatsapp_batch_pause_minutes: Number(formData.get("whatsapp_batch_pause_minutes")),
       whatsapp_send_start_hour: Number(formData.get("whatsapp_send_start_hour")),
       whatsapp_send_end_hour: Number(formData.get("whatsapp_send_end_hour")),
+      whatsapp_day_before_hour: Number(formData.get("whatsapp_day_before_hour")),
     };
     let current;
     try {

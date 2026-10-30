@@ -53,11 +53,13 @@ export function SettingsForm({
   remindersEnabled,
   callsEnabled,
   schedule,
+  dayBefore,
 }: {
   action: (formData: FormData) => Promise<void>;
   remindersEnabled: boolean;
   callsEnabled: boolean;
   schedule: string; // « 7 jours avant l'événement »
+  dayBefore: { enabled: boolean; when: string; sent: number } | null; // null : option non active
 }) {
   return (
     <form action={action} className="grid gap-3">
@@ -82,6 +84,22 @@ export function SettingsForm({
           <span className="block text-text-muted">Après la dernière relance, notre équipe appelle les invités qui n&apos;ont pas répondu.</span>
         </span>
       </label>
+      {dayBefore ? (
+        <label className="flex items-start gap-3 text-[14px]">
+          <input type="hidden" name="day_before_shown" value="1" />
+          <input type="checkbox" name="day_before_enabled" defaultChecked={dayBefore.enabled} className="mt-1 size-4 accent-[var(--color-ink)]" />
+          <span>
+            <span className="flex flex-wrap items-center gap-2 font-semibold">
+              Rappel la veille
+              <span className="inline-flex h-[22px] items-center rounded-sm bg-surface px-2 text-[11px] font-semibold tracking-[0.04em] uppercase">Option</span>
+            </span>
+            <span className="block text-text-muted">
+              Le {dayBefore.when}, la carte avec le QR code d&apos;entrée, renvoyée aux invités qui ont confirmé.
+              {dayBefore.sent ? ` ${dayBefore.sent} envoyé${dayBefore.sent > 1 ? "s" : ""}.` : ""}
+            </span>
+          </span>
+        </label>
+      ) : null}
       <div>
         <SaveButton />
       </div>

@@ -43,6 +43,8 @@ class User(Base):
     )
     # Relances à la demande : option payante, activée par l'équipe Here! (portail admin).
     on_demand_reminders: Mapped[bool] = mapped_column(server_default="false")
+    # Rappel la veille : option payante, activée par l'équipe Here! (portail admin).
+    day_before_reminders: Mapped[bool] = mapped_column(server_default="false")
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
@@ -121,6 +123,9 @@ class Event(Base):
     )
     whatsapp_reminders_enabled: Mapped[bool] = mapped_column(server_default="true")
     call_reminders_enabled: Mapped[bool] = mapped_column(server_default="false")
+    day_before_enabled: Mapped[bool] = mapped_column(
+        server_default="true"
+    )  # si l'option est active
     # Dates choisies par l'organisateur ; None : calendrier proposé (voir messaging.reminder_dates).
     reminder_dates: Mapped[list[date] | None] = mapped_column(ARRAY(Date))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
@@ -295,6 +300,7 @@ class Checkin(Base):
 class MessageKind(enum.StrEnum):
     invitation = "invitation"
     reminder = "reminder"
+    day_before = "day_before"  # rappel la veille : la carte et le QR code d'entrée
 
 
 class MessageStatus(enum.StrEnum):
