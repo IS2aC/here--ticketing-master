@@ -235,8 +235,6 @@ function Seal({
 
 // --- « Mon propre modèle » : fond importé + nom, table / catégorie, QR code ------------------------
 
-const JUSTIFY = { left: "flex-start", center: "center", right: "flex-end" } as const;
-
 function Placed({ text, layout }: { text: string; layout: TextLayout }) {
   const box = textBox(layout);
   return (
@@ -249,8 +247,8 @@ function Placed({ text, layout }: { text: string; layout: TextLayout }) {
         height: box.height,
         display: "flex",
         alignItems: "center",
-        justifyContent: JUSTIFY[layout.align ?? "center"],
-        textAlign: layout.align ?? "center",
+        justifyContent: "center",
+        textAlign: "center",
         fontFamily: FONT_FAMILY[layout.font],
         fontWeight: layout.bold ? 600 : 400,
         fontSize: layout.size,

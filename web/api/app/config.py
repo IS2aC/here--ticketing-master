@@ -53,14 +53,6 @@ class Settings(BaseSettings):
     assistant_model: str = ""
     assistant_timeout_seconds: float = 25
 
-    # Éditeur des cartes d'invitation (Doory) : adresse interne de son API et secret partagé (HERE_SECRET
-    # côté éditeur). Secret vide : éditeur désactivé, la page Carte garde les cartes automatiques.
-    doory_api_url: str = "http://here-doory-api:8000"
-    doory_secret: str = ""
-    doory_timeout_seconds: float = (
-        60  # le rendu du fond (Chromium) peut prendre plusieurs secondes
-    )
-
     @field_validator("database_url")
     @classmethod
     def use_asyncpg_driver(cls, url: str) -> str:

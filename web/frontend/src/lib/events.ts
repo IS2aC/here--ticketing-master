@@ -103,21 +103,7 @@ export type CardSettings = {
   custom: boolean; // « Mon propre modèle » : fond importé
   layout: CardLayout | null;
   cropped: boolean;
-  editor: boolean; // carte dessinée dans l'éditeur (Doory)
-  editor_enabled: boolean; // éditeur de cartes branché
 };
-
-export type EditorTemplate = { slug: string; title: string; thumbnail: string | null };
-
-/** Modèles de l'éditeur pour le type de l'événement ; null si l'éditeur ne répond pas. */
-export async function getEditorTemplates(eventId: string): Promise<EditorTemplate[] | null> {
-  try {
-    const response = await get(`/v1/events/${encodeURIComponent(eventId)}/card/editor/templates`);
-    return response.ok ? await response.json() : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Intitulé et palette de la carte de l'événement ; `locked` : invitations parties, plus de modification. */
 export async function getCardSettings(eventId: string): Promise<CardSettings> {

@@ -1,9 +1,0 @@
-node_modules
-dist
-dist-collab
-dist-app
-*.local
-playwright-report
-test-results
-.vite
-dist-perf

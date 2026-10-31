@@ -8,10 +8,8 @@ from fastapi import APIRouter, HTTPException, Response, UploadFile, status
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import card_editor
 from app.auth import CurrentAuth, DbSession
 from app.card_image import BackgroundError, prepare_background
-from app.config import get_settings
 from app.messaging import cancel_reminders
 from app.models import (
     CardBackground,
@@ -33,9 +31,6 @@ from app.schemas import (
     CardLayout,
     CardSettings,
     CardSettingsIn,
-    EditorLink,
-    EditorOpenIn,
-    EditorTemplate,
     InvitationResponse,
     InvitationsResult,
     PublicCard,
@@ -149,8 +144,6 @@ def _settings(
         custom=bool(card and card.layout),
         layout=CardLayout.model_validate(card.layout) if card and card.layout else None,
         cropped=cropped,
-        editor=bool(card and card.editor_design_id),
-        editor_enabled=card_editor.enabled(),
     )
 
 
@@ -213,106 +206,12 @@ async def upload_background(
             status.HTTP_422_UNPROCESSABLE_CONTENT, detail={"message": str(error)}
         ) from None
     card = await _event_card(db, event)
-    await _store_background(db, card, content)
-    # Un fond importé remplace la carte dessinée dans l'éditeur (et sa mise en page).
-    card.layout = None if card.editor_design_id else card.layout
-    card.editor_design_id = None
-    card.layout = card.layout or DEFAULT_LAYOUT
-    event.updated_at = datetime.now(UTC)
-    await db.commit()
-    return _settings(card, False, cropped)
-
-
-async def _store_background(db: AsyncSession, card: EventCard, content: bytes) -> None:
     background = await db.get(CardBackground, card.id)
     if background is None:
         db.add(CardBackground(event_card_id=card.id, content=content))
     else:
         background.content = content
-
-
-def _editor_error(error: card_editor.EditorError) -> HTTPException:
-    return HTTPException(status.HTTP_502_BAD_GATEWAY, detail={"message": str(error)})
-
-
-EDITOR_OFF = HTTPException(
-    status.HTTP_404_NOT_FOUND,
-    detail={"message": "L'éditeur de cartes n'est pas disponible."},
-)
-
-
-@router.get("/events/{event_id}/card/editor/templates")
-async def editor_templates(
-    event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
-) -> list[EditorTemplate]:
-    """Modèles de l'éditeur proposés pour le type de l'événement (sinon tous)."""
-    event = await owned_event(db, event_id, auth.user.id)
-    if not card_editor.enabled():
-        raise EDITOR_OFF
-    try:
-        found = await card_editor.templates(event.type.value)
-    except card_editor.EditorError as error:
-        raise _editor_error(error) from None
-    return [EditorTemplate.model_validate(t) for t in found]
-
-
-@router.post("/events/{event_id}/card/editor")
-async def open_editor(
-    event_id: uuid.UUID, body: EditorOpenIn, auth: CurrentAuth, db: DbSession
-) -> EditorLink:
-    """Ouvre la carte dans l'éditeur (lien à suivre tout de suite). Sans carte en cours, ou avec `new`, une
-    nouvelle carte est créée : d'après le modèle choisi, ou vierge."""
-    event = await owned_event(db, event_id, auth.user.id)
-    if not card_editor.enabled():
-        raise EDITOR_OFF
-    if await card_locked(db, event.id):
-        raise LOCKED
-    card = await _event_card(db, event)
-    user = auth.user
-    try:
-        if card.editor_design_id is None or body.new:
-            card.editor_design_id = await card_editor.create_design(
-                user.id,
-                f"{user.first_name} {user.last_name}".strip(),
-                event.title,
-                body.template,
-            )
-            await db.commit()
-        back = f"{get_settings().public_app_url.rstrip('/')}/tableau-de-bord/evenements/{event.id}/carte?editeur=1"
-        url = await card_editor.session_link(card.editor_design_id, user.id, back)
-    except card_editor.EditorError as error:
-        raise _editor_error(error) from None
-    return EditorLink(url=url)
-
-
-@router.post("/events/{event_id}/card/editor/validate")
-async def validate_editor_card(
-    event_id: uuid.UUID, auth: CurrentAuth, db: DbSession
-) -> CardSettings:
-    """Valide la carte dessinée dans l'éditeur : son rendu (sans le nom, la table ni le QR code) devient le
-    fond de la carte, et la place de ces champs sa mise en page. Chaque invité a ensuite sa carte."""
-    event = await owned_event(db, event_id, auth.user.id)
-    if not card_editor.enabled():
-        raise EDITOR_OFF
-    if await card_locked(db, event.id):
-        raise LOCKED
-    card = await _default_card(db, event)
-    if card is None or card.editor_design_id is None:
-        raise HTTPException(
-            status.HTTP_409_CONFLICT,
-            detail={"message": "Créez d'abord votre carte dans l'éditeur."},
-        )
-    try:
-        drawn = await card_editor.render(card.editor_design_id, auth.user.id)
-        content, cropped = prepare_background(drawn.image)
-    except card_editor.EditorError as error:
-        raise _editor_error(error) from None
-    except BackgroundError as error:
-        raise HTTPException(
-            status.HTTP_422_UNPROCESSABLE_CONTENT, detail={"message": str(error)}
-        ) from None
-    await _store_background(db, card, content)
-    card.layout = card_editor.layout_from_fields(drawn.fields)
+    card.layout = card.layout or DEFAULT_LAYOUT
     event.updated_at = datetime.now(UTC)
     await db.commit()
     return _settings(card, False, cropped)
@@ -332,7 +231,6 @@ async def remove_background(
         if background is not None:
             await db.delete(background)
         card.layout = None
-        card.editor_design_id = None
         event.updated_at = datetime.now(UTC)
         await db.commit()
     return _settings(card, False)

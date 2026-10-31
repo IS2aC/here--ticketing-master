@@ -9,21 +9,12 @@ import { eventType } from "@/lib/event-types";
 import { SAMPLE_GUEST } from "@/lib/card/data";
 import { tableText } from "@/lib/card/layout";
 import { PALETTES } from "@/lib/card/palettes";
-import { getCardSettings, getEditorTemplates, getEvent } from "@/lib/events";
+import { getCardSettings, getEvent } from "@/lib/events";
 import { getGuests } from "@/lib/guests";
 import { Steps } from "../../steps";
-import {
-  generateInvitations,
-  openEditor,
-  removeBackground,
-  saveCard,
-  saveLayout,
-  uploadBackground,
-  validateEditorCard,
-} from "./actions";
+import { generateInvitations, removeBackground, saveCard, saveLayout, uploadBackground } from "./actions";
 import { CardDesigner } from "./card-designer";
 import { CustomDesigner } from "./custom-designer";
-import { EditorPanel } from "./editor-panel";
 import { UploadBackground } from "./upload-background";
 import { GenerateButton } from "./generate-button";
 
@@ -53,19 +44,6 @@ async function CardView({
   const missing = guests.length - withCard;
   const created = Number(query.creees);
   const preview = `/tableau-de-bord/evenements/${event.id}/carte.png${selected ? `?invite=${selected.id}` : ""}`;
-  const editing = settings.editor_enabled && !settings.locked;
-  const templates = editing ? await getEditorTemplates(event.id) : null;
-
-  // Canvas des cartes : la carte dessinée dans l'éditeur (Doory).
-  const editorPanel = editing ? (
-    <EditorPanel
-      templates={templates}
-      inProgress={settings.editor}
-      validated={settings.editor && settings.custom}
-      open={openEditor.bind(null, event.id)}
-      validate={validateEditorCard.bind(null, event.id)}
-    />
-  ) : null;
 
   // Encarts communs aux deux modes (carte automatique, propre modèle).
   const extras = (
@@ -181,35 +159,7 @@ async function CardView({
         <Steps current={3} />
       </header>
 
-      {settings.editor ? (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <section className="grid content-start justify-items-center gap-3 rounded-lg bg-background p-5 shadow-sm sm:p-8">
-            {settings.custom ? null : (
-              <p className="max-w-[480px] text-center text-[13px] text-text-muted">
-                Votre carte de l&apos;éditeur n&apos;est pas encore validée : vos invités recevraient pour l&apos;instant cette carte.
-              </p>
-            )}
-            {/* eslint-disable-next-line @next/next/no-img-element -- image générée à la demande */}
-            <img
-              src={`${preview}${preview.includes("?") ? "&" : "?"}v=${encodeURIComponent(event.updated_at)}`}
-              alt={`Carte d'invitation pour ${selected?.display_name ?? "un invité"}`}
-              width={1080}
-              height={1350}
-              className="h-auto w-full max-w-[480px] rounded-md shadow-lg"
-            />
-          </section>
-          <aside className="grid content-start gap-4">
-            {settings.locked ? (
-              <p className="flex items-start gap-2 rounded-lg bg-background p-5 text-[14px] text-text-muted shadow-sm">
-                <Icon name="cadenas" width={18} height={18} className="mt-0.5 shrink-0" />
-                <span>Les invitations sont parties : votre carte ne peut plus être modifiée.</span>
-              </p>
-            ) : null}
-            {editorPanel}
-            {extras}
-          </aside>
-        </div>
-      ) : settings.custom && settings.layout ? (
+      {settings.custom && settings.layout ? (
         <CustomDesigner
           background={`/tableau-de-bord/evenements/${event.id}/carte/fond.jpg?v=${encodeURIComponent(event.updated_at)}`}
           preview={preview}
@@ -222,7 +172,6 @@ async function CardView({
           save={saveLayout.bind(null, event.id)}
           remove={removeBackground.bind(null, event.id)}
         >
-          {editorPanel}
           {settings.locked ? null : <UploadBackground action={uploadBackground.bind(null, event.id)} replace />}
           {extras}
         </CustomDesigner>
@@ -237,7 +186,6 @@ async function CardView({
           palettes={PALETTES[style.family]}
           locked={settings.locked}
         >
-          {editorPanel}
           {settings.locked ? null : <UploadBackground action={uploadBackground.bind(null, event.id)} replace={false} />}
           {extras}
         </CardDesigner>
@@ -247,10 +195,6 @@ async function CardView({
           title="Fond importé"
           detail={query.fond === "recadre" ? "Il a été recadré au format de la carte (portrait 4:5). Placez maintenant le nom et le QR code." : "Placez maintenant le nom de l'invité et le QR code."}
         />
-      ) : null}
-      {query.editeur === "valide" ? <Toast title="Carte validée" detail="Chaque invité a maintenant cette carte, avec son nom et son QR code." /> : null}
-      {query.editeur === "1" && settings.editor ? (
-        <Toast title="De retour de l'éditeur" detail="Votre carte est enregistrée. Validez-la pour l'envoyer à vos invités." />
       ) : null}
       {created > 0 ? <Toast title={`${created.toLocaleString("fr-FR")} carte${created > 1 ? "s" : ""} prête${created > 1 ? "s" : ""}`} detail="Chaque invité a son QR code." /> : null}
     </>

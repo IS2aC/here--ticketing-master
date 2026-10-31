@@ -9,9 +9,6 @@ Trois services distincts, orchestrés par [docker-compose.yml](docker-compose.ym
 | `here-api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
 | `here-frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://here-api:8000`) | 3000 |
 | `here-worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp | — |
-| `here-doory-db` | — | PostgreSQL 16 de l'éditeur des cartes (volume `doory-db-data`) | 5432 |
-| `here-doory-api` | [doory/backend/](doory/backend/) | Éditeur des cartes d'invitation (Doory) : API Django, rendu des cartes avec Chromium | 8000 |
-| `here-doory-web` | [doory/frontend/](doory/frontend/) | Éditeur des cartes : site (nginx), relaie `/api` vers `here-doory-api` | 8080 |
 
 Ordre de démarrage : `here-db` (sain) → `here-migrate` (terminé) → `here-api` (saine) et `here-worker` → `here-frontend`.
 
@@ -50,16 +47,6 @@ cd frontend && npm install && API_URL=http://localhost:8000 npm run dev
 2. Onglet **Environment** : reprendre `.env.example` (au minimum `POSTGRES_PASSWORD`, `CORS_ORIGINS` et `PUBLIC_APP_URL` avec le domaine du frontend ; pour WhatsApp : `WHATSAPP_PROVIDER=wasender`, `WASENDER_API_KEY`, `WASENDER_WEBHOOK_SECRET`).
 3. Onglet **Domains** : `here-frontend` sur le port 3000, `here-api` sur le port 8000 (domaine distinct, utilisé aussi par l'app mobile).
 4. Déployer. Les migrations s'appliquent automatiquement avant le démarrage de l'API.
-
-## Canvas des cartes d'invitation (éditeur Doory)
-
-Sur la page **Carte** d'un événement, l'organisateur choisit un modèle (ou une carte vierge) et l'ouvre dans l'éditeur, un éditeur complet comme Canva : textes, photos, formes, calques. Le nom de l'invité, sa table et le QR code y sont des emplacements (champs `nom_invite`, `table_invite`, `qr_code`) qu'il place et habille. **« Valider la carte »** : l'éditeur rend la carte sans ces champs (Chromium) ; ce rendu devient le fond de la carte et la place des champs sa mise en page. Here! dessine ensuite la carte de chaque invité comme pour « Mon propre modèle » (`lib/card/render.tsx`), et l'envoi WhatsApp ne change pas.
-
-- L'éditeur est **Doory** (dossier [doory/](doory/), version d'origine dans `doory/UPSTREAM`), adapté à Here! : application `apps.here` (appels de l'API Here!, lien de connexion signé, rendu de la carte) et lien « Retour à Here! » dans l'éditeur. Chaque organisateur y a un compte, créé à sa première carte, sans mot de passe : il n'y entre que par Here!.
-- Mention obligatoire (licence Attribution Assurance de Doory, voir `doory/LICENSE` et `doory/NOTICE`), affichée en bas de l'éditeur : « Doory by Siam, creator and maintainer of Doory · github.com/shaongitbd/doory ».
-- Variables (voir `.env.example`) : `DOORY_URL` (adresse publique de l'éditeur), `DOORY_HOSTS`, `DOORY_DJANGO_SECRET_KEY`, `DOORY_SECRET` (secret partagé entre l'API Here! et l'éditeur ; vide : éditeur désactivé), `DOORY_DB_PASSWORD`, `DOORY_SECURE` (`true` en production).
-- Dokploy : domaine de `here-doory-web` sur le port 8080 (ex. `studio.here.example.com`). Au premier démarrage, l'éditeur télécharge ses polices, éléments et modèles : quelques minutes.
-- Modèles proposés : ceux de la catégorie de l'éditeur dont le code (slug) est le type de l'événement (`mariage`, `dot`, `anniversaire`…), sinon tous. Ils se gèrent dans l'administration de l'éditeur (`/admin/`, compte créé par `python manage.py createsuperuser` dans le conteneur `here-doory-api`).
 
 ## Sécurité de la connexion
 

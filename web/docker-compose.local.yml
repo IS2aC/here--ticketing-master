@@ -10,6 +10,3 @@ services:
   here-frontend:
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
-  here-doory-web:
-    ports:
-      - "${DOORY_PORT:-8080}:8080"
