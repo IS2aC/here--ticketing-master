@@ -4,6 +4,7 @@
 #   here-api       FastAPI : seule à accéder à la base ; appelée par le frontend et la future app mobile
 #   here-frontend  Next.js : interface web, appelle l'API par le réseau interne
 #   here-worker    envoi WhatsApp (WasenderAPI) : invitations et relances, une à la fois, au rythme anti-blocage
+#   here-doory-*   éditeur des cartes d'invitation (Doory, dossier doory/) : sa base, son API Django et son site
 #
 # Noms préfixés « here- » : sur Dokploy, tous les projets partagent le réseau dokploy-network.
 # Un service nommé « api » ou « db » y entrerait en collision avec celui d'un autre projet
@@ -13,6 +14,7 @@
 # variables dans l'onglet Environment (voir .env.example). Domaines à créer dans Dokploy :
 #   here-frontend → port 3000 (ex. here.example.com)
 #   here-api      → port 8000 (ex. api.here.example.com, utilisé aussi par l'app mobile)
+#   here-doory-web → port 8080 (ex. studio.here.example.com : l'éditeur des cartes)
 
 x-database-url: &database-url postgres://${POSTGRES_USER:-here}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}@here-db:5432/${POSTGRES_DB:-here}
 
@@ -37,6 +39,37 @@ x-whatsapp: &whatsapp
   ASSISTANT_BASE_URL: ${ASSISTANT_BASE_URL:-}
   ASSISTANT_API_KEY: ${ASSISTANT_API_KEY:-}
   ASSISTANT_MODEL: ${ASSISTANT_MODEL:-}
+
+# Éditeur des cartes (Doory) : l'API Here! l'appelle sur le réseau interne avec le secret partagé.
+x-doory-link: &doory-link
+  DOORY_API_URL: http://here-doory-api:8000
+  DOORY_SECRET: ${DOORY_SECRET:-}
+
+x-doory-database-url: &doory-database-url postgres://doory:${DOORY_DB_PASSWORD:-${POSTGRES_PASSWORD}}@here-doory-db:5432/doory
+
+x-doory: &doory
+  DJANGO_SETTINGS_MODULE: doory.settings.prod
+  DJANGO_SECRET_KEY: ${DOORY_DJANGO_SECRET_KEY:?DOORY_DJANGO_SECRET_KEY est obligatoire (openssl rand -base64 48)}
+  SITE_URL: ${DOORY_URL:-http://localhost:8080}
+  CSRF_TRUSTED_ORIGINS: ${DOORY_URL:-http://localhost:8080}
+  DJANGO_ALLOWED_HOSTS: ${DOORY_HOSTS:-localhost,127.0.0.1},here-doory-api
+  SECURE_SSL_REDIRECT: ${DOORY_SECURE:-true}
+  SECURE_COOKIES: ${DOORY_SECURE:-true}
+  DATABASE_URL: *doory-database-url
+  CACHE_URL: dbcache://doory_cache
+  MEDIA_ROOT: /app/media
+  EXPORT_STORAGE_ROOT: /app/exports
+  # Pas d'édition à plusieurs en temps réel : un organisateur à la fois sur sa carte.
+  REALTIME_ENABLED: "false"
+  # Fond de la carte rendu par le serveur (Chromium) quand l'organisateur la valide.
+  SERVER_IMAGE_EXPORT_ENABLED: "true"
+  EXPORT_RENDER_PAGE_URL: http://here-doory-web:8080/render.html
+  EXPORT_ALLOWED_ORIGINS: ${DOORY_URL:-http://localhost:8080},http://here-doory-web:8080
+  HERE_SECRET: ${DOORY_SECRET:-}
+  HERE_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+  DOORY_SYNC_FONTS: "true"
+  DOORY_SYNC_ELEMENTS: "true"
+  DOORY_SEED_TEMPLATES: "true"
 
 services:
   here-db:
@@ -67,7 +100,7 @@ services:
     build: ./api
     restart: unless-stopped
     environment:
-      <<: *whatsapp
+      <<: [*whatsapp, *doory-link]
       DATABASE_URL: *database-url
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
@@ -104,5 +137,61 @@ services:
       here-migrate:
         condition: service_completed_successfully
 
+  # ---- Éditeur des cartes d'invitation : Doory (doory/), Doory by Siam, https://github.com/shaongitbd/doory ----
+  here-doory-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: doory
+      POSTGRES_USER: doory
+      POSTGRES_PASSWORD: ${DOORY_DB_PASSWORD:-${POSTGRES_PASSWORD}}
+    volumes:
+      - doory-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U doory -d doory"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  here-doory-api:
+    build:
+      context: ./doory/backend
+      args:
+        INSTALL_CHROMIUM: "true"
+        INSTALL_FFMPEG: "false"
+        INSTALL_IMAGE_OPTIMIZERS: "false"
+    restart: unless-stopped
+    init: true  # récupère les processus Chromium de l'export
+    environment:
+      <<: *doory
+    volumes:
+      - doory-media:/app/media
+      - doory-exports:/app/exports
+    expose:
+      - "8000"
+    depends_on:
+      here-doory-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck.py"]
+      interval: 15s
+      timeout: 5s
+      start_period: 120s
+      retries: 5
+    # Chromium a besoin de plus de mémoire partagée que les 64 Mo de Docker.
+    shm_size: "512m"
+
+  here-doory-web:
+    build: ./doory/frontend
+    restart: unless-stopped
+    expose:
+      - "8080"
+    depends_on:
+      here-doory-api:
+        condition: service_healthy
+
 volumes:
   db-data:
+  doory-db-data:
+  doory-media:
+  doory-exports:

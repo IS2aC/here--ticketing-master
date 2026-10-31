@@ -314,6 +314,23 @@ class TextLayout(BaseModel):
     color: HexColor
     font: Literal["sans", "serif"] = "serif"  # Poppins ou Playfair Display
     bold: bool = False
+    # Carte dessinée dans l'éditeur : zone exacte du texte (sinon calculée autour du centre) et alignement.
+    box: "TextBox | None" = None
+    align: Literal["left", "center", "right"] = "center"
+
+
+class TextBox(BaseModel):
+    left: Annotated[int, Field(ge=0, le=1080)]
+    top: Annotated[int, Field(ge=0, le=1350)]
+    width: Annotated[int, Field(ge=1, le=1080)]
+    height: Annotated[int, Field(ge=1, le=1350)]
+
+
+class QrCenter(BaseModel):
+    """Carte dessinée dans l'éditeur : centre du sceau Here! (QR code), placé où l'organisateur l'a mis."""
+
+    x: Annotated[int, Field(ge=0, le=1080)]
+    y: Annotated[int, Field(ge=0, le=1350)]
 
 
 class CardLayout(BaseModel):
@@ -321,9 +338,10 @@ class CardLayout(BaseModel):
 
     name: TextLayout
     table: TextLayout | None = None
-    qr: Literal[
-        "bas-droite", "bas-gauche", "bas-centre", "haut-droite", "haut-gauche"
-    ] = "bas-droite"
+    qr: (
+        Literal["bas-droite", "bas-gauche", "bas-centre", "haut-droite", "haut-gauche"]
+        | QrCenter
+    ) = "bas-droite"
 
 
 class PublicCard(BaseModel):
@@ -821,6 +839,28 @@ class CardSettings(BaseModel):
     custom: bool = False  # « Mon propre modèle » : fond importé
     layout: CardLayout | None = None
     cropped: bool = False  # le fond envoyé a été recadré au format de la carte
+    editor: bool = False  # carte dessinée dans l'éditeur (Doory)
+    editor_enabled: bool = False  # éditeur de cartes branché (DOORY_SECRET)
+
+
+class EditorTemplate(BaseModel):
+    """Modèle proposé dans l'éditeur de cartes."""
+
+    slug: str
+    title: str
+    thumbnail: str | None
+
+
+class EditorOpenIn(BaseModel):
+    # Nouvelle carte : d'après ce modèle, ou vierge (null). Absent : la carte en cours.
+    template: (
+        Annotated[str, StringConstraints(pattern=r"^[a-z0-9-]{1,120}$")] | None
+    ) = None
+    new: bool = False
+
+
+class EditorLink(BaseModel):
+    url: str  # à ouvrir tout de suite dans le navigateur de l'organisateur (valable 2 minutes)
 
 
 class CardSettingsIn(BaseModel):

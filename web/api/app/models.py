@@ -282,6 +282,8 @@ class EventCard(Base):
     title: Mapped[str | None]  # intitulé de la carte ; None : le nom de l'événement
     # « Mon propre modèle » : mise en page sur le fond importé ; None : carte automatique.
     layout: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    # Carte dessinée dans l'éditeur (Doory) : identifiant du design ; None : pas d'éditeur.
+    editor_design_id: Mapped[uuid.UUID | None] = mapped_column(UUID)
     photo_url: Mapped[str | None]
     field_values: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     theme_overrides: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")

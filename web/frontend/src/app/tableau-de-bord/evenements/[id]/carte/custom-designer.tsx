@@ -52,8 +52,11 @@ export function CustomDesigner({
   const current = zone === "table" ? layout.table : layout.name;
   const changed = JSON.stringify(layout) !== JSON.stringify(saved);
 
+  // Une zone déplacée ou retouchée ici n'a plus la zone exacte venue de l'éditeur : elle suit son centre.
   const update = (z: Zone, patch: Partial<TextLayout>) =>
-    setLayout((l) => (z === "name" ? { ...l, name: { ...l.name, ...patch } } : l.table ? { ...l, table: { ...l.table, ...patch } } : l));
+    setLayout((l) =>
+      z === "name" ? { ...l, name: { ...l.name, ...patch, box: null } } : l.table ? { ...l, table: { ...l.table, ...patch, box: null } } : l,
+    );
 
   // Glisser au doigt ou à la souris : le centre de la zone suit le pointeur (en pixels de la carte).
   const move = (event: ReactPointerEvent) => {
