@@ -274,6 +274,16 @@ Read by `docker-compose.yml` for the `ai-server` service (profile `ai`). See [ai
 | `AI_SERVER_THREADS` | `4` | CPU threads per image |
 | `AI_SERVER_MEM_LIMIT` | `2g` | Memory limit of the container |
 
+## Here!
+
+The invitation cards of Here! are designed in this editor (`apps.here`). Here! calls `/api/v1/here/` on the
+private network and opens the editor with a signed sign-in link.
+
+| Setting | Default | What it does |
+|---------|---------|--------------|
+| `HERE_SECRET` | empty | Secret shared with the Here! API (its `DOORY_SECRET`). Empty: the Here! routes are off |
+| `HERE_APP_URL` | empty | Address of Here!: the editor's « Retour à Here! » link only goes back to this site |
+
 ## Realtime co-editing
 
 See [realtime.md](realtime.md). The defaults suit most sites.

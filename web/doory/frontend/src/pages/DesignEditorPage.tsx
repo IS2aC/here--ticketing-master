@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useAuthModal } from '@/features/auth/AuthModalProvider'
 import { createAccountAdapter, RevisionTracker } from '@/features/editor/adapters'
-import { EditorHomeLink } from '@/features/editor/EditorHomeLink'
+import { EditorBackLink } from '@/features/editor/EditorHomeLink'
 import { EditorProblemPage, EditorSkeleton, type EditorProblem } from '@/features/editor/EditorStates'
 import { LazyEditor } from '@/features/editor/LazyEditor'
 import { useConflictResolution } from '@/features/editor/useConflictResolution'
@@ -115,5 +115,5 @@ export default function DesignEditorPage() {
     )
   }
 
-  return <LazyEditor editorRef={editorRef} document={design.document} meta={meta} adapter={adapter} onTitleChange={setTitle} onSaveStateChange={setSaveState} onConflictResolve={resolveConflict} topBarStart={<EditorHomeLink to="/dashboard" />} />
+  return <LazyEditor editorRef={editorRef} document={design.document} meta={meta} adapter={adapter} onTitleChange={setTitle} onSaveStateChange={setSaveState} onConflictResolve={resolveConflict} topBarStart={<EditorBackLink to="/dashboard" />} />
 }

@@ -90,7 +90,8 @@ def test_account_security_defaults(prod):
 
 
 def test_health_checks_are_exempt_from_the_https_redirect(prod):
-    assert prod["SECURE_REDIRECT_EXEMPT"] == [r"^api/v1/health/$"]
+    # And the Here! API's calls on the private network (apps.here).
+    assert prod["SECURE_REDIRECT_EXEMPT"] == [r"^api/v1/health/$", r"^api/v1/here/(templates|designs)/"]
 
 
 def test_plain_http_trial_switches(prod):

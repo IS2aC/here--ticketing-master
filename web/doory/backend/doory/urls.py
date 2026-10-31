@@ -22,6 +22,7 @@ urlpatterns = [
     path("api/v1/", include("apps.presets.urls")),
     path("api/v1/", include("apps.apitokens.urls")),
     path("api/v1/ai/", include("apps.ai.urls")),
+    path("api/v1/", include("apps.here.urls")),
 ]
 
 if settings.DEBUG:

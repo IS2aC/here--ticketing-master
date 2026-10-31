@@ -29,6 +29,7 @@ import { DrawerHost, SidebarHost } from './chrome/ToolHost'
 import { ToolRail } from './chrome/ToolRail'
 import { ContextualToolbar } from './toolbar/ContextualToolbar'
 import { TopBar } from './TopBar'
+import { REPO_URL } from '@/lib/links'
 import { t } from './strings'
 import { Toaster } from './ui/Toaster'
 import { PageStrip } from './workspace/PageStrip'
@@ -185,6 +186,13 @@ export const EditorApp = forwardRef<EditorHandle, EditorAppProps>(function Edito
           </div>
           <ToolRail edge="bottom" />
           <DrawerHost />
+          {/* The attribution the Attribution Assurance License (LICENSE) asks every copy of Doory to display. */}
+          <p className={styles.credit}>
+            Doory by Siam, creator and maintainer of Doory ·{' '}
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+              github.com/shaongitbd/doory
+            </a>
+          </p>
         </ChromeProvider>
         <DialogHost onTitle={onTitle} />
         <BrandSync />

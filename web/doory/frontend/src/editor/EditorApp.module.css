@@ -71,6 +71,24 @@
   flex-direction: row;
 }
 
+.credit {
+  flex: none;
+  margin: 0;
+  padding: 2px 12px;
+  border-top: 1px solid var(--ed-border, var(--color-border));
+  background: var(--ed-surface);
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  color: var(--color-text-muted, inherit);
+}
+
+.credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .main {
   flex: 1;
   min-width: 0;

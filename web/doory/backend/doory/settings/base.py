@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "apps.apitokens",
     "apps.mcp",
     "apps.ai",
+    "apps.here",
 ]
 
 MIDDLEWARE = [
@@ -442,6 +443,13 @@ AI_ENV_PROVIDERS = [
 # ---- Element library (apps.elements) ----
 # Keep the brand logos (trademarks) the icon packs contain when `sync_element_packs` runs.
 DOORY_ELEMENTS_BRAND_LOGOS = env.bool("DOORY_ELEMENTS_BRAND_LOGOS", default=False)
+
+# ---- Here! (apps.here): the invitation cards of Here! are designed in this editor ----
+# Shared with the Here! API, which calls /api/v1/here/ with it; it also signs the editor's sign-in links.
+# Empty: off.
+HERE_SECRET = env("HERE_SECRET", default="")
+# Where the editor's « Retour à Here! » link goes when the sign-in link names no page.
+HERE_APP_URL = env("HERE_APP_URL", default="")
 
 # ---- Real-time co-editing (apps.collab) ----
 REALTIME_ENABLED = env.bool("REALTIME_ENABLED", default=True)

@@ -15,7 +15,8 @@ if SECRET_KEY.startswith("dev-insecure") or len(SECRET_KEY) < MIN_SECRET_KEY_LEN
 # SECURE_COOKIES / SECURE_SSL_REDIRECT may only be switched off to try Doory over plain HTTP locally.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
-SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/$"]  # container health checks speak plain HTTP
+# Container health checks, and the Here! API on the private network (apps.here), speak plain HTTP.
+SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/$", r"^api/v1/here/(templates|designs)/"]
 SESSION_COOKIE_SECURE = env.bool("SECURE_COOKIES", default=True)
 CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
