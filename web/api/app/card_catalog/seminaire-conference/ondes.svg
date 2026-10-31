@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <!-- Ornement provisoire : cercles concentriques en currentColor. -->
+  <g fill="none" stroke="currentColor" stroke-width="3">
+    <circle cx="600" cy="0" r="120" opacity=".8"/><circle cx="600" cy="0" r="210" opacity=".6"/>
+    <circle cx="600" cy="0" r="300" opacity=".45"/><circle cx="600" cy="0" r="390" opacity=".3"/>
+    <circle cx="600" cy="0" r="480" opacity=".18"/><circle cx="600" cy="0" r="570" opacity=".1"/>
+  </g>
+</svg>

@@ -3,18 +3,15 @@
 import copy
 import json
 from datetime import UTC, datetime
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
 
 from app.card_templates import CardDefinition, problems, resolve_values
+from app.catalog import CATALOG_DIR
 
-SAMPLE = (
-    Path(__file__).resolve().parents[3]
-    / "uiux/assets/card-templates/dot-wax/definition.json"
-)
+SAMPLE = CATALOG_DIR / "dot-wax" / "definition.json"
 
 
 @pytest.fixture
@@ -78,6 +75,10 @@ def test_sample_template_is_valid(raw: dict) -> None:
             "« date » : hors de la zone de sécurité",
         ),
         (lambda d: layer(d, "photo")["box"].update(x=80), "dépasse de la carte"),
+        (
+            lambda d: layer(d, "qr")["box"].update(x=77),
+            "« qr » : hors de la zone de sécurité",
+        ),
         (
             lambda d: layer(d, "fiances").update(size={"min": 90, "max": 60}),
             "taille minimale",

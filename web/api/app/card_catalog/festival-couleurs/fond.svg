@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" preserveAspectRatio="xMidYMid slice">
+  <!-- Fond provisoire : trame de points en currentColor, plus dense vers le bas. -->
+  <defs>
+    <pattern id="dots" width="36" height="36" patternUnits="userSpaceOnUse"><circle cx="18" cy="18" r="4" fill="currentColor"/></pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
+    <mask id="m"><rect width="1080" height="1350" fill="url(#fade)"/></mask>
+  </defs>
+  <rect width="1080" height="1350" fill="url(#dots)" opacity=".22" mask="url(#m)"/>
+</svg>

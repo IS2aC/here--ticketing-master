@@ -7,8 +7,8 @@ import type { CardDefinition, Layer, TextLayer } from "./definition";
 import { composeCard, displayValue, fillText, layerBox, type ComposeInput } from "./engine";
 import type { Measure } from "./fit";
 
-// Le modèle d'exemple est aussi celui que l'API valide (web/api/tests/test_card_definition.py).
-const SAMPLE = "../../uiux/assets/card-templates/dot-wax";
+// Modèle du catalogue, aussi validé par l'API (web/api/tests/test_card_definition.py).
+const SAMPLE = "../api/app/card_catalog/dot-wax";
 const definition = JSON.parse(readFileSync(join(SAMPLE, "definition.json"), "utf8")) as CardDefinition;
 const assets = {
   fond: { svg: readFileSync(join(SAMPLE, "fond.svg"), "utf8") },
@@ -114,6 +114,15 @@ describe("composeCard", () => {
   it("toutes les palettes du modèle d'exemple sont lisibles", () => {
     for (const palette of definition.theme.palettes) {
       expect(compose({ overrides: { palette: palette.id } }).warnings, palette.id).toEqual([]);
+    }
+  });
+
+  it("n'écrit jamais de propriété de style vide (Satori la refuse)", () => {
+    const noBorder = { ...definition, layers: definition.layers.map((l) => (l.type === "photo" ? { ...l, border: null } : l)) };
+    for (const card of [compose({ definition: noBorder, photo: "data:image/jpeg;base64,AA==" }), compose({ placeholders: true })]) {
+      for (const el of drawn(card)) {
+        expect(Object.values(el.props.style ?? {}), String(el.key)).not.toContain(undefined);
+      }
     }
   });
 

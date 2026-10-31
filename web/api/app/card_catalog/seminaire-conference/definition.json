@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "formats": ["whatsapp_4_5", "story_9_16", "square_1_1", "print_a5"],
+  "theme": {
+    "palettes": [
+      {"id": "marine-or", "label": "Marine et or", "colors": {"primary": "#FFFFFF", "secondary": "#1B2C52", "accent": "#E0B44C", "background": "#0E1A33", "text": "#D8E0F0"}},
+      {"id": "emeraude", "label": "Émeraude", "colors": {"primary": "#FFFFFF", "secondary": "#174236", "accent": "#8BD17C", "background": "#0D2A22", "text": "#D6EDE3"}},
+      {"id": "bordeaux", "label": "Bordeaux", "colors": {"primary": "#FFF4F6", "secondary": "#4A1A28", "accent": "#E8A33D", "background": "#2A0F18", "text": "#F1DCE1"}},
+      {"id": "clair", "label": "Clair", "colors": {"primary": "#0E1A33", "secondary": "#DCE3F2", "accent": "#1F56B0", "background": "#F6F7FB", "text": "#263247"}}
+    ],
+    "fonts": [
+      {"id": "sobre", "label": "Sobre", "heading": "Poppins", "body": "Inter"},
+      {"id": "classique", "label": "Classique", "heading": "Playfair Display", "body": "Inter"},
+      {"id": "moderne", "label": "Moderne", "heading": "Poppins", "body": "Poppins"}
+    ]
+  },
+  "fields": [
+    {"key": "theme", "label": "Thème du séminaire", "required": true, "max_length": 70, "example": "Leadership et économie verte"},
+    {"key": "sous_titre", "label": "Sous-titre", "max_length": 90, "example": "Des solutions durables pour des entreprises résilientes"},
+    {"key": "intervenant", "label": "Intervenant principal", "max_length": 40, "example": "Dr Ibrahim Koné"},
+    {"key": "fonction", "label": "Fonction de l'intervenant", "max_length": 60, "example": "Économiste, conférencier principal"},
+    {"key": "date", "label": "Date", "type": "date", "required": true, "example": "2026-11-12"},
+    {"key": "heure", "label": "Heure", "type": "time", "example": "08:30"},
+    {"key": "lieu", "label": "Lieu", "required": true, "max_length": 90, "example": "Auditorium du Plateau, Abidjan"}
+  ],
+  "field_mapping": {"theme": "title", "date": "date", "heure": "time", "lieu": "location_name"},
+  "layers": [
+    {"id": "ondes", "type": "image", "asset": "ondes", "box": {"x": 52, "y": 0, "w": 48, "h": 38.4}, "fit": "contain", "ornament": true, "tint": "accent", "opacity": 0.6},
+    {"id": "label", "type": "text", "text": "Séminaire", "box": {"x": 7, "y": 7, "w": 60, "h": 3.5}, "align": "left", "uppercase": true, "letter_spacing": 0.3, "weight": 600, "size": {"min": 16, "max": 22}, "max_lines": 1, "color": "accent"},
+    {"id": "theme", "type": "text", "text": "{theme}", "box": {"x": 7, "y": 11, "w": 86, "h": 17}, "font": "heading", "weight": 700, "align": "left", "valign": "top", "size": {"min": 48, "max": 84}, "max_lines": 3, "line_height": 1.08, "color": "primary"},
+    {"id": "sous-titre", "type": "text", "text": "{sous_titre}", "box": {"x": 7, "y": 29, "w": 80, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 25}, "max_lines": 2},
+    {"id": "photo", "type": "photo", "box": {"x": 7, "y": 39, "w": 30, "h": 24}, "mask": "circle", "border": "accent", "border_width": 5},
+    {"id": "intervenant", "type": "text", "text": "{intervenant}", "box": {"x": 41, "y": 44, "w": 52, "h": 5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 24, "max": 36}, "max_lines": 1, "color": "primary"},
+    {"id": "fonction", "type": "text", "text": "{fonction}", "box": {"x": 41, "y": 49.5, "w": 52, "h": 6}, "align": "left", "valign": "top", "size": {"min": 17, "max": 22}, "max_lines": 2},
+    {"id": "invite", "type": "text", "text": "Invitation nominative · {invite.nom}", "box": {"x": 7, "y": 66, "w": 86, "h": 3.5}, "align": "left", "weight": 600, "size": {"min": 16, "max": 22}, "max_lines": 1, "color": "accent"},
+    {"id": "date", "type": "text", "text": "{date}", "box": {"x": 7, "y": 71.5, "w": 62, "h": 4.5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 24, "max": 34}, "max_lines": 1, "color": "primary"},
+    {"id": "heure", "type": "text", "text": "Accueil à {heure}", "box": {"x": 7, "y": 76, "w": 62, "h": 3.5}, "align": "left", "weight": 500, "size": {"min": 20, "max": 26}, "max_lines": 1},
+    {"id": "lieu", "type": "text", "text": "{lieu}", "box": {"x": 7, "y": 80, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 24}, "max_lines": 2},
+    {"id": "qr", "type": "qr", "box": {"x": 72, "y": 70, "w": 22, "h": 23.5}}
+  ]
+}

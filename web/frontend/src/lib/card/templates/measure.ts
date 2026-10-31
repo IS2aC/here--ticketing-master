@@ -1,4 +1,4 @@
-import opentype from "opentype.js";
+import { parse } from "opentype.js";
 import type { Measure } from "./fit";
 
 // Mesure des textes avec les fichiers de polices de la carte (ceux que Satori dessine) :
@@ -7,7 +7,7 @@ import type { Measure } from "./fit";
 export type FontFile = { name: string; weight: number; style: "normal" | "italic"; data: ArrayBuffer };
 
 export function createMeasure(files: FontFile[]): Measure {
-  const parsed = files.map((file) => ({ ...file, font: opentype.parse(file.data) }));
+  const parsed = files.map((file) => ({ ...file, font: parse(file.data) }));
   const cache = new Map<string, (typeof parsed)[number]>();
 
   const pick = (family: string, weight: number, italic: boolean) => {

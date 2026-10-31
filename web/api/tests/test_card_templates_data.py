@@ -93,7 +93,7 @@ def test_template_catalog_by_event_type(client: TestClient) -> None:
         return dot, [r["code"] for r in found]
 
     dot, codes = run(work)
-    assert codes == ["test-dot-wax"]
+    assert "test-dot-wax" in codes and "test-anniv" not in codes
 
     async def orm():
         engine = create_async_engine(get_settings().database_url)

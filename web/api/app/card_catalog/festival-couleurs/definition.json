@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "formats": ["whatsapp_4_5", "story_9_16", "square_1_1", "print_a5"],
+  "theme": {
+    "palettes": [
+      {"id": "neon", "label": "Néon", "colors": {"primary": "#FFFFFF", "secondary": "#FFD23F", "accent": "#FF5CBE", "background": "#14101F", "text": "#EDE7F6"}},
+      {"id": "soleil", "label": "Soleil", "colors": {"primary": "#FFD23F", "secondary": "#FF7A2F", "accent": "#FF8A3D", "background": "#1B1206", "text": "#FFF1DC"}},
+      {"id": "ocean", "label": "Océan", "colors": {"primary": "#7FE3FF", "secondary": "#FFC857", "accent": "#FFC857", "background": "#0B1A2A", "text": "#E6F4FF"}},
+      {"id": "jour", "label": "Plein jour", "colors": {"primary": "#1C1530", "secondary": "#FFC857", "accent": "#C21F66", "background": "#FFF8EC", "text": "#1C1530"}}
+    ],
+    "fonts": [
+      {"id": "affiche", "label": "Affiche", "heading": "Poppins", "body": "Inter"},
+      {"id": "moderne", "label": "Moderne", "heading": "Poppins", "body": "Poppins"},
+      {"id": "classique", "label": "Classique", "heading": "Playfair Display", "body": "Poppins"}
+    ]
+  },
+  "fields": [
+    {"key": "nom", "label": "Nom de l'événement", "required": true, "max_length": 40, "example": "Abidjan Color Fest"},
+    {"key": "date", "label": "Date", "type": "date", "required": true, "example": "2026-12-19"},
+    {"key": "heure", "label": "Heure", "type": "time", "example": "16:00"},
+    {"key": "lieu", "label": "Lieu", "required": true, "max_length": 90, "example": "Parc des sports de Treichville"},
+    {"key": "affiche", "label": "À l'affiche", "type": "multiline", "max_length": 90, "example": "Concerts live, DJ sets et food trucks"}
+  ],
+  "field_mapping": {"nom": "title", "date": "date", "heure": "time", "lieu": "location_name"},
+  "layers": [
+    {"id": "fond", "type": "image", "asset": "fond", "box": {"x": 0, "y": 0, "w": 100, "h": 100}, "tint": "accent"},
+    {"id": "photo", "type": "photo", "box": {"x": 0, "y": 0, "w": 100, "h": 51}, "mask": "rect", "formats": {"square_1_1": {"box": {"x": 0, "y": 0, "w": 100, "h": 44}}}},
+    {"id": "bande", "type": "image", "asset": "eclats", "box": {"x": 0, "y": 51, "w": 100, "h": 1.2}, "fit": "cover", "ornament": true, "tint": "accent", "formats": {"square_1_1": {"box": {"x": 0, "y": 44, "w": 100, "h": 1.5}}}},
+    {"id": "invite", "type": "text", "text": "{invite.nom} · invitation", "box": {"x": 7, "y": 55, "w": 86, "h": 3.5}, "align": "left", "uppercase": true, "letter_spacing": 0.14, "weight": 600, "size": {"min": 16, "max": 22}, "max_lines": 1, "color": "accent", "formats": {"square_1_1": {"box": {"x": 7, "y": 49, "w": 86, "h": 4}}}},
+    {"id": "nom", "type": "text", "text": "{nom}", "box": {"x": 7, "y": 58.5, "w": 86, "h": 12.5}, "font": "heading", "weight": 800, "uppercase": true, "align": "left", "valign": "top", "size": {"min": 52, "max": 96}, "max_lines": 2, "line_height": 1.0, "color": "primary", "formats": {"square_1_1": {"box": {"x": 7, "y": 53, "w": 86, "h": 14}}}},
+    {"id": "date", "type": "text", "text": "{date}", "box": {"x": 7, "y": 72.5, "w": 62, "h": 4.5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 24, "max": 34}, "max_lines": 1, "color": "primary", "formats": {"square_1_1": {"box": {"x": 7, "y": 69, "w": 60, "h": 5}}}},
+    {"id": "heure", "type": "text", "text": "Dès {heure}", "box": {"x": 7, "y": 77, "w": 62, "h": 3.5}, "align": "left", "weight": 500, "size": {"min": 20, "max": 26}, "max_lines": 1, "formats": {"square_1_1": {"box": {"x": 7, "y": 74.5, "w": 60, "h": 4}}}},
+    {"id": "lieu", "type": "text", "text": "{lieu}", "box": {"x": 7, "y": 81, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 24}, "max_lines": 2, "formats": {"square_1_1": {"box": {"x": 7, "y": 79, "w": 60, "h": 8}}}},
+    {"id": "affiche", "type": "text", "text": "{affiche}", "box": {"x": 7, "y": 88, "w": 62, "h": 5.5}, "align": "left", "weight": 500, "size": {"min": 16, "max": 21}, "max_lines": 2, "color": "accent", "formats": {"square_1_1": {"box": {"x": 7, "y": 87.5, "w": 60, "h": 7}}}},
+    {"id": "qr", "type": "qr", "box": {"x": 72, "y": 70, "w": 22, "h": 23.5}, "formats": {"square_1_1": {"box": {"x": 70, "y": 68, "w": 24, "h": 27}}}}
+  ]
+}

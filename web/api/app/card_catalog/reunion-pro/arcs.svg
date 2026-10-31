@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Ornement provisoire : arcs concentriques en currentColor. -->
+  <g fill="none" stroke="currentColor" stroke-width="6">
+    <path d="M300 60A240 240 0 0 0 60 300" opacity=".9"/>
+    <path d="M300 120A180 180 0 0 0 120 300" opacity=".6"/>
+    <path d="M300 180A120 120 0 0 0 180 300" opacity=".35"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "formats": ["whatsapp_4_5", "story_9_16", "square_1_1", "print_a5"],
+  "theme": {
+    "palettes": [
+      {"id": "marine", "label": "Marine", "colors": {"primary": "#0F2A4A", "secondary": "#DCE6F2", "accent": "#1D5FA8", "background": "#F7F8FA", "text": "#1A2230"}},
+      {"id": "ardoise", "label": "Ardoise", "colors": {"primary": "#2E3A3F", "secondary": "#E4E1DA", "accent": "#A8401F", "background": "#F5F5F3", "text": "#22282B"}},
+      {"id": "foret", "label": "Forêt", "colors": {"primary": "#14532D", "secondary": "#D8EBDF", "accent": "#0F6B63", "background": "#F4F8F5", "text": "#1B2A20"}},
+      {"id": "nuit", "label": "Nuit", "colors": {"primary": "#FFFFFF", "secondary": "#1E2B40", "accent": "#7CC4FF", "background": "#0F1724", "text": "#E2E8F0"}}
+    ],
+    "fonts": [
+      {"id": "sobre", "label": "Sobre", "heading": "Poppins", "body": "Inter"},
+      {"id": "moderne", "label": "Moderne", "heading": "Poppins", "body": "Poppins"},
+      {"id": "classique", "label": "Classique", "heading": "Playfair Display", "body": "Inter"}
+    ]
+  },
+  "fields": [
+    {"key": "objet", "label": "Objet de la réunion", "required": true, "max_length": 60, "example": "Rencontre des partenaires 2027"},
+    {"key": "organisateur", "label": "Organisée par", "max_length": 50, "example": "L'équipe Afrique de l'Ouest"},
+    {"key": "date", "label": "Date", "type": "date", "required": true, "example": "2027-01-21"},
+    {"key": "heure", "label": "Heure", "type": "time", "example": "09:30"},
+    {"key": "lieu", "label": "Lieu", "required": true, "max_length": 90, "example": "Salle Ébène, Plateau, Abidjan"},
+    {"key": "ordre_du_jour", "label": "Ordre du jour", "type": "multiline", "max_length": 120, "example": "Bilan de l'année, projets 2027, échanges autour d'un déjeuner"}
+  ],
+  "field_mapping": {"objet": "title", "date": "date", "heure": "time", "lieu": "location_name"},
+  "layers": [
+    {"id": "bandeau", "type": "shape", "shape": "rect", "box": {"x": 0, "y": 0, "w": 100, "h": 7}, "fill": "accent"},
+    {"id": "arcs", "type": "image", "asset": "arcs", "box": {"x": 78, "y": 7, "w": 22, "h": 17.6}, "fit": "contain", "ornament": true, "tint": "accent", "opacity": 0.5},
+    {"id": "photo", "type": "photo", "box": {"x": 7, "y": 11, "w": 86, "h": 35}, "mask": "rect", "formats": {"square_1_1": {"hidden": true}}},
+    {"id": "label", "type": "text", "text": "Invitation", "box": {"x": 7, "y": 49, "w": 60, "h": 3.5}, "align": "left", "uppercase": true, "letter_spacing": 0.2, "weight": 600, "size": {"min": 16, "max": 22}, "max_lines": 1, "color": "accent", "formats": {"square_1_1": {"box": {"x": 7, "y": 13, "w": 60, "h": 4}}}},
+    {"id": "objet", "type": "text", "text": "{objet}", "box": {"x": 7, "y": 52.5, "w": 86, "h": 11}, "font": "heading", "weight": 700, "align": "left", "valign": "top", "size": {"min": 44, "max": 72}, "max_lines": 2, "line_height": 1.1, "color": "primary", "formats": {"square_1_1": {"box": {"x": 7, "y": 18, "w": 86, "h": 20}}}},
+    {"id": "invite", "type": "text", "text": "À l'attention de {invite.nom}", "box": {"x": 7, "y": 64, "w": 86, "h": 3.5}, "align": "left", "italic": true, "font": "heading", "size": {"min": 18, "max": 24}, "max_lines": 1, "formats": {"square_1_1": {"box": {"x": 7, "y": 40, "w": 86, "h": 5}}}},
+    {"id": "trait", "type": "shape", "shape": "line", "box": {"x": 7, "y": 68.5, "w": 86, "h": 0.4}, "stroke": "primary", "stroke_width": 2, "opacity": 0.2, "formats": {"square_1_1": {"box": {"x": 7, "y": 47, "w": 86, "h": 0.5}}}},
+    {"id": "date", "type": "text", "text": "{date}", "box": {"x": 7, "y": 71, "w": 62, "h": 4.5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 24, "max": 34}, "max_lines": 1, "color": "primary", "formats": {"square_1_1": {"box": {"x": 7, "y": 51, "w": 60, "h": 6}}}},
+    {"id": "heure", "type": "text", "text": "À {heure}", "box": {"x": 7, "y": 75.5, "w": 62, "h": 3.5}, "align": "left", "weight": 500, "size": {"min": 20, "max": 26}, "max_lines": 1, "formats": {"square_1_1": {"box": {"x": 7, "y": 57, "w": 60, "h": 4.5}}}},
+    {"id": "lieu", "type": "text", "text": "{lieu}", "box": {"x": 7, "y": 79.5, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 24}, "max_lines": 2, "formats": {"square_1_1": {"box": {"x": 7, "y": 62.5, "w": 60, "h": 8}}}},
+    {"id": "ordre", "type": "text", "text": "{ordre_du_jour}", "box": {"x": 7, "y": 86.5, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 15, "max": 19}, "max_lines": 3, "color": "accent", "formats": {"square_1_1": {"box": {"x": 7, "y": 72, "w": 60, "h": 10}}}},
+    {"id": "organisateur", "type": "text", "text": "Organisée par {organisateur}", "box": {"x": 7, "y": 93.2, "w": 62, "h": 3}, "align": "left", "weight": 500, "size": {"min": 14, "max": 17}, "max_lines": 1, "formats": {"square_1_1": {"box": {"x": 7, "y": 84, "w": 60, "h": 4}}}},
+    {"id": "qr", "type": "qr", "box": {"x": 72, "y": 70, "w": 22, "h": 23.5}, "formats": {"square_1_1": {"box": {"x": 70, "y": 50, "w": 24, "h": 32}}}}
+  ]
+}

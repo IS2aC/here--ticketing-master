@@ -1,0 +1,7 @@
+[
+  {"code": "dot-wax", "name": "Dot wax", "style": "wax_afro", "event_types": ["dot", "mariage"]},
+  {"code": "anniversaire-fete", "name": "Anniversaire en fête", "style": "luxe_gold", "event_types": ["anniversaire"]},
+  {"code": "festival-couleurs", "name": "Festival des couleurs", "style": "boho", "event_types": ["festival", "concert_prive"]},
+  {"code": "reunion-pro", "name": "Réunion", "style": "minimal", "event_types": ["reunion", "retrouvailles"]},
+  {"code": "seminaire-conference", "name": "Séminaire", "style": "minimal", "event_types": ["seminaire", "reunion"]}
+]

@@ -7,6 +7,7 @@ from pydantic import AfterValidator, BaseModel, EmailStr, Field, StringConstrain
 from app.guest_import import RowStatus
 from app.models import (
     CallOutcome,
+    CardStyle,
     ContactStatus,
     EventStatus,
     EventType,
@@ -834,3 +835,16 @@ class CardSettingsIn(BaseModel):
         | None
     ) = None
     palette: PaletteId | None = None
+
+
+# --- Modèles de cartes ------------------------------------------------------------------
+
+
+class CardTemplateOut(BaseModel):
+    id: uuid.UUID
+    code: str
+    name: str
+    style: CardStyle | None
+    event_types: list[EventType]  # vide : proposé pour tous les types
+    definition: dict  # voir app/card_templates.py
+    assets: list[str]  # clés des images (/v1/card-templates/{code}/assets/{clé})

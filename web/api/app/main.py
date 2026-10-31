@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.catalog import sync_catalog
 from app.config import get_settings
 from app.db import dispose_engine, get_session
 from app.platform import refresh_settings
@@ -22,6 +23,11 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         logging.getLogger("here.api").exception(
             "Réglages du portail admin non chargés."
         )
+    try:
+        async for db in get_session():
+            await sync_catalog(db)
+    except Exception:  # le catalogue sera enregistré au prochain démarrage
+        logging.getLogger("here.api").exception("Catalogue des cartes non enregistré.")
     yield
     await dispose_engine()
 

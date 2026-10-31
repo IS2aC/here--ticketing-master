@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" preserveAspectRatio="xMidYMid slice">
+  <!-- Fond provisoire : confettis en currentColor, teintés par la palette. -->
+  <g fill="currentColor">
+    <circle cx="70" cy="90" r="14" opacity=".35"/><circle cx="160" cy="210" r="8" opacity=".25"/>
+    <circle cx="1010" cy="120" r="16" opacity=".3"/><circle cx="930" cy="260" r="9" opacity=".25"/>
+    <circle cx="60" cy="560" r="10" opacity=".2"/><circle cx="1030" cy="600" r="12" opacity=".2"/>
+    <circle cx="110" cy="1260" r="15" opacity=".3"/><circle cx="980" cy="1280" r="11" opacity=".3"/>
+    <rect x="200" y="70" width="26" height="10" rx="5" transform="rotate(35 213 75)" opacity=".3"/>
+    <rect x="850" y="60" width="28" height="10" rx="5" transform="rotate(-25 864 65)" opacity=".35"/>
+    <rect x="40" y="380" width="26" height="10" rx="5" transform="rotate(60 53 385)" opacity=".25"/>
+    <rect x="1010" y="420" width="26" height="10" rx="5" transform="rotate(-50 1023 425)" opacity=".25"/>
+    <rect x="70" y="900" width="26" height="10" rx="5" transform="rotate(20 83 905)" opacity=".2"/>
+    <rect x="1000" y="980" width="26" height="10" rx="5" transform="rotate(-35 1013 985)" opacity=".2"/>
+    <rect x="300" y="1300" width="26" height="10" rx="5" transform="rotate(15 313 1305)" opacity=".3"/>
+    <rect x="760" y="1305" width="26" height="10" rx="5" transform="rotate(-15 773 1310)" opacity=".3"/>
+  </g>
+</svg>

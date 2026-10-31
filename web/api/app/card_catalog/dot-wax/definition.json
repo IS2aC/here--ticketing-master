@@ -17,8 +17,8 @@
   "fields": [
     {"key": "fiances", "label": "Noms des fiancés", "required": true, "max_length": 60, "example": "Aya & Koffi"},
     {"key": "familles", "label": "Noms des familles", "max_length": 80, "example": "Konan et Yao"},
-    {"key": "date", "label": "Date", "type": "date", "required": true},
-    {"key": "heure", "label": "Heure", "type": "time"},
+    {"key": "date", "label": "Date", "type": "date", "required": true, "example": "2026-12-12"},
+    {"key": "heure", "label": "Heure", "type": "time", "example": "15:00"},
     {"key": "lieu", "label": "Lieu (domicile familial)", "required": true, "max_length": 90, "example": "Domicile de la famille Konan, Cocody Angré"},
     {"key": "programme", "label": "Programme", "type": "multiline", "max_length": 140, "example": "Accueil des familles, présentation de la dot, repas"}
   ],

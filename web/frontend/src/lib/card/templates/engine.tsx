@@ -87,6 +87,11 @@ export function layerBox(layer: Layer, format: CardFormat, overrides: ThemeOverr
   return { ...box, x: clamp(moved.x, 100 - box.w), y: clamp(moved.y, 100 - box.h) };
 }
 
+/** Satori refuse une propriété de style qui vaut undefined : on l'omet. */
+function css(style: CSSProperties): CSSProperties {
+  return Object.fromEntries(Object.entries(style).filter(([, value]) => value !== undefined));
+}
+
 const JUSTIFY = { top: "flex-start", middle: "center", bottom: "flex-end" } as const;
 const ALIGN = { left: "flex-start", center: "center", right: "flex-end" } as const;
 
@@ -125,7 +130,7 @@ export function composeCard(input: ComposeInput): ComposedCard {
   for (const layer of definition.layers) {
     const box = layerBox(layer, format, overrides);
     if (!box) continue;
-    const at = px(box, layer.type === "image" || layer.type === "shape");
+    const at = px(box, layer.type === "image" || layer.type === "shape" || layer.type === "photo");
     const place: CSSProperties = { position: "absolute", left: at.left, top: at.top, width: at.width, height: at.height };
 
     if (layer.type === "image") {
@@ -157,23 +162,29 @@ export function composeCard(input: ComposeInput): ComposedCard {
         drawn.push(
           <div
             key={layer.id}
-            style={{
+            style={css({
               ...place,
               background: layer.fill ? color(layer.fill) : "transparent",
               border: stroke && strokeWidth ? `${strokeWidth}px solid ${stroke}` : undefined,
               borderRadius: layer.shape === "ellipse" ? "50%" : (layer.radius ?? 0) * scale,
               opacity: layer.opacity ?? 1,
-            }}
+            })}
           />,
         );
       }
     } else if (layer.type === "photo") {
+      if (layer.mask === "circle") {
+        // Un cercle quel que soit le format : le plus grand carré centré dans la zone.
+        const side = Math.min(at.width, at.height);
+        Object.assign(place, { left: at.left + (at.width - side) / 2, top: at.top + (at.height - side) / 2, width: side, height: side });
+        Object.assign(at, { width: side, height: side });
+      }
       const radius =
         layer.mask === "circle" ? "50%" : layer.mask === "arch" ? `${at.width / 2}px ${at.width / 2}px 0 0` : 0;
       const border = layer.border && layer.border_width ? `${layer.border_width * scale}px solid ${color(layer.border)}` : undefined;
       if (input.photo) {
         drawn.push(
-          <img key={layer.id} src={input.photo} width={at.width} height={at.height} alt="" style={{ ...place, objectFit: "cover", borderRadius: radius, border }} />,
+          <img key={layer.id} src={input.photo} width={at.width} height={at.height} alt="" style={css({ ...place, objectFit: "cover", borderRadius: radius, border })} />,
         );
       } else if (input.placeholders) {
         drawn.push(

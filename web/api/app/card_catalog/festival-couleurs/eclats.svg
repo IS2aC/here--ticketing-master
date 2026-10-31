@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 40">
+  <!-- Ornement provisoire : bande de couleurs sous la photo. -->
+  <rect width="270" height="40" fill="currentColor"/>
+  <rect x="270" width="270" height="40" fill="currentColor" opacity=".7"/>
+  <rect x="540" width="270" height="40" fill="currentColor" opacity=".45"/>
+  <rect x="810" width="270" height="40" fill="currentColor" opacity=".25"/>
+</svg>

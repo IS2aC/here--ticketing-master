@@ -277,10 +277,11 @@ class CardDefinition(Strict):
                         f"Calque « {layer.id} » : réglage pour un format non proposé ({fmt})."
                     )
 
-        # À l'impression, textes, photo et QR code restent à 5 mm de la coupe.
+        # À l'impression, textes et QR code restent à 5 mm de la coupe ; fonds, formes et photo peuvent
+        # aller jusqu'au bord (ils débordent alors dans le fond perdu).
         if CardFormat.print_a5 in self.formats:
             for layer in self.layers:
-                if isinstance(layer, ImageLayer | ShapeLayer):
+                if isinstance(layer, ImageLayer | ShapeLayer | PhotoLayer):
                     continue
                 print_box = layer.formats.get(CardFormat.print_a5)
                 box = print_box.box if print_box and print_box.box else layer.box

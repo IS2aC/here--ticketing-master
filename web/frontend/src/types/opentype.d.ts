@@ -6,6 +6,5 @@ declare module "opentype.js" {
     charToGlyph(char: string): Glyph;
     getKerningValue(left: Glyph, right: Glyph): number;
   };
-  const opentype: { parse(buffer: ArrayBuffer): Font };
-  export default opentype;
+  export function parse(buffer: ArrayBuffer): Font;
 }

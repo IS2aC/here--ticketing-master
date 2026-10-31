@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "formats": ["whatsapp_4_5", "story_9_16", "square_1_1", "print_a5"],
+  "theme": {
+    "palettes": [
+      {"id": "rose-or", "label": "Rose et or", "colors": {"primary": "#B0306A", "secondary": "#F7C6D9", "accent": "#8A6414", "background": "#FFF4F7", "text": "#3A1F2B"}},
+      {"id": "lavande", "label": "Lavande", "colors": {"primary": "#5B3C88", "secondary": "#D9CBF0", "accent": "#7A4E9E", "background": "#F7F3FC", "text": "#2B2140"}},
+      {"id": "corail", "label": "Corail", "colors": {"primary": "#B8402B", "secondary": "#FFD7C2", "accent": "#1F6F6A", "background": "#FFF6EE", "text": "#33201A"}},
+      {"id": "nuit-rose", "label": "Nuit rose", "colors": {"primary": "#F4B6CF", "secondary": "#3A2440", "accent": "#E3B95B", "background": "#1E1424", "text": "#FBEFF4"}}
+    ],
+    "fonts": [
+      {"id": "classique", "label": "Classique", "heading": "Playfair Display", "body": "Poppins"},
+      {"id": "moderne", "label": "Moderne", "heading": "Poppins", "body": "Poppins"},
+      {"id": "editoriale", "label": "Éditoriale", "heading": "Playfair Display", "body": "Inter"}
+    ]
+  },
+  "fields": [
+    {"key": "prenom", "label": "Prénom", "required": true, "max_length": 30, "example": "Grâce"},
+    {"key": "age", "label": "Âge", "max_length": 3, "example": "2"},
+    {"key": "date", "label": "Date", "type": "date", "required": true, "example": "2026-12-12"},
+    {"key": "heure", "label": "Heure", "type": "time", "example": "15:00"},
+    {"key": "lieu", "label": "Lieu", "required": true, "max_length": 90, "example": "Jardin de la Riviera, Cocody"},
+    {"key": "theme", "label": "Thème ou tenue", "max_length": 40, "example": "Rose et or"}
+  ],
+  "field_mapping": {"date": "date", "heure": "time", "lieu": "location_name", "theme": "dress_code"},
+  "layers": [
+    {"id": "fond", "type": "image", "asset": "fond", "box": {"x": 0, "y": 0, "w": 100, "h": 100}, "tint": "primary"},
+    {"id": "photo", "type": "photo", "box": {"x": 27, "y": 6, "w": 46, "h": 36.8}, "mask": "circle", "border": "primary", "border_width": 6},
+    {"id": "etincelles", "type": "image", "asset": "etincelles", "box": {"x": 17, "y": 4, "w": 66, "h": 40}, "fit": "contain", "ornament": true, "tint": "accent"},
+    {"id": "invite", "type": "text", "text": "{invite.nom}", "box": {"x": 8, "y": 45, "w": 84, "h": 4.5}, "font": "heading", "italic": true, "size": {"min": 24, "max": 36}, "max_lines": 1, "color": "text"},
+    {"id": "intro", "type": "text", "text": "Venez fêter l'anniversaire de", "box": {"x": 8, "y": 49.5, "w": 84, "h": 3.5}, "size": {"min": 20, "max": 26}, "max_lines": 1},
+    {"id": "prenom", "type": "text", "text": "{prenom}", "box": {"x": 6, "y": 53, "w": 88, "h": 11.5}, "font": "heading", "weight": 700, "size": {"min": 64, "max": 124}, "max_lines": 1, "color": "primary"},
+    {"id": "age", "type": "text", "text": "{age} ans", "box": {"x": 8, "y": 64.5, "w": 84, "h": 4}, "uppercase": true, "letter_spacing": 0.25, "weight": 600, "size": {"min": 20, "max": 28}, "max_lines": 1, "color": "accent"},
+    {"id": "date", "type": "text", "text": "{date}", "box": {"x": 7, "y": 72, "w": 62, "h": 5}, "font": "heading", "weight": 600, "align": "left", "size": {"min": 26, "max": 38}, "max_lines": 1, "color": "primary"},
+    {"id": "heure", "type": "text", "text": "À partir de {heure}", "box": {"x": 7, "y": 77, "w": 62, "h": 3.5}, "align": "left", "weight": 500, "size": {"min": 20, "max": 26}, "max_lines": 1},
+    {"id": "lieu", "type": "text", "text": "{lieu}", "box": {"x": 7, "y": 81, "w": 62, "h": 6.5}, "align": "left", "valign": "top", "size": {"min": 18, "max": 24}, "max_lines": 2},
+    {"id": "theme", "type": "text", "text": "Thème : {theme}", "box": {"x": 7, "y": 88, "w": 62, "h": 4.5}, "align": "left", "weight": 500, "size": {"min": 16, "max": 21}, "max_lines": 1, "color": "accent"},
+    {"id": "qr", "type": "qr", "box": {"x": 72, "y": 70, "w": 22, "h": 23.5}}
+  ]
+}

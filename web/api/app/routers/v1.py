@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.routers import (
     admin,
     auth,
+    card_templates,
     events,
     guests,
     invitations,
@@ -24,6 +25,7 @@ async def root() -> dict[str, str]:
 
 router.include_router(auth.router)
 router.include_router(events.router)
+router.include_router(card_templates.router)
 router.include_router(guests.router)
 router.include_router(invitations.router)
 router.include_router(scan.router)

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 500">
+  <!-- Ornement provisoire : étincelles autour de la photo. -->
+  <g fill="currentColor">
+    <path d="M80 70l9 27 27 9-27 9-9 27-9-27-27-9 27-9z"/>
+    <path d="M620 110l7 20 20 7-20 7-7 20-7-20-20-7 20-7z"/>
+    <path d="M40 330l6 17 17 6-17 6-6 17-6-17-17-6 17-6z"/>
+    <path d="M650 380l9 27 27 9-27 9-9 27-9-27-27-9 27-9z"/>
+    <circle cx="140" cy="200" r="5"/><circle cx="575" cy="250" r="6"/><circle cx="120" cy="450" r="4"/><circle cx="560" cy="45" r="4"/>
+  </g>
+</svg>
