@@ -39,8 +39,9 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
         - réglages (luminosité, contraste, couleurs, flou) et 6 ambiances, avec les filtres Konva ;
         - couleurs des photos proposées sous les champs couleur et dans le panneau QR.
       - **Reste, côté serveur, à décider** : détourage (rembg + BiRefNet) et agrandissement (Real-ESRGAN). Hébergement, mémoire et temps de calcul à valider dans une ADR.
-    - Étape C, « sortir de l'ordinaire » : cartes proposées par l'IA (C1), carte animée pour WhatsApp (C2), aide à la mise en page (C3).
+    - Étape C, « sortir de l'ordinaire » : cartes proposées par l'IA (C1), aide à la mise en page (C3) ; la carte animée pour WhatsApp (C2) est mise de côté (décision du 02/11).
       - **C1 (fait le 02/11)** : bouton « Propositions » dans l'éditeur. L'IA (`CARD_AI_*`, OpenRouter ou compatible OpenAI) rend 3 chartes en JSON validé, composées par le moteur dans les modèles ; sans fournisseur, 3 chartes par type d'événement. Les noms et les nombres inventés sont refusés ; date, lieu, invité et QR viennent de Here!. Reste : connecteur 1min.ai direct (clé et documentation à fournir), essai avec une vraie clé.
+      - **C3 (fait le 02/11)** : magnétisme au déplacement et au redimensionnement (bords et milieu de la page, marge de 44 px, autres éléments), guides affichés, Alt pour s'en passer ; section « Disposition » : aligner (sur la page pour un élément seul) et répartir à espaces égaux.
     - **Modèles (fait le 02/11)** : les 6 modèles sont au format 4:5 et prévoient la place du nom de l'invité, de sa table et du sceau QR (à un emplacement de Satori). Un test vérifie qu'aucun texte ne les recouvre. Vignettes refaites depuis le rendu réel.
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.
     - Synchroniser les retouches de « Mon propre modèle » (glisser le nom sur la page Carte) avec le document de l'éditeur.

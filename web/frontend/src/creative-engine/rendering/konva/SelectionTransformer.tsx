@@ -6,6 +6,7 @@ import type { Element } from "../../domain/elements/types.ts";
 import { useDocumentStore } from "../../editor/documentStore.ts";
 import { useEditorStore } from "../../editor/editorStore.ts";
 import { reflowText, transformEnded } from "./gestures.ts";
+import { beginSnapTransform, endSnap, snapAnchorPosition } from "./snapping.ts";
 
 const ACCENT = "#E10600";
 /** Taille minimale d'un élément pendant un redimensionnement, en px écran. */
@@ -84,8 +85,14 @@ export function SelectionTransformer() {
         const [only] = nodes;
         if (nodes.length === 1 && elements[0]?.type === "text" && only) reflowText(only as Konva.Group);
       }}
+      onTransformStart={beginSnapTransform}
       onTransformEnd={() => {
+        endSnap();
         transformEnded((transformerRef.current?.nodes() ?? []) as Konva.Group[]);
+      }}
+      anchorDragBoundFunc={(_old, next) => {
+        const transformer = transformerRef.current;
+        return transformer ? snapAnchorPosition(transformer, next) : next;
       }}
       boundBoxFunc={(oldBox, newBox) => {
         // Une ligne n'a pas de hauteur : seule sa longueur a un minimum.

@@ -8,6 +8,7 @@ import { AppearanceSection } from "./AppearanceSection.tsx";
 import { EffectsSection } from "./EffectsSection.tsx";
 import { GeometrySection } from "./GeometrySection.tsx";
 import { ImageSection } from "./ImageSection.tsx";
+import { LayoutSection } from "./LayoutSection.tsx";
 import { elementLabel, elementTypeLabel } from "./labels.ts";
 import { orderAvailability, useSelectedElements } from "./selection.ts";
 import { ShapeSection } from "./ShapeSection.tsx";
@@ -153,6 +154,7 @@ export function SelectionSection() {
       </section>
 
       {single && <GeometrySection element={single} />}
+      <LayoutSection elements={elements} />
       {texts.length === elements.length && <TextSection texts={texts} />}
       {shapes.length === elements.length && <ShapeSection shapes={shapes} />}
       {images.length === elements.length && <ImageSection images={images} />}

@@ -148,6 +148,15 @@
   margin-top: var(--space-2);
 }
 
+/* Disposition : 6 alignements sur une rangée qui partage la largeur du panneau. */
+.align {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  justify-items: center;
+}
+
 .count {
   margin-left: var(--space-1);
   color: var(--color-text);

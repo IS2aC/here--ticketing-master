@@ -16,6 +16,7 @@ import { tintOf, useTintedUrl } from "../svgImages.ts";
 import { placementOf } from "./geometry.ts";
 import { dragEnded } from "./gestures.ts";
 import { layoutImage } from "./imageFit.ts";
+import { beginSnapDrag, endSnap, snapDragPosition } from "./snapping.ts";
 import { shadowConfig, shapeConfig, textConfig } from "./mappers.ts";
 
 // Un élément du document → un Group Konva identifié par l'id métier.
@@ -129,9 +130,11 @@ function ElementNodeView({ id }: { id: Id }) {
   // Un élément que Maj + clic vient de retirer de la sélection ne doit pas être glissé.
   const onDragStart = () => {
     if (!useEditorStore.getState().selectedIds.includes(element.id)) groupRef.current?.stopDrag();
+    else beginSnapDrag(element.id);
   };
 
   const onDragEnd = () => {
+    endSnap();
     if (groupRef.current) dragEnded(element.id, groupRef.current);
   };
 
@@ -152,6 +155,9 @@ function ElementNodeView({ id }: { id: Id }) {
       draggable={!element.locked && !isEditing && !isPanKeyHeld}
       onPointerDown={onPointerDown}
       onDragStart={onDragStart}
+      dragBoundFunc={function (this: Konva.Node, pos) {
+        return snapDragPosition(this, pos);
+      }}
       onDragEnd={onDragEnd}
       onDblClick={onDoubleClick}
       onDblTap={onDoubleClick}

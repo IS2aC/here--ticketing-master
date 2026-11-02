@@ -10,12 +10,14 @@ import { wheelZoomFactor, zoomAt, type Size } from "../../editor/viewport.ts";
 import { isPanGesture, startBackgroundGesture } from "./backgroundGesture.ts";
 import { ElementNode } from "./ElementNode.tsx";
 import { SelectionTransformer } from "./SelectionTransformer.tsx";
+import { SnapGuides } from "./SnapGuides.tsx";
+import { trackSnapModifier } from "./snapping.ts";
 
 // Zone de travail Konva. Le Stage porte la vue (échelle = zoom, position = décalage) : tout ce qu'il contient
 // est exprimé en px du document. Couches :
 //   - « page » : ombre et fond de la page (interface, hors document, non cliquable sauf pour désélectionner) ;
 //   - « elements » : les éléments, découpés aux limites de la page ;
-//   - « selection » : le cadre de transformation et le lasso, au-dessus de tout et non découpés.
+//   - « selection » : guides d'accroche, cadre de transformation et lasso, au-dessus de tout et non découpés.
 
 const PAGE_SHADOW = { color: "#0B0B0B", blur: 24, opacity: 0.12, offsetY: 6 };
 const LASSO = { fill: "rgba(225, 6, 0, 0.08)", stroke: "#E10600" };
@@ -36,6 +38,9 @@ export function CanvasStage({ size }: { size: Size }) {
     },
     [],
   );
+
+  // Alt maintenue pendant un geste : pas de magnétisme.
+  useEffect(() => trackSnapModifier(), []);
 
   // Espace maintenue : curseur « main » au survol de la zone de travail.
   useEffect(() => {
@@ -104,6 +109,7 @@ export function CanvasStage({ size }: { size: Size }) {
         ))}
       </Layer>
       <Layer name="selection">
+        <SnapGuides />
         <SelectionTransformer />
         <Rect
           ref={lassoRef}

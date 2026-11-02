@@ -19,6 +19,7 @@ import type { CreativeDocument, ImageAsset } from "../domain/document/types.ts";
 import type { Element, ShapeElement, TextElement, TextStyle } from "../domain/elements/types.ts";
 import { createId, type Id } from "../domain/ids.ts";
 import { LIMITS } from "../domain/constraints.ts";
+import { alignMoves, distributeMoves, type Alignment } from "./layoutAids.ts";
 import { currentDocument, useDocumentStore, type DocumentCommand } from "./documentStore.ts";
 import { useEditorStore } from "./editorStore.ts";
 import { measuredTextHeight, prepareFont } from "./textMeasure.ts";
@@ -126,6 +127,26 @@ export function selectAll(): void {
 
 export function moveElementTo(id: Id, x: number, y: number): CommandError | null {
   return run("Déplacer", [(doc) => moveElement(doc, { id, x, y })]);
+}
+
+/** Éléments sélectionnés qui peuvent bouger (les verrouillés restent en place). */
+function movableSelection() {
+  const ids = new Set(selection());
+  return currentDocument().elements.filter((e) => ids.has(e.id) && !e.locked);
+}
+
+/** Aligne la sélection : sur la page pour un élément seul, entre eux sinon (une action). */
+export function alignSelection(alignment: Alignment): CommandError | null {
+  const moves = alignMoves(movableSelection(), alignment, currentDocument().page);
+  if (moves.length === 0) return null;
+  return run("Aligner", moves.map(({ id, x, y }) => (doc: CreativeDocument) => moveElement(doc, { id, x, y })));
+}
+
+/** Répartit la sélection (3 éléments au moins) à espaces égaux (une action). */
+export function distributeSelection(axis: "horizontal" | "vertical"): CommandError | null {
+  const moves = distributeMoves(movableSelection(), axis);
+  if (moves.length === 0) return null;
+  return run("Répartir", moves.map(({ id, x, y }) => (doc: CreativeDocument) => moveElement(doc, { id, x, y })));
 }
 
 /** Fin d'un glisser de plusieurs éléments : une seule action. */

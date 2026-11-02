@@ -147,6 +147,60 @@ const PATHS = {
     </>
   ),
   check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
+  alignLeft: (
+    <>
+      <path d="M4 4v16" />
+      <rect x="7" y="6" width="11" height="4" rx="1" />
+      <rect x="7" y="14" width="7" height="4" rx="1" />
+    </>
+  ),
+  alignCenter: (
+    <>
+      <path d="M12 4v16" />
+      <rect x="6" y="6" width="12" height="4" rx="1" />
+      <rect x="8" y="14" width="8" height="4" rx="1" />
+    </>
+  ),
+  alignRight: (
+    <>
+      <path d="M20 4v16" />
+      <rect x="6" y="6" width="11" height="4" rx="1" />
+      <rect x="10" y="14" width="7" height="4" rx="1" />
+    </>
+  ),
+  alignTop: (
+    <>
+      <path d="M4 4h16" />
+      <rect x="6" y="7" width="4" height="11" rx="1" />
+      <rect x="14" y="7" width="4" height="7" rx="1" />
+    </>
+  ),
+  alignMiddle: (
+    <>
+      <path d="M4 12h16" />
+      <rect x="6" y="6" width="4" height="12" rx="1" />
+      <rect x="14" y="8" width="4" height="8" rx="1" />
+    </>
+  ),
+  alignBottom: (
+    <>
+      <path d="M4 20h16" />
+      <rect x="6" y="6" width="4" height="11" rx="1" />
+      <rect x="14" y="10" width="4" height="7" rx="1" />
+    </>
+  ),
+  distributeHorizontal: (
+    <>
+      <path d="M4 4v16M20 4v16" />
+      <rect x="9.5" y="7" width="5" height="10" rx="1" />
+    </>
+  ),
+  distributeVertical: (
+    <>
+      <path d="M4 4h16M4 20h16" />
+      <rect x="7" y="9.5" width="10" height="5" rx="1" />
+    </>
+  ),
   guest: (
     <>
       <circle cx="12" cy="8" r="3.5" />
