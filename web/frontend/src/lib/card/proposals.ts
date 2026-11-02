@@ -71,6 +71,8 @@ export function cardFacts(event: EventOut): CardFacts {
     dateLine: `${formatDate(event.starts_at)} à ${hour(event.starts_at)}`,
     placeLines: [event.location_name, event.location_address].map((l) => l?.trim() ?? "").filter(Boolean).slice(0, 2),
     dressCode: event.dress_code?.trim() || null,
+    theme: event.theme?.trim() || null,
+    colors: event.colors ?? [],
     rsvpLine: deadline ? `Merci de confirmer votre présence avant le ${deadline}` : null,
     description: event.description?.trim() || null,
   };
@@ -112,6 +114,7 @@ Règles :
 - guestLabel : ce qui précède le nom de l'invité (${TEXT_LIMITS.guestLabel} caractères au plus), par exemple « Invitation personnelle pour ».
 - closing : une phrase de fin (${TEXT_LIMITS.closing} caractères au plus), sans date.
 - tagline : une ligne facultative (chaîne vide sinon), tirée de la description sans rien ajouter.
+- Si l'événement a un thème ou un code couleur, la charte « classique » les suit fidèlement (palette tirée du code couleur) ; les deux autres peuvent s'en écarter un peu.
 - palette : couleurs #RRGGBB. title et text doivent être très lisibles sur background ; surface est un fond secondaire proche de background ; accent sert aux surtitres, filets et pastilles.
 - ornamentTint : une couleur pour recolorer les ornements (feuillages, nuages, motifs), ou null pour garder leurs couleurs d'origine (conseillé pour les ornements multicolores : confettis, ballons, wax).
 - Adapte le ton au type d'événement : sobre et respectueux pour des funérailles, chaleureux pour une famille, festif pour une soirée.
@@ -125,6 +128,8 @@ function userPrompt(facts: CardFacts, photoColors: readonly string[]): string {
     date: facts.dateLine,
     lieu: facts.placeLines.join(", ") || null,
     tenue: facts.dressCode,
+    theme: facts.theme,
+    code_couleur: facts.colors.length > 0 ? facts.colors : null,
     description: facts.description,
     couleurs_de_la_photo: photoColors.length > 0 ? photoColors : null,
   });

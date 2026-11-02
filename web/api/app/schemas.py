@@ -97,6 +97,30 @@ Text300 = Annotated[_text(300) | None, AfterValidator(_blank_to_none)]
 Text2000 = Annotated[_text(2000) | None, AfterValidator(_blank_to_none)]
 
 
+# Dress code par défaut : affiché sur la carte quand l'organisateur n'en précise pas.
+DEFAULT_DRESS_CODE = "Dress code Libre"
+DressCode = Annotated[
+    _text(100) | None, AfterValidator(lambda v: v or DEFAULT_DRESS_CODE)
+]
+
+
+def _colors(values: list[str]) -> list[str]:
+    seen: list[str] = []
+    for value in values:
+        color = value.upper()
+        if color not in seen:
+            seen.append(color)
+    return seen
+
+
+# Code couleur de l'événement : 3 couleurs au plus, #RRGGBB.
+Colors = Annotated[
+    list[Annotated[str, StringConstraints(pattern=r"^#[0-9A-Fa-f]{6}$")]],
+    Field(max_length=3),
+    AfterValidator(_colors),
+]
+
+
 def _unique_categories(names: list[str]) -> list[str]:
     seen: dict[str, str] = {}
     for name in names:
@@ -124,7 +148,9 @@ class EventFields(BaseModel):
     location_name: Text200 = None
     location_address: Text300 = None
     expected_guests: int | None = Field(default=None, ge=0, le=100_000)
-    dress_code: Text100 = None
+    dress_code: DressCode = DEFAULT_DRESS_CODE  # vide ou null : « Dress code Libre »
+    theme: Text100 = None
+    colors: Colors = []
     # Date limite de réponse des invités ; vide : jusqu'au début de l'événement.
     rsvp_deadline: AwareDatetime | None = None
 
@@ -183,7 +209,9 @@ class EventOut(BaseModel):
     location_name: str | None
     location_address: str | None
     expected_guests: int | None
-    dress_code: str | None
+    dress_code: str
+    theme: str | None
+    colors: list[str]
     description: str | None
     rsvp_deadline: datetime | None
     track_entries: bool

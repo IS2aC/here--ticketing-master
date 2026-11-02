@@ -23,6 +23,8 @@ const FIELD_MESSAGES: Record<string, [string, string]> = {
   location_address: ["location_address", "L'adresse est trop longue (300 caractères maximum)."],
   expected_guests: ["expected_guests", "Indiquez un nombre d'invités entre 0 et 100 000."],
   dress_code: ["dress_code", "Le dress code est trop long (100 caractères maximum)."],
+  theme: ["theme", "Le thème est trop long (100 caractères maximum)."],
+  colors: ["colors", "Choisissez 3 couleurs au plus."],
   rsvp_deadline: ["rsvp_deadline", "La date limite de réponse doit être avant le début de l'événement."],
   description: ["description", "La description est trop longue (2 000 caractères maximum)."],
   categories: ["categories", "Gardez entre 1 et 10 catégories, de 40 caractères maximum."],
@@ -52,6 +54,8 @@ function payload(formData: FormData) {
     location_address: text(formData, "location_address"),
     expected_guests: number(text(formData, "expected_guests")),
     dress_code: text(formData, "dress_code"),
+    theme: text(formData, "theme"),
+    colors: formData.getAll("colors").map(String).filter(Boolean),
     // Date limite : les réponses ferment à la fin de ce jour (heure d'Abidjan).
     rsvp_deadline: deadline ? `${deadline}T23:59:00${EVENT_UTC_OFFSET}` : null,
     description: text(formData, "description"),

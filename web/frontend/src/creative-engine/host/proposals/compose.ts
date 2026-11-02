@@ -182,7 +182,8 @@ export function composeCard(
   const { palette, fonts, texts } = charter;
   const roles = ROLES[charter.composition];
   const placeText = facts.placeLines.join("\n");
-  const dress = facts.dressCode ? `Tenue : ${facts.dressCode}` : "";
+  // « Dress code Libre » se lit tel quel ; un dress code précis est annoncé (« Tenue : blanc et or »).
+  const dress = !facts.dressCode ? "" : /^dress code/i.test(facts.dressCode) ? facts.dressCode : `Tenue : ${facts.dressCode}`;
   const closingFamily = SCRIPTS.has(fonts.title) || fonts.title === "Bebas Neue" ? fonts.text : fonts.title;
   const pillInk = readableColor(palette.background as HexColor, palette.accent as HexColor);
 

@@ -14,6 +14,8 @@ const FACTS: CardFacts = {
   dateLine: "Samedi 20 mars 2027 à 15 h",
   placeLines: ["Église Saint-Paul du Plateau", "Abidjan"],
   dressCode: "blanc et or",
+  theme: "Nuit à Marrakech",
+  colors: ["#C9A24A", "#0B0B0B"],
   rsvpLine: "Merci de confirmer votre présence avant le 1er mars",
   description: "Cérémonie religieuse puis réception à la Maison des Jardins.",
 };
@@ -58,6 +60,16 @@ describe("chartes sans IA", () => {
       expect(proposalsSchema.safeParse({ proposals: charters }).success, type).toBe(true);
       for (const charter of charters) expect(charterSchema.safeParse(charter).success).toBe(true);
     }
+  });
+});
+
+describe("code couleur de l'événement", () => {
+  it("est suivi par la direction classique", () => {
+    const [classique] = fallbackCharters(FACTS);
+    expect(classique?.palette.accent).toBe("#C9A24A");
+    expect(classique?.ornamentTint).toBe("#C9A24A");
+    const [sansCouleurs] = fallbackCharters({ ...FACTS, colors: [] });
+    expect(sansCouleurs?.name).not.toBe("Vos couleurs");
   });
 });
 

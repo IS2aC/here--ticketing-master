@@ -15,7 +15,9 @@ export type EventOut = {
   location_name: string | null;
   location_address: string | null;
   expected_guests: number | null;
-  dress_code: string | null;
+  dress_code: string; // « Dress code Libre » si l'organisateur n'en précise pas
+  theme: string | null;
+  colors: string[]; // code couleur, 3 au plus (#RRGGBB)
   description: string | null;
   categories: { id: string; name: string; guests: number }[];
   stats: { arrived: number; guests: number; confirmed: number; declined: number; pending: number };

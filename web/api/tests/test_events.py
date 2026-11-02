@@ -52,6 +52,53 @@ def test_default_categories(client: TestClient, organizer: dict[str, str]) -> No
     assert autre.status_code == 201, autre.text
 
 
+def test_theme_colors_dress_code(client: TestClient, organizer: dict[str, str]) -> None:
+    body = {"title": "Brunch", "type": "brunch", "starts_at": IN_A_MONTH.isoformat()}
+    event = client.post("/v1/events", json=body, headers=organizer).json()
+    # Sans dress code : « Dress code Libre » ; ni thème ni couleurs.
+    assert (event["dress_code"], event["theme"], event["colors"]) == (
+        "Dress code Libre",
+        None,
+        [],
+    )
+
+    themed = {
+        **body,
+        "theme": " Nuit à Marrakech ",
+        "colors": ["#c9a24a", "#0B0B0B", "#C9A24A"],
+        "dress_code": "",
+    }
+    event = client.post("/v1/events", json=themed, headers=organizer).json()
+    assert event["theme"] == "Nuit à Marrakech"
+    assert event["colors"] == ["#C9A24A", "#0B0B0B"]  # majuscules, sans doublon
+    assert event["dress_code"] == "Dress code Libre"
+
+    path = f"/v1/events/{event['id']}"
+    changed = client.patch(
+        path, json={"dress_code": "Blanc et or", "colors": []}, headers=organizer
+    ).json()
+    assert (changed["dress_code"], changed["colors"], changed["theme"]) == (
+        "Blanc et or",
+        [],
+        "Nuit à Marrakech",
+    )
+    cleared = client.patch(
+        path, json={"dress_code": None, "theme": None}, headers=organizer
+    ).json()
+    assert (cleared["dress_code"], cleared["theme"]) == ("Dress code Libre", None)
+
+    too_many = {**body, "colors": ["#111111", "#222222", "#333333", "#444444"]}
+    assert (
+        client.post("/v1/events", json=too_many, headers=organizer).status_code == 422
+    )
+    assert (
+        client.post(
+            "/v1/events", json={**body, "colors": ["rouge"]}, headers=organizer
+        ).status_code
+        == 422
+    )
+
+
 def test_validation(client: TestClient, organizer: dict[str, str]) -> None:
     past = (datetime.now(UTC) - timedelta(days=1)).isoformat()
     assert (
@@ -127,7 +174,7 @@ def test_update(client: TestClient, organizer: dict[str, str]) -> None:
     assert updated.status_code == 200, updated.text
     body = updated.json()
     assert body["title"] == "Mariage civil"
-    assert body["dress_code"] is None
+    assert body["dress_code"] == "Dress code Libre"  # effacé : valeur par défaut
     assert body["location_name"] == MARIAGE["location_name"]  # inchangé
     names = {c["name"]: c["id"] for c in body["categories"]}
     assert names == {

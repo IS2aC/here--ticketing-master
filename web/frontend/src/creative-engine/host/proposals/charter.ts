@@ -67,6 +67,9 @@ export interface CardFacts {
   /** Nom du lieu, puis adresse : une ou deux lignes ; vide si le lieu n'est pas connu. */
   readonly placeLines: readonly string[];
   readonly dressCode: string | null;
+  /** Thème et code couleur saisis à la création de l'événement. */
+  readonly theme: string | null;
+  readonly colors: readonly string[];
   /** « Merci de confirmer votre présence avant le 1er mars », si une date limite existe. */
   readonly rsvpLine: string | null;
   readonly description: string | null;
@@ -85,7 +88,7 @@ const normalize = (text: string) =>
  */
 export function isGrounded(text: string, facts: CardFacts): boolean {
   const source = normalize(
-    [facts.title, facts.dateLine, ...facts.placeLines, facts.dressCode, facts.rsvpLine, facts.description].join(" "),
+    [facts.title, facts.dateLine, ...facts.placeLines, facts.dressCode, facts.theme, facts.rsvpLine, facts.description].join(" "),
   );
   const words = new Set(source.split(/[^\p{L}\p{N}]+/u).filter(Boolean));
   const numbers = new Set(source.match(/\d+/g) ?? []);

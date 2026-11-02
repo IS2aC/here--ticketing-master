@@ -29,6 +29,8 @@ async function EditView({ params }: { params: Promise<{ id: string }> }) {
     location_address: event.location_address ?? "",
     expected_guests: event.expected_guests?.toString() ?? "",
     dress_code: event.dress_code ?? "",
+    theme: event.theme ?? "",
+    colors: event.colors ?? [],
     description: event.description ?? "",
     categories: event.categories.map((c) => c.name),
   };

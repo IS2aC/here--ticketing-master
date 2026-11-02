@@ -134,7 +134,20 @@ async function EventView({
                 data
               />
               <Info icon="etiquette" label="Dress code" wide value={event.dress_code} />
+              <Info icon="favori" label="Thème" wide value={event.theme} />
             </dl>
+            {event.colors.length ? (
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-text-muted">Code couleur</span>
+                <ul className="flex gap-1.5">
+                  {event.colors.map((color) => (
+                    <li key={color} title={color} className="size-6 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)]" style={{ background: color }}>
+                      <span className="sr-only">{color}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             {event.description ? <p className="text-[14px] whitespace-pre-line text-text-muted">{event.description}</p> : null}
             <div className="grid gap-2 border-t border-border pt-4">
               <h3 className="text-[13px] font-medium text-text-muted">Catégories d&apos;invités</h3>

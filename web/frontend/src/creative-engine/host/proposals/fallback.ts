@@ -149,11 +149,20 @@ export function defaultTexts(facts: CardFacts): Charter["texts"] {
 export function fallbackCharters(facts: CardFacts): Charter[] {
   const plan = PLANS[facts.type] ?? (PLANS.autre as Plan);
   const texts = defaultTexts(facts);
-  return plan.map(([composition, look, name], index) => ({
+  const charters: Charter[] = plan.map(([composition, look, name], index) => ({
     ...structuredClone(LOOKS[look]),
     direction: DIRECTIONS[index] ?? "classique",
     name,
     composition,
     texts,
   }));
+  // Code couleur de l'organisateur : la direction classique le suit (accent et ornements, puis titre).
+  const [first] = charters;
+  const [accent, title] = facts.colors;
+  if (first && accent) {
+    first.palette = { ...first.palette, accent, ...(title ? { title } : {}) };
+    first.ornamentTint = accent;
+    first.name = "Vos couleurs";
+  }
+  return charters;
 }

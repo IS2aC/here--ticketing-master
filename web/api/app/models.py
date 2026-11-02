@@ -5,7 +5,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any, ClassVar
 
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, Numeric, String, func
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, Numeric, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, INET, JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -113,7 +113,13 @@ class Event(Base):
     latitude: Mapped[float | None] = mapped_column(Numeric(9, 6, asdecimal=False))
     longitude: Mapped[float | None] = mapped_column(Numeric(9, 6, asdecimal=False))
     expected_guests: Mapped[int | None]
-    dress_code: Mapped[str | None]
+    dress_code: Mapped[str] = mapped_column(server_default="Dress code Libre")
+    theme: Mapped[
+        str | None
+    ]  # thème de l'événement (« Nuit à Marrakech »), repris par la carte
+    colors: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), server_default="{}"
+    )  # code couleur, 3 au plus
     rsvp_deadline: Mapped[
         datetime | None
     ]  # date limite de réponse ; None : jusqu'au début

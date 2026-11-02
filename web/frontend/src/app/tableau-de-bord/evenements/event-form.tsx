@@ -17,6 +17,8 @@ export type EventFormValues = {
   location_address: string;
   expected_guests: string;
   dress_code: string;
+  theme: string;
+  colors: string[]; // #RRGGBB, 3 au plus
   rsvp_deadline: string; // AAAA-MM-JJ, vide : jusqu'au début de l'événement
   description: string;
   categories: string[];
@@ -32,6 +34,8 @@ export const EMPTY_EVENT: EventFormValues = {
   location_address: "",
   expected_guests: "",
   dress_code: "",
+  theme: "",
+  colors: [],
   rsvp_deadline: "",
   description: "",
   categories: ["VIP", "Normal"],
@@ -99,11 +103,28 @@ export function EventForm({ action, initial, submitLabel, pendingLabel }: Props)
         <Field label="Adresse" name="location_address" maxLength={300} placeholder="Cocody, Abidjan" defaultValue={initial.location_address} error={e.location_address} />
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Invités prévus" name="expected_guests" type="number" min={0} max={100000} inputMode="numeric" defaultValue={initial.expected_guests} error={e.expected_guests} />
         <Field label="Durée (heures)" name="duration" type="number" min={0.5} max={168} step={0.5} inputMode="decimal" defaultValue={initial.duration} error={e.duration} />
-        <Field label="Dress code (facultatif)" name="dress_code" maxLength={100} placeholder="Tenue traditionnelle" defaultValue={initial.dress_code} error={e.dress_code} />
       </div>
+
+      <fieldset className="grid gap-4 rounded-md p-4 shadow-[inset_0_0_0_1px_var(--color-border)]">
+        <legend className="px-1 font-heading text-[15px] font-semibold">Ambiance de la carte</legend>
+        <p className="-mt-2 text-[13px] text-text-muted">Repris pour composer et générer votre carte d&apos;invitation.</p>
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Thème (facultatif)" name="theme" maxLength={100} placeholder="Nuit à Marrakech, chic et doré…" defaultValue={initial.theme} error={e.theme} hint="L'ambiance que la carte doit évoquer." />
+          <Field
+            label="Dress code"
+            name="dress_code"
+            maxLength={100}
+            placeholder="Dress code Libre"
+            defaultValue={initial.dress_code === "Dress code Libre" ? "" : initial.dress_code}
+            error={e.dress_code}
+            hint="Vide : « Dress code Libre »."
+          />
+        </div>
+        <Colors initial={initial.colors} error={e.colors} />
+      </fieldset>
 
       <div className="grid gap-5 sm:grid-cols-3">
         <Field
@@ -150,6 +171,76 @@ export function EventForm({ action, initial, submitLabel, pendingLabel }: Props)
         </Button>
       </div>
     </form>
+  );
+}
+
+const SUGGESTED_COLORS = ["#C9A24A", "#0B0B0B", "#FFFFFF", "#B76E5C", "#1F3A5F", "#6B8F71"];
+
+/** Code couleur : 1 à 3 couleurs, choisies au sélecteur ou parmi des suggestions. */
+function Colors({ initial, error }: { initial: string[]; error?: string }) {
+  const [colors, setColors] = useState(initial);
+  const [draft, setDraft] = useState("#C9A24A");
+  const add = (color: string) => {
+    const value = color.toUpperCase();
+    if (colors.length < 3 && !colors.includes(value)) setColors([...colors, value]);
+  };
+
+  return (
+    <div className="grid gap-2">
+      <p className="text-[13px] font-medium tracking-[0.02em] text-text-muted">Code couleur (facultatif, 3 couleurs au plus)</p>
+      <div className="flex flex-wrap items-center gap-2">
+        {colors.map((color) => (
+          <span key={color} className="inline-flex h-10 items-center gap-2 rounded-full bg-surface pr-1.5 pl-1.5 text-[13px] font-medium">
+            <input type="hidden" name="colors" value={color} />
+            <span className="size-7 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)]" style={{ background: color }} />
+            <span className="font-data">{color}</span>
+            <button
+              type="button"
+              onClick={() => setColors(colors.filter((c) => c !== color))}
+              aria-label={`Retirer la couleur ${color}`}
+              className="flex size-7 items-center justify-center rounded-full text-text-muted hover:bg-background hover:text-text"
+            >
+              <Icon name="decline" width={16} height={16} />
+            </button>
+          </span>
+        ))}
+        {colors.length < 3 ? (
+          <span className="inline-flex items-center gap-2">
+            <input
+              type="color"
+              aria-label="Choisir une couleur"
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              className="h-10 w-12 cursor-pointer rounded-md bg-background p-1 shadow-[inset_0_0_0_1px_var(--color-border)]"
+            />
+            <button
+              type="button"
+              onClick={() => add(draft)}
+              className="inline-flex h-10 items-center gap-1 rounded-full px-3 text-[14px] font-semibold text-accent-text hover:bg-surface"
+            >
+              <Icon name="ajouter" width={16} height={16} />
+              Ajouter
+            </button>
+          </span>
+        ) : null}
+      </div>
+      {colors.length < 3 ? (
+        <div className="flex flex-wrap items-center gap-1.5" aria-label="Suggestions">
+          {SUGGESTED_COLORS.filter((c) => !colors.includes(c)).map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => add(color)}
+              aria-label={`Ajouter ${color}`}
+              title={color}
+              className="size-7 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)] hover:scale-110"
+              style={{ background: color }}
+            />
+          ))}
+        </div>
+      ) : null}
+      {error ? <p className="text-[13px] text-error">{error}</p> : null}
+    </div>
   );
 }
 
