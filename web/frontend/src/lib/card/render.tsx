@@ -8,6 +8,7 @@ import { formatDate, formatDuration, formatTime } from "@/lib/events";
 import { cardFonts } from "./fonts";
 import { ICON_SVG } from "./icons";
 import { CARD_LIBRARY, type CardStyle } from "./library";
+import { parseQrStyle, styledQrSvg } from "./qr";
 import { FONT_FAMILY, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
 import { paletteOf, type CardColors } from "./palettes";
 import { CompactSeal, HERE_SYMBOL } from "./seal";
@@ -946,12 +947,16 @@ export async function renderCard(
 ): Promise<ImageResponse> {
   const style = CARD_LIBRARY[data.type];
   const Family = FAMILIES[style.family];
+  // QR code stylisé dans l'éditeur de cartes (« Mon propre modèle »), sinon le QR code classique.
+  const qrStyle = data.layout && data.background ? data.layout.qr_style : null;
   const qr = svgUri(
-    await QRCode.toString(data.qrValue, {
-      type: "svg",
-      margin: 0,
-      errorCorrectionLevel: "M",
-    }),
+    qrStyle
+      ? styledQrSvg(data.qrValue, parseQrStyle(qrStyle))
+      : await QRCode.toString(data.qrValue, {
+          type: "svg",
+          margin: 0,
+          errorCorrectionLevel: "M",
+        }),
   );
   return new ImageResponse(
     <div

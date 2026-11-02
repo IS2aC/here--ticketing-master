@@ -1,14 +1,17 @@
 import { ImageResponse } from "next/og";
-import QRCode from "qrcode";
 import { SAMPLE_CODE } from "@/lib/card/data";
 import { cardFonts } from "@/lib/card/fonts";
+import { parseQrStyle, SAMPLE_QR_VALUE, styledQrSvg } from "@/lib/card/qr";
 import { CompactSeal, SEAL_SIZE } from "@/lib/card/seal";
 import { svgUri } from "@/lib/card/templates/color";
 
 // Sceau Here! d'exemple (QR code fictif), affiché dans l'éditeur à la place du QR code de chaque invité.
 // Dessiné par le même composant que la carte envoyée : l'aperçu correspond au rendu final.
-export async function GET() {
-  const qr = svgUri(await QRCode.toString("https://here.example/i/apercu", { type: "svg", margin: 0, errorCorrectionLevel: "M" }));
+// ?points=, ?coins=, ?couleur= : style du QR code (lib/card/qr.ts).
+export async function GET(request: Request) {
+  const query = new URL(request.url).searchParams;
+  const style = parseQrStyle({ dots: query.get("points"), corners: query.get("coins"), color: query.get("couleur") });
+  const qr = svgUri(styledQrSvg(SAMPLE_QR_VALUE, style));
   return new ImageResponse(
     (
       <div style={{ display: "flex", position: "relative", width: SEAL_SIZE.width, height: SEAL_SIZE.height, fontFamily: "Poppins" }}>

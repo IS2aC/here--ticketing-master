@@ -1,8 +1,10 @@
-import type { QrSpot } from "@/lib/card/layout";
-import { qrPosition } from "@/lib/card/layout";
+import { qrPosition, type QrSpot } from "@/lib/card/layout";
+import { DEFAULT_QR_STYLE, QR_MIN_CONTRAST, type QrStyle } from "@/lib/card/qr";
 import { addAsset } from "../domain/commands/documentCommands.ts";
 import { addElement, moveElement, removeElement, updateElement } from "../domain/commands/elementCommands.ts";
+import type { HexColor } from "../domain/elements/types.ts";
 import { createId } from "../domain/ids.ts";
+import { contrastRatio } from "../editor/colors.ts";
 import { currentDocument, useDocumentStore, type DocumentCommand } from "../editor/documentStore.ts";
 import { saveNow } from "../editor/persistence.ts";
 import { exportDocument } from "../export/exportDocument.ts";
@@ -18,6 +20,7 @@ import {
   withoutGuestFields,
   type GuestSample,
 } from "./guestFields.ts";
+import { sealIsScannable, sealUrl } from "./qrStyle.ts";
 
 // Actions de l'hôte sur les champs invité, et validation de la carte (décor + mise en page vers Satori).
 
@@ -61,10 +64,20 @@ export type ValidationResult = { readonly ok: true } | { readonly ok: false; rea
  * Valide la carte : enregistre le document, exporte le décor (sans les champs invité) et l'envoie à Here! avec
  * la mise en page des champs. Satori dessine ensuite la carte de chaque invité.
  */
-export async function validateCard(baseUrl: string, resolveAssetUrl: AssetUrlResolver): Promise<ValidationResult> {
+export async function validateCard(
+  baseUrl: string,
+  resolveAssetUrl: AssetUrlResolver,
+  qrStyle: QrStyle,
+): Promise<ValidationResult> {
   const doc = currentDocument();
   const layout = toCardLayout(doc);
   if (!layout.ok) return layout;
+  // Le QR code doit se scanner : contraste sur le blanc du sceau, puis relecture du sceau dessiné par Satori.
+  const readable =
+    contrastRatio(qrStyle.color as HexColor, "#FFFFFF") >= QR_MIN_CONTRAST && (await sealIsScannable(sealUrl(baseUrl, qrStyle)));
+  if (!readable)
+    return { ok: false, message: "Le QR code ne se relit pas avec ce style : choisissez une couleur plus foncée ou des points carrés." };
+  const isDefault = qrStyle.dots === "carres" && qrStyle.corners === "carres" && qrStyle.color === DEFAULT_QR_STYLE.color;
   if (!(await saveNow())) return { ok: false, message: "La carte n'a pas pu être enregistrée. Réessayez dans un instant." };
 
   const decor = await exportDocument(withoutGuestFields(doc), { format: "png", scale: 1 }, { resolveAssetUrl });
@@ -72,7 +85,7 @@ export async function validateCard(baseUrl: string, resolveAssetUrl: AssetUrlRes
 
   const body = new FormData();
   body.append("decor", decor.value.blob, "decor.png");
-  body.append("layout", JSON.stringify(layout.layout));
+  body.append("layout", JSON.stringify({ ...layout.layout, qr_style: isDefault ? null : qrStyle }));
   try {
     const response = await fetch(`${baseUrl}/valider`, { method: "POST", body });
     if (response.ok) return { ok: true };

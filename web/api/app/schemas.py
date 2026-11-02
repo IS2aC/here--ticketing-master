@@ -317,6 +317,32 @@ class TextLayout(BaseModel):
     bold: bool = False
 
 
+def _luminance(color: str) -> float:
+    def channel(hex_pair: str) -> float:
+        c = int(hex_pair, 16) / 255
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (channel(color[i : i + 2]) for i in (1, 3, 5))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _scannable(color: str) -> str:
+    # Contraste WCAG sur le blanc du sceau : en dessous de 4,5:1, certains téléphones ne lisent plus le code.
+    if 1.05 / (_luminance(color) + 0.05) < 4.5:
+        raise ValueError(
+            "Cette couleur est trop claire pour le QR code : choisissez-en une plus foncée."
+        )
+    return color.upper()
+
+
+class QrStyle(BaseModel):
+    """QR code stylisé du sceau Here! (éditeur de cartes) ; les repères restent pleins, le fond blanc."""
+
+    dots: Literal["carres", "ronds", "arrondis"] = "carres"
+    corners: Literal["carres", "arrondis"] = "carres"
+    color: Annotated[HexColor, AfterValidator(_scannable)] = "#0B0B0B"
+
+
 class CardLayout(BaseModel):
     """« Mon propre modèle » : le nom de l'invité, la table / catégorie (facultative) et le QR code."""
 
@@ -325,6 +351,7 @@ class CardLayout(BaseModel):
     qr: Literal[
         "bas-droite", "bas-gauche", "bas-centre", "haut-droite", "haut-gauche"
     ] = "bas-droite"
+    qr_style: QrStyle | None = None  # None : QR code classique, noir à points carrés
 
 
 class PublicCard(BaseModel):

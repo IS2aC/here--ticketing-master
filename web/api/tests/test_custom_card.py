@@ -102,3 +102,23 @@ def test_own_card_locked_after_sending(
     assert (
         client.patch(url, json={"layout": LAYOUT}, headers=organizer).status_code == 409
     )
+
+
+def test_qr_style(client: TestClient, organizer: dict[str, str]) -> None:
+    event_id, _ = invited(client, organizer)
+    upload(client, organizer, event_id, image(800, 1000))
+    url = f"/v1/events/{event_id}/card"
+    style = {"dots": "ronds", "corners": "arrondis", "color": "#7a5a1e"}
+    saved = client.patch(
+        url, json={"layout": {**LAYOUT, "qr_style": style}}, headers=organizer
+    )
+    assert saved.status_code == 200
+    assert saved.json()["layout"]["qr_style"] == {**style, "color": "#7A5A1E"}
+
+    # Trop clair sur le blanc du sceau : refusé, le QR code ne se lirait pas partout.
+    pale = client.patch(
+        url,
+        json={"layout": {**LAYOUT, "qr_style": {**style, "color": "#E3C77A"}}},
+        headers=organizer,
+    )
+    assert pale.status_code == 422

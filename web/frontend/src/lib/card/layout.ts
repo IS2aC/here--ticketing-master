@@ -1,3 +1,5 @@
+import type { QrStyle } from "./qr";
+
 // « Mon propre modèle » : mise en page sur le fond importé, en pixels de la carte (1080 × 1350).
 // Géométrie commune au rendu (render.tsx) et à l'éditeur de la page Carte : l'aperçu correspond à la carte.
 
@@ -12,7 +14,13 @@ export type TextLayout = {
 
 export type QrSpot = "bas-droite" | "bas-gauche" | "bas-centre" | "haut-droite" | "haut-gauche";
 
-export type CardLayout = { name: TextLayout; table: TextLayout | null; qr: QrSpot };
+export type CardLayout = {
+  name: TextLayout;
+  table: TextLayout | null;
+  qr: QrSpot;
+  /** QR code stylisé (éditeur de cartes) ; absent : QR code classique. */
+  qr_style?: QrStyle | null;
+};
 
 export const CANVAS = { width: 1080, height: 1350 };
 

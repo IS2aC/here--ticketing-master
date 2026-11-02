@@ -46,5 +46,5 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
     name: guest?.display_name ?? SAMPLE_GUEST.guestName,
     table: (guest ? tableText(guest.seat, guest.category) : "") || tableText(SAMPLE_GUEST.seat, SAMPLE_GUEST.category),
   };
-  return <EditorLoader eventId={event.id} eventTitle={event.title} sample={sample} />;
+  return <EditorLoader eventId={event.id} eventTitle={event.title} sample={sample} qrStyle={settings.layout?.qr_style ?? null} />;
 }

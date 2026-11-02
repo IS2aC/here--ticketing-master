@@ -28,6 +28,10 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
 - **Effets.** Les textes, formes et images acceptent des effets facultatifs : `shadow`, `outline` (textes) et `gradient` (textes, rectangles, ellipses). Un document sans effet reste un document v1 valide. L'affichage et l'export passent par les mêmes correspondances (`rendering/konva/mappers.ts`).
 - **Couleurs** (`editor/colors.ts`, culori) : contraste WCAG, correction en OKLCH, palette du document, harmonies.
 - **Polices** : déclarées dans `styles/fonts.css`, avec leurs fichiers et leurs licences dans `public/creative-engine/fonts`.
+- **QR code stylisé** (`lib/card/qr.ts`) :
+  - le SVG est dessiné à partir de la matrice de `qrcode`, avec les repères des coins toujours pleins ;
+  - le style (`CardLayout.qr_style`) est un réglage de Here!, pas du document de l'éditeur (`host/qrStyle.ts`) ;
+  - avant la validation, l'éditeur relit avec jsQR le sceau dessiné par Satori.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches
