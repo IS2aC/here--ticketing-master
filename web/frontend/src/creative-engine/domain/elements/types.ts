@@ -107,6 +107,11 @@ export interface ImageElement extends BaseElement {
   readonly fit: "cover" | "contain" | "fill";
   readonly crop: CropRect | null;
   readonly shadow?: Shadow | null;
+  /**
+   * Image SVG : la recolore dans cette teinte en gardant son modelé (clairs et ombres). Sans effet sur une
+   * image matricielle. Absente : couleurs d'origine.
+   */
+  readonly tint?: HexColor | null;
 }
 
 export interface Stroke {

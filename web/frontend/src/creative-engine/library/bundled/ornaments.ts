@@ -1,6 +1,6 @@
 import { fail, ok, type AssetLibrary, type LibraryAsset } from "../contracts.ts";
 import { matchesQuery, paginate } from "../search.ts";
-import { ornamentKey } from "./keys.ts";
+import { legacyOrnamentKey, ornamentKey } from "./keys.ts";
 import manifest from "./ornaments.json";
 
 // Ornements livrés avec le moteur (public/creative-engine/ornaments, produits par `pnpm library:build` dans le dépôt du moteur).
@@ -21,7 +21,10 @@ const ORNAMENT_BASE = "/creative-engine/ornaments";
 /** URL de chaque ressource intégrée, par clé de stockage (résolution des documents). */
 export const BUNDLED_ASSET_URLS: ReadonlyMap<string, string> = new Map(
   manifest.flatMap((entry: ManifestEntry) => {
-    return [[ornamentKey(entry.id), `${ORNAMENT_BASE}/${entry.id}.webp`] as const];
+    return [
+      [ornamentKey(entry.id), `${ORNAMENT_BASE}/${entry.id}.svg`] as const,
+      [legacyOrnamentKey(entry.id), `${ORNAMENT_BASE}/${entry.id}.webp`] as const,
+    ];
   }),
 );
 
@@ -31,7 +34,7 @@ function toAsset(entry: ManifestEntry): LibraryAsset {
     id: `ornament:${entry.id}`,
     origin: "bundled",
     name: entry.name,
-    mimeType: "image/webp",
+    mimeType: "image/svg+xml",
     width: entry.width,
     height: entry.height,
     source: { type: "remote", key },

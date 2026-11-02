@@ -1,7 +1,8 @@
 import type { CreativeDocument, ImageAsset } from "../domain/document/types.ts";
-import type { TextElement } from "../domain/elements/types.ts";
+import type { HexColor, TextElement } from "../domain/elements/types.ts";
 import type { Id } from "../domain/ids.ts";
 import { ensureFont, isFontAvailable } from "../rendering/fonts.ts";
+import { imageKey, tintedSvgUrl, tintOf } from "../rendering/svgImages.ts";
 import { fail, ok, type ExportOutcome } from "./errors.ts";
 
 // Ressources d'un export : toutes les polices et images des éléments visibles, prêtes AVANT le rendu.
@@ -87,24 +88,30 @@ export async function prepareImages(
   document: CreativeDocument,
   resolveUrl: AssetUrlResolver,
   signal?: AbortSignal,
-): Promise<ExportOutcome<Map<Id, HTMLImageElement>>> {
-  const used = new Map<Id, string[]>();
+): Promise<ExportOutcome<Map<string, HTMLImageElement>>> {
+  // Une image par ressource, et par teinte pour un SVG recoloré (clé : imageKey).
+  const used = new Map<string, { assetId: Id; tint: HexColor | null; names: string[] }>();
   for (const element of document.elements) {
     if (element.type !== "image" || element.hidden) continue;
-    used.set(element.assetId, [...(used.get(element.assetId) ?? []), label(element, "Image")]);
+    const asset = document.assets[element.assetId];
+    const key = imageKey(element, asset);
+    const entry = used.get(key) ?? { assetId: element.assetId, tint: tintOf(element, asset), names: [] };
+    entry.names.push(label(element, "Image"));
+    used.set(key, entry);
   }
 
-  const images = new Map<Id, HTMLImageElement>();
+  const images = new Map<string, HTMLImageElement>();
   const missing: string[] = [];
   const blocked: string[] = [];
   await Promise.all(
-    [...used].map(async ([assetId, names]) => {
+    [...used].map(async ([key, { assetId, tint, names }]) => {
       const asset = document.assets[assetId];
-      const url = asset ? resolveUrl(assetId, asset) : null;
+      const resolved = asset ? resolveUrl(assetId, asset) : null;
+      const url = resolved && tint ? await tintedSvgUrl(resolved, tint) : resolved;
       const image = url ? await loadImage(url, signal) : null;
       if (!image) missing.push(...names);
       else if (!isReadable(image)) blocked.push(...names);
-      else images.set(assetId, image);
+      else images.set(key, image);
     }),
   );
 

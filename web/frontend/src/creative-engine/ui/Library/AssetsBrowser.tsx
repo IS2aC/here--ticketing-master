@@ -100,7 +100,7 @@ export function AssetsBrowser() {
           <input
             ref={inputRef}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg"
             multiple
             hidden
             data-testid="image-import-input"

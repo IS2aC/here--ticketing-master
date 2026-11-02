@@ -117,7 +117,7 @@ export function ToolRail() {
       <input
         ref={fileRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp"
+        accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg"
         multiple
         hidden
         data-testid="toolrail-image-input"

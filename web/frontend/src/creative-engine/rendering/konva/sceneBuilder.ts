@@ -1,8 +1,8 @@
 import Konva from "konva";
 import type { CreativeDocument } from "../../domain/document/types.ts";
 import type { Element } from "../../domain/elements/types.ts";
-import type { Id } from "../../domain/ids.ts";
 import { placementOf } from "./geometry.ts";
+import { imageKey } from "../svgImages.ts";
 import { layoutImage } from "./imageFit.ts";
 import { shadowConfig, shapeConfig, textConfig } from "./mappers.ts";
 
@@ -20,7 +20,11 @@ export interface SceneOptions {
   readonly background: "page" | "transparent";
 }
 
-function elementNode(element: Element, images: ReadonlyMap<Id, HTMLImageElement>): Konva.Group | null {
+function elementNode(
+  element: Element,
+  images: ReadonlyMap<string, HTMLImageElement>,
+  assets: CreativeDocument["assets"],
+): Konva.Group | null {
   if (element.hidden) return null;
   const group = new Konva.Group({ ...placementOf(element), opacity: element.opacity, listening: false });
   switch (element.type) {
@@ -39,7 +43,7 @@ function elementNode(element: Element, images: ReadonlyMap<Id, HTMLImageElement>
       break;
     }
     case "image": {
-      const image = images.get(element.assetId);
+      const image = images.get(imageKey(element, assets[element.assetId]));
       // L'appelant vérifie les images avant : une image absente ici est une erreur de programmation.
       if (!image) throw new Error(`Image non préparée pour l'élément ${element.id}`);
       const layout = layoutImage(
@@ -57,11 +61,11 @@ function elementNode(element: Element, images: ReadonlyMap<Id, HTMLImageElement>
 
 /**
  * Dessine le document dans un nouveau canvas de (page + 2 × fond perdu) × pixelRatio pixels. Le contenu hors
- * de cette zone est coupé, comme dans l'éditeur. `images` : fichier décodé de chaque ressource utilisée.
+ * de cette zone est coupé, comme dans l'éditeur. `images` : fichier décodé de chaque ressource utilisée (clé : imageKey, la teinte d'un SVG comprise).
  */
 export function renderDocumentToCanvas(
   document: CreativeDocument,
-  images: ReadonlyMap<Id, HTMLImageElement>,
+  images: ReadonlyMap<string, HTMLImageElement>,
   options: SceneOptions,
 ): HTMLCanvasElement {
   const { page } = document;
@@ -89,7 +93,7 @@ export function renderDocumentToCanvas(
       clipHeight: height,
     });
     for (const element of document.elements) {
-      const node = elementNode(element, images);
+      const node = elementNode(element, images, document.assets);
       if (node) content.add(node);
     }
     stage.add(background, content);

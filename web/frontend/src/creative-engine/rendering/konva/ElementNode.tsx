@@ -11,6 +11,7 @@ import { useEditorStore } from "../../editor/editorStore.ts";
 import { useAssetResolver } from "../assetResolverContext.ts";
 import { useFontReady } from "../fonts.ts";
 import { useImage } from "../images.ts";
+import { tintOf, useTintedUrl } from "../svgImages.ts";
 import { placementOf } from "./geometry.ts";
 import { dragEnded } from "./gestures.ts";
 import { layoutImage } from "./imageFit.ts";
@@ -72,7 +73,7 @@ function ImagePlaceholder({ element, label }: { element: ImageElement; label: st
 
 function ImageContent({ element, asset }: { element: ImageElement; asset: ImageAsset | undefined }) {
   const resolve = useAssetResolver();
-  const url = asset ? resolve(element.assetId, asset) : null;
+  const url = useTintedUrl(asset ? resolve(element.assetId, asset) : null, tintOf(element, asset));
   const state = useImage(url);
 
   if (state.status === "loading")

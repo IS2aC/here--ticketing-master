@@ -8,6 +8,7 @@ mise en page du nom, de la table et du QR code (routes de la carte, routers/invi
 import hashlib
 import io
 import json
+import re
 import uuid
 from datetime import UTC, datetime
 
@@ -29,6 +30,29 @@ router = APIRouter(tags=["éditeur de cartes"])
 MAX_DOCUMENT_BYTES = 5 * 1024 * 1024
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
 FORMATS = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
+MAX_SVG_BYTES = 2 * 1024 * 1024
+SVG_START = re.compile(
+    rb"^\s*(<\?xml[^>]*\?>\s*)?(<!--.*?-->\s*)*(<!DOCTYPE[^>]*>\s*)?<svg[\s>]",
+    re.DOTALL,
+)
+# Le navigateur nettoie le SVG (DOMPurify) ; l'API refuse en plus ce qui ne devrait plus y être.
+SVG_FORBIDDEN = re.compile(
+    rb"<script|<foreignObject|<iframe|<object|<embed|javascript:|\bon[a-z]+\s*=|(xlink:)?href\s*=\s*[\"'](?!#)",
+    re.IGNORECASE,
+)
+
+
+def _svg_type(content: bytes) -> str | None:
+    """« image/svg+xml » pour un SVG sans contenu actif ; None si ce n'en est pas un, ou s'il est refusé."""
+    if not SVG_START.match(content[:4096]):
+        return None
+    if len(content) > MAX_SVG_BYTES or SVG_FORBIDDEN.search(content):
+        raise _invalid(
+            "Ce SVG contient des scripts ou des liens externes : il n'est pas accepté."
+        )
+    return "image/svg+xml"
+
+
 KEY_PREFIX = "sha256-"
 
 NO_DESIGN = HTTPException(
@@ -155,13 +179,15 @@ async def put_design_asset(
         )
     if key != KEY_PREFIX + hashlib.sha256(content).hexdigest():
         raise _invalid("L'image reçue ne correspond pas à sa clé.")
-    try:
-        with Image.open(io.BytesIO(content)) as image:
-            content_type = FORMATS.get(image.format or "")
-    except (UnidentifiedImageError, OSError):
-        content_type = None
+    content_type = _svg_type(content)
     if content_type is None:
-        raise _invalid("Utilisez une image JPEG, PNG ou WebP.")
+        try:
+            with Image.open(io.BytesIO(content)) as image:
+                content_type = FORMATS.get(image.format or "")
+        except (UnidentifiedImageError, OSError):
+            content_type = None
+    if content_type is None:
+        raise _invalid("Utilisez une image JPEG, PNG, WebP ou SVG.")
     card = await _event_card(db, event)
     await db.execute(
         insert(CardDesignAsset)
@@ -186,5 +212,10 @@ async def get_design_asset(
     return Response(
         asset.content,
         media_type=asset.content_type,
-        headers={"Cache-Control": "private, max-age=31536000, immutable"},
+        headers={
+            "Cache-Control": "private, max-age=31536000, immutable",
+            # Un SVG ouvert seul dans un onglet ne peut rien exécuter ni charger.
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+            "X-Content-Type-Options": "nosniff",
+        },
     )

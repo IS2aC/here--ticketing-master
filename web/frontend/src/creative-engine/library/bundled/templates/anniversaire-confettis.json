@@ -3,10 +3,10 @@
     "03000000-0000-4000-8000-000000000002": {
       "height": 600,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/confettis.webp",
+        "key": "bundled/ornaments/confettis.svg",
         "type": "remote"
       },
       "width": 1000
@@ -14,10 +14,10 @@
     "03000000-0000-4000-8000-000000000009": {
       "height": 820,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/ballons.webp",
+        "key": "bundled/ornaments/ballons.svg",
         "type": "remote"
       },
       "width": 520

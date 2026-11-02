@@ -1,5 +1,6 @@
 import { LIMITS } from "../domain/constraints.ts";
 import { sniffImageType, type ImageMimeType } from "../persistence/imageFormats.ts";
+import { MAX_SVG_BYTES, sanitizeSvg, svgSize, withIntrinsicSize } from "../persistence/svgFiles.ts";
 import type {
   DeviceImageRecord,
   DeviceImageStore,
@@ -43,9 +44,10 @@ export async function readImageFile(
     );
   if (file.size === 0) return fail("invalid", "Ce fichier est vide.");
 
-  const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const head = new Uint8Array(await file.slice(0, 1024).arrayBuffer());
   const mimeType = sniffImageType(head);
-  if (!mimeType) return fail("invalid", "Ce fichier n'est pas une image JPEG, PNG ou WebP.");
+  if (!mimeType) return fail("invalid", "Ce fichier n'est pas une image JPEG, PNG, WebP ou SVG.");
+  if (mimeType === "image/svg+xml") return readSvgFile(file);
 
   let bitmap: ImageBitmap;
   try {
@@ -66,8 +68,23 @@ export async function readImageFile(
   return ok({ blob, mimeType, width, height, name: displayName(file.name) });
 }
 
+/** SVG : nettoyé (scripts et liens retirés), avec ses dimensions explicites ; c'est cette version qui est gardée. */
+async function readSvgFile(file: Blob & { readonly name?: string }): Promise<LibraryResult<ReadImage>> {
+  if (file.size > MAX_SVG_BYTES)
+    return fail("invalid", `Ce SVG dépasse ${MAX_SVG_BYTES / MB} Mo. Simplifiez le dessin ou exportez-le en PNG.`);
+  const clean = sanitizeSvg(await file.text());
+  const size = clean ? svgSize(clean) : null;
+  if (!clean || !size) return fail("invalid", "Ce SVG est illisible ou n'a pas de dimensions (width, height ou viewBox).");
+  if (Math.max(size.width, size.height) > LIMITS.assetPixels.max)
+    return fail("invalid", `Ce SVG est trop grand (${size.width} × ${size.height} px).`);
+  const blob = new Blob([withIntrinsicSize(clean, size)], { type: "image/svg+xml" });
+  return ok({ blob, mimeType: "image/svg+xml", ...size, name: displayName(file.name) });
+}
+
 /** Aperçu réduit (WebP, ou PNG si le navigateur ne sait pas encoder le WebP) ; null en cas d'échec. */
 export async function createThumbnail(image: ReadImage, size: number = THUMBNAIL_SIZE): Promise<Blob | null> {
+  // Un SVG, léger et net à toute taille, est son propre aperçu.
+  if (image.mimeType === "image/svg+xml") return image.blob;
   try {
     const scale = Math.min(1, size / Math.max(image.width, image.height));
     const width = Math.max(1, Math.round(image.width * scale));

@@ -86,6 +86,7 @@ const imageElement = z.strictObject({
     .refine((c) => c.x + c.width <= 1 && c.y + c.height <= 1, "Le recadrage dépasse l'image")
     .nullable(),
   shadow,
+  tint: hexColor.nullable().optional(),
 });
 
 const shapeElement = z
@@ -128,7 +129,7 @@ export const elementSchema = z.discriminatedUnion("type", [textElement, imageEle
 
 export const assetSchema = z.strictObject({
   kind: z.literal("image"),
-  mimeType: z.enum(["image/png", "image/jpeg", "image/webp"]),
+  mimeType: z.enum(["image/png", "image/jpeg", "image/webp", "image/svg+xml"]),
   width: z.int().positive().max(LIMITS.assetPixels.max),
   height: z.int().positive().max(LIMITS.assetPixels.max),
   source: z.strictObject({

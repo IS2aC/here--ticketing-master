@@ -267,3 +267,8 @@
 .legibility p {
   margin: 0;
 }
+
+/* Réglages complémentaires sous le premier réglage d'une section (teinte d'une image SVG). */
+.subsection {
+  margin-top: var(--space-4);
+}

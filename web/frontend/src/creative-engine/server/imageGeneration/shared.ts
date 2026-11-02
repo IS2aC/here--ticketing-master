@@ -30,7 +30,8 @@ export function imageFromBytes(bytes: Uint8Array): GeneratedImagePayload | Image
   if (bytes.length === 0) return "no_image";
   if (bytes.length > MAX_IMAGE_BYTES) return "unsupported_format";
   const mimeType = sniffImageType(bytes);
-  if (!mimeType) return "unsupported_format";
+  // Un fournisseur d'images ne doit renvoyer qu'une image matricielle : un SVG (texte, actif) est refusé.
+  if (!mimeType || mimeType === "image/svg+xml") return "unsupported_format";
   const size = mimeType === "image/png" ? pngSize(bytes) : null;
   return {
     mimeType,

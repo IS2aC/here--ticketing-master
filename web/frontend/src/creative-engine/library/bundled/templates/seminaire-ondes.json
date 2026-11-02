@@ -3,10 +3,10 @@
     "05000000-0000-4000-8000-000000000002": {
       "height": 900,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/ondes.webp",
+        "key": "bundled/ornaments/ondes.svg",
         "type": "remote"
       },
       "width": 900

@@ -29,7 +29,11 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
         - **8 polices** (OFL), dont des calligraphies. Le nom de l'invité peut s'écrire en Great Vibes (Satori et API).
         - **Lisibilité** : contraste WCAG avec un bouton « Rendre lisible », et des couleurs proposées (palette du document et harmonies OKLCH).
       - **QR stylisé (fait le 02/11)** : points carrés, arrondis ou ronds, coins arrondis, couleur au choix. Le sceau reste blanc. La couleur doit atteindre un contraste de 4,5:1, vérifié aussi par l'API. Le sceau dessiné par Satori est relu avec jsQR en direct et avant la validation. Panneau « QR code » dans l'éditeur.
-      - **Reste** : SVG, photo et impression.
+      - **SVG (fait le 02/11)** :
+        - les ornements du catalogue et des modèles sont vectoriels, et les anciens WebP restent servis pour les cartes existantes ;
+        - SVG importables, nettoyés par DOMPurify dans le navigateur et revérifiés par l'API, servis avec une CSP ;
+        - « Teinte » d'une image SVG, avec une recoloration en OKLCH qui garde le modelé, à l'écran comme à l'export.
+      - **Reste** : photo et impression.
     - Modèles conçus avec la zone du QR code et des champs invité. Aujourd'hui, les champs invité arrivent au centre et peuvent chevaucher le modèle.
     - Les 4 modèles qui ne sont pas au format 4:5, à adapter (redimensionnement).
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.

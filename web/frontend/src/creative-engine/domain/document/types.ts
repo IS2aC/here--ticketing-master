@@ -41,7 +41,8 @@ export type AssetSource =
 
 export interface ImageAsset {
   readonly kind: "image";
-  readonly mimeType: "image/png" | "image/jpeg" | "image/webp";
+  /** SVG : vectoriel (net à toute taille), recolorable ; nettoyé à l'import (scripts et liens externes retirés). */
+  readonly mimeType: "image/png" | "image/jpeg" | "image/webp" | "image/svg+xml";
   /** Dimensions intrinsèques du fichier, en pixels. */
   readonly width: number;
   readonly height: number;

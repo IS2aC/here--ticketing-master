@@ -3,10 +3,10 @@
     "04000000-0000-4000-8000-000000000002": {
       "height": 360,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/nuages.webp",
+        "key": "bundled/ornaments/nuages.svg",
         "type": "remote"
       },
       "width": 900
@@ -14,10 +14,10 @@
     "04000000-0000-4000-8000-000000000004": {
       "height": 800,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/couronne-feuilles.webp",
+        "key": "bundled/ornaments/couronne-feuilles.svg",
         "type": "remote"
       },
       "width": 800

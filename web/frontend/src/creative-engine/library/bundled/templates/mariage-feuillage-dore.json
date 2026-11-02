@@ -3,10 +3,10 @@
     "01000000-0000-4000-8000-000000000002": {
       "height": 300,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/feuillage-dore.webp",
+        "key": "bundled/ornaments/feuillage-dore.svg",
         "type": "remote"
       },
       "width": 900

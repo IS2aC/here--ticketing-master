@@ -32,6 +32,10 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
   - le SVG est dessiné à partir de la matrice de `qrcode`, avec les repères des coins toujours pleins ;
   - le style (`CardLayout.qr_style`) est un réglage de Here!, pas du document de l'éditeur (`host/qrStyle.ts`) ;
   - avant la validation, l'éditeur relit avec jsQR le sceau dessiné par Satori.
+- **SVG** :
+  - les ornements sont dans `public/creative-engine/ornaments/*.svg` (clés `.svg`), et les `.webp` restent servis pour les anciens documents ;
+  - un SVG importé est nettoyé (`persistence/svgFiles.ts`, DOMPurify) ;
+  - la teinte (`ImageElement.tint`) est appliquée par `rendering/svgRecolor.ts`, en gardant le modelé, puis servie par `rendering/svgImages.ts` à l'écran et à l'export.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches

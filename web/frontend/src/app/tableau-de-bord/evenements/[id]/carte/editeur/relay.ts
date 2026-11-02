@@ -13,8 +13,10 @@ export async function relay(path: string, init: RequestInit = {}): Promise<Respo
     return Response.json({ detail: { message: "Le service est momentanément indisponible." } }, { status: 503 });
   }
   const headers = new Headers({ "Cache-Control": response.headers.get("Cache-Control") ?? "no-store" });
-  const type = response.headers.get("Content-Type");
-  if (type) headers.set("Content-Type", type);
+  for (const name of ["Content-Type", "Content-Security-Policy", "X-Content-Type-Options"]) {
+    const value = response.headers.get(name);
+    if (value) headers.set(name, value);
+  }
   return new Response(response.body, { status: response.status, headers });
 }
 

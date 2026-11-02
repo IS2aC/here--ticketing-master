@@ -160,3 +160,24 @@ def test_design_private_and_locked(
         == 409
     )
     assert client.get(url, headers=organizer).status_code == 200
+
+
+def test_design_svg_assets(client: TestClient, organizer: dict[str, str]) -> None:
+    event_id, _ = invited(client, organizer)
+    url = f"/v1/events/{event_id}/card/design/assets"
+    svg = b'<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><defs><linearGradient id="g"/></defs><path fill="url(#g)" d="M0 0h10v10z"/></svg>'
+    assert (
+        client.put(f"{url}/{key(svg)}", content=svg, headers=organizer).status_code
+        == 204
+    )
+    got = client.get(f"{url}/{key(svg)}", headers=organizer)
+    assert got.headers["content-type"].startswith("image/svg+xml")
+
+    # Contenu actif : refusé, même si le navigateur était censé l'avoir nettoyé.
+    for active in (
+        b'<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+        b'<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"/>',
+        b'<svg xmlns="http://www.w3.org/2000/svg"><use href="https://evil.example/x.svg#a"/></svg>',
+    ):
+        refused = client.put(f"{url}/{key(active)}", content=active, headers=organizer)
+        assert refused.status_code == 422, active

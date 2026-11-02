@@ -3,10 +3,10 @@
     "06000000-0000-4000-8000-000000000002": {
       "height": 500,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/etincelles.webp",
+        "key": "bundled/ornaments/etincelles.svg",
         "type": "remote"
       },
       "width": 800
@@ -14,10 +14,10 @@
     "06000000-0000-4000-8000-000000000004": {
       "height": 600,
       "kind": "image",
-      "mimeType": "image/webp",
+      "mimeType": "image/svg+xml",
       "provenance": "template",
       "source": {
-        "key": "bundled/ornaments/confettis.webp",
+        "key": "bundled/ornaments/confettis.svg",
         "type": "remote"
       },
       "width": 1000
