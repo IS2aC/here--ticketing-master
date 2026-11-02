@@ -21,6 +21,7 @@ import { TopBar } from "../ui/TopBar/TopBar.tsx";
 import { Workspace } from "../ui/Workspace/Workspace.tsx";
 import { addGuestName, toggleGuestTable, validateCard } from "./guestActions.ts";
 import { SEAL_ASSET_KEY, type GuestSample } from "./guestFields.ts";
+import { ProposalsPanel } from "./proposals/ProposalsPanel.tsx";
 import { QrPanel } from "./QrPanel.tsx";
 import { sealUrl, useQrStyle } from "./qrStyle.ts";
 import { startHereEditor } from "./setup.ts";
@@ -64,6 +65,7 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
   const [validating, setValidating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
+  const [proposalsOpen, setProposalsOpen] = useState(false);
   const qrStyle = useQrStyle((s) => s.style);
   const router = useRouter();
 
@@ -115,6 +117,14 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
             }
             trailing={
               <>
+                <ActionButton
+                  label="Propositions"
+                  icon="sparkles"
+                  showLabel
+                  variant="ghost"
+                  aria-haspopup="dialog"
+                  onClick={() => setProposalsOpen(true)}
+                />
                 <GuestFieldsMenu sample={sample} />
                 <ActionButton
                   label="QR code"
@@ -146,6 +156,9 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
         {isPanelOpen && <div className={styles.scrim} aria-hidden="true" onClick={closePanel} />}
         <ExportDialog />
         {qrOpen && <QrPanel baseUrl={baseUrl} onClose={() => setQrOpen(false)} />}
+        {proposalsOpen && (
+          <ProposalsPanel baseUrl={baseUrl} sample={sample} resolveAsset={resolveAsset} onClose={() => setProposalsOpen(false)} />
+        )}
         {notice && (
           <div role="alert" className={styles.notice}>
             <span>{notice}</span>

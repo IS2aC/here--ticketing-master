@@ -93,6 +93,12 @@ services:
       IMAGE_RESOLUTION: ${IMAGE_RESOLUTION:-}
       IMAGE_MAX_IMAGES: ${IMAGE_MAX_IMAGES:-1}
       IMAGE_TIMEOUT_SECONDS: ${IMAGE_TIMEOUT_SECONDS:-120}
+      # Cartes proposées par l'IA (voir .env.example) ; sans fournisseur, propositions écrites à la main.
+      CARD_AI_PROVIDER: ${CARD_AI_PROVIDER:-none}
+      CARD_AI_API_KEY: ${CARD_AI_API_KEY:-}
+      CARD_AI_MODEL: ${CARD_AI_MODEL:-}
+      CARD_AI_BASE_URL: ${CARD_AI_BASE_URL:-}
+      CARD_AI_TIMEOUT_SECONDS: ${CARD_AI_TIMEOUT_SECONDS:-45}
     expose:
       - "3000"
     depends_on:

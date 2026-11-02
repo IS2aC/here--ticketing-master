@@ -284,3 +284,123 @@
   color: var(--color-text-muted);
   font-size: var(--text-caption-size);
 }
+
+/* ——— Cartes proposées ——— */
+
+.proposalsBackdrop {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(11 11 11 / 0.45);
+}
+
+.proposals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: min(960px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  box-shadow: var(--shadow-lg, 0 24px 48px rgb(0 0 0 / 0.2));
+}
+
+.proposalsTitle {
+  margin: 0;
+  font-family: var(--font-heading, inherit);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.proposalsLead,
+.proposalsStatus {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+.proposalsStatus {
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+.proposalsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proposal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.proposalImage {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  object-fit: cover;
+}
+
+.proposalMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.proposalName {
+  font-weight: 600;
+}
+
+.proposalDirection {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size, 13px);
+}
+
+/* .shell : plus spécifique que les boutons de base de l'éditeur (global.css), comme .validate. */
+.shell .proposalUse,
+.shell .proposalsAgain {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-full);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.shell .proposalUse {
+  border: 1px solid var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-on-inverse);
+}
+
+.shell .proposalsAgain {
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.shell .proposalUse:disabled,
+.shell .proposalsAgain:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.proposalsFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}

@@ -42,6 +42,7 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
   - le cadrage (`editor/photoCrop.ts`) écrit `crop` aux proportions du cadre, et « Cadrer sur le sujet » passe par smartcrop.js ;
   - `editor/colors.ts` (`dominantColors`) et `rendering/photoPalette.ts` tirent la palette des photos.
 - **Modèles** : tous au format de la carte (1080 × 1350). Chacun contient les champs invité (`slot`) et le sceau, déjà à leur place ; `host/templates.test.ts` vérifie les zones de Satori et qu'aucun texte ne les recouvre. À l'ouverture, `ensureGuestFields` y met le nom et la table de l'invité d'exemple de l'événement.
+- **Cartes proposées (étape C1)** : `host/proposals/`. La route `…/carte/editeur/propositions` (`lib/card/proposals.ts`) demande 3 chartes au fournisseur (`CARD_AI_*`) ou les prend dans `fallback.ts` ; `charter.ts` valide la charte et refuse les textes qui inventent un nom ou un nombre ; `compose.ts` habille un modèle selon la charte, avec les faits de l'événement.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches

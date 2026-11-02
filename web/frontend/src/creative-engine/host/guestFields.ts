@@ -116,7 +116,8 @@ export function nearestSpot(element: Pick<Element, "x" | "y">): QrSpot {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-function toTextLayout(element: TextElement): TextLayout {
+/** Zone de Satori d'un champ invité (centre, taille, couleur, police). */
+export function toTextLayout(element: TextElement): TextLayout {
   return {
     x: Math.round(clamp(element.x + element.width / 2, 0, CARD_SIZE.width)),
     y: Math.round(clamp(element.y + element.height / 2, 0, CARD_SIZE.height)),
