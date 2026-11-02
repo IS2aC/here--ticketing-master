@@ -1,4 +1,4 @@
-import { formatHex, oklch, wcagContrast, type Oklch } from "culori";
+import { formatHex, oklab, oklch, wcagContrast, type Oklch } from "culori";
 import type { CreativeDocument } from "../domain/document/types.ts";
 import type { Element, HexColor, TextElement } from "../domain/elements/types.ts";
 
@@ -104,4 +104,75 @@ export function harmonies(color: HexColor): HexColor[] {
   if ((base.c ?? 0) < 0.02 || base.h === undefined) return shades;
   const turn = (degrees: number) => toHex({ ...base, h: ((base.h ?? 0) + degrees + 360) % 360 });
   return [turn(-30), turn(30), turn(180), ...shades];
+}
+
+interface Cluster {
+  l: number;
+  a: number;
+  b: number;
+  weight: number;
+}
+
+const distance = (p: Cluster, q: Cluster) => (p.l - q.l) ** 2 + (p.a - q.a) ** 2 + (p.b - q.b) ** 2;
+
+/**
+ * Couleurs dominantes d'une photo (pixels RGBA, déjà réduits), de la plus présente à la moins présente : k-moyennes
+ * en OKLab sur un histogramme de 4 096 cases, départ déterministe (les cases les plus éloignées entre elles).
+ * Les pixels transparents sont ignorés, les couleurs de moins de 3 % de la photo écartées.
+ */
+export function dominantColors(pixels: Uint8ClampedArray, count = 5): HexColor[] {
+  const bins = new Map<number, Cluster>();
+  for (let i = 0; i < pixels.length; i += 4) {
+    if ((pixels[i + 3] ?? 0) < 128) continue;
+    const r = pixels[i] ?? 0;
+    const g = pixels[i + 1] ?? 0;
+    const b = pixels[i + 2] ?? 0;
+    const key = ((r >> 4) << 8) | ((g >> 4) << 4) | (b >> 4);
+    const bin = bins.get(key);
+    if (bin) bin.weight += 1;
+    else {
+      const lab = oklab({ mode: "rgb", r: ((r >> 4) * 16 + 8) / 255, g: ((g >> 4) * 16 + 8) / 255, b: ((b >> 4) * 16 + 8) / 255 });
+      bins.set(key, { l: lab.l, a: lab.a, b: lab.b, weight: 1 });
+    }
+  }
+  // Les plus présentes d'abord ; à égalité, les plus sombres : l'ordre ne dépend que des pixels.
+  const points = [...bins.values()].sort((p, q) => q.weight - p.weight || p.l - q.l);
+  const total = points.reduce((sum, p) => sum + p.weight, 0);
+  if (total === 0) return [];
+
+  const first = points[0];
+  if (!first) return [];
+  const centers: Cluster[] = [{ ...first }];
+  while (centers.length < Math.min(count, points.length)) {
+    let best = first;
+    let bestScore = -1;
+    for (const point of points) {
+      const score = Math.min(...centers.map((c) => distance(point, c))) * Math.sqrt(point.weight);
+      if (score > bestScore) [best, bestScore] = [point, score];
+    }
+    centers.push({ ...best });
+  }
+
+  for (let round = 0; round < 12; round++) {
+    const sums = centers.map(() => ({ l: 0, a: 0, b: 0, weight: 0 }));
+    for (const point of points) {
+      let nearest = 0;
+      for (let c = 1; c < centers.length; c++)
+        if (distance(point, centers[c] as Cluster) < distance(point, centers[nearest] as Cluster)) nearest = c;
+      const sum = sums[nearest] as Cluster;
+      sum.l += point.l * point.weight;
+      sum.a += point.a * point.weight;
+      sum.b += point.b * point.weight;
+      sum.weight += point.weight;
+    }
+    sums.forEach((sum, c) => {
+      if (sum.weight > 0) centers[c] = { l: sum.l / sum.weight, a: sum.a / sum.weight, b: sum.b / sum.weight, weight: sum.weight };
+      else (centers[c] as Cluster).weight = 0;
+    });
+  }
+
+  return centers
+    .filter((c) => c.weight / total >= 0.03)
+    .sort((p, q) => q.weight - p.weight)
+    .map((c) => formatHex({ mode: "oklab", l: c.l, a: c.a, b: c.b }).toUpperCase() as HexColor);
 }

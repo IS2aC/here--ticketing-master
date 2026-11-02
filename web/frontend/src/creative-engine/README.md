@@ -36,6 +36,11 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
   - les ornements sont dans `public/creative-engine/ornaments/*.svg` (clés `.svg`), et les `.webp` restent servis pour les anciens documents ;
   - un SVG importé est nettoyé (`persistence/svgFiles.ts`, DOMPurify) ;
   - la teinte (`ImageElement.tint`) est appliquée par `rendering/svgRecolor.ts`, en gardant le modelé, puis servie par `rendering/svgImages.ts` à l'écran et à l'export.
+- **Photo** :
+  - `ImageElement.mask` (médaillon et fondu) et `ImageElement.adjustments` (réglages) sont facultatifs ;
+  - `rendering/photo.ts` produit la photo retouchée (filtres Konva, puis masque) pour l'écran et pour l'export ;
+  - le cadrage (`editor/photoCrop.ts`) écrit `crop` aux proportions du cadre, et « Cadrer sur le sujet » passe par smartcrop.js ;
+  - `editor/colors.ts` (`dominantColors`) et `rendering/photoPalette.ts` tirent la palette des photos.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches

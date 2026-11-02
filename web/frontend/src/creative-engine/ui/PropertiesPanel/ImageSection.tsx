@@ -3,6 +3,7 @@ import { commitLiveEdit, previewElements, updateElements } from "../../editor/ac
 import { useDocumentStore } from "../../editor/documentStore.ts";
 import { ColorField } from "../primitives/ColorField.tsx";
 import { Segmented, Toggle } from "../primitives/Segmented.tsx";
+import { PhotoSection } from "./PhotoSection.tsx";
 import { MIXED, orNull, shared } from "./selection.ts";
 import { useSwatches } from "./useSwatches.ts";
 import styles from "./PropertiesPanel.module.css";
@@ -13,7 +14,7 @@ const FIT_OPTIONS = [
   { value: "fill", label: "Étirer" },
 ] as const satisfies readonly { value: ImageElement["fit"]; label: string }[];
 
-/** Ajustement de l'image dans son cadre (le recadrage et le remplacement de l'image ne sont pas encore proposés). */
+/** Image : ajustement dans le cadre, teinte d'un SVG, cadrage, médaillon et réglages (le remplacement n'est pas encore proposé). */
 export function ImageSection({ images }: { images: readonly ImageElement[] }) {
   const ids = images.map((i) => i.id);
   // Teinte : seulement si toutes les images sont des SVG (une image matricielle ne se recolore pas).
@@ -63,6 +64,7 @@ export function ImageSection({ images }: { images: readonly ImageElement[] }) {
           <p className={styles.help}>Image vectorielle : nette à toute taille. La teinte garde ses ombres et ses reflets.</p>
         </div>
       )}
+      <PhotoSection images={images} />
     </section>
   );
 }

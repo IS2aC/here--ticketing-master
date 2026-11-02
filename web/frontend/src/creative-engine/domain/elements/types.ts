@@ -99,6 +99,23 @@ export interface CropRect {
   readonly height: number;
 }
 
+/** Médaillon : forme qui découpe l'image dans son cadre, avec un fondu des bords. */
+export interface ImageMask {
+  /** rect : cadre droit (utile avec un fondu) ; rounded : coins arrondis ; ellipse ; arch : arche, haut arrondi. */
+  readonly shape: "rect" | "rounded" | "ellipse" | "arch";
+  /** Largeur du fondu des bords, en px du document ; 0 : bord net. */
+  readonly feather: number;
+}
+
+/** Réglages d'une photo. Chaque valeur va de -1 à 1, 0 ne change rien ; le flou est en px du document. */
+export interface PhotoAdjustments {
+  readonly brightness: number;
+  readonly contrast: number;
+  /** -1 : noir et blanc ; 1 : couleurs doublées. */
+  readonly saturation: number;
+  readonly blur: number;
+}
+
 /** Image placée dans le document. Le fichier est décrit une seule fois dans document.assets. */
 export interface ImageElement extends BaseElement {
   readonly type: "image";
@@ -112,6 +129,8 @@ export interface ImageElement extends BaseElement {
    * image matricielle. Absente : couleurs d'origine.
    */
   readonly tint?: HexColor | null;
+  readonly mask?: ImageMask | null;
+  readonly adjustments?: PhotoAdjustments | null;
 }
 
 export interface Stroke {

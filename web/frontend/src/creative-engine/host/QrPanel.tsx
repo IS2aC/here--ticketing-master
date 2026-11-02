@@ -8,6 +8,7 @@ import { contrastRatio, documentPalette, readableColor } from "../editor/colors.
 import { useDocumentStore } from "../editor/documentStore.ts";
 import { ColorField } from "../ui/primitives/ColorField.tsx";
 import { Toggle } from "../ui/primitives/Segmented.tsx";
+import { usePhotoPalette } from "../ui/PropertiesPanel/usePhotoPalette.ts";
 import { moveSealTo } from "./guestActions.ts";
 import { nearestSpot } from "./guestFields.ts";
 import { sealIsScannable, sealUrl, useQrStyle } from "./qrStyle.ts";
@@ -30,10 +31,14 @@ export function QrPanel({ baseUrl, onClose }: { baseUrl: string; onClose: () => 
   const [result, setResult] = useState<{ url: string; ok: boolean } | null>(null);
   const check: Check = result?.url !== url ? "checking" : result.ok ? "ok" : "unreadable";
 
-  // Couleurs de la carte, assombries si besoin pour rester lisibles au scan.
+  const photos = usePhotoPalette(3);
+  // Couleurs de la carte et de ses photos, assombries si besoin pour rester lisibles au scan.
   const swatches = useMemo(
-    () => [...new Set(["#0B0B0B" as HexColor, ...documentPalette(doc).map((c) => readableColor(c, WHITE, QR_MIN_CONTRAST))])].slice(0, 8),
-    [doc],
+    () =>
+      [
+        ...new Set(["#0B0B0B" as HexColor, ...[...documentPalette(doc), ...photos].map((c) => readableColor(c, WHITE, QR_MIN_CONTRAST))]),
+      ].slice(0, 10),
+    [doc, photos],
   );
   const color = style.color as HexColor;
   const contrast = contrastRatio(color, WHITE);

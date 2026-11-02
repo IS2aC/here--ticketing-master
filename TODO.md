@@ -33,7 +33,12 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
         - les ornements du catalogue et des modèles sont vectoriels, et les anciens WebP restent servis pour les cartes existantes ;
         - SVG importables, nettoyés par DOMPurify dans le navigateur et revérifiés par l'API, servis avec une CSP ;
         - « Teinte » d'une image SVG, avec une recoloration en OKLCH qui garde le modelé, à l'écran comme à l'export.
-      - **Reste** : photo et impression.
+      - **Photo, côté navigateur (fait le 02/11)** :
+        - cadrage avec « Cadrer sur le sujet » (smartcrop.js), zoom et position ;
+        - médaillon (cadre, arrondi, ovale, arche) avec un fondu des bords ;
+        - réglages (luminosité, contraste, couleurs, flou) et 6 ambiances, avec les filtres Konva ;
+        - couleurs des photos proposées sous les champs couleur et dans le panneau QR.
+      - **Reste, côté serveur, à décider** : détourage (rembg + BiRefNet) et agrandissement (Real-ESRGAN). Hébergement, mémoire et temps de calcul à valider dans une ADR.
     - Modèles conçus avec la zone du QR code et des champs invité. Aujourd'hui, les champs invité arrivent au centre et peuvent chevaucher le modèle.
     - Les 4 modèles qui ne sont pas au format 4:5, à adapter (redimensionnement).
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.

@@ -19,6 +19,8 @@ export const LIMITS = {
   shadowBlur: { min: 0, max: 200 },
   shadowOffset: { min: -500, max: 500 },
   outlineWidth: { min: 0.1, max: 100 },
+  maskFeather: { min: 0, max: 400 },
+  photoBlur: { min: 0, max: 60 },
   assetKey: { maxLength: 500 },
   assetPixels: { max: 20_000 },
   dpi: { min: 72, max: 1200 },

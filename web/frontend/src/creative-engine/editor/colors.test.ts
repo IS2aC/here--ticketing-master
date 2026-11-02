@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { addElement } from "../domain/commands/elementCommands.ts";
 import { createDocument, createShapeElement, createTextElement } from "../domain/document/factories.ts";
 import type { CreativeDocument } from "../domain/document/types.ts";
-import { backgroundBehind, contrastRatio, documentPalette, harmonies, readableColor, targetContrast } from "./colors.ts";
+import type { HexColor } from "../domain/elements/types.ts";
+import { backgroundBehind, contrastRatio, documentPalette, dominantColors, harmonies, readableColor, targetContrast } from "./colors.ts";
 
 function withElements(...elements: Parameters<typeof addElement>[1]["element"][]): CreativeDocument {
   return elements.reduce((doc, element) => {
@@ -54,5 +55,38 @@ describe("palette et harmonies", () => {
   it("propose analogues, complémentaire et nuances ; un gris n'a que ses nuances", () => {
     expect(harmonies("#E10600")).toHaveLength(5);
     expect(harmonies("#808080")).toHaveLength(2);
+  });
+});
+
+describe("couleurs dominantes d'une photo", () => {
+  const pixels = (parts: [number, number, number, number, number][]) =>
+    new Uint8ClampedArray(parts.flatMap(([r, g, b, a, n]) => Array.from({ length: n }, () => [r, g, b, a]).flat()));
+
+  it("rend les couleurs de la plus présente à la moins présente", () => {
+    const colors = dominantColors(
+      pixels([
+        [200, 30, 40, 255, 600],
+        [20, 60, 140, 255, 300],
+        [240, 230, 200, 255, 100],
+      ]),
+      3,
+    );
+    expect(colors).toHaveLength(3);
+    const [red, blue, cream] = colors.map((c) => contrastRatio(c, "#C81E28" as HexColor));
+    expect(red).toBeLessThan(1.2);
+    expect(blue).toBeGreaterThan(1.5);
+    expect(cream).toBeGreaterThan(2);
+  });
+
+  it("ignore la transparence et les couleurs trop rares", () => {
+    const colors = dominantColors(
+      pixels([
+        [10, 120, 60, 255, 980],
+        [250, 0, 250, 255, 20],
+        [0, 0, 0, 0, 5000],
+      ]),
+      4,
+    );
+    expect(colors).toHaveLength(1);
   });
 });

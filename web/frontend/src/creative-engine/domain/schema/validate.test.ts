@@ -81,6 +81,17 @@ describe("structure", () => {
     expect(pathsOf(load04([["elements", 1, "slot"], "guest-email"]))).toEqual(["elements[1].slot"]);
   });
 
+  it("accepte le médaillon et les réglages d'une photo, rejette des valeurs hors limites", () => {
+    const adjustments = { brightness: 0.25, contrast: 0.15, saturation: -1, blur: 0 };
+    expect(
+      load04([["elements", 0, "mask"], { shape: "arch", feather: 24 }], [["elements", 0, "adjustments"], adjustments]),
+    ).toMatchObject({ status: "ok", warnings: [] });
+    expect(pathsOf(load04([["elements", 0, "mask"], { shape: "star", feather: 0 }]))).toEqual(["elements[0].mask.shape"]);
+    expect(pathsOf(load04([["elements", 0, "adjustments"], { ...adjustments, contrast: 2 }]))).toEqual([
+      "elements[0].adjustments.contrast",
+    ]);
+  });
+
   it("accepte les effets d'un texte, rejette des valeurs hors limites", () => {
     const shadow = { color: "#0B0B0B40", blur: 12, offsetX: 0, offsetY: 6 };
     const gradient = { from: "#B8862E", to: "#F3D98B", angle: 90 };

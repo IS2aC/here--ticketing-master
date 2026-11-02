@@ -76,6 +76,7 @@ const textElement = z.strictObject({
 });
 
 const fraction = z.number().min(0).max(1);
+const unit = z.number().min(-1).max(1);
 const imageElement = z.strictObject({
   ...baseElement,
   type: z.literal("image"),
@@ -87,6 +88,22 @@ const imageElement = z.strictObject({
     .nullable(),
   shadow,
   tint: hexColor.nullable().optional(),
+  mask: z
+    .strictObject({
+      shape: z.enum(["rect", "rounded", "ellipse", "arch"]),
+      feather: z.number().min(LIMITS.maskFeather.min).max(LIMITS.maskFeather.max),
+    })
+    .nullable()
+    .optional(),
+  adjustments: z
+    .strictObject({
+      brightness: unit,
+      contrast: unit,
+      saturation: unit,
+      blur: z.number().min(LIMITS.photoBlur.min).max(LIMITS.photoBlur.max),
+    })
+    .nullable()
+    .optional(),
 });
 
 const shapeElement = z

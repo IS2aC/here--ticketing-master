@@ -1,6 +1,6 @@
 import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { memo, useRef, type RefObject } from "react";
+import { memo, useMemo, useRef, type RefObject } from "react";
 import { Ellipse, Group, Image, Line, Rect, Text } from "react-konva";
 import type { ImageAsset } from "../../domain/document/types.ts";
 import type { ImageElement, ShapeElement, TextElement } from "../../domain/elements/types.ts";
@@ -11,6 +11,7 @@ import { useEditorStore } from "../../editor/editorStore.ts";
 import { useAssetResolver } from "../assetResolverContext.ts";
 import { useFontReady } from "../fonts.ts";
 import { useImage } from "../images.ts";
+import { photoCanvas, photoRatio } from "../photo.ts";
 import { tintOf, useTintedUrl } from "../svgImages.ts";
 import { placementOf } from "./geometry.ts";
 import { dragEnded } from "./gestures.ts";
@@ -75,15 +76,30 @@ function ImageContent({ element, asset }: { element: ImageElement; asset: ImageA
   const resolve = useAssetResolver();
   const url = useTintedUrl(asset ? resolve(element.assetId, asset) : null, tintOf(element, asset));
   const state = useImage(url);
+  const image = state.status === "loaded" ? state.image : null;
+  const { fit, width, height, crop, mask, adjustments } = element;
+  const layout = useMemo(
+    () => (image ? layoutImage(fit, { width, height }, { width: image.naturalWidth, height: image.naturalHeight }, crop) : null),
+    [image, fit, width, height, crop],
+  );
+  // Médaillon ou réglages : la photo retouchée est calculée une fois par changement, pas à chaque rendu.
+  const retouched = useMemo(
+    () => (image && layout && (mask || adjustments) ? photoCanvas(image, layout, { mask, adjustments }, photoRatio(layout, 2)) : null),
+    [image, layout, mask, adjustments],
+  );
 
   if (state.status === "loading")
     return <ImagePlaceholder element={element} label="Chargement de l'image…" />;
-  if (state.status === "error") return <ImagePlaceholder element={element} label="Image introuvable" />;
+  if (state.status === "error" || !layout) return <ImagePlaceholder element={element} label="Image introuvable" />;
 
-  const intrinsic = { width: state.image.naturalWidth, height: state.image.naturalHeight };
-  const layout = layoutImage(element.fit, element, intrinsic, element.crop);
-  // eslint-disable-next-line jsx-a11y/alt-text -- Image Konva (dessin sur le canevas), pas une balise <img>
-  return <Image image={state.image} {...layout} {...shadowConfig(element.shadow)} />;
+  const { crop: source, ...box } = layout;
+  return retouched ? (
+    // eslint-disable-next-line jsx-a11y/alt-text -- Image Konva (dessin sur le canevas), pas une balise <img>
+    <Image image={retouched} {...box} {...shadowConfig(element.shadow)} />
+  ) : (
+    // eslint-disable-next-line jsx-a11y/alt-text -- Image Konva (dessin sur le canevas), pas une balise <img>
+    <Image image={state.image} {...box} crop={source} {...shadowConfig(element.shadow)} />
+  );
 }
 
 function ElementNodeView({ id }: { id: Id }) {

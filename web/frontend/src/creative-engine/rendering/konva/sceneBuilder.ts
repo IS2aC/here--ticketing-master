@@ -4,6 +4,7 @@ import type { Element } from "../../domain/elements/types.ts";
 import { placementOf } from "./geometry.ts";
 import { imageKey } from "../svgImages.ts";
 import { layoutImage } from "./imageFit.ts";
+import { isRetouched, photoCanvas, photoRatio } from "../photo.ts";
 import { shadowConfig, shapeConfig, textConfig } from "./mappers.ts";
 
 // Scène d'export (ADR-008) : construite hors écran depuis le document, avec les mêmes correspondances que
@@ -24,6 +25,7 @@ function elementNode(
   element: Element,
   images: ReadonlyMap<string, HTMLImageElement>,
   assets: CreativeDocument["assets"],
+  pixelRatio: number,
 ): Konva.Group | null {
   if (element.hidden) return null;
   const group = new Konva.Group({ ...placementOf(element), opacity: element.opacity, listening: false });
@@ -52,7 +54,16 @@ function elementNode(
         { width: image.naturalWidth, height: image.naturalHeight },
         element.crop,
       );
-      group.add(new Konva.Image({ image, ...layout, ...shadowConfig(element.shadow) }));
+      // Médaillon ou réglages : même photo retouchée qu'à l'écran, à la définition de l'export.
+      const retouched = isRetouched(element) ? photoCanvas(image, layout, element, photoRatio(layout, pixelRatio)) : null;
+      const { crop, ...box } = layout;
+      group.add(
+        new Konva.Image(
+          retouched
+            ? { image: retouched, ...box, ...shadowConfig(element.shadow) }
+            : { image, ...box, crop, ...shadowConfig(element.shadow) },
+        ),
+      );
       break;
     }
   }
@@ -93,7 +104,7 @@ export function renderDocumentToCanvas(
       clipHeight: height,
     });
     for (const element of document.elements) {
-      const node = elementNode(element, images, document.assets);
+      const node = elementNode(element, images, document.assets, options.pixelRatio);
       if (node) content.add(node);
     }
     stage.add(background, content);
