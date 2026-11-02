@@ -6,7 +6,7 @@ export type TextLayout = {
   y: number;
   size: number; // taille du texte
   color: string; // #RRGGBB
-  font: "sans" | "serif"; // Poppins ou Playfair Display
+  font: "sans" | "serif" | "script"; // Poppins, Playfair Display ou Great Vibes (calligraphie)
   bold: boolean;
 };
 
@@ -42,7 +42,7 @@ export function textBox(t: TextLayout): { left: number; top: number; width: numb
   return { left: t.x - half, top: Math.round(t.y - height / 2), width: half * 2, height };
 }
 
-export const FONT_FAMILY: Record<TextLayout["font"], string> = { sans: "Poppins", serif: "Playfair Display" };
+export const FONT_FAMILY: Record<TextLayout["font"], string> = { sans: "Poppins", serif: "Playfair Display", script: "Great Vibes" };
 
 /** Texte de la seconde zone : table et catégorie de l'invité (« Table 4 · VIP »). */
 export function tableText(seat: string | null, category: string | null): string {

@@ -312,7 +312,8 @@ class TextLayout(BaseModel):
     y: Annotated[int, Field(ge=0, le=1350)]
     size: Annotated[int, Field(ge=18, le=160)]
     color: HexColor
-    font: Literal["sans", "serif"] = "serif"  # Poppins ou Playfair Display
+    # Poppins, Playfair Display ou Great Vibes (calligraphie)
+    font: Literal["sans", "serif", "script"] = "serif"
     bold: bool = False
 
 

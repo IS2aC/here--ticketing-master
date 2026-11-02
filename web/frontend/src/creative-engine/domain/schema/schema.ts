@@ -34,6 +34,21 @@ const baseElement = {
   hidden: z.boolean(),
 };
 
+// Effets (facultatifs) : un document sans effet reste un document v1 valide, sans migration.
+const shadow = z
+  .strictObject({
+    color: hexColor,
+    blur: z.number().min(LIMITS.shadowBlur.min).max(LIMITS.shadowBlur.max),
+    offsetX: z.number().min(LIMITS.shadowOffset.min).max(LIMITS.shadowOffset.max),
+    offsetY: z.number().min(LIMITS.shadowOffset.min).max(LIMITS.shadowOffset.max),
+  })
+  .nullable()
+  .optional();
+const gradient = z
+  .strictObject({ from: hexColor, to: hexColor, angle: z.number().min(0).lt(360) })
+  .nullable()
+  .optional();
+
 const textElement = z.strictObject({
   ...baseElement,
   type: z.literal("text"),
@@ -48,6 +63,15 @@ const textElement = z.strictObject({
     color: hexColor,
     align: z.enum(["left", "center", "right", "justify"]),
     textTransform: z.enum(["none", "uppercase"]),
+    shadow,
+    outline: z
+      .strictObject({
+        color: hexColor,
+        width: z.number().min(LIMITS.outlineWidth.min).max(LIMITS.outlineWidth.max),
+      })
+      .nullable()
+      .optional(),
+    gradient,
   }),
 });
 
@@ -61,6 +85,7 @@ const imageElement = z.strictObject({
     .strictObject({ x: fraction, y: fraction, width: fraction.positive(), height: fraction.positive() })
     .refine((c) => c.x + c.width <= 1 && c.y + c.height <= 1, "Le recadrage dépasse l'image")
     .nullable(),
+  shadow,
 });
 
 const shapeElement = z
@@ -78,6 +103,8 @@ const shapeElement = z
       })
       .nullable(),
     cornerRadius: z.number().min(0),
+    shadow,
+    gradient,
   })
   .superRefine((shape, ctx) => {
     const issue = (path: string, message: string) => {
@@ -90,6 +117,7 @@ const shapeElement = z
     } else if (shape.height <= 0) {
       issue("height", "La hauteur doit être supérieure à 0");
     }
+    if (shape.shape === "line" && shape.gradient) issue("gradient", "Une ligne n'a pas de dégradé");
     if (shape.shape !== "rect" && shape.cornerRadius !== 0)
       issue("cornerRadius", "Seul un rectangle a des coins arrondis");
     if (shape.cornerRadius > Math.min(shape.width, shape.height) / 2)

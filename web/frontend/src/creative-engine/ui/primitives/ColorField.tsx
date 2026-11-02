@@ -14,6 +14,8 @@ interface ColorFieldProps {
   onPreview: (color: HexColor) => void;
   /** Choix confirmé (palette refermée, Entrée dans le champ texte) : une seule entrée d'historique. */
   onCommit: (color: HexColor) => void;
+  /** Couleurs proposées sous le champ (palette du document, harmonies) : un clic les applique. */
+  swatches?: readonly HexColor[];
 }
 
 /**
@@ -27,6 +29,7 @@ export function ColorField({
   disabled = none,
   onPreview,
   onCommit,
+  swatches = [],
 }: ColorFieldProps) {
   const id = useId();
   const pickerRef = useRef<HTMLInputElement>(null);
@@ -121,6 +124,24 @@ export function ColorField({
           onKeyDown={onKeyDown}
         />
       </div>
+      {swatches.length > 0 && !disabled && (
+        <div className={styles.swatches} role="group" aria-label={`${label} : couleurs proposées`}>
+          {swatches.map((color) => (
+            <button
+              key={color}
+              type="button"
+              className={styles.chip}
+              style={{ background: color }}
+              title={color}
+              aria-label={color}
+              aria-pressed={value?.slice(0, 7).toUpperCase() === color}
+              onClick={() => {
+                onCommit(`${color}${alpha}` as HexColor);
+              }}
+            />
+          ))}
+        </div>
+      )}
       {invalid && (
         <p id={`${id}-error`} className={styles.error} role="alert">
           Code couleur attendu, par exemple #E10600.

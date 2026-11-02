@@ -5,6 +5,7 @@ import { deleteSelection, duplicateSelection, reorderSelection } from "../../edi
 import { useDocumentStore } from "../../editor/documentStore.ts";
 import { ActionButton } from "../primitives/ActionButton.tsx";
 import { AppearanceSection } from "./AppearanceSection.tsx";
+import { EffectsSection } from "./EffectsSection.tsx";
 import { GeometrySection } from "./GeometrySection.tsx";
 import { ImageSection } from "./ImageSection.tsx";
 import { elementLabel, elementTypeLabel } from "./labels.ts";
@@ -155,6 +156,9 @@ export function SelectionSection() {
       {texts.length === elements.length && <TextSection texts={texts} />}
       {shapes.length === elements.length && <ShapeSection shapes={shapes} />}
       {images.length === elements.length && <ImageSection images={images} />}
+      {texts.length === elements.length && <EffectsSection elements={texts} />}
+      {shapes.length === elements.length && <EffectsSection elements={shapes} />}
+      {images.length === elements.length && <EffectsSection elements={images} />}
       <AppearanceSection elements={elements} />
     </>
   );

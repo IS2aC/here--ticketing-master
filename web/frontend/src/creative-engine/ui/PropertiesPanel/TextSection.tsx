@@ -1,7 +1,8 @@
 import { useId, useState, type KeyboardEvent } from "react";
 import { LIMITS } from "../../domain/constraints.ts";
 import type { FontWeight, HexColor, TextElement, TextStyle } from "../../domain/elements/types.ts";
-import { commitLiveEdit, previewElements, setTextContent, updateTextStyle } from "../../editor/actions.ts";
+import { commitLiveEdit, fitTextToWidth, previewElements, setTextContent, updateTextStyle } from "../../editor/actions.ts";
+import { guestSlotRules } from "../../editor/guestSlots.ts";
 import {
   closestWeight,
   FONT_CATALOG,
@@ -10,6 +11,8 @@ import {
   WEIGHT_LABELS,
 } from "../../editor/fontCatalog.ts";
 import { ColorField } from "../primitives/ColorField.tsx";
+import { LegibilityHint } from "./LegibilityHint.tsx";
+import { useSwatches } from "./useSwatches.ts";
 import { NumberField } from "../primitives/NumberField.tsx";
 import { Segmented, Toggle } from "../primitives/Segmented.tsx";
 import fieldStyles from "../primitives/Field.module.css";
@@ -79,12 +82,16 @@ export function TextSection({ texts }: { texts: readonly TextElement[] }) {
   const transform = style("textTransform");
   const bold = shared(texts, (t) => t.style.fontWeight >= 600);
   const [single] = texts.length === 1 ? texts : [];
+  const swatches = useSwatches(orNull(style("color")));
   const weights = family === MIXED ? [] : (fontOption(family)?.weights ?? []);
   const weightChoices = weight !== MIXED && !weights.includes(weight) ? [...weights, weight] : weights;
 
   const apply = (patch: Partial<TextStyle>, label?: string) => {
     void updateTextStyle(ids, patch, label);
   };
+  // Champs invité : seulement les polices que l'hôte sait dessiner pour chaque invité.
+  const slotFonts = texts.some((t) => t.slot) ? guestSlotRules()?.fonts : undefined;
+  const fonts = slotFonts ? FONT_CATALOG.filter((option) => slotFonts.includes(option.family)) : FONT_CATALOG;
 
   return (
     <section aria-labelledby="properties-text-title" className={styles.section}>
@@ -121,8 +128,8 @@ export function TextSection({ texts }: { texts: readonly TextElement[] }) {
               </option>
             )}
             {family !== MIXED && !fontOption(family) && <option value={family}>{family}</option>}
-            {FONT_CATALOG.map((option) => (
-              <option key={option.family} value={option.family}>
+            {fonts.map((option) => (
+              <option key={option.family} value={option.family} style={{ fontFamily: option.family }}>
                 {option.family}
               </option>
             ))}
@@ -164,6 +171,17 @@ export function TextSection({ texts }: { texts: readonly TextElement[] }) {
             onCommit={(fontSize) => updateTextStyle(ids, { fontSize })}
           />
         </div>
+        {single && (
+          <button
+            type="button"
+            className={styles.textButton}
+            onClick={() => {
+              void fitTextToWidth(single.id);
+            }}
+          >
+            Ajuster la taille à la largeur du cadre
+          </button>
+        )}
 
         <div className={styles.toggles} role="group" aria-label="Style du texte">
           <Toggle
@@ -206,7 +224,9 @@ export function TextSection({ texts }: { texts: readonly TextElement[] }) {
             previewElements(ids, { style: { color } }, "Modifier la couleur");
             commitLiveEdit();
           }}
+          swatches={swatches}
         />
+        {single && <LegibilityHint element={single} />}
 
         <Segmented
           label="Alignement"

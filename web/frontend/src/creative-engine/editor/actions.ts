@@ -18,6 +18,7 @@ import { placeImage } from "../domain/document/placement.ts";
 import type { CreativeDocument, ImageAsset } from "../domain/document/types.ts";
 import type { Element, ShapeElement, TextElement, TextStyle } from "../domain/elements/types.ts";
 import { createId, type Id } from "../domain/ids.ts";
+import { LIMITS } from "../domain/constraints.ts";
 import { currentDocument, useDocumentStore, type DocumentCommand } from "./documentStore.ts";
 import { useEditorStore } from "./editorStore.ts";
 import { measuredTextHeight, prepareFont } from "./textMeasure.ts";
@@ -250,6 +251,34 @@ export async function updateTextStyle(
     await Promise.all(texts.map((e) => prepareFont({ ...e.style, ...style })));
   }
   return updateElements(ids, { style } satisfies TextPatch, label);
+}
+
+/**
+ * Plus grande taille de police pour laquelle le texte tient dans la largeur de sa boîte, sans autre retour à
+ * la ligne que les siens (prénoms, titres). Recherche dichotomique sur la mesure du moteur de rendu.
+ */
+export function fittedFontSize(element: TextElement, min = 8, max = 400): number {
+  const lines = element.content.split("\n").length;
+  const fits = (fontSize: number) => {
+    const style = { ...element.style, fontSize };
+    return measuredTextHeight({ ...element, style }) <= lines * fontSize * style.lineHeight * 1.05;
+  };
+  let [lo, hi] = [min, Math.min(max, LIMITS.fontSize.max)];
+  if (!fits(lo)) return lo;
+  while (hi - lo > 0.5) {
+    const mid = (lo + hi) / 2;
+    if (fits(mid)) lo = mid;
+    else hi = mid;
+  }
+  return Math.floor(lo);
+}
+
+/** Ajuste la taille du texte à la largeur de sa boîte (une action). */
+export async function fitTextToWidth(id: Id): Promise<CommandError | null> {
+  const element = findElement(id);
+  if (element?.type !== "text") return null;
+  await prepareFont(element.style);
+  return updateTextStyle([id], { fontSize: fittedFontSize(element) }, "Ajuster la taille");
 }
 
 // Modification continue depuis le panneau (curseur d'opacité, sélecteur de couleur) : aperçu en direct,

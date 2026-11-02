@@ -14,7 +14,7 @@ import { useImage } from "../images.ts";
 import { placementOf } from "./geometry.ts";
 import { dragEnded } from "./gestures.ts";
 import { layoutImage } from "./imageFit.ts";
-import { shapeConfig, textConfig } from "./mappers.ts";
+import { shadowConfig, shapeConfig, textConfig } from "./mappers.ts";
 
 // Un élément du document → un Group Konva identifié par l'id métier.
 // Pendant un glisser ou une transformation, Konva déplace le nœud seul (aucun état React ou Zustand n'est
@@ -82,7 +82,7 @@ function ImageContent({ element, asset }: { element: ImageElement; asset: ImageA
   const intrinsic = { width: state.image.naturalWidth, height: state.image.naturalHeight };
   const layout = layoutImage(element.fit, element, intrinsic, element.crop);
   // eslint-disable-next-line jsx-a11y/alt-text -- Image Konva (dessin sur le canevas), pas une balise <img>
-  return <Image image={state.image} {...layout} />;
+  return <Image image={state.image} {...layout} {...shadowConfig(element.shadow)} />;
 }
 
 function ElementNodeView({ id }: { id: Id }) {

@@ -25,7 +25,15 @@ export const SEAL_ASSET: ImageAsset = {
 };
 
 /** Polices que Satori connaît pour les champs invité (fichiers TTF de styles/brand/fonts). */
-export const GUEST_FONTS = { "Playfair Display": "serif", Poppins: "sans" } as const satisfies Record<string, TextLayout["font"]>;
+export const GUEST_FONTS = { "Playfair Display": "serif", Poppins: "sans", "Great Vibes": "script" } as const satisfies Record<
+  string,
+  TextLayout["font"]
+>;
+
+const FAMILY_OF = Object.fromEntries(Object.entries(GUEST_FONTS).map(([family, font]) => [font, family])) as Record<
+  TextLayout["font"],
+  string
+>;
 
 /** Bornes de la taille du texte dans CardLayout (API, schemas.py). */
 export const GUEST_TEXT_SIZE = { min: 18, max: 160 };
@@ -54,8 +62,8 @@ function guestText(slot: "guest-name" | "guest-table", content: string, layout: 
     height: layout.size * SATORI_LINE_HEIGHT,
     content,
     style: {
-      fontFamily: layout.font === "serif" ? "Playfair Display" : "Poppins",
-      fontWeight: layout.bold ? 600 : 400,
+      fontFamily: FAMILY_OF[layout.font],
+      fontWeight: layout.bold && layout.font !== "script" ? 600 : 400,
       fontSize: layout.size,
       lineHeight: SATORI_LINE_HEIGHT,
       color: layout.color as TextElement["style"]["color"],
@@ -114,8 +122,9 @@ function toTextLayout(element: TextElement): TextLayout {
     y: Math.round(clamp(element.y + element.height / 2, 0, CARD_SIZE.height)),
     size: Math.round(clamp(element.style.fontSize, GUEST_TEXT_SIZE.min, GUEST_TEXT_SIZE.max)),
     color: element.style.color.slice(0, 7).toUpperCase(),
-    font: element.style.fontFamily === "Playfair Display" ? "serif" : "sans",
-    bold: element.style.fontWeight >= 600,
+    font: (GUEST_FONTS as Record<string, TextLayout["font"]>)[element.style.fontFamily] ?? "sans",
+    // Great Vibes n'a qu'une graisse.
+    bold: element.style.fontWeight >= 600 && element.style.fontFamily !== "Great Vibes",
   };
 }
 

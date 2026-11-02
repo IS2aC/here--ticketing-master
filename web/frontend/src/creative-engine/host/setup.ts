@@ -4,6 +4,7 @@ import { createDocument as createBlankDocument } from "../domain/document/factor
 import type { CreativeDocument } from "../domain/document/types.ts";
 import { createId } from "../domain/ids.ts";
 import { configureImageGeneration } from "../editor/imageGeneration.ts";
+import { configureGuestSlots } from "../editor/guestSlots.ts";
 import { configureLibrary } from "../editor/library.ts";
 import { currentDocument, useDocumentStore, type DocumentCommand } from "../editor/documentStore.ts";
 import {
@@ -26,6 +27,7 @@ import {
   createGuestName,
   createGuestQr,
   createGuestTable,
+  GUEST_FONTS,
   hasGuestFields,
   SEAL_ASSET,
   SEAL_ASSET_KEY,
@@ -99,6 +101,8 @@ export function startHereEditor(options: HereEditorOptions): () => void {
       asset.source.type === "local" || BUNDLED_ASSET_URLS.has(asset.source.key) || asset.source.key === SEAL_ASSET_KEY,
   });
   configureImageGeneration(createHttpImageGenerator({ baseUrl: "/api/image-generation" }));
+  // Satori dessine les champs invité : ses polices, sans effets.
+  configureGuestSlots({ fonts: Object.keys(GUEST_FONTS), effects: false });
 
   // Chaque nouvelle carte (vierge, modèle) reçoit les champs invité.
   let lastId: string | null = null;
@@ -139,6 +143,7 @@ export function startHereEditor(options: HereEditorOptions): () => void {
     configurePersistence(null);
     configureLibrary(null);
     configureImageGeneration(null);
+    configureGuestSlots(null);
     local.close();
   };
 }

@@ -10,6 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@types/culori": "^4.0.1",
+    "culori": "^4.0.2",
     "jsqr": "^1.4.0",
     "konva": "^10.9.0",
     "next": "16.4.3",

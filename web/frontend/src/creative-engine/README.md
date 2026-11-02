@@ -19,9 +19,16 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
    - l'envoie comme fond (`PUT /v1/events/{id}/card/background`) ;
    - convertit les champs en `CardLayout` (`PATCH /v1/events/{id}/card`).
 3. Ce que `CardLayout` ne sait pas décrire est ramené à ce que Satori sait dessiner (`host/guestFields.ts`) :
-   - 2 polices ;
+   - 3 polices (Playfair Display, Poppins, Great Vibes) ;
    - taille de 18 à 160 ;
    - 5 emplacements pour le QR code.
+
+## Rendu graphique (étape B)
+
+- **Effets.** Les textes, formes et images acceptent des effets facultatifs : `shadow`, `outline` (textes) et `gradient` (textes, rectangles, ellipses). Un document sans effet reste un document v1 valide. L'affichage et l'export passent par les mêmes correspondances (`rendering/konva/mappers.ts`).
+- **Couleurs** (`editor/colors.ts`, culori) : contraste WCAG, correction en OKLCH, palette du document, harmonies.
+- **Polices** : déclarées dans `styles/fonts.css`, avec leurs fichiers et leurs licences dans `public/creative-engine/fonts`.
+- **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches
 

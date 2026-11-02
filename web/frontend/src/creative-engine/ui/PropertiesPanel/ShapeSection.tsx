@@ -3,6 +3,7 @@ import type { ShapePatch } from "../../domain/commands/elementCommands.ts";
 import type { Element, HexColor, ShapeElement, Stroke } from "../../domain/elements/types.ts";
 import { commitLiveEdit, previewElements, updateElements, type PatchFor } from "../../editor/actions.ts";
 import { ColorField } from "../primitives/ColorField.tsx";
+import { useSwatches } from "./useSwatches.ts";
 import { NumberField } from "../primitives/NumberField.tsx";
 import { Segmented, Toggle } from "../primitives/Segmented.tsx";
 import { MIXED, orNull, shared } from "./selection.ts";
@@ -42,6 +43,8 @@ export function ShapeSection({ shapes }: { shapes: readonly ShapeElement[] }) {
   const strokeWidth = orNull(shared(strokes, (s) => s.width));
   const strokeStyle = orNull(shared(strokes, (s) => s.style));
 
+  const swatches = useSwatches(fill === MIXED || fill === null ? null : fill);
+
   return (
     <section aria-labelledby="properties-shape-title" className={styles.section}>
       <h3 id="properties-shape-title" className={styles.sectionTitle}>
@@ -60,6 +63,7 @@ export function ShapeSection({ shapes }: { shapes: readonly ShapeElement[] }) {
               onCommit={(color) => {
                 commitColor(ids, { fill: color }, "Modifier le remplissage");
               }}
+              swatches={swatches}
             />
             <Toggle
               label="Aucun"

@@ -15,6 +15,8 @@ const FONTS = [
   ["Playfair Display", 400, "italic", "PlayfairDisplay-Italic.ttf"],
   ["Playfair Display", 600, "normal", "PlayfairDisplay-SemiBold.ttf"],
   ["Playfair Display", 700, "normal", "PlayfairDisplay-Bold.ttf"],
+  // Calligraphie du nom de l'invité (éditeur de cartes), licence OFL.
+  ["Great Vibes", 400, "normal", "GreatVibes-Regular.ttf"],
   ["Inter", 400, "normal", "Inter-Regular.ttf"],
   ["Inter", 500, "normal", "Inter-Medium.ttf"],
   ["Inter", 600, "normal", "Inter-SemiBold.ttf"],

@@ -16,6 +16,9 @@ export const LIMITS = {
   /** En em : -0,5 em à 2 em. */
   letterSpacing: { min: -0.5, max: 2 },
   strokeWidth: { min: 0.1, max: 500 },
+  shadowBlur: { min: 0, max: 200 },
+  shadowOffset: { min: -500, max: 500 },
+  outlineWidth: { min: 0.1, max: 100 },
   assetKey: { maxLength: 500 },
   assetPixels: { max: 20_000 },
   dpi: { min: 72, max: 1200 },

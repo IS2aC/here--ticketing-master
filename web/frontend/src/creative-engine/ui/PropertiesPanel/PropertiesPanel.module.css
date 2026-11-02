@@ -239,3 +239,31 @@
 .section > fieldset + .help {
   margin-top: var(--space-3);
 }
+
+/* Action secondaire en lien (« Ajuster la taille à la largeur du cadre »). */
+.textButton {
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Texte peu lisible sur son fond : message et correction. */
+.legibility {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+}
+
+.legibility p {
+  margin: 0;
+}

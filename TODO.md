@@ -22,7 +22,13 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
     - Sauvegarde sur le serveur, images retrouvées sur tout appareil.
     - « Valider la carte » : le décor et la mise en page passent à Satori pour la carte de chaque invité.
   - **Reste.**
-    - Étape B, les recommandations de rendu graphique (`here--creative-engine/docs/10_recommandations.md`) : typographie et effets, couleur et lisibilité, QR stylisé, SVG, photo et impression.
+    - Étape B, les recommandations de rendu graphique (`here--creative-engine/docs/10_recommandations.md`).
+      - **Fait le 02/11 :**
+        - **Effets** : ombre, contour et dégradé (or, or rose, argent, nuit) sur les textes, les formes et les images.
+        - **Ajustement** de la taille d'un texte à la largeur de son cadre.
+        - **8 polices** (OFL), dont des calligraphies. Le nom de l'invité peut s'écrire en Great Vibes (Satori et API).
+        - **Lisibilité** : contraste WCAG avec un bouton « Rendre lisible », et des couleurs proposées (palette du document et harmonies OKLCH).
+      - **Reste** : QR stylisé, SVG, photo et impression.
     - Modèles conçus avec la zone du QR code et des champs invité. Aujourd'hui, les champs invité arrivent au centre et peuvent chevaucher le modèle.
     - Les 4 modèles qui ne sont pas au format 4:5, à adapter (redimensionnement).
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.

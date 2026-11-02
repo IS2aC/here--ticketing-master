@@ -33,6 +33,31 @@ export interface BaseElement {
   readonly hidden: boolean;
 }
 
+/** Ombre portée, en px du document. La couleur porte sa transparence (#RRGGBBAA). */
+export interface Shadow {
+  readonly color: HexColor;
+  readonly blur: number;
+  readonly offsetX: number;
+  readonly offsetY: number;
+}
+
+/**
+ * Dégradé linéaire à deux couleurs, sur toute la boîte de l'élément. Angle en degrés, sens horaire :
+ * 0 = de gauche à droite, 90 = de haut en bas. Il remplace la couleur de remplissage.
+ */
+export interface LinearGradient {
+  readonly from: HexColor;
+  readonly to: HexColor;
+  readonly angle: number;
+}
+
+/** Contour d'un texte, dessiné sous les lettres (elles gardent leur dessin). */
+export interface TextOutline {
+  readonly color: HexColor;
+  /** px du document. */
+  readonly width: number;
+}
+
 export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export interface TextStyle {
@@ -48,6 +73,10 @@ export interface TextStyle {
   readonly color: HexColor;
   readonly align: "left" | "center" | "right" | "justify";
   readonly textTransform: "none" | "uppercase";
+  /** Effets (facultatifs, absents = aucun). */
+  readonly shadow?: Shadow | null;
+  readonly outline?: TextOutline | null;
+  readonly gradient?: LinearGradient | null;
 }
 
 /**
@@ -77,6 +106,7 @@ export interface ImageElement extends BaseElement {
   /** cover : remplit le cadre en rognant ; contain : entière dans le cadre ; fill : déformée au cadre. */
   readonly fit: "cover" | "contain" | "fill";
   readonly crop: CropRect | null;
+  readonly shadow?: Shadow | null;
 }
 
 export interface Stroke {
@@ -97,6 +127,9 @@ export interface ShapeElement extends BaseElement {
   readonly stroke: Stroke | null;
   /** Rectangle uniquement : rayon des coins, en px. */
   readonly cornerRadius: number;
+  readonly shadow?: Shadow | null;
+  /** Rectangle et ellipse : remplace `fill`. */
+  readonly gradient?: LinearGradient | null;
 }
 
 export type Element = TextElement | ImageElement | ShapeElement;

@@ -81,6 +81,24 @@ describe("structure", () => {
     expect(pathsOf(load04([["elements", 1, "slot"], "guest-email"]))).toEqual(["elements[1].slot"]);
   });
 
+  it("accepte les effets d'un texte, rejette des valeurs hors limites", () => {
+    const shadow = { color: "#0B0B0B40", blur: 12, offsetX: 0, offsetY: 6 };
+    const gradient = { from: "#B8862E", to: "#F3D98B", angle: 90 };
+    expect(
+      load04(
+        [["elements", 1, "style", "shadow"], shadow],
+        [["elements", 1, "style", "outline"], { color: "#FFFFFF", width: 2 }],
+        [["elements", 1, "style", "gradient"], gradient],
+      ),
+    ).toMatchObject({ status: "ok", warnings: [] });
+    expect(pathsOf(load04([["elements", 1, "style", "shadow"], { ...shadow, blur: 900 }]))).toEqual([
+      "elements[1].style.shadow.blur",
+    ]);
+    expect(pathsOf(load04([["elements", 1, "style", "gradient"], { ...gradient, angle: 360 }]))).toEqual([
+      "elements[1].style.gradient.angle",
+    ]);
+  });
+
   it("rejette les types incorrects", () => {
     const paths = pathsOf(load04([["elements", 0, "x"], "140"], [["elements", 1, "hidden"], "non"]));
     expect(paths).toEqual(expect.arrayContaining(["elements[0].x", "elements[1].hidden"]));
@@ -234,7 +252,7 @@ describe("champs inconnus", () => {
     const raw = edit(
       rawFixture("04-avec-image.json"),
       [["futureFeature"], true],
-      [["elements", 1, "style", "shadow"], { blur: 4 }],
+      [["elements", 1, "style", "glow"], { blur: 4 }],
     );
     const before = structuredClone(raw);
 
@@ -242,11 +260,11 @@ describe("champs inconnus", () => {
 
     if (result.status !== "ok") throw new Error(result.status);
     expect(result.warnings.map((w) => [w.code, w.path])).toEqual([
-      ["unknown_field", "elements[1].style.shadow"],
+      ["unknown_field", "elements[1].style.glow"],
       ["unknown_field", "futureFeature"],
     ]);
     expect(result.document).not.toHaveProperty("futureFeature");
-    expect(result.document.elements[1]).not.toHaveProperty("style.shadow");
+    expect(result.document.elements[1]).not.toHaveProperty("style.glow");
     expect(raw).toEqual(before);
   });
 

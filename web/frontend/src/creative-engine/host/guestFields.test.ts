@@ -92,3 +92,19 @@ describe("champs invité", () => {
     expect(validateDocument(decor)).toEqual([]);
   });
 });
+
+describe("calligraphie du nom de l'invité", () => {
+  it("Great Vibes devient la police « script » de Satori, sans gras (une seule graisse)", () => {
+    const name = createGuestName(SAMPLE, { ...DEFAULT_GUEST_LAYOUT.name, font: "script", bold: true });
+    expect(name.style).toMatchObject({ fontFamily: "Great Vibes", fontWeight: 400 });
+    const doc = card();
+    const scripted = {
+      ...doc,
+      elements: doc.elements.map((e) =>
+        e.slot === "guest-name" && e.type === "text" ? { ...e, style: { ...e.style, fontFamily: "Great Vibes", fontWeight: 700 as const } } : e,
+      ),
+    };
+    const result = toCardLayout(scripted);
+    expect(result.ok && result.layout.name).toMatchObject({ font: "script", bold: false });
+  });
+});

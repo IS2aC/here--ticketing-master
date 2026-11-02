@@ -4,7 +4,7 @@ import type { Element } from "../../domain/elements/types.ts";
 import type { Id } from "../../domain/ids.ts";
 import { placementOf } from "./geometry.ts";
 import { layoutImage } from "./imageFit.ts";
-import { shapeConfig, textConfig } from "./mappers.ts";
+import { shadowConfig, shapeConfig, textConfig } from "./mappers.ts";
 
 // Scène d'export (ADR-008) : construite hors écran depuis le document, avec les mêmes correspondances que
 // l'affichage (mappers, imageFit, geometry). Elle ne contient ni poignées, ni sélection, ni repères, et ne
@@ -48,7 +48,7 @@ function elementNode(element: Element, images: ReadonlyMap<Id, HTMLImageElement>
         { width: image.naturalWidth, height: image.naturalHeight },
         element.crop,
       );
-      group.add(new Konva.Image({ image, ...layout }));
+      group.add(new Konva.Image({ image, ...layout, ...shadowConfig(element.shadow) }));
       break;
     }
   }

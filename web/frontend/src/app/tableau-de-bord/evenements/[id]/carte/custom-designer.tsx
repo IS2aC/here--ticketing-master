@@ -218,6 +218,7 @@ export function CustomDesigner({
                   [
                     ["serif", "Élégante"],
                     ["sans", "Moderne"],
+                    ["script", "Calligraphie"],
                   ] as const
                 ).map(([font, label]) => (
                   <button
