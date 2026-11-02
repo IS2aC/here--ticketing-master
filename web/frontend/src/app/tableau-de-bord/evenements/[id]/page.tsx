@@ -151,6 +151,16 @@ async function EventView({
           <EntriesCard eventId={event.id} enabled={event.track_entries} />
         </div>
       </div>
+      {query.carte === "validee" ? (
+        <Toast
+          title="Carte validée"
+          detail={
+            Number(query.creees) > 0
+              ? `${Number(query.creees).toLocaleString("fr-FR")} carte${Number(query.creees) > 1 ? "s" : ""} d'invité prête${Number(query.creees) > 1 ? "s" : ""}, chacune avec son QR code.`
+              : "Chaque invité a sa carte et son QR code."
+          }
+        />
+      ) : null}
       {imported > 0 ? (
         <Toast
           title={`${imported.toLocaleString("fr-FR")} invité${imported > 1 ? "s" : ""} importé${imported > 1 ? "s" : ""}`}

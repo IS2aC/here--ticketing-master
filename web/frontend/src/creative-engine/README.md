@@ -2,11 +2,11 @@
 
 Éditeur graphique des cartes d'invitation (Konva, Zustand, Zod). Il vient du dépôt `here--creative-engine`, phases 0 à 8, copié le 02/11/2026 au commit `d3ab1e8`. Ce dossier est désormais la source : le dépôt d'origine ne sert plus que de référence, avec ses tests navigateur, ses ADR et le générateur du catalogue.
 
-Route : `/tableau-de-bord/evenements/[id]/carte/editeur`, en plein écran, uniquement dans le navigateur (`next/dynamic`, `ssr: false`).
+Route : `/tableau-de-bord/evenements/[id]/carte`, en plein écran, uniquement dans le navigateur (`next/dynamic`, `ssr: false`).
 
 ## Moteur + Satori
 
-L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessinée par Satori (`lib/card/render.tsx`, « Mon propre modèle ») :
+L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessinée par Satori (`lib/card/render.tsx`, à partir du décor validé et de la mise en page des champs invité) :
 
 1. Le document contient trois **champs invité** (`slot` sur un élément) :
    - `guest-name` : le nom de l'invité ;
@@ -17,7 +17,8 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
 2. **Valider la carte** (`host/guestActions.ts`) :
    - exporte le décor **sans** ces champs, en PNG 1080 × 1350 ;
    - l'envoie comme fond (`PUT /v1/events/{id}/card/background`) ;
-   - convertit les champs en `CardLayout` (`PATCH /v1/events/{id}/card`).
+   - convertit les champs en `CardLayout` (`PATCH /v1/events/{id}/card`) ;
+   - prépare les cartes des invités (`POST /v1/events/{id}/invitations`), puis revient à la page de l'événement.
 3. Ce que `CardLayout` ne sait pas décrire est ramené à ce que Satori sait dessiner (`host/guestFields.ts`) :
    - 3 polices (Playfair Display, Poppins, Great Vibes) ;
    - taille de 18 à 160 ;
@@ -42,7 +43,7 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
   - le cadrage (`editor/photoCrop.ts`) écrit `crop` aux proportions du cadre, et « Cadrer sur le sujet » passe par smartcrop.js ;
   - `editor/colors.ts` (`dominantColors`) et `rendering/photoPalette.ts` tirent la palette des photos.
 - **Modèles** : tous au format de la carte (1080 × 1350). Chacun contient les champs invité (`slot`) et le sceau, déjà à leur place ; `host/templates.test.ts` vérifie les zones de Satori et qu'aucun texte ne les recouvre. À l'ouverture, `ensureGuestFields` y met le nom et la table de l'invité d'exemple de l'événement.
-- **Cartes proposées (étape C1)** : `host/proposals/`. La route `…/carte/editeur/propositions` (`lib/card/proposals.ts`) demande 3 chartes au fournisseur (`CARD_AI_*`) ou les prend dans `fallback.ts` ; `charter.ts` valide la charte et refuse les textes qui inventent un nom ou un nombre ; `compose.ts` habille un modèle selon la charte, avec les faits de l'événement.
+- **Cartes proposées (étape C1)** : `host/proposals/`. La route `…/carte/propositions` (`lib/card/proposals.ts`) demande 3 chartes au fournisseur (`CARD_AI_*`) ou les prend dans `fallback.ts` ; `charter.ts` valide la charte et refuse les textes qui inventent un nom ou un nombre ; `compose.ts` habille un modèle selon la charte, avec les faits de l'événement.
 - **Aide à la mise en page (étape C3)** : calculs purs dans `editor/layoutAids.ts` (boîtes englobantes, repères, accroche, alignement, répartition) ; le magnétisme des gestes est dans `rendering/konva/snapping.ts` (repères pris au début du geste, guides dans un store d'interface), les guides dans `SnapGuides.tsx`, les boutons dans `ui/PropertiesPanel/LayoutSection.tsx`.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 

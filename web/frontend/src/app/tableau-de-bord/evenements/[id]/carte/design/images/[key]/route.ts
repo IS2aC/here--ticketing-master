@@ -1,6 +1,6 @@
 import { designPath, relay } from "../../../relay";
 
-type Context = RouteContext<"/tableau-de-bord/evenements/[id]/carte/editeur/design/images/[key]">;
+type Context = RouteContext<"/tableau-de-bord/evenements/[id]/carte/design/images/[key]">;
 
 const path = async (params: Context["params"]) => {
   const { id, key } = await params;

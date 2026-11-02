@@ -58,7 +58,7 @@ export function moveSealTo(spot: QrSpot): void {
   ]);
 }
 
-export type ValidationResult = { readonly ok: true } | { readonly ok: false; readonly message: string };
+export type ValidationResult = { readonly ok: true; readonly created: number } | { readonly ok: false; readonly message: string };
 
 /**
  * Valide la carte : enregistre le document, exporte le décor (sans les champs invité) et l'envoie à Here! avec
@@ -88,7 +88,10 @@ export async function validateCard(
   body.append("layout", JSON.stringify({ ...layout.layout, qr_style: isDefault ? null : qrStyle }));
   try {
     const response = await fetch(`${baseUrl}/valider`, { method: "POST", body });
-    if (response.ok) return { ok: true };
+    if (response.ok) {
+      const { created } = (await response.json().catch(() => ({}))) as { created?: number };
+      return { ok: true, created: created ?? 0 };
+    }
     const { message } = (await response.json()) as { message?: string };
     return { ok: false, message: message ?? "Votre carte n'a pas été validée. Réessayez." };
   } catch {

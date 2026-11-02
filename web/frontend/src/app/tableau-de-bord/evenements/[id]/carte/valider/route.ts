@@ -2,9 +2,11 @@ import { revalidatePath } from "next/cache";
 import { apiFetch } from "@/lib/api";
 import { getSessionToken } from "@/lib/session";
 
-// « Valider la carte » : le décor dessiné dans l'éditeur devient le fond de « Mon propre modèle », et les
-// champs invité sa mise en page. Satori dessine ensuite la carte de chaque invité (nom, table, QR code).
+// « Valider la carte » : le décor dessiné dans l'éditeur devient le fond de la carte, et les champs invité sa
+// mise en page. Les cartes des invités sont ensuite préparées (une invitation et un QR code par invité) :
+// Satori dessine la carte de chacun (nom, table, QR code). Rien n'est envoyé à cette étape.
 // Corps : multipart, `decor` (PNG 1080 × 1350, sans les champs invité) et `layout` (JSON, CardLayout).
+// Réponse : { ok, created } (cartes préparées par cette validation).
 
 const UNAVAILABLE = "Le service est momentanément indisponible. Votre carte n'a pas été validée.";
 
@@ -21,7 +23,7 @@ async function failure(response: Response): Promise<Response> {
   return Response.json({ message }, { status: response.status === 401 ? 401 : 400 });
 }
 
-export async function POST(request: Request, { params }: RouteContext<"/tableau-de-bord/evenements/[id]/carte/editeur/valider">) {
+export async function POST(request: Request, { params }: RouteContext<"/tableau-de-bord/evenements/[id]/carte/valider">) {
   const { id } = await params;
   const form = await request.formData();
   const decor = form.get("decor");
@@ -40,6 +42,14 @@ export async function POST(request: Request, { params }: RouteContext<"/tableau-
   } catch {
     return Response.json({ message: UNAVAILABLE }, { status: 503 });
   }
-  revalidatePath(`/tableau-de-bord/evenements/${id}/carte`);
-  return Response.json({ ok: true });
+  // Cartes des invités : la carte est validée même si la préparation échoue (elle sera refaite à l'envoi).
+  let created = 0;
+  try {
+    const prepared = await apiFetch(`/v1/events/${encodeURIComponent(id)}/invitations`, { method: "POST", token });
+    if (prepared.ok) created = ((await prepared.json()) as { created: number }).created;
+  } catch {
+    // service indisponible : la carte reste validée
+  }
+  revalidatePath(`/tableau-de-bord/evenements/${id}`, "layout");
+  return Response.json({ ok: true, created });
 }

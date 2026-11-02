@@ -92,7 +92,7 @@ function starterDocument(title: string): CreativeDocument {
 }
 
 export interface HereEditorOptions {
-  /** Routes de l'éditeur de l'événement (…/carte/editeur). */
+  /** Routes de l'éditeur de l'événement (…/carte). */
   readonly baseUrl: string;
   readonly title: string;
   readonly sample: GuestSample;

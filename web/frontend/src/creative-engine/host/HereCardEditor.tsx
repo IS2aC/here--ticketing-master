@@ -56,9 +56,9 @@ function GuestFieldsMenu({ sample }: { sample: GuestSample }) {
   return <MenuButton label="Champs invité" menuLabel="Champs invité" icon="guest" items={items} showLabel />;
 }
 
-/** Éditeur de la carte d'invitation d'un événement, en plein écran au-dessus du tableau de bord. */
+/** Page Carte d'un événement : l'éditeur, en plein écran au-dessus du tableau de bord. */
 export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrStyle }: HereCardEditorProps) {
-  const baseUrl = `/tableau-de-bord/evenements/${encodeURIComponent(eventId)}/carte/editeur`;
+  const baseUrl = `/tableau-de-bord/evenements/${encodeURIComponent(eventId)}/carte`;
   const eventUrl = `/tableau-de-bord/evenements/${encodeURIComponent(eventId)}`;
   const isPanelOpen = useEditorStore((s) => s.isPropertiesPanelOpen);
   const closePanel = useEditorStore((s) => s.closePropertiesPanel);
@@ -90,7 +90,7 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
     setNotice(null);
     const result = await validateCard(baseUrl, resolveAsset, qrStyle);
     if (result.ok) {
-      router.push(`${eventUrl}/carte?editeur=valide`);
+      router.push(`${eventUrl}?carte=validee&creees=${result.created}`);
       return;
     }
     setValidating(false);

@@ -17,7 +17,7 @@ import {
 //   - les images, sur l'appareil (IndexedDB, comme avant) ET sur le serveur. Leur clé est l'empreinte de leur
 //     contenu (« sha256-… ») : la même sur l'appareil et sur le serveur. Chaque enregistrement envoie d'abord
 //     les images que le serveur n'a pas ; une image absente de l'appareil est téléchargée puis gardée.
-// `baseUrl` : routes de l'éditeur (…/carte/editeur), relayées vers l'API par le serveur Next.
+// `baseUrl` : routes de l'éditeur (…/carte), relayées vers l'API par le serveur Next.
 
 const SERVER_UNAVAILABLE =
   "Le serveur Here! est injoignable. Vos modifications restent à l'écran ; elles seront enregistrées au retour de la connexion.";

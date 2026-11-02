@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- Satori dessine une image : <img> est le seul moyen d'y placer QR code et symbole. */
-import { svgUri } from "./templates/color";
+import { svgUri } from "./svg";
 
 // Sceau Here! compact : QR code de l'invité sur blanc, symbole, « Invitation vérifiée par Here! » et code.
 // Commun à « Mon propre modèle » (render.tsx) et aux modèles du catalogue (templates/engine.tsx). Taille de base : 260 × 318.

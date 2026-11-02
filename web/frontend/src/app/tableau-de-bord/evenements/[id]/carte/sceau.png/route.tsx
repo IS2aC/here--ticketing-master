@@ -3,7 +3,7 @@ import { SAMPLE_CODE } from "@/lib/card/data";
 import { cardFonts } from "@/lib/card/fonts";
 import { parseQrStyle, SAMPLE_QR_VALUE, styledQrSvg } from "@/lib/card/qr";
 import { CompactSeal, SEAL_SIZE } from "@/lib/card/seal";
-import { svgUri } from "@/lib/card/templates/color";
+import { svgUri } from "@/lib/card/svg";
 
 // Sceau Here! d'exemple (QR code fictif), affiché dans l'éditeur à la place du QR code de chaque invité.
 // Dessiné par le même composant que la carte envoyée : l'aperçu correspond au rendu final.

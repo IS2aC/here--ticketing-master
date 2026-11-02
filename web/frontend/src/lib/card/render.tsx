@@ -12,6 +12,7 @@ import { parseQrStyle, styledQrSvg } from "./qr";
 import { FONT_FAMILY, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
 import { paletteOf, type CardColors } from "./palettes";
 import { CompactSeal, HERE_SYMBOL } from "./seal";
+import { svgUri } from "./svg";
 
 // Carte d'invitation en image (1080 × 1350, format 4:5 optimal dans WhatsApp), d'après uiux/visual-identity/mockups/carte-*.
 // Un seul rendu sert à l'aperçu de l'organisateur et à l'image envoyée à l'invité.
@@ -61,10 +62,6 @@ function colorsOf(family: CardStyle["family"], palette: string | null | undefine
 }
 
 const SEAL_TOP = CARD_HEIGHT - 42 - 228;
-
-function svgUri(svg: string): string {
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
-}
 
 function Icon({
   name,

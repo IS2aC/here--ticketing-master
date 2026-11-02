@@ -15,7 +15,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
 - [x] **Personnaliser la carte** (fait le 30/10) : cartes automatiques avec **intitulé** et **palette** au choix ; **« Mon propre modèle »** : fond importé (recadré en 1080 × 1350), nom de l'invité et table / catégorie placés au doigt (taille, couleur, police), QR code à l'un des 5 emplacements, sceau Here! compact ; carte figée une fois les invitations parties. Reste : carte par catégorie (VIP…).
 - [ ] **Modèles de cartes par type d'événement** (en cours, cahier des charges du 30/10) : données, définition JSON et moteur de rendu faits (4 formats, palettes, polices, ajustement du texte, alertes de contraste) ; **5 modèles avec photo** présentés en exemples dans la bibliothèque (31/10 : dot wax, anniversaire, festival, réunion, séminaire, photos de `uiux/assets/models-cards/`), catalogue dans `web/api/app/card_catalog`. Reste : choisir un modèle pour son événement et l'éditeur (photo, textes, couleurs), exports PNG / PDF, gestion des modèles dans le portail admin, visuels définitifs des fonds.
 - [ ] **Éditeur de cartes (Creative Engine)** : intégré le 02/11, étape A, dans `web/frontend/src/creative-engine`. Voir son README.
-  - **Fait.** L'éditeur s'ouvre en plein écran depuis la page Carte.
+  - **Fait.** La page Carte est l'éditeur (fusion du 02/11 : plus de carte automatique, de « Mon propre modèle » ni de bibliothèque à part). Valider la carte prépare aussi les cartes des invités.
     - Modèles 4:5, textes, formes, images, ornements.
     - Génération d'images par IA (`IMAGE_*`, désactivée par défaut).
     - Champs invité : nom, table, QR code avec le sceau Here!.
@@ -44,7 +44,6 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
       - **C3 (fait le 02/11)** : magnétisme au déplacement et au redimensionnement (bords et milieu de la page, marge de 44 px, autres éléments), guides affichés, Alt pour s'en passer ; section « Disposition » : aligner (sur la page pour un élément seul) et répartir à espaces égaux.
     - **Modèles (fait le 02/11)** : les 6 modèles sont au format 4:5 et prévoient la place du nom de l'invité, de sa table et du sceau QR (à un emplacement de Satori). Un test vérifie qu'aucun texte ne les recouvre. Vignettes refaites depuis le rendu réel.
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.
-    - Synchroniser les retouches de « Mon propre modèle » (glisser le nom sur la page Carte) avec le document de l'éditeur.
 - [ ] **Cartes proposées et modifiées par IA** (à commencer simple, avec **1min.ai**) :
   - **génération** : à partir du type d'événement, des informations et des photos des hôtes (mariés, famille, organisateur), l'IA propose 2 ou 3 cartes ;
   - **modification** : retouches demandées en langage courant (« plus sobre », « texte plus court », « couleurs plus chaudes ») et ajustements directs (textes, palette, cadrage de la photo) avec aperçu immédiat ;

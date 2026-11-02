@@ -7,7 +7,6 @@ import { Icon, type IconName } from "@/components/icons";
 // Maquette « tableau de bord organisateur ». Les écrans sans page pour l'instant sont grisés avec « Bientôt ».
 const LINKS: { label: string; icon: IconName; href?: string }[] = [
   { label: "Tableau de bord", icon: "statistiques", href: "/tableau-de-bord" },
-  { label: "Cartes", icon: "invitation", href: "/tableau-de-bord/cartes" },
   { label: "Mes invités", icon: "participants" },
   { label: "Messages", icon: "message" },
   { label: "Statistiques", icon: "courbe" },

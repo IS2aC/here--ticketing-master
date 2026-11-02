@@ -30,10 +30,6 @@ export default function DashboardPage({ searchParams }: PageProps<"/tableau-de-b
           <p className="mt-1 text-[14px] text-text-muted">Retrouvez ici un aperçu de vos événements et de leur activité.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <ButtonLink href="/tableau-de-bord/cartes" variant="ghost" className="h-11 text-[14px]">
-            <Icon name="invitation" width={18} height={18} />
-            Voir mes cartes
-          </ButtonLink>
           <ButtonLink href={NEW_EVENT} className="h-11 text-[14px]">
             <Icon name="ajouter" width={18} height={18} />
             Créer un événement
