@@ -41,6 +41,7 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
   - `rendering/photo.ts` produit la photo retouchée (filtres Konva, puis masque) pour l'écran et pour l'export ;
   - le cadrage (`editor/photoCrop.ts`) écrit `crop` aux proportions du cadre, et « Cadrer sur le sujet » passe par smartcrop.js ;
   - `editor/colors.ts` (`dominantColors`) et `rendering/photoPalette.ts` tirent la palette des photos.
+- **Modèles** : tous au format de la carte (1080 × 1350). Chacun contient les champs invité (`slot`) et le sceau, déjà à leur place ; `host/templates.test.ts` vérifie les zones de Satori et qu'aucun texte ne les recouvre. À l'ouverture, `ensureGuestFields` y met le nom et la table de l'invité d'exemple de l'événement.
 - **Champs invité** : ils n'acceptent que les polices et les effets que Satori sait dessiner (`editor/guestSlots.ts`, configuré par `host/setup.ts`). Le nom peut être en Playfair Display, Poppins ou Great Vibes.
 
 ## Couches

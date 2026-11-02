@@ -21,6 +21,17 @@
         "type": "remote"
       },
       "width": 1000
+    },
+    "06000000-0000-4000-8000-0000000000f0": {
+      "height": 318,
+      "kind": "image",
+      "mimeType": "image/png",
+      "provenance": "template",
+      "source": {
+        "key": "here/sceau-apercu.png",
+        "type": "remote"
+      },
+      "width": 260
     }
   },
   "elements": [
@@ -28,7 +39,7 @@
       "assetId": "06000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 500,
+      "height": 300,
       "hidden": false,
       "id": "06000000-0000-4000-8000-000000000003",
       "locked": false,
@@ -36,9 +47,9 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 800,
-      "x": 140,
-      "y": 40
+      "width": 480,
+      "x": 300,
+      "y": 20
     },
     {
       "assetId": "06000000-0000-4000-8000-000000000004",
@@ -58,7 +69,7 @@
     },
     {
       "content": "La nuit des",
-      "height": 64.8,
+      "height": 60.0,
       "hidden": false,
       "id": "06000000-0000-4000-8000-000000000006",
       "locked": false,
@@ -69,7 +80,7 @@
         "align": "center",
         "color": "#FFD166",
         "fontFamily": "Poppins",
-        "fontSize": 54,
+        "fontSize": 50,
         "fontStyle": "normal",
         "fontWeight": 600,
         "letterSpacing": 0.35,
@@ -79,11 +90,11 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 430
+      "y": 330
     },
     {
       "content": "Couleurs",
-      "height": 180,
+      "height": 168.0,
       "hidden": false,
       "id": "06000000-0000-4000-8000-000000000007",
       "locked": false,
@@ -94,7 +105,7 @@
         "align": "center",
         "color": "#FFFFFF",
         "fontFamily": "Poppins",
-        "fontSize": 150,
+        "fontSize": 140,
         "fontStyle": "normal",
         "fontWeight": 700,
         "letterSpacing": 0.05,
@@ -104,11 +115,11 @@
       "type": "text",
       "width": 1000,
       "x": 40,
-      "y": 500
+      "y": 390
     },
     {
       "content": "Concert privé · DJ · Food trucks",
-      "height": 48,
+      "height": 45.6,
       "hidden": false,
       "id": "06000000-0000-4000-8000-000000000008",
       "locked": false,
@@ -119,7 +130,7 @@
         "align": "center",
         "color": "#F7C6FF",
         "fontFamily": "Poppins",
-        "fontSize": 40,
+        "fontSize": 38,
         "fontStyle": "normal",
         "fontWeight": 500,
         "letterSpacing": 0,
@@ -129,12 +140,12 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 710
+      "y": 574
     },
     {
-      "cornerRadius": 50,
+      "cornerRadius": 48,
       "fill": "#FFD166",
-      "height": 100,
+      "height": 96,
       "hidden": false,
       "id": "06000000-0000-4000-8000-000000000009",
       "locked": false,
@@ -146,7 +157,7 @@
       "type": "shape",
       "width": 550,
       "x": 265,
-      "y": 800
+      "y": 652
     },
     {
       "content": "Vendredi 2 juillet · 21 h",
@@ -171,11 +182,11 @@
       "type": "text",
       "width": 550,
       "x": 265,
-      "y": 827
+      "y": 677.2
     },
     {
       "content": "Jardin botanique de Bingerville",
-      "height": 45.6,
+      "height": 43.2,
       "hidden": false,
       "id": "06000000-0000-4000-8000-00000000000b",
       "locked": false,
@@ -186,7 +197,7 @@
         "align": "center",
         "color": "#FFFFFF",
         "fontFamily": "Poppins",
-        "fontSize": 38,
+        "fontSize": 36,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -196,11 +207,88 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 950
+      "y": 780
+    },
+    {
+      "content": "Invitation nominative",
+      "height": 31.2,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-0000000000f1",
+      "locked": false,
+      "name": "Invitation",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#F7C6FF",
+        "fontFamily": "Poppins",
+        "fontSize": 26,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0.25,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 862
+    },
+    {
+      "content": "Awa Koné",
+      "height": 76.8,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-0000000000f2",
+      "locked": false,
+      "name": "Nom de l'invité",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-name",
+      "style": {
+        "align": "center",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 64,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 896.6
+    },
+    {
+      "content": "Table 4 · Famille",
+      "height": 36.0,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-0000000000f4",
+      "locked": false,
+      "name": "Table · catégorie",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-table",
+      "style": {
+        "align": "center",
+        "color": "#FFD166",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 984.0
     },
     {
       "content": "Entrée sur invitation",
-      "height": 52.8,
+      "height": 48.0,
       "hidden": false,
       "id": "06000000-0000-4000-8000-00000000000c",
       "locked": false,
@@ -211,7 +299,7 @@
         "align": "center",
         "color": "#FFD166",
         "fontFamily": "Playfair Display",
-        "fontSize": 44,
+        "fontSize": 40,
         "fontStyle": "italic",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -219,9 +307,26 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 900,
-      "x": 90,
-      "y": 1040
+      "width": 680,
+      "x": 60,
+      "y": 1100
+    },
+    {
+      "assetId": "06000000-0000-4000-8000-0000000000f0",
+      "crop": null,
+      "fit": "contain",
+      "height": 318,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-0000000000f3",
+      "locked": true,
+      "name": "QR code et sceau Here!",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-qr",
+      "type": "image",
+      "width": 260,
+      "x": 776,
+      "y": 988
     }
   ],
   "id": "06000000-0000-4000-8000-000000000001",

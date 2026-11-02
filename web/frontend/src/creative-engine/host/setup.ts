@@ -1,5 +1,5 @@
 import { addAsset } from "../domain/commands/documentCommands.ts";
-import { addElement } from "../domain/commands/elementCommands.ts";
+import { addElement, updateElement } from "../domain/commands/elementCommands.ts";
 import { createDocument as createBlankDocument } from "../domain/document/factories.ts";
 import type { CreativeDocument } from "../domain/document/types.ts";
 import { createId } from "../domain/ids.ts";
@@ -39,7 +39,7 @@ import { createHereRepository } from "./hereRepository.ts";
 // Démarrage de l'éditeur dans Here! : stockage de la carte de l'événement (serveur + appareil), modèles au
 // format de la carte, génération d'images par les routes de Here!, champs invité ajoutés à chaque carte.
 
-/** Seuls les modèles au format de la carte WhatsApp (4:5) ; les autres formats viendront avec leur adaptation. */
+/** Seuls les modèles au format de la carte WhatsApp (4:5) : tous les modèles intégrés, pas forcément ceux d'un autre catalogue. */
 function cardTemplates(catalog: TemplateCatalog): TemplateCatalog {
   const PRESET = "social-4-5" as const;
   return {
@@ -56,22 +56,34 @@ function cardTemplates(catalog: TemplateCatalog): TemplateCatalog {
   };
 }
 
-/** Ajoute à la carte les champs invité qui lui manquent (nouvelle carte, carte issue d'un modèle). */
+/**
+ * Ajoute à la carte les champs invité qui lui manquent (nouvelle carte, carte issue d'un modèle) ; ceux que
+ * prévoit un modèle prennent le nom et la table de l'invité d'exemple de l'événement.
+ */
 export function ensureGuestFields(sample: GuestSample): void {
   const doc = currentDocument();
-  if (hasGuestFields(doc)) return;
   const commands: DocumentCommand[] = [];
-  let sealId = Object.entries(doc.assets).find(([, a]) => a.source.key === SEAL_ASSET_KEY)?.[0];
-  if (!sealId) {
-    const id = createId();
-    sealId = id;
-    commands.push((d) => addAsset(d, { id, asset: SEAL_ASSET }));
+  for (const [slot, content] of [
+    ["guest-name", sample.name],
+    ["guest-table", sample.table],
+  ] as const) {
+    const field = slotOf(doc, slot);
+    if (field?.type === "text" && field.content !== content)
+      commands.push((d) => updateElement(d, { id: field.id, patch: { content } }));
   }
-  if (!slotOf(doc, "guest-name")) commands.push((d) => addElement(d, { element: createGuestName(sample) }));
-  if (!slotOf(doc, "guest-table")) commands.push((d) => addElement(d, { element: createGuestTable(sample) }));
-  const assetId = sealId;
-  commands.push((d) => addElement(d, { element: createGuestQr(assetId) }));
-  useDocumentStore.getState().executeAll("Ajouter les champs invité", commands);
+  if (!hasGuestFields(doc)) {
+    let sealId = Object.entries(doc.assets).find(([, a]) => a.source.key === SEAL_ASSET_KEY)?.[0];
+    if (!sealId) {
+      const id = createId();
+      sealId = id;
+      commands.push((d) => addAsset(d, { id, asset: SEAL_ASSET }));
+    }
+    if (!slotOf(doc, "guest-name")) commands.push((d) => addElement(d, { element: createGuestName(sample) }));
+    if (!slotOf(doc, "guest-table")) commands.push((d) => addElement(d, { element: createGuestTable(sample) }));
+    const assetId = sealId;
+    commands.push((d) => addElement(d, { element: createGuestQr(assetId) }));
+  }
+  if (commands.length > 0) useDocumentStore.getState().executeAll("Ajouter les champs invité", commands);
 }
 
 function starterDocument(title: string): CreativeDocument {

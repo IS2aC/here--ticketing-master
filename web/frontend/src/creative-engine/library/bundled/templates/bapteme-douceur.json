@@ -21,6 +21,17 @@
         "type": "remote"
       },
       "width": 800
+    },
+    "04000000-0000-4000-8000-0000000000f0": {
+      "height": 318,
+      "kind": "image",
+      "mimeType": "image/png",
+      "provenance": "template",
+      "source": {
+        "key": "here/sceau-apercu.png",
+        "type": "remote"
+      },
+      "width": 260
     }
   },
   "elements": [
@@ -28,7 +39,7 @@
       "assetId": "04000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 440,
+      "height": 320,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000003",
       "locked": false,
@@ -36,15 +47,15 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 1100,
+      "width": 800,
       "x": -60,
-      "y": 80
+      "y": 30
     },
     {
       "assetId": "04000000-0000-4000-8000-000000000004",
       "crop": null,
       "fit": "contain",
-      "height": 800,
+      "height": 440,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000005",
       "locked": false,
@@ -52,13 +63,13 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 800,
-      "x": 474,
-      "y": 520
+      "width": 440,
+      "x": 320,
+      "y": 110
     },
     {
       "content": "Baptême de",
-      "height": 132,
+      "height": 64.8,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000006",
       "locked": false,
@@ -69,7 +80,7 @@
         "align": "center",
         "color": "#3E5C76",
         "fontFamily": "Playfair Display",
-        "fontSize": 110,
+        "fontSize": 54,
         "fontStyle": "italic",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -77,13 +88,13 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 800,
-      "x": 474,
-      "y": 760
+      "width": 440,
+      "x": 320,
+      "y": 245
     },
     {
       "content": "Noah",
-      "height": 220,
+      "height": 110.0,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000007",
       "locked": false,
@@ -94,7 +105,7 @@
         "align": "center",
         "color": "#2F4858",
         "fontFamily": "Playfair Display",
-        "fontSize": 200,
+        "fontSize": 100,
         "fontStyle": "normal",
         "fontWeight": 700,
         "letterSpacing": 0,
@@ -102,13 +113,13 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 800,
-      "x": 474,
-      "y": 890
+      "width": 440,
+      "x": 320,
+      "y": 305
     },
     {
       "content": "Dimanche 18 avril 2027 à 10 h",
-      "height": 79.2,
+      "height": 45.6,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000008",
       "locked": false,
@@ -119,7 +130,7 @@
         "align": "center",
         "color": "#2F4858",
         "fontFamily": "Poppins",
-        "fontSize": 66,
+        "fontSize": 38,
         "fontStyle": "normal",
         "fontWeight": 500,
         "letterSpacing": 0,
@@ -127,13 +138,13 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 1400,
-      "x": 174,
-      "y": 1460
+      "width": 900,
+      "x": 90,
+      "y": 590
     },
     {
       "content": "Paroisse Sainte-Thérèse, Marcory\nSuivi d'un déjeuner en famille",
-      "height": 162.4,
+      "height": 87.0,
       "hidden": false,
       "id": "04000000-0000-4000-8000-000000000009",
       "locked": false,
@@ -144,7 +155,7 @@
         "align": "center",
         "color": "#4F6D7A",
         "fontFamily": "Poppins",
-        "fontSize": 56,
+        "fontSize": 30,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -152,13 +163,90 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 1400,
-      "x": 174,
-      "y": 1570
+      "width": 900,
+      "x": 90,
+      "y": 648
+    },
+    {
+      "content": "Avec joie, nous invitons",
+      "height": 36.0,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-0000000000f1",
+      "locked": false,
+      "name": "Invitation",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#3E5C76",
+        "fontFamily": "Playfair Display",
+        "fontSize": 30,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 772
+    },
+    {
+      "content": "Awa Koné",
+      "height": 76.8,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-0000000000f2",
+      "locked": false,
+      "name": "Nom de l'invité",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-name",
+      "style": {
+        "align": "center",
+        "color": "#2F4858",
+        "fontFamily": "Playfair Display",
+        "fontSize": 64,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 816.6
+    },
+    {
+      "content": "Table 4 · Famille",
+      "height": 36.0,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-0000000000f4",
+      "locked": false,
+      "name": "Table · catégorie",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-table",
+      "style": {
+        "align": "center",
+        "color": "#4F6D7A",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 907.0
     },
     {
       "content": "Avec toute notre tendresse,\nses parents",
-      "height": 166.4,
+      "height": 88.4,
       "hidden": false,
       "id": "04000000-0000-4000-8000-00000000000a",
       "locked": false,
@@ -169,7 +257,7 @@
         "align": "center",
         "color": "#3E5C76",
         "fontFamily": "Playfair Display",
-        "fontSize": 64,
+        "fontSize": 34,
         "fontStyle": "italic",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -177,15 +265,15 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 1400,
-      "x": 174,
-      "y": 1900
+      "width": 660,
+      "x": 360,
+      "y": 1010
     },
     {
       "assetId": "04000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 320,
+      "height": 180,
       "hidden": false,
       "id": "04000000-0000-4000-8000-00000000000b",
       "locked": false,
@@ -193,9 +281,26 @@
       "opacity": 0.9,
       "rotation": 0,
       "type": "image",
-      "width": 800,
-      "x": 900,
-      "y": 2150
+      "width": 450,
+      "x": 600,
+      "y": 1150
+    },
+    {
+      "assetId": "04000000-0000-4000-8000-0000000000f0",
+      "crop": null,
+      "fit": "contain",
+      "height": 318,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-0000000000f3",
+      "locked": true,
+      "name": "QR code et sceau Here!",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-qr",
+      "type": "image",
+      "width": 260,
+      "x": 44,
+      "y": 988
     }
   ],
   "id": "04000000-0000-4000-8000-000000000001",
@@ -210,16 +315,11 @@
       "color": "#DCEBF5",
       "type": "solid"
     },
-    "height": 2480,
-    "preset": "print-a5",
-    "print": {
-      "bleedMm": 3,
-      "dpi": 300,
-      "heightMm": 210,
-      "widthMm": 148
-    },
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
     "unit": "px",
-    "width": 1748
+    "width": 1080
   },
   "schemaVersion": 1
 }

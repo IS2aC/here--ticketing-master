@@ -1,9 +1,9 @@
 [
   {
     "id": "mariage-feuillage-dore",
-    "version": 1,
+    "version": 2,
     "name": "Feuillage doré",
-    "description": "Faire-part de mariage classique : feuillage doré, prénoms en grand, date, lieux et réponse attendue.",
+    "description": "Faire-part de mariage classique : feuillage doré, prénoms en grand, nom de l'invité en calligraphie et sceau QR au centre.",
     "categories": [
       "mariage"
     ],
@@ -12,7 +12,8 @@
       "or",
       "classique",
       "feuilles",
-      "faire-part"
+      "faire-part",
+      "WhatsApp"
     ],
     "page": {
       "width": 1080,
@@ -24,7 +25,7 @@
     "id": "dot-motifs-wax",
     "version": 2,
     "name": "Motifs wax",
-    "description": "Invitation à imprimer en A5 pour une dot ou un mariage coutumier, encadrée de bandes aux motifs wax.",
+    "description": "Invitation à une dot ou un mariage coutumier, encadrée de bandes aux motifs wax, avec le nom de l'invité sous les prénoms.",
     "categories": [
       "dot",
       "mariage"
@@ -34,20 +35,19 @@
       "pagne",
       "coutumier",
       "afrique",
-      "imprimer",
-      "A5"
+      "WhatsApp"
     ],
     "page": {
-      "width": 1748,
-      "height": 2480,
-      "preset": "print-a5"
+      "width": 1080,
+      "height": 1350,
+      "preset": "social-4-5"
     }
   },
   {
     "id": "anniversaire-confettis",
-    "version": 1,
+    "version": 2,
     "name": "Confettis",
-    "description": "Invitation d'anniversaire carrée et colorée : confettis, ballons, âge en grand et dress code.",
+    "description": "Invitation d'anniversaire colorée : confettis, ballons, âge en grand, nom de l'invité et dress code.",
     "categories": [
       "anniversaire"
     ],
@@ -55,20 +55,19 @@
       "fête",
       "couleurs",
       "ballons",
-      "carré",
-      "réseaux sociaux"
+      "WhatsApp"
     ],
     "page": {
       "width": 1080,
-      "height": 1080,
-      "preset": "square"
+      "height": 1350,
+      "preset": "social-4-5"
     }
   },
   {
     "id": "bapteme-douceur",
-    "version": 1,
+    "version": 2,
     "name": "Douceur",
-    "description": "Invitation au baptême à imprimer en A5 : bleu tendre, nuages et couronne de feuilles autour du prénom.",
+    "description": "Invitation au baptême : bleu tendre, nuages et couronne de feuilles autour du prénom, nom de l'invité au cœur de la carte.",
     "categories": [
       "bapteme"
     ],
@@ -77,20 +76,19 @@
       "enfant",
       "pastel",
       "nuages",
-      "imprimer",
-      "A5"
+      "WhatsApp"
     ],
     "page": {
-      "width": 1748,
-      "height": 2480,
-      "preset": "print-a5"
+      "width": 1080,
+      "height": 1350,
+      "preset": "social-4-5"
     }
   },
   {
     "id": "seminaire-ondes",
-    "version": 1,
+    "version": 2,
     "name": "Séminaire",
-    "description": "Story verticale pour un séminaire ou une conférence : titre, date, lieu et programme en encadré.",
+    "description": "Invitation à un séminaire ou une conférence : titre, date, lieu, encadré nominatif et programme.",
     "categories": [
       "seminaire",
       "reunion"
@@ -99,20 +97,20 @@
       "professionnel",
       "conférence",
       "entreprise",
-      "story",
-      "programme"
+      "programme",
+      "WhatsApp"
     ],
     "page": {
       "width": 1080,
-      "height": 1920,
-      "preset": "story-9-16"
+      "height": 1350,
+      "preset": "social-4-5"
     }
   },
   {
     "id": "festival-nuit-couleurs",
-    "version": 1,
+    "version": 2,
     "name": "Nuit des couleurs",
-    "description": "Affiche de soirée ou de concert privé pour les réseaux sociaux : fond nuit, étincelles et titre en capitales.",
+    "description": "Invitation de soirée ou de concert privé : fond nuit, étincelles, titre en capitales et invitation nominative.",
     "categories": [
       "festival",
       "concert_prive"
@@ -122,7 +120,7 @@
       "concert",
       "fête",
       "nuit",
-      "réseaux sociaux"
+      "WhatsApp"
     ],
     "page": {
       "width": 1080,

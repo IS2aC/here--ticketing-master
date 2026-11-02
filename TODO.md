@@ -39,8 +39,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
         - réglages (luminosité, contraste, couleurs, flou) et 6 ambiances, avec les filtres Konva ;
         - couleurs des photos proposées sous les champs couleur et dans le panneau QR.
       - **Reste, côté serveur, à décider** : détourage (rembg + BiRefNet) et agrandissement (Real-ESRGAN). Hébergement, mémoire et temps de calcul à valider dans une ADR.
-    - Modèles conçus avec la zone du QR code et des champs invité. Aujourd'hui, les champs invité arrivent au centre et peuvent chevaucher le modèle.
-    - Les 4 modèles qui ne sont pas au format 4:5, à adapter (redimensionnement).
+    - **Modèles (fait le 02/11)** : les 6 modèles sont au format 4:5 et prévoient la place du nom de l'invité, de sa table et du sceau QR (à un emplacement de Satori). Un test vérifie qu'aucun texte ne les recouvre. Vignettes refaites depuis le rendu réel.
     - Tests d'interface et du canevas, restés dans le dépôt du moteur.
     - Synchroniser les retouches de « Mon propre modèle » (glisser le nom sur la page Carte) avec le document de l'éditeur.
 - [ ] **Cartes proposées et modifiées par IA** (à commencer simple, avec **1min.ai**) :

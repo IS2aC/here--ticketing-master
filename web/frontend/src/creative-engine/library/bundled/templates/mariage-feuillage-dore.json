@@ -10,6 +10,17 @@
         "type": "remote"
       },
       "width": 900
+    },
+    "01000000-0000-4000-8000-0000000000f0": {
+      "height": 318,
+      "kind": "image",
+      "mimeType": "image/png",
+      "provenance": "template",
+      "source": {
+        "key": "here/sceau-apercu.png",
+        "type": "remote"
+      },
+      "width": 260
     }
   },
   "elements": [
@@ -17,7 +28,7 @@
       "assetId": "01000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 300,
+      "height": 200,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000003",
       "locked": false,
@@ -25,13 +36,13 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 900,
-      "x": 90,
-      "y": 60
+      "width": 600,
+      "x": 240,
+      "y": 40
     },
     {
       "content": "Nous nous marions",
-      "height": 36,
+      "height": 33.6,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000004",
       "locked": false,
@@ -42,7 +53,7 @@
         "align": "center",
         "color": "#8E6B2E",
         "fontFamily": "Poppins",
-        "fontSize": 30,
+        "fontSize": 28,
         "fontStyle": "normal",
         "fontWeight": 500,
         "letterSpacing": 0.3,
@@ -52,11 +63,11 @@
       "type": "text",
       "width": 800,
       "x": 140,
-      "y": 380
+      "y": 258
     },
     {
       "content": "Aminata\n& Jean-Marc",
-      "height": 211.2,
+      "height": 184.8,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000005",
       "locked": false,
@@ -67,7 +78,7 @@
         "align": "center",
         "color": "#2B2620",
         "fontFamily": "Playfair Display",
-        "fontSize": 96,
+        "fontSize": 84,
         "fontStyle": "normal",
         "fontWeight": 600,
         "letterSpacing": 0,
@@ -77,7 +88,7 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 440
+      "y": 302
     },
     {
       "cornerRadius": 0,
@@ -98,11 +109,11 @@
       "type": "shape",
       "width": 200,
       "x": 440,
-      "y": 690
+      "y": 500
     },
     {
       "content": "Samedi 20 mars 2027 à 15 h",
-      "height": 43.2,
+      "height": 40.8,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000007",
       "locked": false,
@@ -113,7 +124,7 @@
         "align": "center",
         "color": "#4A443B",
         "fontFamily": "Poppins",
-        "fontSize": 36,
+        "fontSize": 34,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -123,11 +134,11 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 730
+      "y": 522
     },
     {
       "content": "Église Saint-Paul du Plateau, Abidjan\nRéception à la Maison des Jardins",
-      "height": 90,
+      "height": 84.0,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000008",
       "locked": false,
@@ -138,7 +149,7 @@
         "align": "center",
         "color": "#6B645A",
         "fontFamily": "Poppins",
-        "fontSize": 30,
+        "fontSize": 28,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -148,11 +159,88 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 800
+      "y": 576
+    },
+    {
+      "content": "Invitation personnelle pour",
+      "height": 31.2,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-0000000000f1",
+      "locked": false,
+      "name": "Invitation",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#8E6B2E",
+        "fontFamily": "Playfair Display",
+        "fontSize": 26,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 140,
+      "y": 700
+    },
+    {
+      "content": "Awa Koné",
+      "height": 86.4,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-0000000000f2",
+      "locked": false,
+      "name": "Nom de l'invité",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-name",
+      "style": {
+        "align": "center",
+        "color": "#2B2620",
+        "fontFamily": "Great Vibes",
+        "fontSize": 72,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 746.8
+    },
+    {
+      "content": "Table 4 · Famille",
+      "height": 36.0,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-0000000000f4",
+      "locked": false,
+      "name": "Table · catégorie",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-table",
+      "style": {
+        "align": "center",
+        "color": "#6B645A",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 844.0
     },
     {
       "content": "Merci de confirmer votre présence avant le 1er mars",
-      "height": 41.6,
+      "height": 33.8,
       "hidden": false,
       "id": "01000000-0000-4000-8000-000000000009",
       "locked": false,
@@ -163,7 +251,7 @@
         "align": "center",
         "color": "#8E6B2E",
         "fontFamily": "Playfair Display",
-        "fontSize": 32,
+        "fontSize": 26,
         "fontStyle": "italic",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -173,23 +261,56 @@
       "type": "text",
       "width": 800,
       "x": 140,
-      "y": 950
+      "y": 912
     },
     {
       "assetId": "01000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 200,
+      "height": 110,
       "hidden": false,
       "id": "01000000-0000-4000-8000-00000000000a",
       "locked": false,
       "name": "Feuillage bas",
       "opacity": 1,
-      "rotation": 180,
+      "rotation": 0,
       "type": "image",
-      "width": 600,
-      "x": 240,
-      "y": 1070
+      "width": 330,
+      "x": 50,
+      "y": 1110
+    },
+    {
+      "assetId": "01000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 110,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-0000000000f6",
+      "locked": false,
+      "name": "Feuillage bas droite",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 330,
+      "x": 700,
+      "y": 1110
+    },
+    {
+      "assetId": "01000000-0000-4000-8000-0000000000f0",
+      "crop": null,
+      "fit": "contain",
+      "height": 318,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-0000000000f3",
+      "locked": true,
+      "name": "QR code et sceau Here!",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-qr",
+      "type": "image",
+      "width": 260,
+      "x": 410.0,
+      "y": 988
     }
   ],
   "id": "01000000-0000-4000-8000-000000000001",

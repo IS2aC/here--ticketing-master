@@ -21,6 +21,17 @@
         "type": "remote"
       },
       "width": 520
+    },
+    "03000000-0000-4000-8000-0000000000f0": {
+      "height": 318,
+      "kind": "image",
+      "mimeType": "image/png",
+      "provenance": "template",
+      "source": {
+        "key": "here/sceau-apercu.png",
+        "type": "remote"
+      },
+      "width": 260
     }
   },
   "elements": [
@@ -67,7 +78,7 @@
     },
     {
       "content": "30 ans",
-      "height": 242,
+      "height": 220.0,
       "hidden": false,
       "id": "03000000-0000-4000-8000-000000000005",
       "locked": false,
@@ -78,7 +89,7 @@
         "align": "center",
         "color": "#E4572E",
         "fontFamily": "Playfair Display",
-        "fontSize": 220,
+        "fontSize": 200,
         "fontStyle": "normal",
         "fontWeight": 700,
         "letterSpacing": 0,
@@ -88,11 +99,11 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 360
+      "y": 356
     },
     {
       "content": "Samedi 6 février 2027 · 19 h\nChez Awa, Riviera 3",
-      "height": 112,
+      "height": 112.0,
       "hidden": false,
       "id": "03000000-0000-4000-8000-000000000006",
       "locked": false,
@@ -113,7 +124,100 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 660
+      "y": 600
+    },
+    {
+      "content": "Une invitation pour",
+      "height": 33.6,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-0000000000f1",
+      "locked": false,
+      "name": "Invitation",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#E4572E",
+        "fontFamily": "Poppins",
+        "fontSize": 28,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0.2,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 752
+    },
+    {
+      "content": "Awa Koné",
+      "height": 76.8,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-0000000000f2",
+      "locked": false,
+      "name": "Nom de l'invité",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-name",
+      "style": {
+        "align": "center",
+        "color": "#29335C",
+        "fontFamily": "Playfair Display",
+        "fontSize": 64,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 791.6
+    },
+    {
+      "content": "Table 4 · Famille",
+      "height": 36.0,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-0000000000f4",
+      "locked": false,
+      "name": "Table · catégorie",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-table",
+      "style": {
+        "align": "center",
+        "color": "#29335C",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 882.0
+    },
+    {
+      "assetId": "03000000-0000-4000-8000-000000000009",
+      "crop": null,
+      "fit": "contain",
+      "height": 299,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Ballons",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 190,
+      "x": 60,
+      "y": 1000
     },
     {
       "cornerRadius": 45,
@@ -128,9 +232,9 @@
       "shape": "rect",
       "stroke": null,
       "type": "shape",
-      "width": 500,
-      "x": 290,
-      "y": 830
+      "width": 460,
+      "x": 280,
+      "y": 1110
     },
     {
       "content": "Dress code : blanc",
@@ -153,25 +257,26 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 500,
-      "x": 290,
-      "y": 853
+      "width": 460,
+      "x": 280,
+      "y": 1134.6
     },
     {
-      "assetId": "03000000-0000-4000-8000-000000000009",
+      "assetId": "03000000-0000-4000-8000-0000000000f0",
       "crop": null,
       "fit": "contain",
-      "height": 315,
+      "height": 318,
       "hidden": false,
-      "id": "03000000-0000-4000-8000-00000000000a",
-      "locked": false,
-      "name": "Ballons",
+      "id": "03000000-0000-4000-8000-0000000000f3",
+      "locked": true,
+      "name": "QR code et sceau Here!",
       "opacity": 1,
       "rotation": 0,
+      "slot": "guest-qr",
       "type": "image",
-      "width": 200,
-      "x": 850,
-      "y": 720
+      "width": 260,
+      "x": 776,
+      "y": 988
     }
   ],
   "id": "03000000-0000-4000-8000-000000000001",
@@ -186,8 +291,8 @@
       "color": "#FFF4E0",
       "type": "solid"
     },
-    "height": 1080,
-    "preset": "square",
+    "height": 1350,
+    "preset": "social-4-5",
     "print": null,
     "unit": "px",
     "width": 1080

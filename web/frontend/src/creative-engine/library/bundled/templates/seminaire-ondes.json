@@ -10,6 +10,17 @@
         "type": "remote"
       },
       "width": 900
+    },
+    "05000000-0000-4000-8000-0000000000f0": {
+      "height": 318,
+      "kind": "image",
+      "mimeType": "image/png",
+      "provenance": "template",
+      "source": {
+        "key": "here/sceau-apercu.png",
+        "type": "remote"
+      },
+      "width": 260
     }
   },
   "elements": [
@@ -17,7 +28,7 @@
       "assetId": "05000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 900,
+      "height": 700,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000003",
       "locked": false,
@@ -25,13 +36,13 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 900,
-      "x": 180,
+      "width": 700,
+      "x": 380,
       "y": 0
     },
     {
       "content": "Séminaire 2027",
-      "height": 40.8,
+      "height": 36.0,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000004",
       "locked": false,
@@ -42,7 +53,7 @@
         "align": "left",
         "color": "#4CC9F0",
         "fontFamily": "Poppins",
-        "fontSize": 34,
+        "fontSize": 30,
         "fontStyle": "normal",
         "fontWeight": 600,
         "letterSpacing": 0.3,
@@ -52,11 +63,11 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 560
+      "y": 250
     },
     {
       "content": "Innover ensemble\ndans l'événementiel",
-      "height": 167.2,
+      "height": 149.6,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000005",
       "locked": false,
@@ -67,7 +78,7 @@
         "align": "left",
         "color": "#FFFFFF",
         "fontFamily": "Poppins",
-        "fontSize": 76,
+        "fontSize": 68,
         "fontStyle": "normal",
         "fontWeight": 700,
         "letterSpacing": 0,
@@ -77,7 +88,7 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 620
+      "y": 298
     },
     {
       "cornerRadius": 0,
@@ -94,11 +105,11 @@
       "type": "shape",
       "width": 120,
       "x": 90,
-      "y": 830
+      "y": 470
     },
     {
       "content": "Jeudi 9 septembre 2027\n9 h – 17 h",
-      "height": 124.2,
+      "height": 108.0,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000007",
       "locked": false,
@@ -109,7 +120,7 @@
         "align": "left",
         "color": "#FFFFFF",
         "fontFamily": "Poppins",
-        "fontSize": 46,
+        "fontSize": 40,
         "fontStyle": "normal",
         "fontWeight": 500,
         "letterSpacing": 0,
@@ -119,11 +130,11 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 880
+      "y": 506
     },
     {
       "content": "Hôtel Ivoire, Abidjan",
-      "height": 48,
+      "height": 40.8,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000008",
       "locked": false,
@@ -134,7 +145,7 @@
         "align": "left",
         "color": "#B8C4D6",
         "fontFamily": "Poppins",
-        "fontSize": 40,
+        "fontSize": 34,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -144,12 +155,12 @@
       "type": "text",
       "width": 900,
       "x": 90,
-      "y": 1030
+      "y": 622
     },
     {
       "cornerRadius": 24,
       "fill": "#172A45",
-      "height": 400,
+      "height": 236,
       "hidden": false,
       "id": "05000000-0000-4000-8000-000000000009",
       "locked": false,
@@ -161,11 +172,88 @@
       "type": "shape",
       "width": 900,
       "x": 90,
-      "y": 1160
+      "y": 706
+    },
+    {
+      "content": "Invitation nominative",
+      "height": 28.8,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-0000000000f1",
+      "locked": false,
+      "name": "Invitation",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#4CC9F0",
+        "fontFamily": "Poppins",
+        "fontSize": 24,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0.25,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 738
+    },
+    {
+      "content": "Awa Koné",
+      "height": 67.2,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-0000000000f2",
+      "locked": false,
+      "name": "Nom de l'invité",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-name",
+      "style": {
+        "align": "center",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 56,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 796.4
+    },
+    {
+      "content": "Table 4 · Famille",
+      "height": 33.6,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-0000000000f4",
+      "locked": false,
+      "name": "Table · catégorie",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-table",
+      "style": {
+        "align": "center",
+        "color": "#B8C4D6",
+        "fontFamily": "Poppins",
+        "fontSize": 28,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1032,
+      "x": 24,
+      "y": 878.2
     },
     {
       "content": "Au programme",
-      "height": 45.6,
+      "height": 38.4,
       "hidden": false,
       "id": "05000000-0000-4000-8000-00000000000a",
       "locked": false,
@@ -176,7 +264,7 @@
         "align": "left",
         "color": "#4CC9F0",
         "fontFamily": "Poppins",
-        "fontSize": 38,
+        "fontSize": 32,
         "fontStyle": "normal",
         "fontWeight": 600,
         "letterSpacing": 0,
@@ -184,13 +272,13 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 800,
-      "x": 140,
-      "y": 1210
+      "width": 640,
+      "x": 90,
+      "y": 990
     },
     {
       "content": "Conférences et tables rondes\nAteliers pratiques\nDéjeuner de networking",
-      "height": 192,
+      "height": 135.0,
       "hidden": false,
       "id": "05000000-0000-4000-8000-00000000000b",
       "locked": false,
@@ -201,21 +289,21 @@
         "align": "left",
         "color": "#FFFFFF",
         "fontFamily": "Poppins",
-        "fontSize": 40,
+        "fontSize": 30,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
-        "lineHeight": 1.6,
+        "lineHeight": 1.5,
         "textTransform": "none"
       },
       "type": "text",
-      "width": 800,
-      "x": 140,
-      "y": 1280
+      "width": 640,
+      "x": 90,
+      "y": 1040
     },
     {
       "content": "Inscription obligatoire avant le 1er septembre",
-      "height": 38.4,
+      "height": 28.8,
       "hidden": false,
       "id": "05000000-0000-4000-8000-00000000000c",
       "locked": false,
@@ -226,7 +314,7 @@
         "align": "left",
         "color": "#B8C4D6",
         "fontFamily": "Poppins",
-        "fontSize": 32,
+        "fontSize": 24,
         "fontStyle": "normal",
         "fontWeight": 400,
         "letterSpacing": 0,
@@ -234,9 +322,26 @@
         "textTransform": "none"
       },
       "type": "text",
-      "width": 900,
+      "width": 640,
       "x": 90,
-      "y": 1700
+      "y": 1262
+    },
+    {
+      "assetId": "05000000-0000-4000-8000-0000000000f0",
+      "crop": null,
+      "fit": "contain",
+      "height": 318,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-0000000000f3",
+      "locked": true,
+      "name": "QR code et sceau Here!",
+      "opacity": 1,
+      "rotation": 0,
+      "slot": "guest-qr",
+      "type": "image",
+      "width": 260,
+      "x": 776,
+      "y": 988
     }
   ],
   "id": "05000000-0000-4000-8000-000000000001",
@@ -251,8 +356,8 @@
       "color": "#0F1B2D",
       "type": "solid"
     },
-    "height": 1920,
-    "preset": "story-9-16",
+    "height": 1350,
+    "preset": "social-4-5",
     "print": null,
     "unit": "px",
     "width": 1080
