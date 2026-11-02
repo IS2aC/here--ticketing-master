@@ -1,0 +1,120 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: var(--editor-control-size);
+  height: var(--editor-control-size);
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--editor-transition),
+    color var(--editor-transition),
+    border-color var(--editor-transition);
+}
+
+.tool:hover {
+  background: var(--color-surface);
+}
+
+.tool[aria-pressed="true"] {
+  background: var(--color-inverse);
+  color: var(--color-on-inverse);
+}
+
+.ghost {
+  border-color: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.ghost:hover {
+  background: var(--color-surface);
+}
+
+.withLabel {
+  padding: 0 var(--space-4);
+}
+
+.button[aria-disabled="true"] {
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.button:disabled {
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ghost[aria-disabled="true"] {
+  background: var(--color-surface);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  max-width: 220px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-inverse);
+  color: var(--color-on-inverse);
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--editor-transition);
+}
+
+.wrapper:hover .tooltip,
+.button:focus-visible + .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltipLabel {
+  font-weight: 600;
+}
+
+.tooltipHint {
+  color: var(--color-gray-300);
+}
+
+.right {
+  left: calc(100% + var(--space-2));
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bottom {
+  top: calc(100% + var(--space-2));
+  right: 0;
+}
+
+.top {
+  bottom: calc(100% + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Une icône garde sa taille, même dans un bouton contraint en largeur. */
+.button svg {
+  flex-shrink: 0;
+}

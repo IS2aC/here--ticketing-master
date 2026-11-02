@@ -1,0 +1,196 @@
+{
+  "assets": {
+    "03000000-0000-4000-8000-000000000002": {
+      "height": 600,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/confettis.webp",
+        "type": "remote"
+      },
+      "width": 1000
+    },
+    "03000000-0000-4000-8000-000000000009": {
+      "height": 820,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/ballons.webp",
+        "type": "remote"
+      },
+      "width": 520
+    }
+  },
+  "elements": [
+    {
+      "assetId": "03000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 600,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Confettis",
+      "opacity": 0.9,
+      "rotation": 0,
+      "type": "image",
+      "width": 1000,
+      "x": 40,
+      "y": -330
+    },
+    {
+      "content": "Viens fêter mes",
+      "height": 57.6,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000004",
+      "locked": false,
+      "name": "Annonce",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#29335C",
+        "fontFamily": "Poppins",
+        "fontSize": 48,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 300
+    },
+    {
+      "content": "30 ans",
+      "height": 242,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Âge",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#E4572E",
+        "fontFamily": "Playfair Display",
+        "fontSize": 220,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "letterSpacing": 0,
+        "lineHeight": 1.1,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 360
+    },
+    {
+      "content": "Samedi 6 février 2027 · 19 h\nChez Awa, Riviera 3",
+      "height": 112,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Date et lieu",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#29335C",
+        "fontFamily": "Poppins",
+        "fontSize": 40,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.4,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 660
+    },
+    {
+      "cornerRadius": 45,
+      "fill": "#29335C",
+      "height": 90,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Pastille",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "rect",
+      "stroke": null,
+      "type": "shape",
+      "width": 500,
+      "x": 290,
+      "y": 830
+    },
+    {
+      "content": "Dress code : blanc",
+      "height": 40.8,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Dress code",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 34,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 500,
+      "x": 290,
+      "y": 853
+    },
+    {
+      "assetId": "03000000-0000-4000-8000-000000000009",
+      "crop": null,
+      "fit": "contain",
+      "height": 315,
+      "hidden": false,
+      "id": "03000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Ballons",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 200,
+      "x": 850,
+      "y": 720
+    }
+  ],
+  "id": "03000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Invitation d'anniversaire",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#FFF4E0",
+      "type": "solid"
+    },
+    "height": 1080,
+    "preset": "square",
+    "print": null,
+    "unit": "px",
+    "width": 1080
+  },
+  "schemaVersion": 1
+}

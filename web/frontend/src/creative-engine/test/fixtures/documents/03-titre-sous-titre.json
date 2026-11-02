@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "d0000000-0000-4000-8000-000000000003",
+  "meta": {
+    "title": "Mariage Aïcha & Koffi",
+    "createdAt": "2026-10-31T10:00:00.000Z",
+    "updatedAt": "2026-10-31T10:00:00.000Z",
+    "template": null
+  },
+  "page": {
+    "unit": "px",
+    "width": 1080,
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
+    "background": {
+      "type": "solid",
+      "color": "#F7F1E8"
+    }
+  },
+  "assets": {},
+  "elements": [
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000001",
+      "type": "text",
+      "name": "Titre",
+      "x": 90,
+      "y": 520,
+      "width": 900,
+      "height": 130,
+      "content": "Aïcha & Koffi",
+      "style": {
+        "fontFamily": "Playfair Display",
+        "fontWeight": 600,
+        "fontStyle": "normal",
+        "fontSize": 104,
+        "lineHeight": 1.15,
+        "letterSpacing": 0,
+        "color": "#0B0B0B",
+        "align": "center",
+        "textTransform": "none"
+      }
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000002",
+      "type": "text",
+      "name": "Sous-titre",
+      "x": 140,
+      "y": 690,
+      "width": 800,
+      "height": 101,
+      "content": "vous invitent à célébrer leur union\nSamedi 12 décembre 2026 · Abidjan",
+      "style": {
+        "fontFamily": "Poppins",
+        "fontWeight": 400,
+        "fontStyle": "normal",
+        "fontSize": 36,
+        "lineHeight": 1.4,
+        "letterSpacing": 0.02,
+        "color": "#5E5A53",
+        "align": "center",
+        "textTransform": "none"
+      }
+    }
+  ]
+}

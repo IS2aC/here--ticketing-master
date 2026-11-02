@@ -1,0 +1,261 @@
+{
+  "assets": {
+    "05000000-0000-4000-8000-000000000002": {
+      "height": 900,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/ondes.webp",
+        "type": "remote"
+      },
+      "width": 900
+    }
+  },
+  "elements": [
+    {
+      "assetId": "05000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 900,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Ondes",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 900,
+      "x": 180,
+      "y": 0
+    },
+    {
+      "content": "Séminaire 2027",
+      "height": 40.8,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000004",
+      "locked": false,
+      "name": "Surtitre",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#4CC9F0",
+        "fontFamily": "Poppins",
+        "fontSize": 34,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0.3,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 560
+    },
+    {
+      "content": "Innover ensemble\ndans l'événementiel",
+      "height": 167.2,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Titre",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 76,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "letterSpacing": 0,
+        "lineHeight": 1.1,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 620
+    },
+    {
+      "cornerRadius": 0,
+      "fill": "#4CC9F0",
+      "height": 8,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Accent",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "rect",
+      "stroke": null,
+      "type": "shape",
+      "width": 120,
+      "x": 90,
+      "y": 830
+    },
+    {
+      "content": "Jeudi 9 septembre 2027\n9 h – 17 h",
+      "height": 124.2,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Date",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 46,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0,
+        "lineHeight": 1.35,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 880
+    },
+    {
+      "content": "Hôtel Ivoire, Abidjan",
+      "height": 48,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Lieu",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#B8C4D6",
+        "fontFamily": "Poppins",
+        "fontSize": 40,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 1030
+    },
+    {
+      "cornerRadius": 24,
+      "fill": "#172A45",
+      "height": 400,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-000000000009",
+      "locked": false,
+      "name": "Encadré",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "rect",
+      "stroke": null,
+      "type": "shape",
+      "width": 900,
+      "x": 90,
+      "y": 1160
+    },
+    {
+      "content": "Au programme",
+      "height": 45.6,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Programme — titre",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#4CC9F0",
+        "fontFamily": "Poppins",
+        "fontSize": 38,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 140,
+      "y": 1210
+    },
+    {
+      "content": "Conférences et tables rondes\nAteliers pratiques\nDéjeuner de networking",
+      "height": 192,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-00000000000b",
+      "locked": false,
+      "name": "Programme",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 40,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.6,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 140,
+      "y": 1280
+    },
+    {
+      "content": "Inscription obligatoire avant le 1er septembre",
+      "height": 38.4,
+      "hidden": false,
+      "id": "05000000-0000-4000-8000-00000000000c",
+      "locked": false,
+      "name": "Inscription",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "left",
+        "color": "#B8C4D6",
+        "fontFamily": "Poppins",
+        "fontSize": 32,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 1700
+    }
+  ],
+  "id": "05000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Invitation au séminaire",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#0F1B2D",
+      "type": "solid"
+    },
+    "height": 1920,
+    "preset": "story-9-16",
+    "print": null,
+    "unit": "px",
+    "width": 1080
+  },
+  "schemaVersion": 1
+}

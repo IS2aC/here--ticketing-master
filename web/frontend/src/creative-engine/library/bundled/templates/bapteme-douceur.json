@@ -1,0 +1,225 @@
+{
+  "assets": {
+    "04000000-0000-4000-8000-000000000002": {
+      "height": 360,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/nuages.webp",
+        "type": "remote"
+      },
+      "width": 900
+    },
+    "04000000-0000-4000-8000-000000000004": {
+      "height": 800,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/couronne-feuilles.webp",
+        "type": "remote"
+      },
+      "width": 800
+    }
+  },
+  "elements": [
+    {
+      "assetId": "04000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 440,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Nuages haut",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 1100,
+      "x": -60,
+      "y": 80
+    },
+    {
+      "assetId": "04000000-0000-4000-8000-000000000004",
+      "crop": null,
+      "fit": "contain",
+      "height": 800,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Couronne de feuilles",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 800,
+      "x": 474,
+      "y": 520
+    },
+    {
+      "content": "Baptême de",
+      "height": 132,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Annonce",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#3E5C76",
+        "fontFamily": "Playfair Display",
+        "fontSize": 110,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 474,
+      "y": 760
+    },
+    {
+      "content": "Noah",
+      "height": 220,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Prénom",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#2F4858",
+        "fontFamily": "Playfair Display",
+        "fontSize": 200,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "letterSpacing": 0,
+        "lineHeight": 1.1,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 474,
+      "y": 890
+    },
+    {
+      "content": "Dimanche 18 avril 2027 à 10 h",
+      "height": 79.2,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Date",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#2F4858",
+        "fontFamily": "Poppins",
+        "fontSize": 66,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1460
+    },
+    {
+      "content": "Paroisse Sainte-Thérèse, Marcory\nSuivi d'un déjeuner en famille",
+      "height": 162.4,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-000000000009",
+      "locked": false,
+      "name": "Lieu",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#4F6D7A",
+        "fontFamily": "Poppins",
+        "fontSize": 56,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.45,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1570
+    },
+    {
+      "content": "Avec toute notre tendresse,\nses parents",
+      "height": 166.4,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Signature",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#3E5C76",
+        "fontFamily": "Playfair Display",
+        "fontSize": 64,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.3,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1900
+    },
+    {
+      "assetId": "04000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 320,
+      "hidden": false,
+      "id": "04000000-0000-4000-8000-00000000000b",
+      "locked": false,
+      "name": "Nuages bas",
+      "opacity": 0.9,
+      "rotation": 0,
+      "type": "image",
+      "width": 800,
+      "x": 900,
+      "y": 2150
+    }
+  ],
+  "id": "04000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Invitation au baptême",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#DCEBF5",
+      "type": "solid"
+    },
+    "height": 2480,
+    "preset": "print-a5",
+    "print": {
+      "bleedMm": 3,
+      "dpi": 300,
+      "heightMm": 210,
+      "widthMm": 148
+    },
+    "unit": "px",
+    "width": 1748
+  },
+  "schemaVersion": 1
+}

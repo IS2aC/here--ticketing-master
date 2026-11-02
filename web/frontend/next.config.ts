@@ -13,7 +13,9 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     rules: {
-      "*.css": {
+      // Tailwind ne traite que la feuille globale (elle importe les fonts et tokens de la marque) : les CSS
+      // modules de l'éditeur de cartes (src/creative-engine) gardent le traitement natif de Next.
+      "globals.css": {
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

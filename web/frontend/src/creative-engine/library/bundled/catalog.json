@@ -1,0 +1,133 @@
+[
+  {
+    "id": "mariage-feuillage-dore",
+    "version": 1,
+    "name": "Feuillage doré",
+    "description": "Faire-part de mariage classique : feuillage doré, prénoms en grand, date, lieux et réponse attendue.",
+    "categories": [
+      "mariage"
+    ],
+    "tags": [
+      "élégant",
+      "or",
+      "classique",
+      "feuilles",
+      "faire-part"
+    ],
+    "page": {
+      "width": 1080,
+      "height": 1350,
+      "preset": "social-4-5"
+    }
+  },
+  {
+    "id": "dot-motifs-wax",
+    "version": 2,
+    "name": "Motifs wax",
+    "description": "Invitation à imprimer en A5 pour une dot ou un mariage coutumier, encadrée de bandes aux motifs wax.",
+    "categories": [
+      "dot",
+      "mariage"
+    ],
+    "tags": [
+      "wax",
+      "pagne",
+      "coutumier",
+      "afrique",
+      "imprimer",
+      "A5"
+    ],
+    "page": {
+      "width": 1748,
+      "height": 2480,
+      "preset": "print-a5"
+    }
+  },
+  {
+    "id": "anniversaire-confettis",
+    "version": 1,
+    "name": "Confettis",
+    "description": "Invitation d'anniversaire carrée et colorée : confettis, ballons, âge en grand et dress code.",
+    "categories": [
+      "anniversaire"
+    ],
+    "tags": [
+      "fête",
+      "couleurs",
+      "ballons",
+      "carré",
+      "réseaux sociaux"
+    ],
+    "page": {
+      "width": 1080,
+      "height": 1080,
+      "preset": "square"
+    }
+  },
+  {
+    "id": "bapteme-douceur",
+    "version": 1,
+    "name": "Douceur",
+    "description": "Invitation au baptême à imprimer en A5 : bleu tendre, nuages et couronne de feuilles autour du prénom.",
+    "categories": [
+      "bapteme"
+    ],
+    "tags": [
+      "naissance",
+      "enfant",
+      "pastel",
+      "nuages",
+      "imprimer",
+      "A5"
+    ],
+    "page": {
+      "width": 1748,
+      "height": 2480,
+      "preset": "print-a5"
+    }
+  },
+  {
+    "id": "seminaire-ondes",
+    "version": 1,
+    "name": "Séminaire",
+    "description": "Story verticale pour un séminaire ou une conférence : titre, date, lieu et programme en encadré.",
+    "categories": [
+      "seminaire",
+      "reunion"
+    ],
+    "tags": [
+      "professionnel",
+      "conférence",
+      "entreprise",
+      "story",
+      "programme"
+    ],
+    "page": {
+      "width": 1080,
+      "height": 1920,
+      "preset": "story-9-16"
+    }
+  },
+  {
+    "id": "festival-nuit-couleurs",
+    "version": 1,
+    "name": "Nuit des couleurs",
+    "description": "Affiche de soirée ou de concert privé pour les réseaux sociaux : fond nuit, étincelles et titre en capitales.",
+    "categories": [
+      "festival",
+      "concert_prive"
+    ],
+    "tags": [
+      "soirée",
+      "concert",
+      "fête",
+      "nuit",
+      "réseaux sociaux"
+    ],
+    "page": {
+      "width": 1080,
+      "height": 1350,
+      "preset": "social-4-5"
+    }
+  }
+]

@@ -575,3 +575,31 @@ class CardBackground(Base):
     )
     content: Mapped[bytes]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class CardDesign(Base):
+    """Document de l'éditeur de cartes (Creative Engine), pour reprendre l'édition."""
+
+    __tablename__ = "card_designs"
+
+    event_card_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("event_cards.id", ondelete="CASCADE"), primary_key=True
+    )
+    document_id: Mapped[uuid.UUID] = mapped_column(UUID)
+    document: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    revision: Mapped[int]
+    saved_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class CardDesignAsset(Base):
+    """Image d'un document de l'éditeur, par empreinte de son contenu (« sha256-<hex> »)."""
+
+    __tablename__ = "card_design_assets"
+
+    event_card_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("event_cards.id", ondelete="CASCADE"), primary_key=True
+    )
+    key: Mapped[str] = mapped_column(primary_key=True)
+    content_type: Mapped[str]
+    content: Mapped[bytes]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())

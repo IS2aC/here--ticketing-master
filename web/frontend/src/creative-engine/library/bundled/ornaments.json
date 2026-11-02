@@ -1,0 +1,106 @@
+[
+  {
+    "id": "feuillage-dore",
+    "name": "Feuillage doré",
+    "tags": [
+      "feuilles",
+      "branche",
+      "or",
+      "mariage",
+      "élégant"
+    ],
+    "width": 900,
+    "height": 300
+  },
+  {
+    "id": "couronne-feuilles",
+    "name": "Couronne de feuilles",
+    "tags": [
+      "couronne",
+      "feuilles",
+      "vert",
+      "baptême",
+      "douceur"
+    ],
+    "width": 800,
+    "height": 800
+  },
+  {
+    "id": "confettis",
+    "name": "Confettis",
+    "tags": [
+      "fête",
+      "anniversaire",
+      "couleurs",
+      "célébration"
+    ],
+    "width": 1000,
+    "height": 600
+  },
+  {
+    "id": "ballons",
+    "name": "Ballons",
+    "tags": [
+      "anniversaire",
+      "fête",
+      "enfants",
+      "célébration"
+    ],
+    "width": 520,
+    "height": 820
+  },
+  {
+    "id": "bande-wax",
+    "name": "Bande motifs wax",
+    "tags": [
+      "wax",
+      "pagne",
+      "dot",
+      "mariage",
+      "afrique",
+      "motif"
+    ],
+    "width": 1200,
+    "height": 220
+  },
+  {
+    "id": "ondes",
+    "name": "Ondes",
+    "tags": [
+      "séminaire",
+      "conférence",
+      "professionnel",
+      "moderne",
+      "lignes"
+    ],
+    "width": 900,
+    "height": 900
+  },
+  {
+    "id": "etincelles",
+    "name": "Étincelles",
+    "tags": [
+      "étoiles",
+      "nuit",
+      "festival",
+      "concert",
+      "fête",
+      "brillant"
+    ],
+    "width": 800,
+    "height": 500
+  },
+  {
+    "id": "nuages",
+    "name": "Nuages",
+    "tags": [
+      "ciel",
+      "baptême",
+      "naissance",
+      "douceur",
+      "enfant"
+    ],
+    "width": 900,
+    "height": 360
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "id": "d0000000-0000-4000-8000-000000000004",
+  "meta": {
+    "title": "Baptême de Nathan",
+    "createdAt": "2026-10-31T10:00:00.000Z",
+    "updatedAt": "2026-10-31T10:00:00.000Z",
+    "template": null
+  },
+  "page": {
+    "unit": "px",
+    "width": 1080,
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
+    "background": {
+      "type": "solid",
+      "color": "#FFFFFF"
+    }
+  },
+  "assets": {
+    "a0000000-0000-4000-8000-000000000001": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "width": 2400,
+      "height": 1600,
+      "source": {
+        "type": "local",
+        "key": "assets/a0000000-0000-4000-8000-000000000001"
+      },
+      "provenance": "upload"
+    }
+  },
+  "elements": [
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000001",
+      "type": "image",
+      "name": "Photo",
+      "x": 140,
+      "y": 140,
+      "width": 800,
+      "height": 560,
+      "assetId": "a0000000-0000-4000-8000-000000000001",
+      "fit": "cover",
+      "crop": null
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000002",
+      "type": "text",
+      "name": "Titre",
+      "x": 90,
+      "y": 760,
+      "width": 900,
+      "height": 120,
+      "content": "Baptême de Nathan",
+      "style": {
+        "fontFamily": "Poppins",
+        "fontWeight": 600,
+        "fontStyle": "normal",
+        "fontSize": 72,
+        "lineHeight": 1.2,
+        "letterSpacing": 0,
+        "color": "#0B0B0B",
+        "align": "center",
+        "textTransform": "none"
+      }
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000003",
+      "type": "text",
+      "name": "Date",
+      "x": 140,
+      "y": 900,
+      "width": 800,
+      "height": 51,
+      "content": "Dimanche 6 décembre 2026 · 10 h",
+      "style": {
+        "fontFamily": "Poppins",
+        "fontWeight": 400,
+        "fontStyle": "normal",
+        "fontSize": 32,
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "color": "#6B6B6B",
+        "align": "center",
+        "textTransform": "none"
+      }
+    }
+  ]
+}

@@ -837,6 +837,30 @@ class CardSettingsIn(BaseModel):
     palette: PaletteId | None = None
 
 
+# --- Éditeur de cartes (Creative Engine) -------------------------------------------------
+
+
+class CardDesignOut(BaseModel):
+    """Document de l'éditeur, tel qu'enregistré. Son contenu est validé par le moteur, pas par l'API."""
+
+    document: dict[str, object]
+    revision: int  # à renvoyer à l'enregistrement suivant (concurrence optimiste)
+    saved_at: datetime
+
+
+class CardDesignIn(BaseModel):
+    document: dict[str, object]
+    expected_revision: Annotated[int, Field(ge=0)]  # 0 : premier enregistrement
+    # Nouvelle carte (vierge ou depuis un modèle) à la place de l'actuelle, qui n'a pas changé depuis
+    # expected_revision : un autre identifiant de document est alors accepté.
+    replace: bool = False
+
+
+class CardDesignSaved(BaseModel):
+    revision: int
+    saved_at: datetime
+
+
 # --- Modèles de cartes ------------------------------------------------------------------
 
 

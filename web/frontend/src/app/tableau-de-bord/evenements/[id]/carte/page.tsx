@@ -48,6 +48,24 @@ async function CardView({
   // Encarts communs aux deux modes (carte automatique, propre modèle).
   const extras = (
     <>
+          {settings.locked ? null : (
+            <div className="grid gap-3 rounded-lg bg-ink p-5 text-white shadow-sm">
+              <p className="flex items-center gap-2 font-heading text-[16px] font-semibold">
+                <Icon name="invitation" width={20} height={20} className="text-primary" />
+                Créer ma carte dans l&apos;éditeur
+              </p>
+              <p className="text-[14px] opacity-80">
+                Partez d&apos;un modèle ou d&apos;une page vierge : textes, photos, ornements, couleurs. Placez le nom de
+                l&apos;invité et le QR code, puis validez : chaque invité reçoit sa carte.
+              </p>
+              <Link
+                href={`/tableau-de-bord/evenements/${event.id}/carte/editeur`}
+                className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-[14px] font-semibold text-on-primary hover:bg-primary-hover"
+              >
+                Ouvrir l&apos;éditeur
+              </Link>
+            </div>
+          )}
           <div className="grid gap-3 rounded-lg bg-background p-5 shadow-sm">
             {settings.custom ? (
               <p className="font-heading text-[15px] font-semibold">Aperçu</p>
@@ -195,6 +213,9 @@ async function CardView({
           title="Fond importé"
           detail={query.fond === "recadre" ? "Il a été recadré au format de la carte (portrait 4:5). Placez maintenant le nom et le QR code." : "Placez maintenant le nom de l'invité et le QR code."}
         />
+      ) : null}
+      {query.editeur === "valide" ? (
+        <Toast title="Carte validée" detail="Votre création est la carte de l'événement. Vérifiez l'aperçu pour un invité." />
       ) : null}
       {created > 0 ? <Toast title={`${created.toLocaleString("fr-FR")} carte${created > 1 ? "s" : ""} prête${created > 1 ? "s" : ""}`} detail="Chaque invité a son QR code." /> : null}
     </>

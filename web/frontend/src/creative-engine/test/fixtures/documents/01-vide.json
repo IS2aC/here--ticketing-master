@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "d0000000-0000-4000-8000-000000000001",
+  "meta": {
+    "title": "Document vide",
+    "createdAt": "2026-10-31T10:00:00.000Z",
+    "updatedAt": "2026-10-31T10:00:00.000Z",
+    "template": null
+  },
+  "page": {
+    "unit": "px",
+    "width": 1080,
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
+    "background": {
+      "type": "solid",
+      "color": "#FFFFFF"
+    }
+  },
+  "assets": {},
+  "elements": []
+}

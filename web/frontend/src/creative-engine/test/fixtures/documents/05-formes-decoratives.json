@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "id": "d0000000-0000-4000-8000-000000000005",
+  "meta": {
+    "title": "Séminaire annuel",
+    "createdAt": "2026-10-31T10:00:00.000Z",
+    "updatedAt": "2026-10-31T10:00:00.000Z",
+    "template": null
+  },
+  "page": {
+    "unit": "px",
+    "width": 1500,
+    "height": 1050,
+    "preset": "custom",
+    "print": null,
+    "background": {
+      "type": "solid",
+      "color": "#0B0B0B"
+    }
+  },
+  "assets": {},
+  "elements": [
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000001",
+      "type": "shape",
+      "name": "Cadre",
+      "shape": "rect",
+      "x": 60,
+      "y": 60,
+      "width": 1380,
+      "height": 930,
+      "fill": null,
+      "stroke": {
+        "color": "#A8823C",
+        "width": 4,
+        "style": "solid"
+      },
+      "cornerRadius": 24
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000002",
+      "type": "shape",
+      "name": "Pastille",
+      "shape": "ellipse",
+      "x": 1180,
+      "y": 120,
+      "width": 180,
+      "height": 180,
+      "fill": "#E10600",
+      "stroke": null,
+      "cornerRadius": 0
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000003",
+      "type": "shape",
+      "name": "Filet",
+      "shape": "line",
+      "x": 450,
+      "y": 600,
+      "width": 600,
+      "height": 0,
+      "fill": null,
+      "stroke": {
+        "color": "#FFFFFF",
+        "width": 2,
+        "style": "dashed"
+      },
+      "cornerRadius": 0
+    },
+    {
+      "rotation": 342,
+      "opacity": 0.85,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000004",
+      "type": "shape",
+      "name": "Bandeau incliné",
+      "shape": "rect",
+      "x": -80,
+      "y": 840,
+      "width": 700,
+      "height": 90,
+      "fill": "#E10600",
+      "stroke": null,
+      "cornerRadius": 0
+    },
+    {
+      "rotation": 0,
+      "opacity": 1,
+      "locked": false,
+      "hidden": false,
+      "id": "e0000000-0000-4000-8000-000000000005",
+      "type": "text",
+      "name": "Titre",
+      "x": 250,
+      "y": 420,
+      "width": 1000,
+      "height": 140,
+      "content": "SÉMINAIRE ANNUEL",
+      "style": {
+        "fontFamily": "Poppins",
+        "fontWeight": 600,
+        "fontStyle": "normal",
+        "fontSize": 96,
+        "lineHeight": 1.1,
+        "letterSpacing": 0.04,
+        "color": "#FFFFFF",
+        "align": "center",
+        "textTransform": "none"
+      }
+    }
+  ]
+}

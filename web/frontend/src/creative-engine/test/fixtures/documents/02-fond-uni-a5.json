@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "d0000000-0000-4000-8000-000000000002",
+  "meta": {
+    "title": "Carte A5 fond ivoire",
+    "createdAt": "2026-10-31T10:00:00.000Z",
+    "updatedAt": "2026-10-31T10:00:00.000Z",
+    "template": null
+  },
+  "page": {
+    "unit": "px",
+    "width": 1748,
+    "height": 2480,
+    "preset": "print-a5",
+    "print": {
+      "widthMm": 148,
+      "heightMm": 210,
+      "dpi": 300,
+      "bleedMm": 3
+    },
+    "background": {
+      "type": "solid",
+      "color": "#F7F1E8"
+    }
+  },
+  "assets": {},
+  "elements": []
+}

@@ -1,0 +1,219 @@
+{
+  "assets": {
+    "02000000-0000-4000-8000-000000000002": {
+      "height": 220,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/bande-wax.webp",
+        "type": "remote"
+      },
+      "width": 1200
+    }
+  },
+  "elements": [
+    {
+      "assetId": "02000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 335,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Bande haut",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 1828,
+      "x": -40,
+      "y": -40
+    },
+    {
+      "content": "Cérémonie de dot",
+      "height": 76.8,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000004",
+      "locked": false,
+      "name": "Annonce",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#1F3A5F",
+        "fontFamily": "Poppins",
+        "fontSize": 64,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0.25,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 520
+    },
+    {
+      "content": "Fatou\n& Ibrahim",
+      "height": 399,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Prénoms",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#C8553D",
+        "fontFamily": "Playfair Display",
+        "fontSize": 190,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "letterSpacing": 0,
+        "lineHeight": 1.05,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1500,
+      "x": 124,
+      "y": 680
+    },
+    {
+      "cornerRadius": 0,
+      "fill": null,
+      "height": 0,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Filet",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "line",
+      "stroke": {
+        "color": "#1F3A5F",
+        "style": "solid",
+        "width": 6
+      },
+      "type": "shape",
+      "width": 300,
+      "x": 724,
+      "y": 1160
+    },
+    {
+      "content": "Samedi 15 mai 2027 · 10 h",
+      "height": 86.4,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Date",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#1F3A5F",
+        "fontFamily": "Poppins",
+        "fontSize": 72,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1240
+    },
+    {
+      "content": "Domicile familial, Cocody Angré\nAbidjan",
+      "height": 168,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Lieu",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#3B3B3B",
+        "fontFamily": "Poppins",
+        "fontSize": 60,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.4,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1370
+    },
+    {
+      "content": "Tenue en pagne souhaitée",
+      "height": 86.4,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-000000000009",
+      "locked": false,
+      "name": "Tenue",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#C8553D",
+        "fontFamily": "Playfair Display",
+        "fontSize": 72,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 1400,
+      "x": 174,
+      "y": 1720
+    },
+    {
+      "assetId": "02000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 335,
+      "hidden": false,
+      "id": "02000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Bande bas",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 1828,
+      "x": -40,
+      "y": 2185
+    }
+  ],
+  "id": "02000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Invitation à la dot",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#F2D0A4",
+      "type": "solid"
+    },
+    "height": 2480,
+    "preset": "print-a5",
+    "print": {
+      "bleedMm": 3,
+      "dpi": 300,
+      "heightMm": 210,
+      "widthMm": 148
+    },
+    "unit": "px",
+    "width": 1748
+  },
+  "schemaVersion": 1
+}

@@ -1,0 +1,22 @@
+/* Tokens propres à l'éditeur, construits sur les tokens Here! (styles/brand/tokens.css de Here!). */
+:root {
+  --editor-topbar-height: 56px;
+  --editor-rail-width: 72px;
+  --editor-panel-width: 296px;
+  --editor-control-size: 44px;
+
+  --editor-chrome-bg: var(--color-background);
+  --editor-workspace-bg: var(--color-surface);
+  --editor-workspace-dot: var(--color-border);
+  --editor-page-shadow: var(--shadow-md);
+  --editor-focus-ring: 2px solid var(--color-primary);
+  --editor-scrim: rgba(11, 11, 11, 0.32);
+
+  --editor-transition: 160ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --editor-transition: 0ms;
+  }
+}

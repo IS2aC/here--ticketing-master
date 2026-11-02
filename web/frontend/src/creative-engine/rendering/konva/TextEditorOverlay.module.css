@@ -1,0 +1,20 @@
+/* Zone de saisie superposée au texte : transparente, sans marge, pour se confondre avec le rendu Konva. */
+.editor {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  box-sizing: content-box;
+  min-height: 1em;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  outline: 1.5px solid var(--color-primary);
+  outline-offset: 2px;
+  background: transparent;
+  caret-color: var(--color-primary);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  resize: none;
+}

@@ -1,0 +1,214 @@
+{
+  "assets": {
+    "01000000-0000-4000-8000-000000000002": {
+      "height": 300,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/feuillage-dore.webp",
+        "type": "remote"
+      },
+      "width": 900
+    }
+  },
+  "elements": [
+    {
+      "assetId": "01000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 300,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Feuillage haut",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 900,
+      "x": 90,
+      "y": 60
+    },
+    {
+      "content": "Nous nous marions",
+      "height": 36,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000004",
+      "locked": false,
+      "name": "Annonce",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#8E6B2E",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0.3,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 140,
+      "y": 380
+    },
+    {
+      "content": "Aminata\n& Jean-Marc",
+      "height": 211.2,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Prénoms",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#2B2620",
+        "fontFamily": "Playfair Display",
+        "fontSize": 96,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.1,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 440
+    },
+    {
+      "cornerRadius": 0,
+      "fill": null,
+      "height": 0,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Filet",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "line",
+      "stroke": {
+        "color": "#B8924A",
+        "style": "solid",
+        "width": 2
+      },
+      "type": "shape",
+      "width": 200,
+      "x": 440,
+      "y": 690
+    },
+    {
+      "content": "Samedi 20 mars 2027 à 15 h",
+      "height": 43.2,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Date",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#4A443B",
+        "fontFamily": "Poppins",
+        "fontSize": 36,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 730
+    },
+    {
+      "content": "Église Saint-Paul du Plateau, Abidjan\nRéception à la Maison des Jardins",
+      "height": 90,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Lieux",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#6B645A",
+        "fontFamily": "Poppins",
+        "fontSize": 30,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.5,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 800
+    },
+    {
+      "content": "Merci de confirmer votre présence avant le 1er mars",
+      "height": 41.6,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-000000000009",
+      "locked": false,
+      "name": "Réponse",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#8E6B2E",
+        "fontFamily": "Playfair Display",
+        "fontSize": 32,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.3,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 800,
+      "x": 140,
+      "y": 950
+    },
+    {
+      "assetId": "01000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 200,
+      "hidden": false,
+      "id": "01000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Feuillage bas",
+      "opacity": 1,
+      "rotation": 180,
+      "type": "image",
+      "width": 600,
+      "x": 240,
+      "y": 1070
+    }
+  ],
+  "id": "01000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Faire-part de mariage",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#F7F1E8",
+      "type": "solid"
+    },
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
+    "unit": "px",
+    "width": 1080
+  },
+  "schemaVersion": 1
+}

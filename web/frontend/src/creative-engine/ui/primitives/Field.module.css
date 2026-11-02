@@ -1,0 +1,254 @@
+/* Champs du panneau de propriétés : compacts (36 px), alignés sur la grille de 4 px des tokens Here!. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  font-weight: 500;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  position: relative;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--editor-transition);
+}
+
+.input:hover:not(:disabled),
+.select:hover:not(:disabled),
+.textarea:hover:not(:disabled) {
+  border-color: var(--color-gray-500);
+}
+
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  border-color: var(--color-primary);
+  outline: var(--editor-focus-ring);
+  outline-offset: -1px;
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.field[data-invalid] .input {
+  border-color: var(--color-error);
+}
+
+/* Unité dans le champ, à droite : la valeur reste lisible, l'unité discrète. */
+.control:has(.unit) .input {
+  padding-right: calc(var(--space-3) + 2ch);
+}
+
+.unit {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  pointer-events: none;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+}
+
+.textarea {
+  height: auto;
+  min-height: 72px;
+  padding: var(--space-2) var(--space-3);
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.select {
+  padding-right: var(--space-2);
+  cursor: pointer;
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  cursor: pointer;
+}
+
+.swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: 3px;
+}
+
+/* Valeurs différentes : la pastille est barrée plutôt que d'afficher une couleur trompeuse. */
+.swatch[data-mixed] {
+  background: linear-gradient(
+    135deg,
+    transparent calc(50% - 1px),
+    var(--color-gray-500) 50%,
+    transparent calc(50% + 1px)
+  );
+}
+
+.swatch[data-mixed]::-webkit-color-swatch {
+  opacity: 0;
+}
+
+.swatch:focus-visible {
+  outline: var(--editor-focus-ring);
+  outline-offset: 1px;
+}
+
+.hex {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.segmented {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.segment {
+  position: relative;
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 32px;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segment input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.segment:has(input:checked) {
+  background: var(--color-background);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.segment:has(input:focus-visible) {
+  outline: var(--editor-focus-ring);
+  outline-offset: -2px;
+}
+
+.field:disabled .segment {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-caption-size);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.toggle[aria-pressed="true"] {
+  border-color: var(--color-inverse);
+  background: var(--color-inverse);
+  color: var(--color-on-inverse);
+}
+
+/* Mixte : contour pointillé, l'information ne passe pas que par la couleur. */
+.toggle[aria-pressed="mixed"] {
+  border-style: dashed;
+  border-color: var(--color-gray-500);
+}
+
+.toggle:focus-visible {
+  outline: var(--editor-focus-ring);
+  outline-offset: 1px;
+}
+
+.toggle:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.range {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--color-primary);
+}
+
+.output {
+  min-width: 5ch;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
+}

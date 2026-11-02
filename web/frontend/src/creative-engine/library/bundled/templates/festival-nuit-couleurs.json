@@ -1,0 +1,246 @@
+{
+  "assets": {
+    "06000000-0000-4000-8000-000000000002": {
+      "height": 500,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/etincelles.webp",
+        "type": "remote"
+      },
+      "width": 800
+    },
+    "06000000-0000-4000-8000-000000000004": {
+      "height": 600,
+      "kind": "image",
+      "mimeType": "image/webp",
+      "provenance": "template",
+      "source": {
+        "key": "bundled/ornaments/confettis.webp",
+        "type": "remote"
+      },
+      "width": 1000
+    }
+  },
+  "elements": [
+    {
+      "assetId": "06000000-0000-4000-8000-000000000002",
+      "crop": null,
+      "fit": "contain",
+      "height": 500,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000003",
+      "locked": false,
+      "name": "Étincelles",
+      "opacity": 1,
+      "rotation": 0,
+      "type": "image",
+      "width": 800,
+      "x": 140,
+      "y": 40
+    },
+    {
+      "assetId": "06000000-0000-4000-8000-000000000004",
+      "crop": null,
+      "fit": "contain",
+      "height": 600,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000005",
+      "locked": false,
+      "name": "Confettis",
+      "opacity": 0.6,
+      "rotation": 0,
+      "type": "image",
+      "width": 1000,
+      "x": 40,
+      "y": 1120
+    },
+    {
+      "content": "La nuit des",
+      "height": 64.8,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000006",
+      "locked": false,
+      "name": "Surtitre",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#FFD166",
+        "fontFamily": "Poppins",
+        "fontSize": 54,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0.35,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 430
+    },
+    {
+      "content": "Couleurs",
+      "height": 180,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000007",
+      "locked": false,
+      "name": "Titre",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 150,
+        "fontStyle": "normal",
+        "fontWeight": 700,
+        "letterSpacing": 0.05,
+        "lineHeight": 1.2,
+        "textTransform": "uppercase"
+      },
+      "type": "text",
+      "width": 1000,
+      "x": 40,
+      "y": 500
+    },
+    {
+      "content": "Concert privé · DJ · Food trucks",
+      "height": 48,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000008",
+      "locked": false,
+      "name": "Programme",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#F7C6FF",
+        "fontFamily": "Poppins",
+        "fontSize": 40,
+        "fontStyle": "normal",
+        "fontWeight": 500,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 710
+    },
+    {
+      "cornerRadius": 50,
+      "fill": "#FFD166",
+      "height": 100,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-000000000009",
+      "locked": false,
+      "name": "Pastille",
+      "opacity": 1,
+      "rotation": 0,
+      "shape": "rect",
+      "stroke": null,
+      "type": "shape",
+      "width": 550,
+      "x": 265,
+      "y": 800
+    },
+    {
+      "content": "Vendredi 2 juillet · 21 h",
+      "height": 45.6,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-00000000000a",
+      "locked": false,
+      "name": "Date",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#2A0F4A",
+        "fontFamily": "Poppins",
+        "fontSize": 38,
+        "fontStyle": "normal",
+        "fontWeight": 600,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 550,
+      "x": 265,
+      "y": 827
+    },
+    {
+      "content": "Jardin botanique de Bingerville",
+      "height": 45.6,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-00000000000b",
+      "locked": false,
+      "name": "Lieu",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#FFFFFF",
+        "fontFamily": "Poppins",
+        "fontSize": 38,
+        "fontStyle": "normal",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 950
+    },
+    {
+      "content": "Entrée sur invitation",
+      "height": 52.8,
+      "hidden": false,
+      "id": "06000000-0000-4000-8000-00000000000c",
+      "locked": false,
+      "name": "Accès",
+      "opacity": 1,
+      "rotation": 0,
+      "style": {
+        "align": "center",
+        "color": "#FFD166",
+        "fontFamily": "Playfair Display",
+        "fontSize": 44,
+        "fontStyle": "italic",
+        "fontWeight": 400,
+        "letterSpacing": 0,
+        "lineHeight": 1.2,
+        "textTransform": "none"
+      },
+      "type": "text",
+      "width": 900,
+      "x": 90,
+      "y": 1040
+    }
+  ],
+  "id": "06000000-0000-4000-8000-000000000001",
+  "meta": {
+    "createdAt": "2026-11-01T00:00:00.000Z",
+    "template": null,
+    "title": "Invitation à la soirée",
+    "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  "page": {
+    "background": {
+      "color": "#2A0F4A",
+      "type": "solid"
+    },
+    "height": 1350,
+    "preset": "social-4-5",
+    "print": null,
+    "unit": "px",
+    "width": 1080
+  },
+  "schemaVersion": 1
+}

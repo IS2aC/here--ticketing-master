@@ -84,6 +84,15 @@ services:
       API_URL: http://here-api:8000
       # Adresse publique du site : lien porté par le QR code des cartes (/i/<jeton>).
       PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+      # Éditeur de cartes : génération d'images par IA (voir .env.example), désactivée par défaut.
+      IMAGE_PROVIDER: ${IMAGE_PROVIDER:-none}
+      IMAGE_API_KEY: ${IMAGE_API_KEY:-}
+      IMAGE_MODEL: ${IMAGE_MODEL:-}
+      IMAGE_BASE_URL: ${IMAGE_BASE_URL:-}
+      IMAGE_SIZES: ${IMAGE_SIZES:-}
+      IMAGE_RESOLUTION: ${IMAGE_RESOLUTION:-}
+      IMAGE_MAX_IMAGES: ${IMAGE_MAX_IMAGES:-1}
+      IMAGE_TIMEOUT_SECONDS: ${IMAGE_TIMEOUT_SECONDS:-120}
     expose:
       - "3000"
     depends_on:
