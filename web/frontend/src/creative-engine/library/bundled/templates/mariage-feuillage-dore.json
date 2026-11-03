@@ -267,7 +267,7 @@
       "assetId": "01000000-0000-4000-8000-000000000002",
       "crop": null,
       "fit": "contain",
-      "height": 110,
+      "height": 133,
       "hidden": false,
       "id": "01000000-0000-4000-8000-00000000000a",
       "locked": false,
@@ -275,25 +275,9 @@
       "opacity": 1,
       "rotation": 0,
       "type": "image",
-      "width": 330,
-      "x": 50,
-      "y": 1110
-    },
-    {
-      "assetId": "01000000-0000-4000-8000-000000000002",
-      "crop": null,
-      "fit": "contain",
-      "height": 110,
-      "hidden": false,
-      "id": "01000000-0000-4000-8000-0000000000f6",
-      "locked": false,
-      "name": "Feuillage bas droite",
-      "opacity": 1,
-      "rotation": 0,
-      "type": "image",
-      "width": 330,
-      "x": 700,
-      "y": 1110
+      "width": 400,
+      "x": 188,
+      "y": 1100
     },
     {
       "assetId": "01000000-0000-4000-8000-0000000000f0",
@@ -309,7 +293,7 @@
       "slot": "guest-qr",
       "type": "image",
       "width": 260,
-      "x": 410.0,
+      "x": 776,
       "y": 988
     }
   ],

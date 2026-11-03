@@ -1,5 +1,6 @@
+import { QR_SPOT, qrPosition } from "@/lib/card/layout";
 import { addAsset } from "../domain/commands/documentCommands.ts";
-import { addElement, updateElement } from "../domain/commands/elementCommands.ts";
+import { addElement, moveElement, updateElement } from "../domain/commands/elementCommands.ts";
 import { createDocument as createBlankDocument } from "../domain/document/factories.ts";
 import type { CreativeDocument } from "../domain/document/types.ts";
 import { createId } from "../domain/ids.ts";
@@ -31,6 +32,7 @@ import {
   hasGuestFields,
   SEAL_ASSET,
   SEAL_ASSET_KEY,
+  sealInPlace,
   slotOf,
   type GuestSample,
 } from "./guestFields.ts";
@@ -70,6 +72,16 @@ export function ensureGuestFields(sample: GuestSample): void {
     const field = slotOf(doc, slot);
     if (field?.type === "text" && field.content !== content)
       commands.push((d) => updateElement(d, { id: field.id, patch: { content } }));
+  }
+  // Le sceau est toujours en bas à droite : une ancienne carte qui le plaçait ailleurs y est ramenée.
+  const seal = slotOf(doc, "guest-qr");
+  if (seal && !sealInPlace(seal)) {
+    const { left, top } = qrPosition(QR_SPOT);
+    commands.push(
+      (d) => updateElement(d, { id: seal.id, patch: { locked: false } }),
+      (d) => moveElement(d, { id: seal.id, x: left, y: top }),
+      (d) => updateElement(d, { id: seal.id, patch: { locked: true } }),
+    );
   }
   if (!hasGuestFields(doc)) {
     let sealId = Object.entries(doc.assets).find(([, a]) => a.source.key === SEAL_ASSET_KEY)?.[0];

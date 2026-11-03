@@ -9,7 +9,8 @@ import { cardFonts } from "./fonts";
 import { ICON_SVG } from "./icons";
 import { CARD_LIBRARY, type CardStyle } from "./library";
 import { parseQrStyle, styledQrSvg } from "./qr";
-import { FONT_FAMILY, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
+import { FONT_FAMILY, QR_SPOT, qrPosition, tableText, textBox, type CardLayout, type TextLayout } from "./layout";
+import { fittedSize } from "./measure";
 import { paletteOf, type CardColors } from "./palettes";
 import { CompactSeal, HERE_SYMBOL } from "./seal";
 import { svgUri } from "./svg";
@@ -233,7 +234,11 @@ function Seal({
 
 // --- « Mon propre modèle » : fond importé + nom, table / catégorie, QR code ------------------------
 
-function Placed({ text, layout }: { text: string; layout: TextLayout }) {
+// Nom et table : la taille est celle de l'éditeur, réduite (fittedSize) si le texte de l'invité ne tient pas
+// en entier dans la largeur réservée. Le sceau est toujours en bas à droite, quelle que soit la mise en page.
+type Fitted = { name: number; table: number | null };
+
+function Placed({ text, layout, size }: { text: string; layout: TextLayout; size: number }) {
   const box = textBox(layout);
   return (
     <div
@@ -249,7 +254,7 @@ function Placed({ text, layout }: { text: string; layout: TextLayout }) {
         textAlign: "center",
         fontFamily: FONT_FAMILY[layout.font],
         fontWeight: layout.bold ? 600 : 400,
-        fontSize: layout.size,
+        fontSize: size,
         lineHeight: 1.2,
         color: layout.color,
         overflow: "hidden",
@@ -260,15 +265,15 @@ function Placed({ text, layout }: { text: string; layout: TextLayout }) {
   );
 }
 
-function CustomCard({ data, qr }: { data: CardData; qr: string }) {
+function CustomCard({ data, qr, fitted }: { data: CardData; qr: string; fitted: Fitted }) {
   const layout = data.layout as CardLayout;
-  const spot = qrPosition(layout.qr);
+  const spot = qrPosition(QR_SPOT);
   const table = tableText(data.seat, data.category);
   return (
     <div style={{ display: "flex", position: "absolute", inset: 0 }}>
       <img src={data.background as string} width={CARD_WIDTH} height={CARD_HEIGHT} alt="" style={{ position: "absolute", inset: 0 }} />
-      <Placed text={data.guestName} layout={layout.name} />
-      {layout.table && table ? <Placed text={table} layout={layout.table} /> : null}
+      <Placed text={data.guestName} layout={layout.name} size={fitted.name} />
+      {layout.table && table && fitted.table ? <Placed text={table} layout={layout.table} size={fitted.table} /> : null}
       <CompactSeal qr={qr} code={data.code} left={spot.left} top={spot.top} />
     </div>
   );
@@ -946,6 +951,13 @@ export async function renderCard(
   const Family = FAMILIES[style.family];
   // QR code stylisé dans l'éditeur de cartes (« Mon propre modèle »), sinon le QR code classique.
   const qrStyle = data.layout && data.background ? data.layout.qr_style : null;
+  const table = data.layout?.table ? tableText(data.seat, data.category) : "";
+  const fitted: Fitted | null = data.layout
+    ? {
+        name: await fittedSize(data.guestName, data.layout.name),
+        table: data.layout.table && table ? await fittedSize(table, data.layout.table) : null,
+      }
+    : null;
   const qr = svgUri(
     qrStyle
       ? styledQrSvg(data.qrValue, parseQrStyle(qrStyle))
@@ -965,8 +977,8 @@ export async function renderCard(
         fontFamily: "Poppins",
       }}
     >
-      {data.layout && data.background ? (
-        <CustomCard data={data} qr={qr} />
+      {data.layout && data.background && fitted ? (
+        <CustomCard data={data} qr={qr} fitted={fitted} />
       ) : (
         <>
           <Family data={data} style={style} />

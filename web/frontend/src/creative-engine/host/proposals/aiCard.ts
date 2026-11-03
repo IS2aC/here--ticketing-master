@@ -86,7 +86,7 @@ export function composeOnImage(
             createGuestTable(sample, { x: 395, y: 1135, size: 26, color: muted, font: "sans", bold: false }),
             filled(text(bottom, "Tenue", 1165, "x", { fontSize: 22, fontWeight: 500, color: accent }), dress),
             filled(text(bottom, "Réponse", 1205, "x", { ...italic, fontSize: 22, color: muted }), texts.closing),
-            createGuestQr(sealId, "bas-droite"),
+            createGuestQr(sealId),
           ];
         })()
       : (() => {
@@ -103,7 +103,7 @@ export function composeOnImage(
             createGuestTable(sample, { x: 540, y: 816, size: 28, color: muted, font: "sans", bold: false }),
             filled(text(inner, "Tenue", 858, "x", { fontSize: 24, fontWeight: 500, color: accent }), dress),
             filled(text(inner, "Réponse", 900, "x", { ...italic, fontSize: 24, color: muted }), texts.closing),
-            createGuestQr(sealId, "bas-droite"),
+            createGuestQr(sealId),
           ];
         })();
 

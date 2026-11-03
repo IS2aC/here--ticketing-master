@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { qrPosition, QR_BOX } from "@/lib/card/layout";
+import { qrPosition, QR_BOX, QR_SPOT } from "@/lib/card/layout";
 import type { CreativeDocument } from "../domain/document/types.ts";
 import type { Element } from "../domain/elements/types.ts";
 import { loadDocument } from "../domain/schema/validate.ts";
 import { TEMPLATE_DOCUMENTS } from "../library/bundled/templateDocuments.ts";
-import { CARD_SIZE, createGuestName, createGuestTable, nearestSpot, SEAL_ASSET_KEY, slotOf, toCardLayout } from "./guestFields.ts";
+import { CARD_SIZE, createGuestName, createGuestTable, SEAL_ASSET_KEY, slotOf, toCardLayout } from "./guestFields.ts";
 
 // Modèles intégrés : au format de la carte, avec une place réservée au nom, à la table et au sceau QR.
 
@@ -31,12 +31,12 @@ describe("modèles de cartes", () => {
     }
   });
 
-  it("placent le sceau exactement à un emplacement de Satori", async () => {
+  it("placent le sceau exactement en bas à droite, comme Satori", async () => {
     for (const [path, doc] of await templates()) {
       const qr = slotOf(doc, "guest-qr");
       expect(qr?.type === "image" && doc.assets[qr.assetId]?.source.key, path).toBe(SEAL_ASSET_KEY);
       if (!qr) continue;
-      const { left, top } = qrPosition(nearestSpot(qr));
+      const { left, top } = qrPosition(QR_SPOT);
       expect({ x: qr.x, y: qr.y, width: qr.width, height: qr.height, locked: qr.locked }, path).toEqual({
         x: left,
         y: top,

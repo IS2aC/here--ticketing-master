@@ -30,6 +30,7 @@ LAYOUT = {
         "x": 540,
         "y": 600,
         "size": 80,
+        "width": 700,
         "color": "#7D2335",
         "font": "serif",
         "bold": True,
@@ -72,6 +73,7 @@ def test_own_card_model(client: TestClient, organizer: dict[str, str]) -> None:
     saved = client.patch(url, json={"layout": LAYOUT}, headers=organizer).json()
     assert (
         saved["layout"]["name"]["color"] == "#7D2335"
+        and saved["layout"]["name"]["width"] == 700
         and saved["layout"]["table"] is None
     )
     bad = {**LAYOUT, "name": {**LAYOUT["name"], "color": "rouge"}}

@@ -339,6 +339,9 @@ class TextLayout(BaseModel):
     x: Annotated[int, Field(ge=0, le=1080)]
     y: Annotated[int, Field(ge=0, le=1350)]
     size: Annotated[int, Field(ge=18, le=160)]
+    # Largeur réservée, centrée sur x (éditeur) ; le texte est réduit pour y tenir sur une ligne.
+    # Absente : aussi large que le permettent les bords.
+    width: Annotated[int, Field(ge=40, le=1080)] | None = None
     color: HexColor
     # Poppins, Playfair Display ou Great Vibes (calligraphie)
     font: Literal["sans", "serif", "script"] = "serif"
@@ -376,6 +379,7 @@ class CardLayout(BaseModel):
 
     name: TextLayout
     table: TextLayout | None = None
+    # Le sceau est toujours dessiné en bas à droite ; les autres valeurs restent lisibles (anciennes cartes).
     qr: Literal[
         "bas-droite", "bas-gauche", "bas-centre", "haut-droite", "haut-gauche"
     ] = "bas-droite"

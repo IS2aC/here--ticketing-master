@@ -1,4 +1,4 @@
-import { CANVAS, QR_BOX, QR_SPOTS, qrPosition, textBox, type CardLayout, type QrSpot, type TextLayout } from "@/lib/card/layout";
+import { CANVAS, GUEST_MIN_SIZE, QR_BOX, QR_SPOT, qrPosition, textBox, type CardLayout, type TextLayout } from "@/lib/card/layout";
 import { createImageElement, createTextElement } from "../domain/document/factories.ts";
 import type { CreativeDocument, ImageAsset } from "../domain/document/types.ts";
 import type { Element, GuestSlot, TextElement } from "../domain/elements/types.ts";
@@ -36,7 +36,7 @@ const FAMILY_OF = Object.fromEntries(Object.entries(GUEST_FONTS).map(([family, f
 >;
 
 /** Bornes de la taille du texte dans CardLayout (API, schemas.py). */
-export const GUEST_TEXT_SIZE = { min: 18, max: 160 };
+export const GUEST_TEXT_SIZE = { min: GUEST_MIN_SIZE, max: 160 };
 
 /** Ligne de texte de Satori pour les champs invité (render.tsx, Placed). */
 const SATORI_LINE_HEIGHT = 1.2;
@@ -77,7 +77,7 @@ function guestText(slot: "guest-name" | "guest-table", content: string, layout: 
 export const DEFAULT_GUEST_LAYOUT: CardLayout = {
   name: { x: 540, y: 700, size: 64, color: "#0B0B0B", font: "serif", bold: false },
   table: { x: 540, y: 790, size: 34, color: "#0B0B0B", font: "sans", bold: false },
-  qr: "bas-droite",
+  qr: QR_SPOT,
 };
 
 export function createGuestName(sample: GuestSample, layout: TextLayout = DEFAULT_GUEST_LAYOUT.name): TextElement {
@@ -91,9 +91,9 @@ export function createGuestTable(
   return guestText("guest-table", sample.table, layout);
 }
 
-/** Sceau Here! et QR code : verrouillé (il ne se place qu'à l'un des emplacements prévus, voir moveSealTo). */
-export function createGuestQr(assetId: Id, spot: QrSpot = DEFAULT_GUEST_LAYOUT.qr): Element {
-  const { left, top } = qrPosition(spot);
+/** Sceau Here! et QR code : verrouillé, toujours en bas à droite. */
+export function createGuestQr(assetId: Id): Element {
+  const { left, top } = qrPosition(QR_SPOT);
   return {
     ...createImageElement({ x: left, y: top, width: QR_BOX.width, height: QR_BOX.height, assetId, fit: "contain" }),
     slot: "guest-qr",
@@ -102,16 +102,10 @@ export function createGuestQr(assetId: Id, spot: QrSpot = DEFAULT_GUEST_LAYOUT.q
   };
 }
 
-/** Emplacement du QR code le plus proche de la position de l'élément. */
-export function nearestSpot(element: Pick<Element, "x" | "y">): QrSpot {
-  let best: QrSpot = "bas-droite";
-  let bestDistance = Number.POSITIVE_INFINITY;
-  for (const { id } of QR_SPOTS) {
-    const { left, top } = qrPosition(id);
-    const distance = Math.hypot(left - element.x, top - element.y);
-    if (distance < bestDistance) [best, bestDistance] = [id, distance];
-  }
-  return best;
+/** Le sceau est-il à sa place (en bas à droite) ? Les anciennes cartes pouvaient le mettre ailleurs. */
+export function sealInPlace(element: Pick<Element, "x" | "y">): boolean {
+  const { left, top } = qrPosition(QR_SPOT);
+  return element.x === left && element.y === top;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -122,6 +116,8 @@ export function toTextLayout(element: TextElement): TextLayout {
     x: Math.round(clamp(element.x + element.width / 2, 0, CARD_SIZE.width)),
     y: Math.round(clamp(element.y + element.height / 2, 0, CARD_SIZE.height)),
     size: Math.round(clamp(element.style.fontSize, GUEST_TEXT_SIZE.min, GUEST_TEXT_SIZE.max)),
+    // Largeur du champ : Satori y fait tenir le nom de chaque invité, en réduisant la police si besoin.
+    width: Math.round(clamp(element.width, 40, CARD_SIZE.width)),
     color: element.style.color.slice(0, 7).toUpperCase(),
     font: (GUEST_FONTS as Record<string, TextLayout["font"]>)[element.style.fontFamily] ?? "sans",
     // Great Vibes n'a qu'une graisse.
@@ -142,13 +138,12 @@ export function toCardLayout(doc: CreativeDocument): LayoutResult {
   if (name?.type !== "text" || name.hidden)
     return { ok: false, message: "Ajoutez le nom de l'invité sur la carte : chaque invité y verra le sien." };
   const table = slotOf(doc, "guest-table");
-  const qr = slotOf(doc, "guest-qr");
   return {
     ok: true,
     layout: {
       name: toTextLayout(name),
       table: table?.type === "text" && !table.hidden ? toTextLayout(table) : null,
-      qr: qr ? nearestSpot(qr) : DEFAULT_GUEST_LAYOUT.qr,
+      qr: QR_SPOT,
     },
   };
 }

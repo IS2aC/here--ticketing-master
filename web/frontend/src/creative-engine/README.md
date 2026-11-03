@@ -21,8 +21,9 @@ L'éditeur dessine le **décor**. La carte de chaque invité est toujours dessin
    - prépare les cartes des invités (`POST /v1/events/{id}/invitations`), puis revient à la page de l'événement.
 3. Ce que `CardLayout` ne sait pas décrire est ramené à ce que Satori sait dessiner (`host/guestFields.ts`) :
    - 3 polices (Playfair Display, Poppins, Great Vibes) ;
-   - taille de 18 à 160 ;
-   - 5 emplacements pour le QR code.
+   - taille de 18 à 160, et la largeur du champ : Satori y fait tenir le nom complet de chaque invité sur une
+     ligne, en réduisant la police si besoin (mesure avec les mêmes fichiers de police, `lib/card/measure.ts`) ;
+   - le sceau toujours en bas à droite (une ancienne carte qui le plaçait ailleurs y est ramenée à l'ouverture).
 
 ## Rendu graphique (étape B)
 

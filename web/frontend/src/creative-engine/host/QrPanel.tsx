@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { QR_SPOTS } from "@/lib/card/layout";
 import { QR_CORNERS, QR_DOTS, QR_MIN_CONTRAST } from "@/lib/card/qr";
 import type { HexColor } from "../domain/elements/types.ts";
 import { contrastRatio, documentPalette, readableColor } from "../editor/colors.ts";
@@ -9,22 +8,16 @@ import { useDocumentStore } from "../editor/documentStore.ts";
 import { ColorField } from "../ui/primitives/ColorField.tsx";
 import { Toggle } from "../ui/primitives/Segmented.tsx";
 import { usePhotoPalette } from "../ui/PropertiesPanel/usePhotoPalette.ts";
-import { moveSealTo } from "./guestActions.ts";
-import { nearestSpot } from "./guestFields.ts";
 import { sealIsScannable, sealUrl, useQrStyle } from "./qrStyle.ts";
 import styles from "./HereCardEditor.module.css";
 
 const WHITE = "#FFFFFF" as HexColor;
 type Check = "checking" | "ok" | "unreadable";
 
-/** Réglages du QR code et du sceau Here! : emplacement, style, couleur, et relecture du code dessiné. */
+/** Réglages du QR code et du sceau Here! (toujours en bas à droite) : style, couleur, et relecture du code dessiné. */
 export function QrPanel({ baseUrl, onClose }: { baseUrl: string; onClose: () => void }) {
   const style = useQrStyle((s) => s.style);
   const setStyle = useQrStyle((s) => s.set);
-  const spot = useDocumentStore((s) => {
-    const qr = s.history.present.elements.find((e) => e.slot === "guest-qr");
-    return qr ? nearestSpot(qr) : null;
-  });
   const doc = useDocumentStore((s) => s.history.present);
   // Résultat de la dernière relecture, pour un style donné : un autre style est « en cours de vérification ».
   const url = sealUrl(baseUrl, style);
@@ -66,13 +59,6 @@ export function QrPanel({ baseUrl, onClose }: { baseUrl: string; onClose: () => 
         </button>
       </div>
 
-      <p className={styles.qrLabel}>Emplacement</p>
-      <div className={styles.qrChoices} role="group" aria-label="Emplacement">
-        {QR_SPOTS.map(({ id, label }) => (
-          <Toggle key={id} label={label} pressed={spot === id} onChange={() => moveSealTo(id)} />
-        ))}
-      </div>
-
       <p className={styles.qrLabel}>Points</p>
       <div className={styles.qrChoices} role="group" aria-label="Points">
         {QR_DOTS.map(({ id, label }) => (
@@ -111,7 +97,7 @@ export function QrPanel({ baseUrl, onClose }: { baseUrl: string; onClose: () => 
             ? "Lu sans erreur : le code se scanne."
             : "Ce code ne se relit pas : choisissez une couleur plus foncée ou des points carrés."}
       </p>
-      <p className={styles.qrNote}>Le sceau reste blanc et porte le code de l&apos;invitation : c&apos;est la garantie Here!.</p>
+      <p className={styles.qrNote}>Le sceau reste blanc, en bas à droite, et porte le code de l&apos;invitation : c&apos;est la garantie Here!.</p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { qrPosition, textBox } from "@/lib/card/layout";
+import { qrPosition, QR_SPOT, textBox } from "@/lib/card/layout";
 import { addAsset } from "../domain/commands/documentCommands.ts";
 import { addElement } from "../domain/commands/elementCommands.ts";
 import { createDocument, createTextElement } from "../domain/document/factories.ts";
@@ -10,7 +10,7 @@ import {
   createGuestQr,
   createGuestTable,
   DEFAULT_GUEST_LAYOUT,
-  nearestSpot,
+  sealInPlace,
   SEAL_ASSET,
   toCardLayout,
   withoutGuestFields,
@@ -34,7 +34,7 @@ function card(): CreativeDocument {
     (d) => addAsset(d, { id: SEAL_ID, asset: SEAL_ASSET }),
     (d) => addElement(d, { element: createGuestName(SAMPLE) }),
     (d) => addElement(d, { element: createGuestTable(SAMPLE) }),
-    (d) => addElement(d, { element: createGuestQr(SEAL_ID, "bas-gauche") }),
+    (d) => addElement(d, { element: createGuestQr(SEAL_ID) }),
   );
 }
 
@@ -43,8 +43,20 @@ describe("champs invité", () => {
     expect(validateDocument(card())).toEqual([]);
   });
 
-  it("redonnent la mise en page proposée par Here! sans changement", () => {
-    expect(toCardLayout(card())).toEqual({ ok: true, layout: { ...DEFAULT_GUEST_LAYOUT, qr: "bas-gauche" } });
+  it("redonnent la mise en page proposée par Here!, avec la largeur réservée à chaque champ", () => {
+    const { name, table } = DEFAULT_GUEST_LAYOUT;
+    expect(toCardLayout(card())).toEqual({
+      ok: true,
+      layout: { ...DEFAULT_GUEST_LAYOUT, name: { ...name, width: 1032 }, table: { ...table, width: 1032 } },
+    });
+  });
+
+  it("gardent la largeur choisie dans l'éditeur : c'est la zone où Satori fait tenir le nom", () => {
+    const narrow = createGuestName(SAMPLE, { ...DEFAULT_GUEST_LAYOUT.name, x: 300, width: 400 });
+    expect([narrow.x, narrow.width]).toEqual([100, 400]);
+    const doc = card();
+    const result = toCardLayout({ ...doc, elements: doc.elements.map((e) => (e.slot === "guest-name" ? narrow : e)) });
+    expect(result.ok && result.layout.name).toMatchObject({ x: 300, width: 400 });
   });
 
   it("occupent la zone de texte de Satori", () => {
@@ -80,9 +92,14 @@ describe("champs invité", () => {
     expect(result.ok && result.layout.table).toBeNull();
   });
 
-  it("placent le QR code à l'emplacement le plus proche", () => {
-    const { left, top } = qrPosition("haut-droite");
-    expect(nearestSpot({ x: left - 30, y: top + 40 })).toBe("haut-droite");
+  it("placent toujours le QR code en bas à droite", () => {
+    const { left, top } = qrPosition(QR_SPOT);
+    expect(QR_SPOT).toBe("bas-droite");
+    expect(sealInPlace({ x: left, y: top })).toBe(true);
+    expect(sealInPlace({ x: qrPosition("bas-gauche").left, y: top })).toBe(false);
+    const moved = card();
+    const elsewhere = { ...moved, elements: moved.elements.map((e) => (e.slot === "guest-qr" ? { ...e, x: 44, y: 44 } : e)) };
+    expect(toCardLayout(elsewhere)).toMatchObject({ ok: true, layout: { qr: "bas-droite" } });
   });
 
   it("disparaissent du décor exporté, avec le sceau d'exemple", () => {

@@ -1,9 +1,6 @@
-import { qrPosition, type QrSpot } from "@/lib/card/layout";
 import { DEFAULT_QR_STYLE, QR_MIN_CONTRAST, type QrStyle } from "@/lib/card/qr";
-import { addAsset } from "../domain/commands/documentCommands.ts";
-import { addElement, moveElement, removeElement, updateElement } from "../domain/commands/elementCommands.ts";
+import { addElement, removeElement } from "../domain/commands/elementCommands.ts";
 import type { HexColor } from "../domain/elements/types.ts";
-import { createId } from "../domain/ids.ts";
 import { contrastRatio } from "../editor/colors.ts";
 import { currentDocument, useDocumentStore, type DocumentCommand } from "../editor/documentStore.ts";
 import { saveNow } from "../editor/persistence.ts";
@@ -11,10 +8,7 @@ import { exportDocument } from "../export/exportDocument.ts";
 import type { AssetUrlResolver } from "../rendering/assetResolverContext.ts";
 import {
   createGuestName,
-  createGuestQr,
   createGuestTable,
-  SEAL_ASSET,
-  SEAL_ASSET_KEY,
   slotOf,
   toCardLayout,
   withoutGuestFields,
@@ -35,27 +29,6 @@ export function toggleGuestTable(sample: GuestSample): void {
   const table = slotOf(currentDocument(), "guest-table");
   if (table) run("Retirer la table", [(d) => removeElement(d, { id: table.id })]);
   else run("Ajouter la table", [(d) => addElement(d, { element: createGuestTable(sample) })]);
-}
-
-/** Le QR code est verrouillé (il ne se dépose pas n'importe où) : déverrouillé, placé et reverrouillé en une étape. */
-export function moveSealTo(spot: QrSpot): void {
-  const doc = currentDocument();
-  const qr = slotOf(doc, "guest-qr");
-  const { left, top } = qrPosition(spot);
-  if (qr) {
-    run("Placer le QR code", [
-      (d) => updateElement(d, { id: qr.id, patch: { locked: false } }),
-      (d) => moveElement(d, { id: qr.id, x: left, y: top }),
-      (d) => updateElement(d, { id: qr.id, patch: { locked: true } }),
-    ]);
-    return;
-  }
-  const existing = Object.entries(doc.assets).find(([, a]) => a.source.key === SEAL_ASSET_KEY)?.[0];
-  const assetId = existing ?? createId();
-  run("Ajouter le QR code", [
-    ...(existing ? [] : [(d: Parameters<DocumentCommand>[0]) => addAsset(d, { id: assetId, asset: SEAL_ASSET })]),
-    (d) => addElement(d, { element: createGuestQr(assetId, spot) }),
-  ]);
 }
 
 export type ValidationResult = { readonly ok: true; readonly created: number } | { readonly ok: false; readonly message: string };
