@@ -7,6 +7,7 @@ import { parseQrStyle, type QrStyle } from "@/lib/card/qr";
 import type { ImageAsset } from "../domain/document/types.ts";
 import { useDocumentStore } from "../editor/documentStore.ts";
 import { useEditorStore } from "../editor/editorStore.ts";
+import { usePersistenceStore } from "../editor/persistence.ts";
 import { BUNDLED_ASSET_URLS } from "../library/bundled/ornaments.ts";
 import { AssetResolverProvider } from "../rendering/assetResolver.tsx";
 import { ExportDialog } from "../ui/Export/ExportDialog.tsx";
@@ -21,6 +22,8 @@ import { TopBar } from "../ui/TopBar/TopBar.tsx";
 import { Workspace } from "../ui/Workspace/Workspace.tsx";
 import { addGuestName, toggleGuestTable, validateCard } from "./guestActions.ts";
 import { SEAL_ASSET_KEY, type GuestSample } from "./guestFields.ts";
+import type { CardFacts } from "./proposals/charter.ts";
+import { CardStartPanel, type StartTab } from "./proposals/CardStartPanel.tsx";
 import { ProposalsPanel } from "./proposals/ProposalsPanel.tsx";
 import { QrPanel } from "./QrPanel.tsx";
 import { sealUrl, useQrStyle } from "./qrStyle.ts";
@@ -35,6 +38,8 @@ export interface HereCardEditorProps {
   readonly eventId: string;
   readonly eventTitle: string;
   readonly sample: GuestSample;
+  /** Données de l'événement, mises en forme pour la carte (modèles remplis, génération par IA). */
+  readonly facts: CardFacts;
   /** Style du QR code enregistré avec la carte (mise en page), sinon le style classique. */
   readonly qrStyle: QrStyle | null;
 }
@@ -57,7 +62,7 @@ function GuestFieldsMenu({ sample }: { sample: GuestSample }) {
 }
 
 /** Page Carte d'un événement : l'éditeur, en plein écran au-dessus du tableau de bord. */
-export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrStyle }: HereCardEditorProps) {
+export function HereCardEditor({ eventId, eventTitle, sample, facts, qrStyle: savedQrStyle }: HereCardEditorProps) {
   const baseUrl = `/tableau-de-bord/evenements/${encodeURIComponent(eventId)}/carte`;
   const eventUrl = `/tableau-de-bord/evenements/${encodeURIComponent(eventId)}`;
   const isPanelOpen = useEditorStore((s) => s.isPropertiesPanelOpen);
@@ -66,6 +71,16 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
   const [notice, setNotice] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
   const [proposalsOpen, setProposalsOpen] = useState(false);
+  // Ouverture : une carte vide (nouvel événement) propose d'emblée l'IA ou un modèle ; ensuite, à la demande.
+  const [startTab, setStartTab] = useState<StartTab | null>(null);
+  const [dismissedStart, setDismissedStart] = useState<string | null>(null);
+  const openedId = usePersistenceStore((s) => s.documentId);
+  const blank = useDocumentStore((s) => s.history.present.elements.every((e) => e.slot));
+  const start: StartTab | null = startTab ?? (openedId && blank && dismissedStart !== openedId ? "ia" : null);
+  const closeStart = () => {
+    setStartTab(null);
+    setDismissedStart(openedId);
+  };
   const qrStyle = useQrStyle((s) => s.style);
   const router = useRouter();
 
@@ -118,12 +133,12 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
             trailing={
               <>
                 <ActionButton
-                  label="Propositions"
+                  label="Nouvelle carte"
                   icon="sparkles"
                   showLabel
                   variant="ghost"
                   aria-haspopup="dialog"
-                  onClick={() => setProposalsOpen(true)}
+                  onClick={() => setStartTab("ia")}
                 />
                 <GuestFieldsMenu sample={sample} />
                 <ActionButton
@@ -144,7 +159,7 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
           />
         </div>
         <div className={styles.tools}>
-          <ToolRail />
+          <ToolRail onTemplates={() => setStartTab("modeles")} />
         </div>
         <LibraryPanel />
         <div className={styles.workspace}>
@@ -156,6 +171,20 @@ export function HereCardEditor({ eventId, eventTitle, sample, qrStyle: savedQrSt
         {isPanelOpen && <div className={styles.scrim} aria-hidden="true" onClick={closePanel} />}
         <ExportDialog />
         {qrOpen && <QrPanel baseUrl={baseUrl} onClose={() => setQrOpen(false)} />}
+        {start && (
+          <CardStartPanel
+            key={start}
+            baseUrl={baseUrl}
+            facts={facts}
+            sample={sample}
+            initialTab={start}
+            onClose={closeStart}
+            onProposals={() => {
+              closeStart();
+              setProposalsOpen(true);
+            }}
+          />
+        )}
         {proposalsOpen && (
           <ProposalsPanel baseUrl={baseUrl} sample={sample} resolveAsset={resolveAsset} onClose={() => setProposalsOpen(false)} />
         )}

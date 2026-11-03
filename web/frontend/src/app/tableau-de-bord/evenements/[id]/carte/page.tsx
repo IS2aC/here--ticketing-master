@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { SAMPLE_GUEST } from "@/lib/card/data";
 import { tableText } from "@/lib/card/layout";
+import { cardFacts } from "@/lib/card/proposals";
 import { getCardSettings, getEvent } from "@/lib/events";
 import { getGuests } from "@/lib/guests";
 import { EditorLoader } from "./editor-loader";
@@ -46,5 +47,13 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
     name: guest?.display_name ?? SAMPLE_GUEST.guestName,
     table: (guest ? tableText(guest.seat, guest.category) : "") || tableText(SAMPLE_GUEST.seat, SAMPLE_GUEST.category),
   };
-  return <EditorLoader eventId={event.id} eventTitle={event.title} sample={sample} qrStyle={settings.layout?.qr_style ?? null} />;
+  return (
+    <EditorLoader
+      eventId={event.id}
+      eventTitle={event.title}
+      sample={sample}
+      facts={cardFacts(event)}
+      qrStyle={settings.layout?.qr_style ?? null}
+    />
+  );
 }

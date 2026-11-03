@@ -9,6 +9,7 @@ import { prepareFont } from "../../editor/textMeasure.ts";
 import { TEMPLATE_DOCUMENTS } from "../../library/bundled/templateDocuments.ts";
 import { createGuestName, createGuestTable, GUEST_FONTS, toTextLayout, type GuestSample } from "../guestFields.ts";
 import type { CardFacts, Charter, Composition } from "./charter.ts";
+import { defaultTexts } from "./fallback.ts";
 
 // Composition d'une carte à partir d'une charte : le modèle choisi garde sa mise en page (et la place du nom,
 // de la table et du sceau) ; ses textes, couleurs, polices et la teinte de ses ornements suivent la charte.
@@ -93,6 +94,44 @@ const ROLES: Record<Composition, Record<string, Role>> = {
   },
 };
 
+/**
+ * Charte qui garde le style du modèle (couleurs, polices, ornements) : « Modèles Here! » remplis avec les
+ * données de l'événement, sans changer leur apparence.
+ */
+export function charterOf(template: CreativeDocument, composition: Composition, facts: CardFacts): Charter {
+  const roles = ROLES[composition];
+  const byRole = (role: Role) =>
+    template.elements.find((e): e is TextElement => e.type === "text" && !!e.name && roles[e.name] === role);
+  const fill = (role: Role) => {
+    const shape = template.elements.find((e) => e.type === "shape" && !!e.name && roles[e.name] === role);
+    return shape?.type === "shape" ? shape.fill : null;
+  };
+  const background = template.page.background.color.slice(0, 7);
+  const title = byRole("title");
+  const body = byRole("date") ?? byRole("datePlace") ?? byRole("place");
+  const name = template.elements.find((e): e is TextElement => e.type === "text" && e.slot === "guest-name");
+  const guest = name?.style.fontFamily;
+  return {
+    direction: "classique",
+    name: "Modèle",
+    composition,
+    palette: {
+      background,
+      surface: (fill("panel") ?? background).slice(0, 7),
+      title: (title?.style.color ?? "#1F1F1F").slice(0, 7),
+      text: (body?.style.color ?? "#4A4A4A").slice(0, 7),
+      accent: (byRole("kicker")?.style.color ?? fill("pill") ?? "#8E6B2E").slice(0, 7),
+    },
+    fonts: {
+      title: title?.style.fontFamily ?? "Playfair Display",
+      text: body?.style.fontFamily ?? "Poppins",
+      guest: guest === "Great Vibes" || guest === "Poppins" ? guest : "Playfair Display",
+    },
+    ornamentTint: null,
+    texts: defaultTexts(facts),
+  };
+}
+
 /** Modèle de la composition, avec de nouveaux identifiants. */
 export async function loadComposition(composition: Composition): Promise<CreativeDocument> {
   const load = TEMPLATE_DOCUMENTS[`./templates/${composition}.json`];
@@ -138,7 +177,7 @@ function styled(element: TextElement, family: string, color: HexColor): TextElem
  * Le texte dans sa zone : pas plus de lignes que le modèle n'en prévoit (les suivantes sont jointes),
  * taille réduite s'il ne tient pas sur la largeur, centre vertical conservé.
  */
-function withContent(element: TextElement, content: string): TextElement {
+export function withContent(element: TextElement, content: string): TextElement {
   const allowed = Math.max(1, element.content.split("\n").length);
   const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
   // « & Koffi » se joint par une espace ; les autres lignes (lieu, adresse) par une virgule.

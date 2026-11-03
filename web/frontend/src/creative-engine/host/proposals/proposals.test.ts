@@ -4,7 +4,9 @@ import { validateDocument } from "../../domain/schema/validate.ts";
 import { contrastRatio, targetContrast } from "../../editor/colors.ts";
 import { slotOf, toCardLayout } from "../guestFields.ts";
 import { charterSchema, groundedTexts, isGrounded, proposalsSchema, type CardFacts } from "./charter.ts";
-import { composeCard, loadComposition } from "./compose.ts";
+import { composeOnImage } from "./aiCard.ts";
+import { COMPOSITIONS } from "./charter.ts";
+import { charterOf, composeCard, loadComposition } from "./compose.ts";
 import { defaultTexts, fallbackCharters } from "./fallback.ts";
 import { backgroundBehind } from "../../editor/colors.ts";
 
@@ -113,5 +115,50 @@ describe("composition d'une carte", () => {
     expect(name?.type === "text" && name.style.fontFamily).toBe("Poppins");
     const layout = toCardLayout(doc);
     expect(layout.ok && layout.layout.name.font).toBe("sans");
+  });
+});
+
+describe("modèles Here! remplis avec l'événement", () => {
+  it("gardent le style du modèle et prennent les faits de l'événement", async () => {
+    for (const composition of COMPOSITIONS) {
+      const template = await loadComposition(composition);
+      const doc = composeCard(template, charterOf(template, composition, FACTS), FACTS, SAMPLE);
+      expect(validateDocument(doc), composition).toEqual([]);
+      expect(toCardLayout(doc).ok, composition).toBe(true);
+      expect(doc.page.background.color.slice(0, 7), composition).toBe(template.page.background.color.slice(0, 7));
+      const contents = doc.elements.flatMap((e) => (e.type === "text" ? [e.content] : [])).join("\n");
+      expect(contents, composition).toContain(FACTS.dateLine);
+      expect(contents, composition).toContain("Koffi");
+    }
+  });
+});
+
+describe("carte générée par l'IA", () => {
+  const illustration = {
+    kind: "image" as const,
+    mimeType: "image/png" as const,
+    width: 1024,
+    height: 1280,
+    source: { type: "local" as const, key: `sha256-${"a".repeat(64)}` },
+    provenance: "ai" as const,
+  };
+
+  it("pose les textes exacts sur un voile lisible, le sceau en bas à droite", () => {
+    const doc = composeOnImage(illustration, FACTS, SAMPLE);
+    expect(validateDocument(doc)).toEqual([]);
+    const layout = toCardLayout(doc);
+    expect(layout.ok && layout.layout.qr).toBe("bas-droite");
+    const contents = doc.elements.flatMap((e) => (e.type === "text" ? [e.content] : [])).join("\n");
+    for (const fact of [FACTS.dateLine, "Église Saint-Paul du Plateau", "Tenue : blanc et or", SAMPLE.name]) expect(contents).toContain(fact);
+    for (const element of doc.elements) {
+      if (element.type !== "text") continue;
+      const behind = backgroundBehind(doc, element) ?? doc.page.background.color;
+      expect(contrastRatio(element.style.color, behind), element.name).toBeGreaterThanOrEqual(targetContrast(element) - 0.05);
+    }
+  });
+
+  it("n'écrit rien pour un fait absent", () => {
+    const doc = composeOnImage(illustration, { ...FACTS, placeLines: [], dressCode: null }, SAMPLE);
+    expect(doc.elements.some((e) => e.name === "Lieu" || e.name === "Tenue")).toBe(false);
   });
 });

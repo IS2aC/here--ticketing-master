@@ -12,7 +12,8 @@ const PREVIOUS_KEYS = new Set(["ArrowUp", "ArrowLeft"]);
 // Barre d'outils au sens ARIA : un seul arrêt de tabulation, flèches pour passer d'un outil à l'autre.
 // Sélection : seul mode d'interaction (indicateur). Texte et Formes ajoutent un élément au document ; Image
 // importe une image de l'appareil ; Modèles et Ressources ouvrent le panneau de bibliothèque.
-export function ToolRail() {
+/** `onTemplates` : l'hôte remplace le panneau des modèles par le sien (Here! : modèles remplis avec l'événement). */
+export function ToolRail({ onTemplates }: { onTemplates?: () => void } = {}) {
   const railRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const libraryPanel = useEditorStore((s) => s.libraryPanel);
@@ -109,9 +110,10 @@ export function ToolRail() {
         tooltipSide="right"
         className={styles.tool}
         tabIndex={-1}
-        aria-expanded={libraryPanel === "templates"}
+        aria-expanded={onTemplates ? undefined : libraryPanel === "templates"}
         onClick={() => {
-          toggle("templates");
+          if (onTemplates) onTemplates();
+          else toggle("templates");
         }}
       />
       <input

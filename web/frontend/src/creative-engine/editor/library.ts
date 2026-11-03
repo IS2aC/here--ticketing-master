@@ -175,6 +175,22 @@ export async function importAndInsert(
   return imported.ok ? insertLibraryAsset(imported.value, provenance, placement) : imported.error;
 }
 
+/**
+ * Un fichier image → « Mes images » (vérifié, enregistré sur l'appareil), décrit comme ressource de document,
+ * sans l'insérer : pour composer un nouveau document autour (carte générée par IA).
+ */
+export async function importAsDocumentAsset(
+  file: Blob & { readonly name?: string },
+  provenance: ImageAsset["provenance"],
+): Promise<{ ok: true; asset: ImageAsset } | { ok: false; error: LibraryError }> {
+  const device = config?.device;
+  if (!device) return { ok: false, error: NOT_CONFIGURED };
+  const imported = await device.importImage(file);
+  if (!imported.ok) return { ok: false, error: imported.error };
+  const { mimeType, width, height, source } = imported.value;
+  return { ok: true, asset: { kind: "image", mimeType, width, height, source, provenance } };
+}
+
 export async function removeDeviceImage(asset: LibraryAsset): Promise<LibraryError | null> {
   const device = config?.device;
   if (!device) return NOT_CONFIGURED;
