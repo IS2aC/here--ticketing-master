@@ -133,6 +133,11 @@ export function readImageGenerationConfig(env: Env): ConfigResult {
   };
 }
 
+/** Photos de référence par génération : OpenRouter (input_references) et Gemini (images du message). */
+export function maxReferences(config: Pick<ImageGenerationConfig, "provider">): number {
+  return config.provider === "openrouter" || config.provider === "gemini" ? 4 : 0;
+}
+
 /** Ce que le navigateur a le droit de savoir : ni URL, ni clé. */
 export function publicCapabilities(config: ImageGenerationConfig | null): ImageGenerationCapabilities {
   if (!config)
@@ -143,6 +148,7 @@ export function publicCapabilities(config: ImageGenerationConfig | null): ImageG
       sizes: [],
       maxImages: 0,
       maxPromptLength: MAX_PROMPT_LENGTH,
+      maxReferences: 0,
     };
   return {
     enabled: true,
@@ -151,5 +157,6 @@ export function publicCapabilities(config: ImageGenerationConfig | null): ImageG
     sizes: config.sizes,
     maxImages: config.maxImages,
     maxPromptLength: MAX_PROMPT_LENGTH,
+    maxReferences: maxReferences(config),
   };
 }

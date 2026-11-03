@@ -39,6 +39,11 @@ async function generateOne(
     aspect_ratio: request.size,
   };
   if (config.resolution) payload.resolution = config.resolution;
+  // Photos de référence : data URL, champ input_references (documentation OpenRouter, « Image generation »).
+  const references = request.references.map((r) => ({
+    type: "image_url",
+    image_url: { url: `data:${r.mimeType};base64,${r.data}` },
+  }));
   let response: Response;
   try {
     response = await fetchImpl(`${config.baseUrl}/images`, {
@@ -50,7 +55,7 @@ async function generateOne(
         "X-Title": "Here! Creative Engine",
       },
       signal: signals.signal,
-      body: JSON.stringify(payload),
+      body: JSON.stringify(references.length > 0 ? { ...payload, input_references: references } : payload),
     });
   } catch {
     if (signals.user?.aborted) return { code: "aborted" };

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { qrPosition, textBox } from "@/lib/card/layout";
 import { z } from "zod";
 import { validateDocument } from "../../domain/schema/validate.ts";
 import { contrastRatio, targetContrast } from "../../editor/colors.ts";
@@ -150,6 +151,23 @@ describe("carte générée par l'IA", () => {
     expect(layout.ok && layout.layout.qr).toBe("bas-droite");
     const contents = doc.elements.flatMap((e) => (e.type === "text" ? [e.content] : [])).join("\n");
     for (const fact of [FACTS.dateLine, "Église Saint-Paul du Plateau", "Tenue : blanc et or", SAMPLE.name]) expect(contents).toContain(fact);
+    for (const element of doc.elements) {
+      if (element.type !== "text") continue;
+      const behind = backgroundBehind(doc, element) ?? doc.page.background.color;
+      expect(contrastRatio(element.style.color, behind), element.name).toBeGreaterThanOrEqual(targetContrast(element) - 0.05);
+    }
+  });
+
+  it("avec des photos : textes en bas, nom de l'invité jamais sous le sceau", () => {
+    const doc = composeOnImage(illustration, FACTS, SAMPLE, "photos");
+    expect(validateDocument(doc)).toEqual([]);
+    const layout = toCardLayout(doc);
+    if (!layout.ok) throw new Error(layout.message);
+    expect(layout.layout.qr).toBe("bas-droite");
+    const name = textBox(layout.layout.name);
+    expect(name.left + name.width).toBeLessThanOrEqual(qrPosition("bas-droite").left);
+    // Rien d'écrit dans la moitié haute : elle est aux personnes des photos.
+    for (const element of doc.elements) if (element.type === "text") expect(element.y, element.name).toBeGreaterThan(600);
     for (const element of doc.elements) {
       if (element.type !== "text") continue;
       const behind = backgroundBehind(doc, element) ?? doc.page.background.color;

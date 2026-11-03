@@ -1,5 +1,7 @@
+import type { ReferenceImage } from "../../integrations/ai/contract.ts";
 import type { ImageGenerationConfig } from "./config.ts";
-import { MAX_PROMPT_LENGTH } from "./config.ts";
+import { MAX_PROMPT_LENGTH, maxReferences } from "./config.ts";
+import { sniffImageType } from "../../persistence/imageFormats.ts";
 
 // Validation côté serveur des paramètres qui coûtent (nombre d'images, taille) : le navigateur n'est pas cru
 // sur parole. Le modèle n'est jamais choisi par le navigateur : c'est celui de la configuration.
@@ -9,7 +11,11 @@ export interface ValidRequest {
   readonly size: string;
   readonly count: number;
   readonly noText: boolean;
+  readonly references: readonly ReferenceImage[];
 }
+
+/** Taille maximale d'une photo de référence (le navigateur les réduit avant l'envoi). */
+export const MAX_REFERENCE_BYTES = 4 * 1024 * 1024;
 
 /** Consigne ajoutée à la description quand l'image doit être sans texte (en français et en anglais : selon le modèle). */
 export const NO_TEXT_INSTRUCTION =
@@ -45,5 +51,18 @@ export function validateGenerationRequest(body: unknown, config: ImageGeneration
 
   if (body.noText !== undefined && typeof body.noText !== "boolean") return null;
 
-  return { prompt, size, count, noText: body.noText === true };
+  // Photos de référence : vérifiées comme les images du fournisseur (signature), en nombre et en taille.
+  const raw = body.references === undefined ? [] : body.references;
+  if (!Array.isArray(raw) || raw.length > maxReferences(config)) return null;
+  const references: ReferenceImage[] = [];
+  for (const item of raw) {
+    if (!isRecord(item) || typeof item.data !== "string") return null;
+    const bytes = Buffer.from(item.data, "base64");
+    if (bytes.length === 0 || bytes.length > MAX_REFERENCE_BYTES) return null;
+    const mimeType = sniffImageType(Uint8Array.from(bytes));
+    if (mimeType !== "image/png" && mimeType !== "image/jpeg" && mimeType !== "image/webp") return null;
+    references.push({ mimeType, data: item.data });
+  }
+
+  return { prompt, size, count, noText: body.noText === true, references };
 }

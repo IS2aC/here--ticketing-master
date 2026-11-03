@@ -22,6 +22,15 @@ export interface ImageGenerationCapabilities {
   /** Nombre maximal d'images par génération (1 si le fournisseur n'en produit qu'une). */
   readonly maxImages: number;
   readonly maxPromptLength: number;
+  /** Photos de référence acceptées par génération (0 : le fournisseur n'en prend pas). */
+  readonly maxReferences?: number;
+}
+
+/** Photo de référence (visages, lieu, tenue) que le modèle d'image doit reprendre. */
+export interface ReferenceImage {
+  readonly mimeType: "image/png" | "image/jpeg" | "image/webp";
+  /** Fichier encodé en base64. */
+  readonly data: string;
 }
 
 export interface ImageGenerationRequest {
@@ -35,6 +44,8 @@ export interface ImageGenerationRequest {
    * dessiné par l'IA ne se corrige pas). Par défaut : faux.
    */
   readonly noText?: boolean;
+  /** Photos de référence, `maxReferences` au plus. */
+  readonly references?: readonly ReferenceImage[];
 }
 
 export interface GeneratedImagePayload {

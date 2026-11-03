@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CreativeDocument } from "../../domain/document/types.ts";
 import { importAsDocumentAsset } from "../../editor/library.ts";
 import { createDocument, usePersistenceStore } from "../../editor/persistence.ts";
@@ -41,6 +41,25 @@ async function open(document: CreativeDocument): Promise<string | null> {
   return usePersistenceStore.getState().openError?.message ?? "La carte n'a pas pu être ouverte. Réessayez.";
 }
 
+/** Photo réduite avant l'envoi (1536 px au plus, JPEG) : rapide à envoyer, assez nette pour le modèle d'image. */
+async function shrink(file: File): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1536 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return new Promise((resolve, reject) =>
+    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Cette photo n'a pas pu être lue."))), "image/jpeg", 0.85),
+  );
+}
+
+interface Photo {
+  readonly blob: Blob;
+  readonly url: string;
+}
+
 function fromBase64(data: string, type: string): File {
   const bytes = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
   return new File([bytes], `Carte IA.${type.split("/")[1] ?? "png"}`, { type });
@@ -66,30 +85,59 @@ export function CardStartPanel({
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [aiEnabled, setAiEnabled] = useState<boolean | null>(null);
+  const [maxPhotos, setMaxPhotos] = useState(0);
+  const [photos, setPhotos] = useState<readonly Photo[]>([]);
+  const photoInput = useRef<HTMLInputElement>(null);
   const ideas = IDEAS[facts.type] ?? IDEAS.mariage ?? [];
 
   useEffect(() => {
     let active = true;
     void fetch("/api/image-generation/capabilities")
-      .then((r) => (r.ok ? (r.json() as Promise<{ enabled: boolean }>) : { enabled: false }))
-      .catch(() => ({ enabled: false }))
+      .then((r) => (r.ok ? (r.json() as Promise<{ enabled: boolean; maxReferences?: number }>) : { enabled: false }))
+      .catch(() => ({ enabled: false, maxReferences: 0 }))
       .then((c) => {
-        if (active) setAiEnabled(c.enabled);
+        if (!active) return;
+        setAiEnabled(c.enabled);
+        setMaxPhotos(Math.min(4, ("maxReferences" in c ? c.maxReferences : 0) ?? 0));
       });
     return () => {
       active = false;
     };
   }, []);
 
+  // Aperçus des photos : libérés quand elles sont retirées ou le panneau fermé.
+  const urls = useRef<string[]>([]);
+  useEffect(() => {
+    urls.current = photos.map((p) => p.url);
+  }, [photos]);
+  useEffect(() => () => urls.current.forEach((url) => URL.revokeObjectURL(url)), []);
+
+  async function addPhotos(files: FileList | null) {
+    const chosen = [...(files ?? [])].filter((f) => f.type.startsWith("image/")).slice(0, maxPhotos - photos.length);
+    try {
+      const added = await Promise.all(chosen.map(async (file) => {
+        const blob = await shrink(file);
+        return { blob, url: URL.createObjectURL(blob) };
+      }));
+      setPhotos((current) => [...current, ...added].slice(0, maxPhotos));
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Cette photo n'a pas pu être lue.");
+    }
+  }
+
+  function removePhoto(photo: Photo) {
+    URL.revokeObjectURL(photo.url);
+    setPhotos((current) => current.filter((p) => p !== photo));
+  }
+
   async function generate() {
     setBusy("ia");
     setNotice(null);
     try {
-      const response = await fetch(`${baseUrl}/generer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
+      const form = new FormData();
+      form.append("prompt", prompt);
+      photos.forEach((photo, index) => form.append("photos", photo.blob, `photo-${index + 1}.jpg`));
+      const response = await fetch(`${baseUrl}/generer`, { method: "POST", body: form });
       const body = (await response.json()) as {
         images?: { mimeType: string; data: string }[];
         error?: { message?: string };
@@ -98,7 +146,7 @@ export function CardStartPanel({
       if (!response.ok || !image) throw new Error(body.error?.message ?? "La génération a échoué. Réessayez.");
       const imported = await importAsDocumentAsset(fromBase64(image.data, image.mimeType), "ai");
       if (!imported.ok) throw new Error(imported.error.message);
-      const error = await open(composeOnImage(imported.asset, facts, sample));
+      const error = await open(composeOnImage(imported.asset, facts, sample, photos.length > 0 ? "photos" : "centre"));
       if (error) throw new Error(error);
       onClose();
     } catch (error) {
@@ -179,6 +227,38 @@ export function CardStartPanel({
                 </button>
               ))}
             </div>
+            {maxPhotos > 0 ? (
+              <div className={styles.startPhotos}>
+                {photos.map((photo, index) => (
+                  <span key={photo.url} className={styles.startPhoto}>
+                    <img src={photo.url} alt={`Photo ${index + 1}`} />
+                    <button type="button" aria-label={`Retirer la photo ${index + 1}`} onClick={() => removePhoto(photo)} disabled={busy !== null}>
+                      <Icon name="close" size={16} />
+                    </button>
+                  </span>
+                ))}
+                {photos.length < maxPhotos ? (
+                  <button type="button" className={styles.startAddPhoto} onClick={() => photoInput.current?.click()} disabled={busy !== null}>
+                    <Icon name="image" />
+                    {photos.length === 0 ? "Ajouter des photos (facultatif)" : "Ajouter"}
+                  </button>
+                ) : null}
+                <input
+                  ref={photoInput}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  hidden
+                  onChange={(event) => {
+                    void addPhotos(event.target.files);
+                    event.target.value = "";
+                  }}
+                />
+                <p className={styles.qrNote}>
+                  Les mariés, la famille, l&apos;enfant… : l&apos;IA les représente sur la carte ({maxPhotos} photos au plus).
+                </p>
+              </div>
+            ) : null}
             <p className={styles.qrNote}>
               Nous y ajoutons votre événement : {[facts.title, facts.dateLine, facts.theme, facts.colors.join(" ")].filter(Boolean).join(" · ")}.
             </p>

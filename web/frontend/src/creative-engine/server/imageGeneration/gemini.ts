@@ -83,7 +83,15 @@ async function generateOne(
         headers: { "Content-Type": "application/json", "x-goog-api-key": config.apiKey ?? "" },
         signal: signals.signal,
         body: JSON.stringify({
-          contents: [{ parts: [{ text: providerPrompt(request) }] }],
+          // Photos de référence : parties « inlineData » du même message que la description.
+          contents: [
+            {
+              parts: [
+                { text: providerPrompt(request) },
+                ...request.references.map((r) => ({ inlineData: { mimeType: r.mimeType, data: r.data } })),
+              ],
+            },
+          ],
           generationConfig: { responseModalities: ["IMAGE"], imageConfig },
         }),
       },
