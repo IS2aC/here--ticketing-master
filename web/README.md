@@ -68,6 +68,46 @@ L'assistant se branche par variables d'environnement, sans toucher au code (dét
 
 Les messages des organisateurs sont envoyés à l'agent configuré : choisissez un hébergement de confiance. 30 messages par heure et par organisateur au plus.
 
+### Agent hébergé dans Hermes (choix du 07/11)
+
+L'assistant est le profil Hermes Agent `here-support` (Nemotron via OpenRouter), dans le conteneur Hermes déployé par Dokploy sur le même VPS. Chaque profil y fait tourner **sa propre passerelle sur son propre port** : `here-support` écoute sur **8652** (8643 à 8651 sont pris par les autres profils ; vérifier avec la boucle `curl …/health` ci-dessous avant d'en changer). Here! l'appelle en `openai`.
+
+Dans le shell du conteneur Hermes :
+
+```bash
+hermes profile create here-support
+hermes -p here-support setup                                   # Full setup : OpenRouter + modèle, aucun outil, aucune messagerie
+echo "API_SERVER_KEY=$(openssl rand -hex 32)" >> /opt/data/profiles/here-support/.env
+printf 'API_SERVER_ENABLED=true\nAPI_SERVER_HOST=0.0.0.0\nAPI_SERVER_PORT=8652\n' >> /opt/data/profiles/here-support/.env
+hermes -p here-support config set memory.memory_enabled false  # tous les organisateurs parlent au même profil
+hermes -p here-support config set memory.user_profile_enabled false
+hermes -p here-support gateway restart
+for p in $(seq 8642 8660); do echo "$p $(curl -s -m 2 http://localhost:$p/health)"; done   # ports occupés
+```
+
+- **Outils coupés** : `platform_toolsets` vide pour `cli` et `api_server`, et `agent.disabled_toolsets: [terminal, file, code_execution, browser]` dans `/opt/data/profiles/here-support/config.yaml`. À vérifier avec `GET /v1/toolsets` (reste à confirmer au 07/11).
+- **Port jamais publié** : ni port public ni domaine. Depuis la VM, `localhost:8652` et l'IP publique ne répondent pas, c'est voulu ; l'IP du conteneur (réseau overlay) non plus. Here! joint Hermes par son nom sur `dokploy-network`.
+- **`SOUL.md`** (identité, périmètre, confidentialité, documentation de Here!) est versionné dans `web/hermes/here-support/SOUL.md` : le recopier dans `/opt/data/profiles/here-support/SOUL.md` à chaque modification, puis `gateway restart`. Le tenir d'accord avec `SYSTEM_PROMPT` (`api/app/assistant`).
+- **Modèle** : la variante `:free` d'OpenRouter suffit pour tester ; passer à la variante payante avant l'ouverture (limites d'usage, conservation des messages par certains fournisseurs).
+
+Variables du service `here-api` :
+
+```
+ASSISTANT_PROVIDER=openai
+ASSISTANT_BASE_URL=http://<conteneur ou service Hermes>:8652/v1
+ASSISTANT_API_KEY=<API_SERVER_KEY du profil>
+ASSISTANT_MODEL=here-support
+ASSISTANT_TIMEOUT_SECONDS=60
+```
+
+Test depuis la VM, par le conteneur `here-api` (même chemin que l'assistant) :
+
+```bash
+docker exec -e K="$K" $A python -c "import os,json,urllib.request as u; r=u.Request('http://$N:8652/v1/chat/completions', data=json.dumps({'model':'here-support','messages':[{'role':'user','content':'Bonjour'}]}).encode(), headers={'Authorization':'Bearer '+os.environ['K'],'Content-Type':'application/json'}); print(json.load(u.urlopen(r, timeout=90))['choices'][0]['message']['content'])"
+```
+
+(`A` = conteneur `here-api`, `N` = conteneur Hermes, `K` = clé lue avec `docker exec $N grep '^API_SERVER_KEY=' /opt/data/profiles/here-support/.env | cut -d= -f2`.) Sans réponse dans le délai, la question passe à l'équipe. Documentation : [profils](https://hermes-agent.nousresearch.com/docs/user-guide/profiles), [serveur API](https://hermes-agent.nousresearch.com/docs/user-guide/features/api-server), [multi-profils](https://hermes-agent.nousresearch.com/docs/user-guide/multi-profile-gateways).
+
 ## Portail admin (équipe Here!)
 
 Un compte devient admin (ou support, pour la conseillère) par une commande, depuis le terminal du conteneur `here-api` (dossier `/app`) (sur Dokploy : onglet du service, « Terminal ») ; le compte doit déjà exister :

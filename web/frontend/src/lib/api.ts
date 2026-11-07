@@ -39,8 +39,9 @@ export async function clientHeaders(): Promise<Record<string, string>> {
   return { ...(ip ? { "X-Forwarded-For": ip } : {}), ...(agent ? { "User-Agent": agent } : {}) };
 }
 
-export async function apiFetch(path: string, init: RequestInit & { token?: string } = {}): Promise<Response> {
-  const { token, headers, ...rest } = init;
+// timeoutMs : 10 s par défaut ; plus long pour les appels qui attendent un service lent (assistant du support).
+export async function apiFetch(path: string, init: RequestInit & { token?: string; timeoutMs?: number } = {}): Promise<Response> {
+  const { token, headers, timeoutMs = 10_000, ...rest } = init;
   const url = apiUrl(path);
   // L'erreur est écrite dans les journaux du frontend : l'interface n'affiche qu'un message générique.
   const fail = (error: unknown): never => {
@@ -50,7 +51,7 @@ export async function apiFetch(path: string, init: RequestInit & { token?: strin
   return fetch(url, {
     ...rest,
     cache: "no-store",
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(timeoutMs),
     headers: {
       // JSON par défaut ; un envoi de fichier (FormData) fixe lui-même son Content-Type.
       ...(typeof rest.body === "string" ? { "Content-Type": "application/json" } : {}),

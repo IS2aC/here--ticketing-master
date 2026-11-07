@@ -7,11 +7,17 @@ import type { SupportConversation } from "@/lib/support";
 
 export type SupportResult = { conversation: SupportConversation | null; message?: string };
 
+const ASSISTANT_WAIT_MS = 75_000;
 const UNAVAILABLE = "Le service est momentanément indisponible. Réessayez dans un instant.";
 
-async function call(path: string, method: "GET" | "POST", body?: unknown): Promise<Response | null> {
+async function call(path: string, method: "GET" | "POST", body?: unknown, timeoutMs?: number): Promise<Response | null> {
   try {
-    const response = await apiFetch(path, { method, token: await getSessionToken(), body: body ? JSON.stringify(body) : undefined });
+    const response = await apiFetch(path, {
+      method,
+      token: await getSessionToken(),
+      body: body ? JSON.stringify(body) : undefined,
+      timeoutMs,
+    });
     if (response.status === 401) redirect("/connexion");
     return response;
   } catch (error) {
@@ -40,7 +46,8 @@ export async function sendQuestion(body: string, current: SupportConversation | 
   const text = body.trim();
   if (!text) return { conversation: current };
   if (text.length > 2000) return { conversation: current, message: "Votre message est trop long (2 000 caractères au plus)." };
-  return result(await call("/v1/support/messages", "POST", { body: text }), current);
+  // L'API attend l'assistant (ASSISTANT_TIMEOUT_SECONDS, 60 s en production) : on lui laisse le temps de répondre.
+  return result(await call("/v1/support/messages", "POST", { body: text }, ASSISTANT_WAIT_MS), current);
 }
 
 /** « Parler à l'équipe Here! ». */
