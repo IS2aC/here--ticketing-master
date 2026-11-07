@@ -14,3 +14,22 @@ body {
 /* Éditeur « Mon propre modèle » : police « élégante » des cartes (comme le rendu des cartes). */
 @font-face { font-family: "Playfair Display"; font-weight: 400; font-style: normal; font-display: swap; src: url("../styles/brand/fonts/PlayfairDisplay-Regular.ttf") format("truetype"); }
 @font-face { font-family: "Playfair Display"; font-weight: 600; font-style: normal; font-display: swap; src: url("../styles/brand/fonts/PlayfairDisplay-SemiBold.ttf") format("truetype"); }
+
+/* Écrans d'accès : apparitions douces (désactivées si l'utilisateur réduit les animations). */
+@keyframes here-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes here-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes here-float-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .here-rise { animation: here-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .here-fade { animation: here-fade 0.8s ease-out both; }
+  .here-float-in { animation: here-float-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+}

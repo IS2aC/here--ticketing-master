@@ -8,14 +8,15 @@ export async function getSessionToken(): Promise<string | undefined> {
   return (await cookies()).get(COOKIE_NAME)?.value;
 }
 
-export async function setSessionToken(token: string, expiresAt: string): Promise<void> {
+// remember = false (« Se souvenir de moi » décoché) : cookie de session, effacé à la fermeture du navigateur.
+export async function setSessionToken(token: string, expiresAt: string, remember = true): Promise<void> {
   (await cookies()).set(COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
     // COOKIE_SECURE=false uniquement pour tester en HTTP sur une autre machine que localhost.
     secure: process.env.NODE_ENV === "production" && process.env.COOKIE_SECURE !== "false",
     path: "/",
-    expires: new Date(expiresAt),
+    expires: remember ? new Date(expiresAt) : undefined,
   });
 }
 

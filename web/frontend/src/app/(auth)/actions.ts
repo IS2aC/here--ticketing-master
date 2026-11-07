@@ -70,8 +70,8 @@ export async function register(_: FormState, formData: FormData): Promise<FormSt
 }
 
 export async function login(_: FormState, formData: FormData): Promise<FormState> {
-  const values = { identifier: text(formData, "identifier") };
-  const response = await call("/v1/auth/login", { ...values, password: String(formData.get("password") ?? "") });
+  const values = { identifier: text(formData, "identifier"), remember: formData.get("remember") === "on" ? "on" : "" };
+  const response = await call("/v1/auth/login", { identifier: values.identifier, password: String(formData.get("password") ?? "") });
 
   if (!response) return { message: UNAVAILABLE, values };
   if (response.status === 429) return { message: await detailMessage(response), values };
@@ -87,7 +87,7 @@ export async function login(_: FormState, formData: FormData): Promise<FormState
   if (!response.ok) return { message: UNAVAILABLE, values };
 
   const session = (await response.json()) as SessionResponse;
-  await setSessionToken(session.access_token, session.expires_at);
+  await setSessionToken(session.access_token, session.expires_at, formData.get("remember") === "on");
   redirect("/tableau-de-bord");
 }
 

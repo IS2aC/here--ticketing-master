@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthHeading } from "@/components/auth/auth-heading";
 import { LoginForm } from "./form";
 
 export const metadata: Metadata = { title: "Se connecter · Here!" };
@@ -6,8 +7,9 @@ export const metadata: Metadata = { title: "Se connecter · Here!" };
 export default function LoginPage() {
   return (
     <>
-      <h1 className="font-heading text-[32px] leading-[1.15] font-bold tracking-[-0.01em]">Bon retour</h1>
-      <p className="mt-2 mb-8 text-text-muted">Retrouvez vos événements et vos invités.</p>
+      <AuthHeading badge="Bienvenue sur Here!" title="Connectez-vous" accent="à votre espace">
+        Gérez vos événements, créez vos cartes d&apos;invitation et suivez les réponses de vos invités.
+      </AuthHeading>
       <LoginForm />
     </>
   );

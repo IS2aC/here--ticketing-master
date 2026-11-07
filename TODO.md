@@ -2,7 +2,35 @@
 
 On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'ajoutent au fur et à mesure.
 
-## Plus tard
+Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tout le reste passe en moins urgent.
+
+## Urgent
+
+- [x] **Améliorer la page de garde** (fait le 07/11) : `/` mène à la connexion (ou au tableau de bord si l'on est connecté). Connexion, inscription et mot de passe oublié en deux panneaux : formulaire à gauche, univers Here! sur fond noir avec le visuel de l'invitation à droite (écrans larges). « Se souvenir de moi » décoché : session effacée à la fermeture du navigateur. Pas de connexion Google ni de choix de langue (absents de Here!).
+- [ ] **Support : chatbot relié à un agent IA déployé dans Hermes**.
+  - L'agent répond aux utilisateurs par API.
+  - Il peut **interpeller l'administrateur par API** quand il ne sait pas répondre ou qu'une action humaine est nécessaire.
+  - Base existante : « Une question ? » (`ASSISTANT_PROVIDER` : none, compatible OpenAI, webhook) et Messages › Questions du portail admin.
+  - À définir avec l'équipe Hermes : URL et authentification de l'agent, format des messages, appel retour vers Here! pour alerter l'administrateur (et notification de l'admin).
+- [ ] **Lien « Carte d'invitation » grisé une fois les invitations parties** : quand les cartes sont prêtes et déjà envoyées, le lien vers la carte (page de l'événement) est grisé et inactif, pour montrer qu'aucune action n'est plus possible. Aujourd'hui, il mène à l'écran « La carte est figée » (`frontend/src/app/tableau-de-bord/evenements/[id]/carte/page.tsx`), qui est une impasse.
+- [ ] **Agrandir la palette de couleurs des thèmes de mariage** (code couleur choisi à la création de l'événement).
+- [ ] **Agrandir le choix de polices** (8 polices OFL aujourd'hui).
+- [ ] **Améliorer le pré-prompt de génération des cartes** (`frontend/src/lib/card/imagePrompt.ts`), une fois sa direction confirmée.
+  - Déjà en place : les textes de la carte (nom de l'événement, date et heure, lieu, tenue, date limite de réponse, invité, table, QR) sont posés par le moteur avec les données exactes de l'événement (`creative-engine/host/proposals/aiCard.ts`) ; le prompt de l'illustration reçoit le type (pré-prompt pour chacun des 12 types), la demande, le thème, les couleurs, la tenue et les photos.
+  - Piste : donner aussi à l'illustration le contexte de la cérémonie (lieu : mairie, église, jardin ; moment : matin ou soirée ; description), pour un décor encore plus juste.
+  - Revoir les garde-fous : pour un hommage, le portrait du défunt reste recadré et en noir et blanc, jamais réinterprété par l'IA.
+- [ ] **Skills de génération de cartes**, intégrés au workflow de génération : règles de composition, de lisibilité et de style par type d'événement, utilisées par l'IA à chaque proposition.
+- [ ] **Modèle économique**, à partir des coûts d'exploitation et des prix du marché.
+  - Coûts : OpenRouter et Gemini (textes et images), WasenderAPI (numéros), hébergement (Dokploy, base, stockage des images), support humain (conseillère).
+  - Marché : prix des faire-part et invitations numériques, des wedding planners et des services de confirmation de présence, en Côte d'Ivoire et en Afrique de l'Ouest.
+  - À trancher : offre gratuite, prix par événement ou par invité, options payantes (relances à la demande, rappel la veille, cartes IA, numéros dédiés).
+- [ ] **Retirer les tournures typiques de l'IA** dans les textes produits avec Claude Code : interface, messages WhatsApp, documentation et commentaires.
+- [ ] **Audit de sécurité** : authentification et sessions, droits (organisateur, support, admin), jetons publics (`/i/`, `/scan/`), webhooks, fichiers importés (Excel, images, SVG), clés et secrets, en-têtes HTTP, dépendances.
+- [ ] **Motion design et publicités Facebook** : vidéos et visuels animés pour lancer la solution (formats Facebook et Instagram), dans l'identité Here!.
+
+## Moins urgent (le MVP fonctionne déjà)
+
+### Plus tard
 
 - [ ] **Authentification OTP WhatsApp** à l'inscription et à la connexion. Pour l'instant : téléphone ou email + mot de passe. Prévoir une table `otp_codes` (code haché, expiration, nombre d'essais).
 - [ ] **Scan à l'entrée, compléments** : mode hors connexion (liste sur l'appareil, synchronisation au retour du réseau, maquette `mobile-scan-hors-connexion`) ; code PIN en plus du lien ; « Appeler le responsable » (numéro de l'organisateur) ; entrée partielle quand une invitation compte plusieurs personnes.
@@ -73,7 +101,7 @@ On commence simple (parcours de `Parcours.excalidraw`), les fonctionnalités s'a
   - surveiller la session WasenderAPI (webhook `session.status`) et prévenir si le numéro est déconnecté ;
   - ~~rappel la veille avec le QR code d'entrée~~ (fait le 30/10, **option payante** : activée compte par compte dans le portail admin, coupable par événement sur la page Relances ; la carte et le QR code renvoyés la veille à 10 h aux invités confirmés).
 
-## Ajustements (à traiter une fois le parcours complet terminé)
+### Ajustements
 
 - [x] **Choix de la carte** (fait le 30/10) : palettes de couleurs et intitulé modifiable ; import de son propre modèle (voir « Personnaliser la carte »).
 - [x] **Retour vers l'événement** (fait le 29/10 : lien rouge « Retour à l'événement » sur la carte, l'import, l'aperçu de l'import, la modification, le contrôle d'accès et les relances) depuis les étapes (carte, import, modification) : un bouton retour simple, ou un lien plus visible (par exemple en rouge) vers l'événement.

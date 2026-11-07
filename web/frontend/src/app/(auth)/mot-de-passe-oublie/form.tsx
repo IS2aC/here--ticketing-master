@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Field } from "@/components/field";
+import { AuthAlert, AuthField, AuthSubmit } from "@/components/auth/auth-field";
+import { AuthHeading } from "@/components/auth/auth-heading";
 import { Icon } from "@/components/icons";
-import { Button } from "@/components/ui";
 import { confirmReset, requestReset, type ResetState } from "../actions";
 
 // Deux étapes : le téléphone ou l'e-mail du compte, puis le code reçu sur WhatsApp et le nouveau mot de passe.
@@ -16,27 +16,25 @@ export function ResetForm() {
   if (asked.step !== "code") {
     return (
       <>
-        <h1 className="font-heading text-[32px] leading-[1.15] font-bold tracking-[-0.01em]">Mot de passe oublié</h1>
-        <p className="mt-2 mb-8 text-text-muted">
+        <AuthHeading badge="Mot de passe oublié" badgeIcon="cadenas" title="Retrouvez" accent="votre accès">
           Indiquez le téléphone ou l&apos;e-mail de votre compte : nous vous envoyons un code sur WhatsApp.
-        </p>
+        </AuthHeading>
         <form action={ask} className="grid gap-5" noValidate>
-          <Field
+          <AuthField
             label="Téléphone ou e-mail"
             name="identifier"
+            icon="profil"
             autoComplete="username"
             required
             defaultValue={identifier}
             error={asked.errors?.identifier}
           />
-          {asked.message ? (
-            <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
-              {asked.message}
-            </p>
-          ) : null}
-          <Button type="submit" disabled={asking} className="mt-1 w-full">
-            {asking ? "Envoi…" : "Recevoir un code"}
-          </Button>
+          {asked.message ? <AuthAlert>{asked.message}</AuthAlert> : null}
+          <div className="mt-1">
+            <AuthSubmit pending={asking} pendingLabel="Envoi…">
+              Recevoir un code
+            </AuthSubmit>
+          </div>
           <BackToLogin />
         </form>
       </>
@@ -45,8 +43,8 @@ export function ResetForm() {
 
   return (
     <>
-      <h1 className="font-heading text-[32px] leading-[1.15] font-bold tracking-[-0.01em]">Saisissez votre code</h1>
-      <p className="mt-2 mb-8 flex items-start gap-2 text-text-muted">
+      <AuthHeading badge="Mot de passe oublié" badgeIcon="cadenas" title="Saisissez" accent="votre code" />
+      <p className="-mt-3 mb-8 flex items-start gap-2 text-text-muted">
         <Icon name="message" width={20} height={20} className="mt-0.5 shrink-0 text-status-confirmed" />
         <span>
           Si un compte correspond à « {identifier} », un code à 6 chiffres vient d&apos;être envoyé sur WhatsApp, au numéro du
@@ -55,9 +53,10 @@ export function ResetForm() {
       </p>
       <form action={confirm} className="grid gap-5" noValidate>
         <input type="hidden" name="identifier" value={identifier} />
-        <Field
+        <AuthField
           label="Code reçu sur WhatsApp"
           name="code"
+          icon="message"
           inputMode="numeric"
           autoComplete="one-time-code"
           placeholder="123 456"
@@ -65,24 +64,23 @@ export function ResetForm() {
           required
           error={confirmed.errors?.code}
         />
-        <Field
+        <AuthField
           label="Nouveau mot de passe"
           name="password"
+          icon="cadenas"
           type="password"
           autoComplete="new-password"
           required
           error={confirmed.errors?.password}
           hint="8 caractères au moins."
         />
-        <Field label="Confirmez le mot de passe" name="confirm" type="password" autoComplete="new-password" required error={confirmed.errors?.confirm} />
-        {confirmed.message ? (
-          <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
-            {confirmed.message}
-          </p>
-        ) : null}
-        <Button type="submit" disabled={confirming} className="mt-1 w-full">
-          {confirming ? "Enregistrement…" : "Changer le mot de passe"}
-        </Button>
+        <AuthField label="Confirmez le mot de passe" name="confirm" type="password" icon="cadenas" autoComplete="new-password" required error={confirmed.errors?.confirm} />
+        {confirmed.message ? <AuthAlert>{confirmed.message}</AuthAlert> : null}
+        <div className="mt-1">
+          <AuthSubmit pending={confirming} pendingLabel="Enregistrement…">
+            Changer le mot de passe
+          </AuthSubmit>
+        </div>
         <p className="text-center text-[13px] text-text-muted">Vos autres appareils seront déconnectés.</p>
       </form>
       <form action={ask} className="mt-4 text-center text-[14px] text-text-muted">

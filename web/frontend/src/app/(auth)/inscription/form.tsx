@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Field } from "@/components/field";
-import { Button } from "@/components/ui";
+import { AuthAlert, AuthField, AuthSubmit } from "@/components/auth/auth-field";
 import { register, type FormState } from "../actions";
 
 export function RegisterForm() {
@@ -14,12 +13,13 @@ export function RegisterForm() {
   return (
     <form action={action} className="grid gap-5" noValidate>
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Prénom" name="first_name" autoComplete="given-name" required defaultValue={v.first_name} error={e.first_name} />
-        <Field label="Nom" name="last_name" autoComplete="family-name" required defaultValue={v.last_name} error={e.last_name} />
+        <AuthField label="Prénom" name="first_name" autoComplete="given-name" required defaultValue={v.first_name} error={e.first_name} />
+        <AuthField label="Nom" name="last_name" autoComplete="family-name" required defaultValue={v.last_name} error={e.last_name} />
       </div>
-      <Field
+      <AuthField
         label="Téléphone (WhatsApp)"
         name="phone"
+        icon="telephone"
         type="tel"
         autoComplete="tel"
         inputMode="tel"
@@ -29,17 +29,19 @@ export function RegisterForm() {
         error={e.phone}
         hint="Il vous servira à vous connecter."
       />
-      <Field
+      <AuthField
         label="E-mail (facultatif)"
         name="email"
+        icon="message"
         type="email"
         autoComplete="email"
         defaultValue={v.email}
         error={e.email}
       />
-      <Field
+      <AuthField
         label="Mot de passe"
         name="password"
+        icon="cadenas"
         type="password"
         autoComplete="new-password"
         required
@@ -47,15 +49,13 @@ export function RegisterForm() {
         error={e.password}
         hint="8 caractères minimum."
       />
-      {state.message ? (
-        <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
-          {state.message}
-        </p>
-      ) : null}
-      <Button type="submit" disabled={pending} className="mt-1 w-full">
-        {pending ? "Création du compte…" : "Créer mon compte"}
-      </Button>
-      <p className="text-center text-[14px] text-text-muted">
+      {state.message ? <AuthAlert>{state.message}</AuthAlert> : null}
+      <div className="mt-1">
+        <AuthSubmit pending={pending} pendingLabel="Création du compte…">
+          Créer mon compte
+        </AuthSubmit>
+      </div>
+      <p className="mt-1 text-center text-[15px] text-text-muted">
         Déjà un compte ?{" "}
         <Link href="/connexion" className="font-semibold text-accent-text hover:underline">
           Se connecter
