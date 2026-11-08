@@ -4,10 +4,10 @@ import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { BackToDashboard } from "@/components/back-link";
 import { Toast } from "@/components/toast";
-import { ButtonLink } from "@/components/ui";
+import { ButtonLink, DisabledButton } from "@/components/ui";
 import { PHASE_LABELS, phaseOf } from "@/lib/event-phase";
 import { eventType } from "@/lib/event-types";
-import { formatDate, formatDuration, formatShortDate, formatTime, getEvent } from "@/lib/events";
+import { formatDate, formatDuration, formatShortDate, formatTime, getCardSettings, getEvent } from "@/lib/events";
 import { getGuests, type GuestOut } from "@/lib/guests";
 import { getWhatsApp, sentTotal, type WhatsAppOverview } from "@/lib/whatsapp";
 import { maskPhone } from "@/lib/phone";
@@ -39,12 +39,14 @@ async function EventView({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-  const [event, guests, query, wa] = await Promise.all([
+  const [event, guests, query, wa, card] = await Promise.all([
     getEvent(id),
     getGuests(id),
     searchParams,
     // Envoi WhatsApp : sans réponse de l'API, la liste s'affiche quand même, sans le bouton d'envoi.
     getWhatsApp(id).catch(() => null),
+    // Carte figée (invitations parties ou en file) : le bouton « Carte d'invitation » est grisé.
+    getCardSettings(id).catch(() => null),
   ]);
   const type = eventType(event.type);
   const imported = Number(query.importes);
@@ -74,10 +76,20 @@ async function EventView({
             <Icon name="scanner" width={18} height={18} />
             Contrôle d&apos;accès
           </ButtonLink>
-          <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/carte`} variant="ghost" className="h-10 text-[14px]">
-            <Icon name="invitation" width={18} height={18} />
-            Carte d&apos;invitation
-          </ButtonLink>
+          {card?.locked ? (
+            <DisabledButton
+              reason="Les invitations sont parties : la carte ne peut plus être modifiée."
+              className="h-10 text-[14px]"
+            >
+              <Icon name="cadenas" width={18} height={18} />
+              Carte d&apos;invitation
+            </DisabledButton>
+          ) : (
+            <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/carte`} variant="ghost" className="h-10 text-[14px]">
+              <Icon name="invitation" width={18} height={18} />
+              Carte d&apos;invitation
+            </ButtonLink>
+          )}
           <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/modifier`} variant="ghost" className="h-10 text-[14px]">
             <Icon name="modifier" width={18} height={18} />
             Modifier

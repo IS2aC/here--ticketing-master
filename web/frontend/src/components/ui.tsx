@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 // Boutons et champs selon uiux/visual-identity/DESIGN.md (pilule, 52 px, un seul bouton rouge par écran).
 const button =
@@ -19,4 +19,19 @@ export function Button({ variant = "primary", className = "", ...props }: Compon
 
 export function ButtonLink({ variant = "primary", className = "", ...props }: ComponentProps<typeof Link> & { variant?: Variant }) {
   return <Link className={`${button} ${variants[variant]} ${className}`} {...props} />;
+}
+
+/** Action indisponible : même gabarit qu'un bouton contour, grisé, non cliquable. `reason` s'affiche au survol et est lu par les lecteurs d'écran. */
+export function DisabledButton({ reason, className = "", children }: { reason: string; className?: string; children: ReactNode }) {
+  return (
+    <span
+      role="link"
+      aria-disabled="true"
+      title={reason}
+      className={`${button} cursor-not-allowed bg-surface text-text-muted opacity-70 ${className}`}
+    >
+      {children}
+      <span className="sr-only"> — {reason}</span>
+    </span>
+  );
 }

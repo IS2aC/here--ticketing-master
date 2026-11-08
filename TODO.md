@@ -7,14 +7,14 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
 ## Urgent
 
 - [x] **Améliorer la page de garde** (fait le 07/11) : `/` mène à la connexion (ou au tableau de bord si l'on est connecté). Connexion, inscription et mot de passe oublié en deux panneaux : formulaire à gauche, univers Here! sur fond noir avec le visuel de l'invitation à droite (écrans larges). « Se souvenir de moi » décoché : session effacée à la fermeture du navigateur. Pas de connexion Google ni de choix de langue (absents de Here!).
-- [ ] **Support : chatbot relié à un agent IA déployé dans Hermes**.
+- [x] **Support : chatbot relié à un agent IA déployé dans Hermes** (en service le 08/11 : « Une question ? » répond avec l'agent `here-support`).
   - L'agent répond aux utilisateurs par API.
   - Il peut **interpeller l'administrateur par API** quand il ne sait pas répondre ou qu'une action humaine est nécessaire.
   - Base existante : « Une question ? » (`ASSISTANT_PROVIDER` : none, compatible OpenAI, webhook) et Messages › Questions du portail admin.
   - Décidé le 07/11 : un vrai chat, hébergé dans Hermes (profil `here-support`, Nemotron via OpenRouter), branché en `ASSISTANT_PROVIDER=openai` sans changer le code ; l'agent transmet à l'équipe avec `[EQUIPE]`. Procédure dans `web/README.md` (« Agent hébergé dans Hermes »).
   - Fait le 07/11 : profil configuré sur le VPS (passerelle propre, port 8652 non publié, mémoire coupée), réponse testée depuis le conteneur `here-api`.
-  - Reste : variables `ASSISTANT_*` sur `here-api` et test dans « Une question ? » ; confirmer par `GET /v1/toolsets` que terminal, fichiers, code et navigateur sont coupés côté API ; alléger le prompt d'Hermes (17 000 tokens par question) ; passer au modèle payant avant l'ouverture ; **alerter l'administrateur** (WhatsApp) quand une question lui est transmise, aujourd'hui seulement visible dans le portail.
-- [ ] **Lien « Carte d'invitation » grisé une fois les invitations parties** : quand les cartes sont prêtes et déjà envoyées, le lien vers la carte (page de l'événement) est grisé et inactif, pour montrer qu'aucune action n'est plus possible. Aujourd'hui, il mène à l'écran « La carte est figée » (`frontend/src/app/tableau-de-bord/evenements/[id]/carte/page.tsx`), qui est une impasse.
+  - Suites : confirmer par `GET /v1/toolsets` que terminal, fichiers, code et navigateur sont coupés côté API ; alléger le prompt d'Hermes (17 000 tokens par question) ; passer au modèle payant avant l'ouverture ; **alerter l'administrateur** (WhatsApp) quand une question lui est transmise, aujourd'hui seulement visible dans le portail.
+- [x] **Lien « Carte d'invitation » grisé une fois les invitations parties** (fait le 08/11 : bouton grisé avec un cadenas dès que la carte est figée ; l'écran « La carte est figée » renvoie à l'événement) : quand les cartes sont prêtes et déjà envoyées, le lien vers la carte (page de l'événement) est grisé et inactif, pour montrer qu'aucune action n'est plus possible. Aujourd'hui, il mène à l'écran « La carte est figée » (`frontend/src/app/tableau-de-bord/evenements/[id]/carte/page.tsx`), qui est une impasse.
 - [ ] **Agrandir la palette de couleurs des thèmes de mariage** (code couleur choisi à la création de l'événement).
 - [ ] **Agrandir le choix de polices** (8 polices OFL aujourd'hui).
 - [ ] **Améliorer le pré-prompt de génération des cartes** (`frontend/src/lib/card/imagePrompt.ts`), une fois sa direction confirmée.

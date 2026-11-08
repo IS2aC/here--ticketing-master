@@ -33,8 +33,8 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
           <p className="text-[14px] text-text-muted">
             Les invitations sont parties : la carte ne peut plus être modifiée, pour que tous vos invités reçoivent la même.
           </p>
-          <Link href={`/tableau-de-bord/evenements/${event.id}/carte`} className="font-semibold text-accent-text hover:underline">
-            Retour à la carte
+          <Link href={`/tableau-de-bord/evenements/${event.id}`} className="font-semibold text-accent-text hover:underline">
+            Retour à l&apos;événement
           </Link>
         </div>
       </div>
