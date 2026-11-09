@@ -5,6 +5,7 @@ import { Icon } from "@/components/icons";
 import { Field } from "@/components/field";
 import { Button } from "@/components/ui";
 import { EVENT_TYPES, type EventType } from "@/lib/event-types";
+import { EVENT_COLOR_FAMILIES, colorName } from "@/lib/event-colors";
 import type { EventFormState } from "./actions";
 
 export type EventFormValues = {
@@ -174,9 +175,7 @@ export function EventForm({ action, initial, submitLabel, pendingLabel }: Props)
   );
 }
 
-const SUGGESTED_COLORS = ["#C9A24A", "#0B0B0B", "#FFFFFF", "#B76E5C", "#1F3A5F", "#6B8F71"];
-
-/** Code couleur : 1 à 3 couleurs, choisies au sélecteur ou parmi des suggestions. */
+/** Code couleur : 1 à 3 couleurs, choisies dans la palette (par famille) ou au sélecteur. */
 function Colors({ initial, error }: { initial: string[]; error?: string }) {
   const [colors, setColors] = useState(initial);
   const [draft, setDraft] = useState("#C9A24A");
@@ -193,7 +192,7 @@ function Colors({ initial, error }: { initial: string[]; error?: string }) {
           <span key={color} className="inline-flex h-10 items-center gap-2 rounded-full bg-surface pr-1.5 pl-1.5 text-[13px] font-medium">
             <input type="hidden" name="colors" value={color} />
             <span className="size-7 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)]" style={{ background: color }} />
-            <span className="font-data">{color}</span>
+            <span className={colorName(color) ? "" : "font-data"}>{colorName(color) ?? color}</span>
             <button
               type="button"
               onClick={() => setColors(colors.filter((c) => c !== color))}
@@ -225,17 +224,30 @@ function Colors({ initial, error }: { initial: string[]; error?: string }) {
         ) : null}
       </div>
       {colors.length < 3 ? (
-        <div className="flex flex-wrap items-center gap-1.5" aria-label="Suggestions">
-          {SUGGESTED_COLORS.filter((c) => !colors.includes(c)).map((color) => (
-            <button
-              key={color}
-              type="button"
-              onClick={() => add(color)}
-              aria-label={`Ajouter ${color}`}
-              title={color}
-              className="size-7 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)] hover:scale-110"
-              style={{ background: color }}
-            />
+        <div className="grid gap-2.5 rounded-[16px] bg-surface p-3 sm:p-4" aria-label="Palette de couleurs">
+          {EVENT_COLOR_FAMILIES.map((family) => (
+            <div key={family.label} className="grid gap-1.5 sm:grid-cols-[150px_1fr] sm:items-center">
+              <p className="text-[12px] text-text-muted">{family.label}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {family.colors.map(({ hex, name }) => {
+                  const chosen = colors.includes(hex);
+                  return (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => (chosen ? setColors(colors.filter((c) => c !== hex)) : add(hex))}
+                      aria-pressed={chosen}
+                      aria-label={name}
+                      title={name}
+                      className={`size-8 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform hover:scale-110 ${
+                        chosen ? "ring-2 ring-text ring-offset-2 ring-offset-surface" : ""
+                      }`}
+                      style={{ background: hex }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </div>
       ) : null}

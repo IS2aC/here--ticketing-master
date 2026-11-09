@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { colorName } from "@/lib/event-colors";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
@@ -153,8 +154,8 @@ async function EventView({
                 <span className="text-[12px] text-text-muted">Code couleur</span>
                 <ul className="flex gap-1.5">
                   {event.colors.map((color) => (
-                    <li key={color} title={color} className="size-6 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)]" style={{ background: color }}>
-                      <span className="sr-only">{color}</span>
+                    <li key={color} title={colorName(color) ?? color} className="size-6 rounded-full shadow-[inset_0_0_0_1px_var(--color-border)]" style={{ background: color }}>
+                      <span className="sr-only">{colorName(color) ?? color}</span>
                     </li>
                   ))}
                 </ul>
