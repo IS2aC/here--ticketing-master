@@ -6,6 +6,8 @@ import { guestSlotRules } from "../../editor/guestSlots.ts";
 import {
   closestWeight,
   FONT_CATALOG,
+  FONT_KIND_LABELS,
+  type FontKind,
   fontOption,
   toggledBoldWeight,
   WEIGHT_LABELS,
@@ -128,11 +130,18 @@ export function TextSection({ texts }: { texts: readonly TextElement[] }) {
               </option>
             )}
             {family !== MIXED && !fontOption(family) && <option value={family}>{family}</option>}
-            {fonts.map((option) => (
-              <option key={option.family} value={option.family} style={{ fontFamily: option.family }}>
-                {option.family}
-              </option>
-            ))}
+            {(Object.keys(FONT_KIND_LABELS) as FontKind[]).map((kind) => {
+              const group = fonts.filter((option) => option.kind === kind);
+              return group.length ? (
+                <optgroup key={kind} label={FONT_KIND_LABELS[kind]}>
+                  {group.map((option) => (
+                    <option key={option.family} value={option.family} style={{ fontFamily: option.family }}>
+                      {option.family}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null;
+            })}
           </select>
         </div>
 

@@ -110,3 +110,94 @@
   font-display: swap;
   src: url("/creative-engine/fonts/BebasNeue-Regular.ttf") format("truetype");
 }
+@font-face {
+  font-family: "Parisienne";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Parisienne-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Alex Brush";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/AlexBrush-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Allura";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Allura-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Dancing Script";
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/DancingScript-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "EB Garamond";
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/EBGaramond-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "EB Garamond";
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: swap;
+  src: url("/creative-engine/fonts/EBGaramond-Italic-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Bodoni Moda";
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/BodoniModa-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Marcellus";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Marcellus-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Italiana";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Italiana-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Raleway";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Raleway-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Josefin Sans";
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/JosefinSans-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Anton";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/Anton-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Abril Fatface";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/creative-engine/fonts/AbrilFatface-Regular.ttf") format("truetype");
+}

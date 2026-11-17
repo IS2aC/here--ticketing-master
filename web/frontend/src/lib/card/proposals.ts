@@ -81,12 +81,24 @@ export function cardFacts(event: EventOut): CardFacts {
 const FONT_NOTES: Record<string, string> = {
   "Great Vibes": "calligraphie fluide, romantique",
   "Pinyon Script": "calligraphie anglaise, très élégante",
+  Parisienne: "calligraphie légère, raffinée",
+  "Alex Brush": "calligraphie au pinceau, cérémonieuse",
+  Allura: "calligraphie fine et sobre",
+  "Dancing Script": "écriture manuscrite enjouée, festive",
   "Playfair Display": "serif à fort contraste, chic",
   "Cormorant Garamond": "serif fin et raffiné",
+  "EB Garamond": "serif classique, lecture confortable",
+  "Bodoni Moda": "serif de mode à fort contraste, luxueux",
   Cinzel: "capitales romaines, solennel",
+  Marcellus: "serif lapidaire doux, intemporel",
+  Italiana: "serif très fin, élancé, couture",
   Poppins: "linéale ronde, moderne et lisible",
   Montserrat: "linéale géométrique, sobre",
+  Raleway: "linéale élégante et aérée",
+  "Josefin Sans": "linéale géométrique, rétro chic",
   "Bebas Neue": "capitales condensées, affiche",
+  Anton: "condensée très grasse, impact",
+  "Abril Fatface": "titrage très gras à fort contraste, spectaculaire",
 };
 
 function systemPrompt(): string {

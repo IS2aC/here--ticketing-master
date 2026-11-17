@@ -1,10 +1,21 @@
 import type { FontWeight, TextStyle } from "../domain/elements/types.ts";
 
 // Polices proposées dans l'éditeur : celles déclarées dans styles/fonts.css (marque Here! et polices des
-// faire-part, licence OFL). L'import de polices n'existe pas encore.
+// faire-part, licence OFL ; fichiers et licences dans public/creative-engine/fonts). L'import de polices n'existe pas encore.
+
+export type FontKind = "script" | "serif" | "sans" | "display";
+
+export const FONT_KIND_LABELS: Record<FontKind, string> = {
+  script: "Calligraphies",
+  serif: "Serifs",
+  sans: "Linéales",
+  display: "Affiche",
+};
 
 export interface FontFamilyOption {
   family: string;
+  /** Genre : groupe du sélecteur ; une calligraphie ne s'écrit ni en capitales ni espacée. */
+  kind: FontKind;
   /** Graisses dont le fichier est embarqué : les autres seraient simulées par le navigateur. */
   weights: readonly FontWeight[];
   /** Graisses disposant d'un vrai fichier italique. */
@@ -13,16 +24,29 @@ export interface FontFamilyOption {
 
 export const FONT_CATALOG: readonly FontFamilyOption[] = [
   // Calligraphies : prénoms des mariés, titres.
-  { family: "Great Vibes", weights: [400], italicWeights: [] },
-  { family: "Pinyon Script", weights: [400], italicWeights: [] },
+  { family: "Great Vibes", kind: "script", weights: [400], italicWeights: [] },
+  { family: "Pinyon Script", kind: "script", weights: [400], italicWeights: [] },
+  { family: "Parisienne", kind: "script", weights: [400], italicWeights: [] },
+  { family: "Alex Brush", kind: "script", weights: [400], italicWeights: [] },
+  { family: "Allura", kind: "script", weights: [400], italicWeights: [] },
+  { family: "Dancing Script", kind: "script", weights: [400, 500, 600, 700], italicWeights: [] },
   // Serifs élégants.
-  { family: "Playfair Display", weights: [400, 600, 700], italicWeights: [400] },
-  { family: "Cormorant Garamond", weights: [300, 400, 500, 600, 700], italicWeights: [300, 400, 500, 600, 700] },
-  { family: "Cinzel", weights: [400, 500, 600, 700, 800, 900], italicWeights: [] },
-  // Linéales et affiche.
-  { family: "Poppins", weights: [400, 500, 600, 700], italicWeights: [] },
-  { family: "Montserrat", weights: [300, 400, 500, 600, 700, 800], italicWeights: [] },
-  { family: "Bebas Neue", weights: [400], italicWeights: [] },
+  { family: "Playfair Display", kind: "serif", weights: [400, 600, 700], italicWeights: [400] },
+  { family: "Cormorant Garamond", kind: "serif", weights: [300, 400, 500, 600, 700], italicWeights: [300, 400, 500, 600, 700] },
+  { family: "EB Garamond", kind: "serif", weights: [400, 500, 600, 700, 800], italicWeights: [400, 500, 600, 700, 800] },
+  { family: "Bodoni Moda", kind: "serif", weights: [400, 500, 600, 700, 800, 900], italicWeights: [] },
+  { family: "Cinzel", kind: "serif", weights: [400, 500, 600, 700, 800, 900], italicWeights: [] },
+  { family: "Marcellus", kind: "serif", weights: [400], italicWeights: [] },
+  { family: "Italiana", kind: "serif", weights: [400], italicWeights: [] },
+  // Linéales.
+  { family: "Poppins", kind: "sans", weights: [400, 500, 600, 700], italicWeights: [] },
+  { family: "Montserrat", kind: "sans", weights: [300, 400, 500, 600, 700, 800], italicWeights: [] },
+  { family: "Raleway", kind: "sans", weights: [300, 400, 500, 600, 700, 800], italicWeights: [] },
+  { family: "Josefin Sans", kind: "sans", weights: [300, 400, 500, 600, 700], italicWeights: [] },
+  // Affiche.
+  { family: "Bebas Neue", kind: "display", weights: [400], italicWeights: [] },
+  { family: "Anton", kind: "display", weights: [400], italicWeights: [] },
+  { family: "Abril Fatface", kind: "display", weights: [400], italicWeights: [] },
 ];
 
 export const WEIGHT_LABELS: Record<FontWeight, string> = {

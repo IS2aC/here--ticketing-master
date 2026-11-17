@@ -16,7 +16,7 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
   - Suites : confirmer par `GET /v1/toolsets` que terminal, fichiers, code et navigateur sont coupés côté API ; alléger le prompt d'Hermes (17 000 tokens par question) ; passer au modèle payant avant l'ouverture ; **alerter l'administrateur** (WhatsApp) quand une question lui est transmise, aujourd'hui seulement visible dans le portail.
 - [x] **Lien « Carte d'invitation » grisé une fois les invitations parties** (fait le 08/11 : bouton grisé avec un cadenas dès que la carte est figée ; l'écran « La carte est figée » renvoie à l'événement) : quand les cartes sont prêtes et déjà envoyées, le lien vers la carte (page de l'événement) est grisé et inactif, pour montrer qu'aucune action n'est plus possible. Aujourd'hui, il mène à l'écran « La carte est figée » (`frontend/src/app/tableau-de-bord/evenements/[id]/carte/page.tsx`), qui est une impasse.
 - [x] **Agrandir la palette de couleurs** (code couleur choisi à la création de l'événement, tous types) (fait le 09/11 : 41 couleurs nommées en 6 familles, cliquer une pastille l'ajoute ou la retire ; le nom s'affiche aussi sur la page de l'événement).
-- [ ] **Agrandir le choix de polices** (8 polices OFL aujourd'hui).
+- [x] **Agrandir le choix de polices** (fait le 09/11 : 20 polices OFL au lieu de 8, rangées en Calligraphies, Serifs, Linéales et Affiche dans l'éditeur ; ajout de Parisienne, Alex Brush, Allura, Dancing Script, EB Garamond, Bodoni Moda, Marcellus, Italiana, Raleway, Josefin Sans, Anton, Abril Fatface, proposées aussi à l'IA des cartes. Le nom de l'invité reste en Playfair Display, Poppins ou Great Vibes, les trois polices du rendu serveur).
 - [ ] **Améliorer le pré-prompt de génération des cartes** (`frontend/src/lib/card/imagePrompt.ts`), une fois sa direction confirmée.
   - Déjà en place : les textes de la carte (nom de l'événement, date et heure, lieu, tenue, date limite de réponse, invité, table, QR) sont posés par le moteur avec les données exactes de l'événement (`creative-engine/host/proposals/aiCard.ts`) ; le prompt de l'illustration reçoit le type (pré-prompt pour chacun des 12 types), la demande, le thème, les couleurs, la tenue et les photos.
   - Piste : donner aussi à l'illustration le contexte de la cérémonie (lieu : mairie, église, jardin ; moment : matin ou soirée ; description), pour un décor encore plus juste.
@@ -56,7 +56,7 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
       - **Fait le 02/11 :**
         - **Effets** : ombre, contour et dégradé (or, or rose, argent, nuit) sur les textes, les formes et les images.
         - **Ajustement** de la taille d'un texte à la largeur de son cadre.
-        - **8 polices** (OFL), dont des calligraphies. Le nom de l'invité peut s'écrire en Great Vibes (Satori et API).
+        - **20 polices** (OFL, 8 au départ, 12 ajoutées le 09/11), dont des calligraphies. Le nom de l'invité peut s'écrire en Great Vibes (Satori et API).
         - **Lisibilité** : contraste WCAG avec un bouton « Rendre lisible », et des couleurs proposées (palette du document et harmonies OKLCH).
       - **QR stylisé (fait le 02/11)** : points carrés, arrondis ou ronds, coins arrondis, couleur au choix. Le sceau reste blanc. La couleur doit atteindre un contraste de 4,5:1, vérifié aussi par l'API. Le sceau dessiné par Satori est relu avec jsQR en direct et avant la validation. Panneau « QR code » dans l'éditeur.
       - **SVG (fait le 02/11)** :

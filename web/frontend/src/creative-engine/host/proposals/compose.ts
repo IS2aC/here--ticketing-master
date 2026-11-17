@@ -141,7 +141,7 @@ export async function loadComposition(composition: Composition): Promise<Creativ
   return instantiateTemplate(result.document, { origin: { id: composition, version: 2 } });
 }
 
-const SCRIPTS = new Set(["Great Vibes", "Pinyon Script"]);
+const kindOf = (family: string) => fontOption(family)?.kind;
 
 /** Polices d'une charte, chargées : la mesure des textes en dépend. */
 export async function prepareCharterFonts(charter: Charter): Promise<void> {
@@ -158,7 +158,7 @@ export async function prepareCharterFonts(charter: Charter): Promise<void> {
 function styled(element: TextElement, family: string, color: HexColor): TextElement {
   const weight = closestWeight(family, element.style.fontWeight as FontWeight);
   const italic = element.style.fontStyle === "italic" && (fontOption(family)?.italicWeights ?? []).includes(weight);
-  const script = SCRIPTS.has(family);
+  const script = kindOf(family) === "script";
   return {
     ...element,
     style: {
@@ -223,7 +223,8 @@ export function composeCard(
   const placeText = facts.placeLines.join("\n");
   // « Dress code Libre » se lit tel quel ; un dress code précis est annoncé (« Tenue : blanc et or »).
   const dress = !facts.dressCode ? "" : /^dress code/i.test(facts.dressCode) ? facts.dressCode : `Tenue : ${facts.dressCode}`;
-  const closingFamily = SCRIPTS.has(fonts.title) || fonts.title === "Bebas Neue" ? fonts.text : fonts.title;
+  const titleKind = kindOf(fonts.title);
+  const closingFamily = titleKind === "script" || titleKind === "display" ? fonts.text : fonts.title;
   const pillInk = readableColor(palette.background as HexColor, palette.accent as HexColor);
 
   const text = (element: TextElement, content: string, family: string, color: string): TextElement | null =>
