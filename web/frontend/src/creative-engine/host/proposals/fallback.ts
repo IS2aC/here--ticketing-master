@@ -79,7 +79,7 @@ const PLANS: Record<string, Plan> = {
   ],
   funerailles: [
     ["mariage-feuillage-dore", "sobre", "Hommage sobre"],
-    ["bapteme-douceur", "vertSauge", "Couronne de sauge"],
+    ["seminaire-ondes", "sobre", "Ondes paisibles"],
     ["seminaire-ondes", "marine", "Nuit paisible"],
   ],
   anniversaire: [
@@ -109,7 +109,7 @@ const WORDING: Record<string, Pick<Charter["texts"], "kicker" | "guestLabel" | "
   mariage: { kicker: "Nous nous marions", guestLabel: "Invitation personnelle pour", tagline: "", closing: "Votre présence nous comblera de joie" },
   dot: { kicker: "Cérémonie de dot", guestLabel: "Invitation pour", tagline: "", closing: "Votre présence honorera nos familles" },
   bapteme: { kicker: "Baptême", guestLabel: "Avec joie, nous invitons", tagline: "", closing: "Avec toute notre tendresse" },
-  funerailles: { kicker: "En mémoire", guestLabel: "La famille invite", tagline: "", closing: "Merci de votre soutien et de vos prières" },
+  funerailles: { kicker: "En mémoire", guestLabel: "La famille invite", tagline: "", closing: "Merci de votre présence et de votre soutien" },
   anniversaire: { kicker: "Venez fêter avec nous", guestLabel: "Une invitation pour", tagline: "", closing: "On compte sur vous" },
   brunch: { kicker: "Un brunch entre nous", guestLabel: "Une invitation pour", tagline: "", closing: "On compte sur vous" },
   retrouvailles: { kicker: "Les retrouvailles", guestLabel: "Une invitation pour", tagline: "", closing: "On compte sur vous" },

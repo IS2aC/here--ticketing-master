@@ -94,6 +94,14 @@ const ROLES: Record<Composition, Record<string, Role>> = {
   },
 };
 
+/** Textes de la charte qu'une composition affiche (« closing » cède sa place à la tenue dans la dot). */
+export function visibleTexts(composition: Composition): (keyof Charter["texts"])[] {
+  const roles = new Set(Object.values(ROLES[composition]));
+  return (["kicker", "title", "tagline", "closing", "guestLabel"] as const).filter(
+    (key) => roles.has(key) || (key === "closing" && roles.has("dressOrClosing")),
+  );
+}
+
 /**
  * Charte qui garde le style du modèle (couleurs, polices, ornements) : « Modèles Here! » remplis avec les
  * données de l'événement, sans changer leur apparence.

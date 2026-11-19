@@ -2,13 +2,18 @@
 
 ## Illustration
 
-Festival : énergie et couleurs. Lumières de scène, faisceaux, motifs graphiques, formes géométriques ou pagnes stylisés, esprit d'affiche. Couleurs vives et contrastées (orange, magenta, jaune, turquoise sur fond sombre ou crème). Foule seulement en silhouettes lointaines, sans visage. Décor généreux sur les bords et en haut, centre lisible. À éviter : texte, logos de sponsors, programme dessiné, artistes reconnaissables.
+Festival : énergie et couleurs. Partir de la discipline ou du thème (musique, danse, mode, cuisine, arts) : lumières de scène, motifs graphiques, formes géométriques. Couleurs vives et contrastées. Foule seulement en silhouettes lointaines, sans visage. À éviter : logos de sponsors, programme dessiné, artistes reconnaissables, motifs culturels sans lien avec le thème.
 
 ## Propositions
 
-- Compositions : `festival-nuit-couleurs` en priorité ; `anniversaire-confettis` pour un festival en journée ; `dot-motifs-wax` pour un festival culturel.
-- Polices du titre : Bebas Neue, Anton ou Abril Fatface ; Josefin Sans pour une version rétro. Texte en Montserrat ou Poppins. Nom de l'invité : Poppins.
-- Palettes : orange, magenta et bleu nuit ; jaune, noir et turquoise ; crème, rouge et vert. ornamentTint à null pour les motifs multicolores.
+- Classique : `festival-nuit-couleurs`, orange et bleu nuit, titre en Bebas Neue, texte en Montserrat.
+- Moderne : `seminaire-ondes` en couleurs franches, titre en Josefin Sans.
+- Audacieuse : `festival-nuit-couleurs`, magenta et jaune, titre en Anton ou Abril Fatface.
+- `dot-motifs-wax` seulement pour un festival dont le thème est le pagne ou la culture ivoirienne ; `anniversaire-confettis` seulement pour une fête de jour annoncée.
+- `festival-nuit-couleurs` affiche une accroche : la tirer de la description, sans rien ajouter.
+- Sur fond clair : jaune et turquoise en décor seulement, encre sombre pour les mentions.
 - Ton : enthousiaste, direct, court.
-- Surtitres : « Le festival », « Pass invité », « Accès sur invitation ». Fins : « Venez vibrer avec nous », « Présentez votre QR code à l'entrée ».
+- Surtitres : « Le festival » ; « Pass invité » ; « Accès sur invitation ».
+- Fins : « Venez vibrer avec nous » ; « On vous attend ».
+- Mentions avant le nom : « Pass nominatif » ; « Invitation nominative ».
 - À éviter : artistes, horaires ou programme inventés, plus de deux polices.

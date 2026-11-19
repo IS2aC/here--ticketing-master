@@ -2,13 +2,16 @@
 
 ## Illustration
 
-Concert privé, ambiance intime et nocturne : scène, projecteurs, halo de lumière, fumée légère, instruments suggérés (guitare, micro, piano, djembé, kora) selon la demande. Couleurs profondes (noir, bleu nuit, bordeaux) avec des éclats chauds (or, ambre, magenta). Décor en haut et sur les bords, centre sombre et calme. À éviter : artiste reconnaissable, foule, nom de groupe écrit, logos de marques.
+Concert privé, ambiance intime : scène, projecteurs, halo de lumière, instruments selon la programmation donnée (guitare, micro, piano, djembé, kora). Couleurs profondes (noir, bleu nuit, bordeaux) avec éclats chauds, ou version acoustique claire (bois, lin, bougies) si la description le dit. Pas de personnage inventé. À éviter : artiste reconnaissable, foule, logos de marques.
 
 ## Propositions
 
-- Compositions : `festival-nuit-couleurs` en priorité ; `seminaire-ondes` pour une version épurée.
-- Polices du titre : Bebas Neue, Anton ou Abril Fatface ; Playfair Display ou Italiana pour un concert classique ou jazz. Texte en Montserrat ou Poppins. Nom de l'invité : Poppins ou Playfair Display.
-- Palettes : noir, or et ambre ; bleu nuit et magenta ; bordeaux et crème. Sur fond sombre, title et text clairs.
+- Classique : `festival-nuit-couleurs`, bordeaux et crème, titre en Playfair Display ou Italiana (titre court), texte en Montserrat.
+- Moderne : `seminaire-ondes`, noir et ambre, titre en Montserrat.
+- Audacieuse : `festival-nuit-couleurs`, bleu nuit et magenta, titre en Bebas Neue ou Anton.
+- Sur fond sombre : titre et texte clairs, couleurs vives en accent.
 - Ton : intime, exclusif, élégant.
-- Surtitres : « Concert privé », « Une soirée en musique », « Sur invitation ». Fins : « Une soirée rare, à vivre avec vous », « Venez vivre ce moment avec nous ».
-- À éviter : noms d'artistes ou de titres s'ils ne sont pas dans l'événement.
+- Surtitres : « Concert privé » ; « Un moment en musique » ; « Sur invitation ».
+- Fins : « Venez vivre ce moment avec nous » ; « Entrée sur invitation ».
+- Mentions avant le nom : « Invitation nominative » ; « Une place réservée pour ».
+- À éviter : noms d'artistes ou de titres absents de l'événement, ton promotionnel.

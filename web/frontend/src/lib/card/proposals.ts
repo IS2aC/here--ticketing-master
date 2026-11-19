@@ -5,14 +5,17 @@ import { FONT_CATALOG } from "@/creative-engine/editor/fontCatalog";
 import {
   COMPOSITIONS,
   groundedTexts,
+  onePerDirection,
   proposalsSchema,
   TEXT_LIMITS,
   type CardFacts,
   type Charter,
 } from "@/creative-engine/host/proposals/charter";
+import { visibleTexts } from "@/creative-engine/host/proposals/compose";
 import { defaultTexts, fallbackCharters } from "@/creative-engine/host/proposals/fallback";
 import { EVENT_TIME_ZONE, eventType } from "@/lib/event-types";
 import { formatDate, type EventOut } from "@/lib/events";
+import { cardSkill } from "./skills";
 
 // Cartes proposées par l'IA (étape C1) : un modèle de langage reçoit les faits de l'événement et rend trois
 // chartes en JSON (sortie structurée), validées par le schéma de l'éditeur. Sans fournisseur, ou s'il échoue,
@@ -108,11 +111,15 @@ const FONT_NOTES: Record<string, string> = {
   "Abril Fatface": "titrage très gras à fort contraste, spectaculaire",
 };
 
-function systemPrompt(): string {
+const TEXT_NAMES = { kicker: "kicker", title: "title", tagline: "tagline", closing: "closing", guestLabel: "guestLabel" } as const;
+
+function systemPrompt(type: string): string {
   const compositions = COMPOSITIONS.map((id) => {
     const entry = catalog.find((c) => c.id === id);
-    return `- ${id} : ${entry?.description ?? ""}`;
+    const shown = visibleTexts(id).map((key) => TEXT_NAMES[key]).join(", ");
+    return `- ${id} : ${entry?.description ?? ""} Textes affichés : ${shown}.`;
   }).join("\n");
+  const skill = cardSkill(type, "Propositions");
   const fonts = FONT_CATALOG.map((f) => `- ${f.family} : ${FONT_NOTES[f.family] ?? ""}`).join("\n");
   return `Tu es directeur artistique pour Here!, qui envoie des cartes d'invitation sur WhatsApp en Côte d'Ivoire.
 Tu proposes TROIS chartes de carte pour un événement, dans trois directions bien différentes : « classique », « moderne », « audacieuse ».
@@ -127,8 +134,10 @@ Police du nom de l'invité : Playfair Display, Poppins ou Great Vibes seulement.
 
 Règles :
 - Textes en français, sans faute, sans emoji. Pas de guillemets décoratifs.
-- N'invente AUCUN fait : ni nom, ni date, ni heure, ni lieu, ni chiffre. La date, le lieu, la tenue et le nom de l'invité sont ajoutés par le moteur.
-- title : le titre principal, tiré du titre de l'événement (les noms exactement comme écrits), ${TEXT_LIMITS.title} caractères au plus, un retour à la ligne (\\n) au plus. Exemple : « Aïcha\\n& Koffi » pour « Mariage d'Aïcha & Koffi ».
+- N'invente AUCUN fait : ni nom, ni date, ni heure, ni lieu, ni chiffre, ni contrainte (places limitées, contrôle à l'entrée, contexte religieux). La date, le lieu et le nom de l'invité sont ajoutés par le moteur ; la tenue aussi, quand la composition a sa place.
+- Exactement une charte par direction : classique, moderne, audacieuse.
+- Un texte qu'une composition n'affiche pas (voir « Textes affichés ») est perdu : choisis la composition en conséquence.
+- title : le titre principal, avec UNIQUEMENT des mots du titre de l'événement (les noms exactement comme écrits, sans mot ajouté), ${TEXT_LIMITS.title} caractères au plus, un retour à la ligne (\\n) au plus. Exemple : « Aïcha\\n& Koffi » pour « Mariage d'Aïcha & Koffi ».
 - kicker : surtitre court (${TEXT_LIMITS.kicker} caractères au plus), par exemple « Nous nous marions ».
 - guestLabel : ce qui précède le nom de l'invité (${TEXT_LIMITS.guestLabel} caractères au plus), par exemple « Invitation personnelle pour ».
 - closing : une phrase de fin (${TEXT_LIMITS.closing} caractères au plus), sans date.
@@ -137,7 +146,14 @@ Règles :
 - palette : couleurs #RRGGBB. title et text doivent être très lisibles sur background ; surface est un fond secondaire proche de background ; accent sert aux surtitres, filets et pastilles.
 - ornamentTint : une couleur pour recolorer les ornements (feuillages, nuages, motifs), ou null pour garder leurs couleurs d'origine (conseillé pour les ornements multicolores : confettis, ballons, wax).
 - Adapte le ton au type d'événement : sobre et respectueux pour des funérailles, chaleureux pour une famille, festif pour une soirée.
-- name : un nom court et évocateur pour chaque charte (« Ivoire et or »).`;
+- name : un nom court et évocateur pour chaque charte (« Ivoire et or »).${
+    skill
+      ? `
+
+Conseils pour ce type d'événement (le thème, le code couleur et la description de l'organisateur passent avant) :
+${skill}`
+      : ""
+  }`;
 }
 
 function userPrompt(facts: CardFacts, photoColors: readonly string[]): string {
@@ -176,7 +192,7 @@ async function askProvider(config: Config, facts: CardFacts, photoColors: readon
         model: config.model,
         temperature: 0.9,
         messages: [
-          { role: "system", content: systemPrompt() },
+          { role: "system", content: systemPrompt(facts.type) },
           { role: "user", content: userPrompt(facts, photoColors) },
         ],
         response_format: { type: "json_schema", json_schema: { name: "chartes", strict: true, schema } },
@@ -214,5 +230,5 @@ export async function proposeCharters(event: EventOut, photoColors: readonly str
   if (!charters) return { source: "regles", facts, proposals: fallback };
   const defaults = defaultTexts(facts);
   const checked = charters.map((charter) => ({ ...charter, texts: groundedTexts(charter.texts, defaults, facts) }));
-  return { source: "ia", facts, proposals: [...checked, ...fallback].slice(0, 3) };
+  return { source: "ia", facts, proposals: onePerDirection(checked, fallback) };
 }

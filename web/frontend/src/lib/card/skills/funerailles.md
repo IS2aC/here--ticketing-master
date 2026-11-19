@@ -2,13 +2,18 @@
 
 ## Illustration
 
-Hommage à un défunt : sobriété, sérénité, respect. Tons doux et neutres (blanc, crème, gris, noir et blanc, touches d'or pâle). Lys blancs, feuillage, bougie, ciel calme au lever ou au coucher du jour, papier texturé. Lumière paisible. Aucun personnage, visage ni silhouette : le portrait éventuel est posé par Here!. À éviter : couleurs vives, fleurs festives, croix ou symboles religieux si la demande ne le précise pas, ambiance sombre ou effrayante.
+Hommage à un défunt : sobriété, sérénité, respect. Tons doux et neutres (blanc, crème, gris, noir et blanc, touche d'or pâle). Lys blancs, feuillage, bougie, ciel calme, papier texturé. Aucun personnage, visage ni silhouette. Croix ou symbole religieux seulement si la demande le dit. À éviter : couleurs vives, fleurs festives, ambiance sombre ou effrayante.
 
 ## Propositions
 
-- Compositions : `bapteme-douceur` ou `mariage-feuillage-dore` avec des tons neutres ; jamais `anniversaire-confettis` ni `festival-nuit-couleurs`.
-- Polices du titre : Cormorant Garamond, EB Garamond, Cinzel ou Marcellus ; une calligraphie fine (Allura) seulement pour la classique. Texte en EB Garamond ou Raleway. Nom de l'invité : Playfair Display.
-- Palettes : blanc, gris et noir ; crème et or pâle ; bleu nuit et argent. ornamentTint dans un gris ou un or pâle. Les trois chartes restent sobres : « audacieuse » veut dire plus graphique, pas plus coloré.
+- Classique : `mariage-feuillage-dore`, titre en Cormorant Garamond ou Cinzel, texte en EB Garamond, fond blanc cassé, titre noir, accent gris.
+- Moderne : `seminaire-ondes` en tons neutres (gris, bleu nuit), titre en Marcellus, texte en Raleway.
+- Audacieuse : plus graphique, pas plus coloré ; `seminaire-ondes` sur fond bleu nuit, titre clair, accent argent.
+- Jamais `anniversaire-confettis`, `festival-nuit-couleurs` ni `bapteme-douceur` (ses nuages évoquent l'enfance).
+- Or pâle et argent : décor et filets seulement, jamais pour un petit texte sur fond clair.
+- Nom de l'invité : Playfair Display.
 - Ton : respectueux, digne, sans emphase. Le titre reprend le nom du défunt tel qu'écrit.
-- Surtitres : « In memoriam », « Hommage à », « Avis de décès », « Célébration de la vie de ». Fins : « Votre présence sera un réconfort pour la famille », « Merci de vous joindre à nous pour ce dernier hommage ».
-- À éviter : toute formule festive (« fête », « joie »), le mot « invitation » en surtitre, l'humour.
+- Surtitres : « En mémoire de » ; « Hommage à » ; « In memoriam ». Selon la description seulement : « Avis de décès » (annonce) ; « Célébration de la vie de » (cérémonie qui se veut lumineuse).
+- Fins : « Votre présence sera un réconfort pour la famille » ; « Merci de vous joindre à nous pour ce dernier hommage ».
+- Mentions avant le nom : « La famille invite » ; « Avec reconnaissance, pour ».
+- À éviter : toute formule festive, « invitation » en surtitre, l'humour, toute mention religieuse si la description n'en parle pas.

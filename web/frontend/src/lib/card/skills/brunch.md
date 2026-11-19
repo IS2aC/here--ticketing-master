@@ -2,13 +2,16 @@
 
 ## Illustration
 
-Brunch convivial et chic : table dressée, fruits tropicaux (mangue, ananas, papaye, fruit de la passion), jus frais, viennoiseries, fleurs fraîches, nappe en lin. Lumière douce du matin, terrasse ou jardin. Couleurs fraîches et gaies (pêche, vert tendre, jaune soleil, crème). Vue de dessus ou en perspective douce, décor sur les bords. À éviter : personnes à table, plats surchargés, néons, ambiance de soirée.
+Brunch convivial et chic : table en lin vue de biais, fruits tropicaux, jus frais, fleurs fraîches, vaisselle claire. Reprendre un seul détail du lieu ou du menu s'il est donné. Couleurs fraîches et gaies (pêche, vert tendre, jaune soleil, crème). Pas de personnage inventé. À éviter : plats surchargés, néons, table qui occupe toute l'image.
 
 ## Propositions
 
-- Compositions : `bapteme-douceur` pour la légèreté ; `anniversaire-confettis` en version festive ; `mariage-feuillage-dore` pour un brunch chic.
-- Polices du titre : Dancing Script ou Parisienne ; Josefin Sans ou Raleway pour la moderne. Texte en Poppins ou Raleway. Nom de l'invité : Poppins.
-- Palettes : pêche, vert sauge et crème ; jaune mangue et blanc ; corail et vert tendre.
+- Classique : `mariage-feuillage-dore` en version légère, titre en Parisienne, texte en Raleway, fond crème, encre foncée.
+- Moderne : `seminaire-ondes` en tons clairs (pêche, sauge), titre en Josefin Sans, texte en Poppins.
+- Audacieuse : `anniversaire-confettis`, titre en Dancing Script, couleurs vives (corail, jaune mangue).
+- Éviter `bapteme-douceur` (nuages) et les ballons hors fête annoncée.
 - Ton : détendu, souriant, simple.
-- Surtitres : « Un brunch entre nous », « Rendez-vous au brunch », « On se retrouve autour d'un brunch ». Fins : « Venez comme vous êtes, on s'occupe du reste », « Nous avons hâte de partager ce moment avec vous ».
-- À éviter : ton cérémonieux, polices de titrage très grasses.
+- Surtitres : « Un brunch entre nous » ; « Rendez-vous au brunch » ; « On se retrouve autour d'un brunch ».
+- Fins : « Nous avons hâte de partager ce moment avec vous » ; « Venez comme vous êtes ».
+- Mentions avant le nom : « Une invitation pour » ; « Une place à table pour ».
+- À éviter : ton cérémonieux, promesses que l'hôte n'a pas faites.

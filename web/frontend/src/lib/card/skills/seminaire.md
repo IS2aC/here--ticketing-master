@@ -2,13 +2,15 @@
 
 ## Illustration
 
-Séminaire, conférence ou formation : moderne, professionnel, tourné vers l'avenir. Lignes et ondes abstraites, dégradés profonds, particules de lumière, formes géométriques, éventuellement une silhouette épurée de la ville d'Abidjan. Tons bleu nuit, violet, cyan ou or. Décor sur les bords, grande zone calme. À éviter : personnes, pupitres, écrans avec texte, graphiques et chiffres, logos inventés.
+Séminaire, conférence ou formation : moderne et professionnel. Lignes et ondes abstraites, dégradés, formes géométriques, motifs liés au sujet si la description le donne. Couleurs du code couleur ou de l'organisation ; sinon bleu nuit, violet ou vert profond. Silhouette de ville seulement si le lieu ou le thème s'y prête. Pas de personnage. À éviter : pupitres, écrans, graphiques, chiffres, logos inventés.
 
 ## Propositions
 
-- Compositions : `seminaire-ondes` en priorité ; `festival-nuit-couleurs` pour une conférence grand public en soirée.
-- Polices du titre : Montserrat ou Raleway pour la classique ; Bebas Neue ou Anton pour l'audacieuse. Texte en Poppins ou Montserrat. Nom de l'invité : Poppins.
-- Palettes : bleu nuit, cyan et blanc ; violet profond et or ; noir, blanc et une couleur vive. Le code couleur de l'organisation passe avant.
-- Ton : professionnel, inspirant, concis.
-- Surtitres : « Vous êtes invité(e) », « Séminaire », « Rejoignez-nous ». Fins : « Places limitées : merci de confirmer votre présence », « Nous comptons sur votre participation ».
-- À éviter : thèmes ou intervenants inventés, calligraphies, ton festif.
+- Classique : `seminaire-ondes`, institutionnel, titre en Montserrat, texte en Poppins, fond blanc, titre marine.
+- Moderne : `seminaire-ondes` clair, titre en Raleway, une couleur d'accent vive tirée du code couleur.
+- Audacieuse : `seminaire-ondes` ou `festival-nuit-couleurs` pour une conférence en soirée, titre en Bebas Neue, fond sombre, texte clair ; cyan ou or seulement en accent.
+- Ton : professionnel, concis.
+- Surtitres : « Séminaire » ; « Vous êtes invité » ; « Rejoignez-nous ».
+- Fins : « Nous comptons sur votre participation » ; « Au plaisir de vous y retrouver ».
+- Mentions avant le nom : « Invitation nominative » ; « À l'attention de ».
+- À éviter : thèmes, intervenants ou contraintes inventés (places limitées), calligraphies.

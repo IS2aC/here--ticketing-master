@@ -3,7 +3,7 @@
     "id": "mariage-feuillage-dore",
     "version": 2,
     "name": "Feuillage doré",
-    "description": "Faire-part de mariage classique : feuillage doré, prénoms en grand, nom de l'invité en calligraphie et sceau QR au centre.",
+    "description": "Faire-part de mariage classique : feuillage doré, prénoms en grand et nom de l'invité en calligraphie.",
     "categories": [
       "mariage"
     ],
@@ -88,7 +88,7 @@
     "id": "seminaire-ondes",
     "version": 2,
     "name": "Séminaire",
-    "description": "Invitation à un séminaire ou une conférence : titre, date, lieu, encadré nominatif et programme.",
+    "description": "Invitation à un séminaire ou une conférence : titre, date, lieu, encadré nominatif et mention d'inscription.",
     "categories": [
       "seminaire",
       "reunion"

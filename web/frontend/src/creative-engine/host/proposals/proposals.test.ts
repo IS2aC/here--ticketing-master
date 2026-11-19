@@ -4,10 +4,10 @@ import { z } from "zod";
 import { validateDocument } from "../../domain/schema/validate.ts";
 import { contrastRatio, targetContrast } from "../../editor/colors.ts";
 import { slotOf, toCardLayout } from "../guestFields.ts";
-import { charterSchema, groundedTexts, isGrounded, proposalsSchema, type CardFacts } from "./charter.ts";
+import { charterSchema, groundedTexts, isGrounded, isTitleGrounded, onePerDirection, proposalsSchema, type CardFacts } from "./charter.ts";
 import { composeOnImage } from "./aiCard.ts";
 import { COMPOSITIONS } from "./charter.ts";
-import { charterOf, composeCard, loadComposition } from "./compose.ts";
+import { charterOf, composeCard, loadComposition, visibleTexts } from "./compose.ts";
 import { defaultTexts, fallbackCharters } from "./fallback.ts";
 import { backgroundBehind } from "../../editor/colors.ts";
 
@@ -201,5 +201,39 @@ describe("carte d'hommage", () => {
       const behind = backgroundBehind(doc, element) ?? doc.page.background.color;
       expect(contrastRatio(element.style.color, behind), element.name).toBeGreaterThanOrEqual(targetContrast(element) - 0.05);
     }
+  });
+});
+
+describe("garanties sur les titres et les directions", () => {
+  it("vérifie aussi un nom en tête d'une ligne suivante", () => {
+    expect(isGrounded("Aïcha\n& Kofi", FACTS)).toBe(false);
+    expect(isGrounded("Aïcha\n& Koffi", FACTS)).toBe(true);
+  });
+
+  it("le titre ne reprend que des mots du titre saisi", () => {
+    expect(isTitleGrounded("Aïcha\n& Koffi", FACTS)).toBe(true);
+    expect(isTitleGrounded("Aicha & Koffi", FACTS)).toBe(true);
+    expect(isTitleGrounded("Les noces d'Aïcha & Koffi", FACTS)).toBe(false);
+    expect(isTitleGrounded("", FACTS)).toBe(false);
+    const fallback = defaultTexts(FACTS);
+    expect(groundedTexts({ ...fallback, title: "Aïcha\n& Kofi" }, fallback, FACTS).title).toBe(fallback.title);
+  });
+
+  it("une charte par direction, complétée par les règles", () => {
+    const fallback = fallbackCharters(FACTS);
+    const [classique] = fallback;
+    const ia = [{ ...classique!, name: "IA 1" }, { ...classique!, name: "IA 2" }];
+    const chosen = onePerDirection(ia, fallback);
+    expect(chosen.map((c) => c.direction)).toEqual(["classique", "moderne", "audacieuse"]);
+    expect(chosen[0]?.name).toBe("IA 1");
+    expect(chosen[1]).toBe(fallback[1]);
+  });
+});
+
+describe("textes affichés par composition", () => {
+  it("l'anniversaire n'a pas de phrase de fin, seul le festival a une accroche", () => {
+    expect(visibleTexts("anniversaire-confettis")).not.toContain("closing");
+    expect(visibleTexts("dot-motifs-wax")).toContain("closing");
+    for (const id of COMPOSITIONS) expect(visibleTexts(id).includes("tagline"), id).toBe(id === "festival-nuit-couleurs");
   });
 });

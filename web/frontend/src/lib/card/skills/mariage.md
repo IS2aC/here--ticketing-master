@@ -2,13 +2,16 @@
 
 ## Illustration
 
-Faire-part de mariage haut de gamme, esprit afro-chic d'Abidjan. Fleurs (roses, pivoines, orchidées, frangipanier) et feuillages fins, dorure discrète, papier ivoire ou satin. Lumière douce et chaude. Le décor encadre la carte sur les bords et en haut, jamais au centre. À éviter : alliances et cœurs clichés, couple en dessin animé, colombes, paillettes partout, fond chargé derrière les textes.
+Faire-part de mariage haut de gamme. Fleurs (roses, pivoines, orchidées, frangipanier) et feuillages fins, dorure discrète, papier ivoire ou satin. Reprendre en priorité une matière, une fleur ou un décor tiré du lieu, du thème ou du code couleur. Pas de personnage inventé. À éviter : alliances et cœurs, colombes, paillettes partout, décor chargé.
 
 ## Propositions
 
-- Compositions : `mariage-feuillage-dore` en priorité ; `bapteme-douceur` pour une version poudrée et légère.
-- Polices du titre : une calligraphie (Great Vibes, Pinyon Script, Parisienne, Alex Brush) pour la classique ; Playfair Display, Bodoni Moda ou Italiana pour la moderne. Texte en Cormorant Garamond, EB Garamond ou Raleway. Nom de l'invité : Great Vibes ou Playfair Display.
-- Palettes : ivoire et or ; blanc, vert sauge et or ; terracotta et crème ; bleu nuit et or pour une soirée. Le code couleur des mariés passe avant tout.
-- Ton : joyeux, solennel sans être raide. Le titre garde les prénoms tels qu'écrits, sur deux lignes (« Aïcha\n& Koffi »).
-- Surtitres : « Nous nous marions », « Ensemble, pour la vie », « Ils se disent oui ». Fins : « Votre présence comptera pour nous », « Nous serions heureux de partager ce jour avec vous ».
+- Classique : `mariage-feuillage-dore`, titre en calligraphie (Great Vibes, Pinyon Script, Parisienne) ou en Playfair Display si les prénoms sont longs, texte en Cormorant Garamond, fond ivoire, titre brun foncé, or réservé à l'accent et au décor.
+- Moderne : `mariage-feuillage-dore` ou `bapteme-douceur` (titre sur une ligne, donc prénoms courts), titre en Bodoni Moda ou Italiana, texte en Raleway, palette sobre (blanc, vert sauge, encre foncée).
+- Audacieuse : fond sombre (bleu nuit, bordeaux) avec titre clair et accent or, titre en Playfair Display.
+- Nom de l'invité : Playfair Display par défaut, Great Vibes seulement sur fond clair et uni.
+- Ton : joyeux, solennel sans être raide. Le titre ne garde que les prénoms, tels qu'écrits, sur deux lignes si la composition le permet.
+- Surtitres : « Nous nous marions » ; « Ils se disent oui » ; « Ensemble, pour la vie ».
+- Fins : « Votre présence comptera pour nous » ; « Nous serions heureux de partager ce jour avec vous ».
+- Mentions avant le nom : « Invitation personnelle pour » ; « Avec joie, nous invitons ».
 - À éviter : humour, formules administratives, plus de deux familles de polices.

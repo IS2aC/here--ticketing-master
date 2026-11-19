@@ -83,27 +83,39 @@ const normalize = (text: string) =>
     .replace(/\p{M}/gu, "")
     .toLowerCase();
 
+const wordsOf = (text: string) =>
+  normalize(text)
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+
 /**
- * Vrai si le texte n'invente rien : chaque nombre et chaque nom propre (mot à majuscule qui n'ouvre pas une
- * ligne) figure dans les faits. C'est la garantie « zéro faute dans les prénoms » : un nom mal écrit ou
- * inventé par l'IA est refusé.
+ * Vrai si le texte n'invente rien : chaque nombre et chaque nom propre (mot à majuscule qui n'ouvre pas le
+ * texte) figure dans les faits. C'est la garantie « zéro faute dans les prénoms » : un nom mal écrit ou
+ * inventé par l'IA est refusé. Seul le tout premier mot est exempté (« Nous nous marions ») : un mot à
+ * majuscule en tête d'une ligne suivante (« Aïcha\n& Kofi ») est vérifié.
  */
 export function isGrounded(text: string, facts: CardFacts): boolean {
-  const source = normalize(
-    [facts.title, facts.dateLine, ...facts.placeLines, facts.dressCode, facts.theme, facts.rsvpLine, facts.description].join(" "),
-  );
-  const words = new Set(source.split(/[^\p{L}\p{N}]+/u).filter(Boolean));
+  const source = [facts.title, facts.dateLine, ...facts.placeLines, facts.dressCode, facts.theme, facts.rsvpLine, facts.description].join(" ");
+  const words = new Set(wordsOf(source));
   const numbers = new Set(source.match(/\d+/g) ?? []);
   for (const number of text.match(/\d+/g) ?? []) if (!numbers.has(number)) return false;
-  for (const textLine of text.split("\n")) {
-    const tokens = textLine.split(/[^\p{L}\p{N}'’-]+/u).filter(Boolean);
-    for (const [index, token] of tokens.entries()) {
-      if (index === 0 || !/^\p{Lu}/u.test(token)) continue;
-      const parts = normalize(token).split(/['’-]/).filter((p) => p.length > 1);
-      if (parts.some((part) => !words.has(part))) return false;
-    }
+  const tokens = text.split(/[^\p{L}\p{N}'’-]+/u).filter(Boolean);
+  for (const [index, token] of tokens.entries()) {
+    if (index === 0 || !/^\p{Lu}/u.test(token)) continue;
+    const parts = normalize(token).split(/['’-]/).filter((p) => p.length > 1);
+    if (parts.some((part) => !words.has(part))) return false;
   }
   return true;
+}
+
+/**
+ * Titre de la carte : il porte les noms, il ne reprend donc que des mots du titre saisi par l'organisateur
+ * (dans l'ordre qu'on veut, avec des retours à la ligne et « & »), sans en ajouter aucun.
+ */
+export function isTitleGrounded(text: string, facts: CardFacts): boolean {
+  const allowed = new Set(wordsOf(facts.title));
+  const used = wordsOf(text);
+  return used.length > 0 && used.every((word) => allowed.has(word));
 }
 
 /** Textes d'une charte, ceux qui inventent remplacés par ceux de `fallback` (même rôle). */
@@ -115,9 +127,17 @@ export function groundedTexts(texts: Charter["texts"], fallback: Charter["texts"
   return {
     kicker: keep("kicker"),
     // Le titre porte les noms : sans garantie, c'est celui tiré du titre saisi par l'organisateur.
-    title: isGrounded(texts.title, facts) && texts.title ? texts.title : fallback.title,
+    title: isTitleGrounded(texts.title, facts) ? texts.title : fallback.title,
     tagline: keep("tagline"),
     closing: keep("closing"),
     guestLabel: keep("guestLabel"),
   };
+}
+
+/** Une charte par direction, dans l'ordre classique, moderne, audacieuse : celle de l'IA, sinon celle des règles. */
+export function onePerDirection(charters: readonly Charter[], fallback: readonly Charter[]): Charter[] {
+  return DIRECTIONS.flatMap((direction) => {
+    const chosen = charters.find((c) => c.direction === direction) ?? fallback.find((c) => c.direction === direction);
+    return chosen ? [chosen] : [];
+  });
 }

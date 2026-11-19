@@ -1,5 +1,6 @@
 import type { CardFacts } from "@/creative-engine/host/proposals/charter";
 import { eventType, type EventType } from "@/lib/event-types";
+import { cardSkill } from "./skills";
 
 // Prompt complet de la génération d'une carte par l'IA (lots D2 et D3) : un pré-prompt propre au type
 // d'événement, la demande de l'organisateur, les données de l'événement et, s'il y en a, ses photos.
@@ -32,7 +33,10 @@ const LIGHT: Record<NonNullable<CardFacts["moment"]>, string> = {
 
 const shorten = (text: string, max: number) => (text.length <= max ? text : `${text.slice(0, max).replace(/\s+\S*$/, "")}…`);
 
-/** Direction artistique par type d'événement : ce qui fait une belle carte de ce type, à Abidjan. */
+/**
+ * Direction artistique par type d'événement, de secours : la partie « Illustration » de la fiche du type
+ * (skills/<type>.md) la remplace quand elle existe.
+ */
 export const PREPROMPTS: Record<EventType, string> = {
   mariage:
     "Faire-part de mariage raffiné : romantisme et élégance, matières nobles (dorure, ivoire, satin), fleurs et feuillages délicats, esprit afro-chic contemporain d'Abidjan.",
@@ -67,7 +71,8 @@ export function cardImagePrompt(facts: CardFacts, request: string, photos = 0): 
   const description = facts.description ? shorten(facts.description.replace(/\s+/g, " "), MAX_DESCRIPTION) : null;
   const lines = [
     `Illustration pour une carte d'invitation (${eventType(type).label.toLowerCase()}), format portrait 4:5, haut de gamme, soignée, digne d'un faire-part imprimé.`,
-    `Direction artistique : ${PREPROMPTS[type] ?? PREPROMPTS.autre}`,
+    `Direction artistique : ${cardSkill(type, "Illustration") ?? PREPROMPTS[type] ?? PREPROMPTS.autre}`,
+    "La demande, le thème, les couleurs et le cadre donnés ci-dessous passent avant cette direction artistique.",
     `Demande de l'organisateur : ${request.trim()}`,
     facts.theme ? `Thème de l'événement : ${facts.theme}.` : null,
     facts.colors.length > 0 ? `Couleurs dominantes à respecter : ${facts.colors.join(", ")}.` : null,
@@ -81,7 +86,7 @@ export function cardImagePrompt(facts: CardFacts, request: string, photos = 0): 
         ? "Composition : en haut au centre, un espace uni, doux et sans motif où sera posé ensuite un médaillon avec le portrait du défunt ; ne dessine aucun personnage ni visage. Décor discret sur les bords ; une zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code."
         : "Composition : ne dessine aucun personnage ni visage. Décor discret sur les bords et en haut ; une grande zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code."
       : photos > 0
-        ? `${photos === 1 ? "La photo jointe montre" : `Les ${photos} photos jointes montrent`} les personnes à l'honneur : représente-les fidèlement (visages, carnation, tenues), avec élégance, dans la moitié haute de l'image. La moitié basse reste une zone calme, claire et peu détaillée, où seront posés les textes ; le coin inférieur droit reste dégagé pour un QR code.`
+        ? `${photos === 1 ? "La photo jointe montre" : `Les ${photos} photos jointes montrent`} les personnes à l'honneur (elles seules font exception à l'absence de personnage) : représente-les fidèlement (visages, carnation, tenues), avec élégance, dans la moitié haute de l'image. La moitié basse reste une zone calme, claire et peu détaillée, où seront posés les textes ; le coin inférieur droit reste dégagé pour un QR code.`
         : "Composition : décor et motifs sur les bords et en haut ; une grande zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code.",
   ];
   return lines.filter(Boolean).join("\n");

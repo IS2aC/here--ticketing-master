@@ -2,13 +2,17 @@
 
 ## Illustration
 
-Baptême ou présentation d'un enfant : douceur et tendresse. Tons pastel (bleu ciel, rose poudré, vert d'eau, crème), nuages légers, petites étoiles, fleurs délicates, rameaux d'olivier, lumière apaisante du matin. Aquarelle ou papier doux. Décor léger sur les bords, centre clair. À éviter : bébé dessiné, personnages, couleurs vives, motifs chargés, symboles religieux imposants si la demande n'en parle pas.
+Baptême ou présentation d'un enfant : douceur et tendresse. Tons pastel (bleu ciel, rose poudré, vert d'eau, crème), nuages légers, petites fleurs, rameaux d'olivier, aquarelle ou papier doux. Colombe ou symbole religieux seulement si la demande le dit. Pas de personnage inventé, pas de bébé dessiné. À éviter : couleurs vives, motifs chargés.
 
 ## Propositions
 
-- Compositions : `bapteme-douceur` en priorité ; `mariage-feuillage-dore` pour une cérémonie plus solennelle.
-- Polices du titre : Parisienne, Allura ou Dancing Script ; Cormorant Garamond pour la moderne. Texte en Raleway ou Poppins. Nom de l'invité : Great Vibes ou Poppins.
-- Palettes : bleu ciel et crème ; rose poudré et blanc ; vert d'eau et or doux. Contraste suffisant malgré le pastel : titre et texte dans un ton soutenu (bleu nuit, vieux rose foncé, gris anthracite).
-- Ton : tendre, simple, reconnaissant. Le titre reprend le prénom de l'enfant tel qu'écrit.
-- Surtitres : « Bienvenue au monde », « Notre petit trésor », « Un jour de grâce ». Fins : « Venez entourer notre enfant de votre affection », « Nous serions heureux de vous compter parmi nous ».
-- À éviter : humour, ton de fête de soirée, majuscules intérieures dans les formules religieuses.
+- Classique : `bapteme-douceur`, titre en Parisienne ou Allura, texte en Raleway, fond bleu ciel ou crème, titre bleu nuit.
+- Moderne : `bapteme-douceur`, titre en Cormorant Garamond, texte en Poppins, vert d'eau et anthracite.
+- Audacieuse : `mariage-feuillage-dore`, ivoire et or, titre en Playfair Display.
+- Contraste : malgré le pastel, titre et texte dans un ton soutenu (bleu nuit, vieux rose foncé, anthracite).
+- Nom de l'invité : Poppins ou Playfair Display, plus lisibles en petit qu'une calligraphie.
+- Ton : tendre et simple. Le titre reprend le prénom de l'enfant tel qu'écrit. Distinguer baptême et présentation selon le titre et la description.
+- Surtitres : « Baptême » ; « Un jour de grâce » ; « Nous célébrons son baptême ».
+- Fins : « Nous serions heureux de vous compter parmi nous » ; « Venez partager ce jour avec nous ».
+- Mentions avant le nom : « Avec joie, nous invitons » ; « Invitation pour ».
+- À éviter : formules de naissance (« bienvenue au monde ») sauf pour une présentation, humour, ton de soirée.

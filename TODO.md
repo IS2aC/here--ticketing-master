@@ -21,7 +21,10 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
   - **Cadre de la cérémonie** : l'illustration reçoit le lieu (nom et adresse, sans l'écrire sur la carte), le moment (matin, après-midi ou soirée, d'après l'heure de début) et la description de l'événement (300 caractères au plus).
   - **Hommage** : le portrait du défunt n'est plus envoyé à l'IA (refusé par l'API s'il l'était). L'éditeur le pose tel quel en haut de la carte, dans un médaillon en arche, en noir et blanc ; le prompt lui réserve sa place et interdit tout personnage ou visage.
   - Reste : essayer avec une vraie clé (`IMAGE_*`) sur un mariage en église, un anniversaire en soirée et un hommage avec portrait.
-- [ ] **Skills de génération de cartes**, intégrés au workflow de génération : règles de composition, de lisibilité et de style par type d'événement, utilisées par l'IA à chaque proposition.
+- [x] **Skills de génération de cartes** (fait le 19/11) : une fiche par type dans `web/frontend/src/lib/card/skills/` (voir son README), relue par Codex (`docs/avis-codex-skills-cartes.md`) puis corrigée.
+  - La partie « Illustration » remplace la direction artistique du type dans le prompt de l'image ; la partie « Propositions » s'ajoute au prompt des chartes, avec les textes que chaque composition affiche.
+  - Titre de la carte : seulement des mots du titre saisi ; un prénom mal écrit en tête de ligne n'échappe plus à la vérification. Une charte par direction, complétée par les règles.
+  - Reste : essayer avec de vraies clés (`IMAGE_*`, `CARD_AI_*`) sur un mariage aux noms longs, une dot avec tenue, des funérailles avec et sans portrait, un concert de jour, une palette claire ; faire relire les formules de deuil et de dot par des organisateurs ivoiriens ; des compositions dédiées pour brunch, réunion, retrouvailles, concert et funérailles.
 - [ ] **Modèle économique**, à partir des coûts d'exploitation et des prix du marché.
   - Coûts : OpenRouter et Gemini (textes et images), WasenderAPI (numéros), hébergement (Dokploy, base, stockage des images), support humain (conseillère).
   - Marché : prix des faire-part et invitations numériques, des wedding planners et des services de confirmation de présence, en Côte d'Ivoire et en Afrique de l'Ouest.
