@@ -73,6 +73,8 @@ export interface CardFacts {
   /** « Merci de confirmer votre présence avant le 1er mars », si une date limite existe. */
   readonly rsvpLine: string | null;
   readonly description: string | null;
+  /** Moment du début, pour la lumière de l'illustration ; absent : inconnu. */
+  readonly moment?: "matin" | "après-midi" | "soirée" | null;
 }
 
 const normalize = (text: string) =>

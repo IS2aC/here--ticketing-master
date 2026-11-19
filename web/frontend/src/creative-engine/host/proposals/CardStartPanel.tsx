@@ -89,6 +89,9 @@ export function CardStartPanel({
   const [photos, setPhotos] = useState<readonly Photo[]>([]);
   const photoInput = useRef<HTMLInputElement>(null);
   const ideas = IDEAS[facts.type] ?? IDEAS.mariage ?? [];
+  // Hommage : un seul portrait, posé par l'éditeur, jamais envoyé à l'IA (il ne dépend donc pas du fournisseur).
+  const tribute = facts.type === "funerailles";
+  const photoLimit = tribute ? (aiEnabled ? 1 : 0) : maxPhotos;
 
   useEffect(() => {
     let active = true;
@@ -113,13 +116,13 @@ export function CardStartPanel({
   useEffect(() => () => urls.current.forEach((url) => URL.revokeObjectURL(url)), []);
 
   async function addPhotos(files: FileList | null) {
-    const chosen = [...(files ?? [])].filter((f) => f.type.startsWith("image/")).slice(0, maxPhotos - photos.length);
+    const chosen = [...(files ?? [])].filter((f) => f.type.startsWith("image/")).slice(0, photoLimit - photos.length);
     try {
       const added = await Promise.all(chosen.map(async (file) => {
         const blob = await shrink(file);
         return { blob, url: URL.createObjectURL(blob) };
       }));
-      setPhotos((current) => [...current, ...added].slice(0, maxPhotos));
+      setPhotos((current) => [...current, ...added].slice(0, photoLimit));
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Cette photo n'a pas pu être lue.");
     }
@@ -136,7 +139,9 @@ export function CardStartPanel({
     try {
       const form = new FormData();
       form.append("prompt", prompt);
-      photos.forEach((photo, index) => form.append("photos", photo.blob, `photo-${index + 1}.jpg`));
+      if (tribute) {
+        if (photos.length > 0) form.append("portrait", "1");
+      } else photos.forEach((photo, index) => form.append("photos", photo.blob, `photo-${index + 1}.jpg`));
       const response = await fetch(`${baseUrl}/generer`, { method: "POST", body: form });
       const body = (await response.json()) as {
         images?: { mimeType: string; data: string }[];
@@ -146,7 +151,14 @@ export function CardStartPanel({
       if (!response.ok || !image) throw new Error(body.error?.message ?? "La génération a échoué. Réessayez.");
       const imported = await importAsDocumentAsset(fromBase64(image.data, image.mimeType), "ai");
       if (!imported.ok) throw new Error(imported.error.message);
-      const error = await open(composeOnImage(imported.asset, facts, sample, photos.length > 0 ? "photos" : "centre"));
+      let portrait;
+      if (tribute && photos[0]) {
+        const placed = await importAsDocumentAsset(photos[0].blob, "upload");
+        if (!placed.ok) throw new Error(placed.error.message);
+        portrait = placed.asset;
+      }
+      const layout = photos.length > 0 && !tribute ? "photos" : "centre";
+      const error = await open(composeOnImage(imported.asset, facts, sample, layout, portrait));
       if (error) throw new Error(error);
       onClose();
     } catch (error) {
@@ -227,7 +239,7 @@ export function CardStartPanel({
                 </button>
               ))}
             </div>
-            {maxPhotos > 0 ? (
+            {photoLimit > 0 ? (
               <div className={styles.startPhotos}>
                 {photos.map((photo, index) => (
                   <span key={photo.url} className={styles.startPhoto}>
@@ -237,10 +249,10 @@ export function CardStartPanel({
                     </button>
                   </span>
                 ))}
-                {photos.length < maxPhotos ? (
+                {photos.length < photoLimit ? (
                   <button type="button" className={styles.startAddPhoto} onClick={() => photoInput.current?.click()} disabled={busy !== null}>
                     <Icon name="image" />
-                    {photos.length === 0 ? "Ajouter des photos (facultatif)" : "Ajouter"}
+                    {tribute ? "Ajouter le portrait (facultatif)" : photos.length === 0 ? "Ajouter des photos (facultatif)" : "Ajouter"}
                   </button>
                 ) : null}
                 <input
@@ -255,7 +267,9 @@ export function CardStartPanel({
                   }}
                 />
                 <p className={styles.qrNote}>
-                  Les mariés, la famille, l&apos;enfant… : l&apos;IA les représente sur la carte ({maxPhotos} photos au plus).
+                  {tribute
+                    ? "Le portrait est posé tel quel en haut de la carte, en noir et blanc. Il n'est pas envoyé à l'IA."
+                    : `Les mariés, la famille, l'enfant… : l'IA les représente sur la carte (${maxPhotos} photos au plus).`}
                 </p>
               </div>
             ) : null}

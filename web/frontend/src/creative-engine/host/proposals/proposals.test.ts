@@ -180,3 +180,26 @@ describe("carte générée par l'IA", () => {
     expect(doc.elements.some((e) => e.name === "Lieu" || e.name === "Tenue")).toBe(false);
   });
 });
+
+describe("carte d'hommage", () => {
+  const illustration = { kind: "image", mimeType: "image/png", width: 1024, height: 1280, source: { type: "local", key: `sha256-${"a".repeat(64)}` }, provenance: "ai" } as const;
+  const portrait = { ...illustration, width: 600, height: 800, source: { type: "local", key: `sha256-${"b".repeat(64)}` }, provenance: "upload" } as const;
+
+  it("pose le portrait tel quel, en arche et en noir et blanc, textes au-dessus du sceau", () => {
+    const doc = composeOnImage(illustration, { ...FACTS, type: "funerailles" }, SAMPLE, "centre", portrait);
+    expect(validateDocument(doc)).toEqual([]);
+    const photo = doc.elements.find((e) => e.name === "Portrait");
+    if (photo?.type !== "image") throw new Error("portrait absent");
+    expect(doc.assets[photo.assetId]).toBe(portrait);
+    expect(photo.mask?.shape).toBe("arch");
+    expect(photo.adjustments?.saturation).toBe(-1);
+    const seal = qrPosition("bas-droite");
+    for (const element of doc.elements) {
+      if (element.type !== "text") continue;
+      expect(element.y + element.height, element.name).toBeLessThanOrEqual(seal.top);
+      expect(element.y, element.name).toBeGreaterThanOrEqual(photo.y + photo.height);
+      const behind = backgroundBehind(doc, element) ?? doc.page.background.color;
+      expect(contrastRatio(element.style.color, behind), element.name).toBeGreaterThanOrEqual(targetContrast(element) - 0.05);
+    }
+  });
+});

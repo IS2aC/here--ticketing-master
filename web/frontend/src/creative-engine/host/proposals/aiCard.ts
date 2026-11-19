@@ -12,9 +12,11 @@ import { defaultTexts } from "./fallback.ts";
 // par le moteur sur un voile clair, là où le prompt demande une zone calme, et le sceau en bas à droite.
 //   - « centre » : un voile au centre ;
 //   - « photos » : les personnes des photos occupent la moitié haute ; deux voiles en bas, à gauche du sceau.
+//   - « portrait » (hommage) : le portrait du défunt, que l'IA n'a jamais reçu, posé tel quel en haut dans un
+//     médaillon en arche, recadré et en noir et blanc ; les textes sur un voile en dessous, au-dessus du sceau.
 // L'IA ne dessine aucun texte : noms, date et lieu restent exacts et modifiables.
 
-export type AiLayout = "centre" | "photos";
+export type AiLayout = "centre" | "photos" | "portrait";
 
 interface Box {
   readonly x: number;
@@ -43,13 +45,18 @@ const veil = (name: string, x: number, y: number, width: number, height: number)
   name,
 });
 
-/** Carte complète autour de l'illustration générée, avec les faits de l'événement et l'invité d'exemple. */
+/**
+ * Carte complète autour de l'illustration générée, avec les faits de l'événement et l'invité d'exemple.
+ * `portrait` : le portrait d'un hommage ; il impose la mise en page « portrait ».
+ */
 export function composeOnImage(
   illustration: ImageAsset,
   facts: CardFacts,
   sample: GuestSample,
   layout: AiLayout = "centre",
+  portrait?: ImageAsset,
 ): CreativeDocument {
+  if (portrait) layout = "portrait";
   const base = createDocument({ preset: "social-4-5" });
   const accent = (facts.colors[0] ?? "#8E6B2E") as HexColor;
   const ink = (facts.colors[1] ?? "#1F1F1F") as HexColor;
@@ -57,6 +64,7 @@ export function composeOnImage(
   const texts = defaultTexts(facts);
   const imageId = createId();
   const sealId = createId();
+  const portraitId = createId();
   const dress = !facts.dressCode ? "" : /^dress code/i.test(facts.dressCode) ? facts.dressCode : `Tenue : ${facts.dressCode}`;
 
   const filled = (element: TextElement, content: string) => (content.trim() ? withContent(element, content) : null);
@@ -69,7 +77,32 @@ export function composeOnImage(
   };
 
   const parts: (Element | null)[] =
-    layout === "photos"
+    layout === "portrait"
+      ? (() => {
+          const inner = { x: 160, width: 760 };
+          const photo: Element = {
+            ...createImageElement({ x: 420, y: 50, width: 240, height: 260, assetId: portraitId, fit: "cover" }),
+            name: "Portrait",
+            mask: { shape: "arch", feather: 0 },
+            adjustments: { brightness: 0, contrast: 0, saturation: -1, blur: 0 },
+          };
+          return [
+            illustrationElement,
+            portrait ? photo : null,
+            veil("Voile", 120, 340, 840, 620),
+            filled(text(inner, "Annonce", 368, "x", kicker), texts.kicker),
+            filled(text(inner, "Titre", 406, "x\nx", { ...title, fontSize: 64 }), texts.title),
+            filled(text(inner, "Date", 562, "x", { fontSize: 30, fontWeight: 500, color: ink }), facts.dateLine),
+            filled(text(inner, "Lieu", 606, "x\nx", { fontSize: 24, lineHeight: 1.4, color: muted }), facts.placeLines.join("\n")),
+            filled(text(inner, "Invitation", 696, "x", { ...italic, fontSize: 24, color: accent }), texts.guestLabel),
+            createGuestName(sample, { x: 540, y: 768, size: 54, color: ink, font: "serif", bold: true }),
+            createGuestTable(sample, { x: 540, y: 826, size: 26, color: muted, font: "sans", bold: false }),
+            filled(text(inner, "Tenue", 866, "x", { fontSize: 22, fontWeight: 500, color: accent }), dress),
+            filled(text(inner, "Réponse", 906, "x", { ...italic, fontSize: 22, color: muted }), texts.closing),
+            createGuestQr(sealId),
+          ];
+        })()
+      : layout === "photos"
       ? (() => {
           const top = { x: 130, width: 820 };
           const bottom = { x: 100, width: 610 };
@@ -110,7 +143,7 @@ export function composeOnImage(
   const doc: CreativeDocument = {
     ...base,
     meta: { ...base.meta, title: `Carte · ${facts.title}` },
-    assets: { [imageId]: illustration, [sealId]: SEAL_ASSET },
+    assets: { [imageId]: illustration, [sealId]: SEAL_ASSET, ...(portrait ? { [portraitId]: portrait } : {}) },
     elements: parts.filter((e): e is Element => e !== null),
   };
   // Textes lisibles sur le voile (couleurs du code couleur de l'événement, assombries si besoin).

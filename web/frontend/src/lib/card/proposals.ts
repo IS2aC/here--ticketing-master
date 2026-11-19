@@ -62,6 +62,12 @@ function hour(iso: string): string {
   return m === "00" ? `${h} h` : `${h} h ${m}`;
 }
 
+/** Matin avant midi, après-midi avant 18 h, soirée ensuite (et la nuit). */
+function moment(iso: string): CardFacts["moment"] {
+  const h = Number(hourMinute.format(new Date(iso)).split(":")[0]);
+  return h >= 5 && h < 12 ? "matin" : h >= 12 && h < 18 ? "après-midi" : "soirée";
+}
+
 /** Faits de l'événement, mis en forme pour la carte. */
 export function cardFacts(event: EventOut): CardFacts {
   const deadline = event.rsvp_deadline ? dayMonth.format(new Date(event.rsvp_deadline)).replace(/^1 /, "1er ") : null;
@@ -75,6 +81,7 @@ export function cardFacts(event: EventOut): CardFacts {
     colors: event.colors ?? [],
     rsvpLine: deadline ? `Merci de confirmer votre présence avant le ${deadline}` : null,
     description: event.description?.trim() || null,
+    moment: moment(event.starts_at),
   };
 }
 

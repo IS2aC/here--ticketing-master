@@ -5,12 +5,32 @@ import { eventType, type EventType } from "@/lib/event-types";
 // d'événement, la demande de l'organisateur, les données de l'événement et, s'il y en a, ses photos.
 // L'image est une illustration SANS texte : le moteur pose ensuite les textes de l'événement (noms, date,
 // lieu exacts) et le sceau QR, aux places que le prompt réserve.
+//
+// Hommage (funérailles) : le portrait du défunt n'est jamais envoyé à l'IA. Le moteur le pose tel quel, recadré
+// et en noir et blanc, dans un médaillon dont le prompt réserve la place (host/proposals/aiCard.ts).
 
 /** Longueur maximale de la demande de l'organisateur. */
 export const MAX_REQUEST_LENGTH = 600;
 
 /** Photos de référence par génération (le fournisseur peut en accepter moins). */
 export const MAX_PHOTOS = 4;
+
+/** Longueur de la description de l'événement reprise dans le prompt. */
+const MAX_DESCRIPTION = 300;
+
+/** Types où la photo est un portrait posé par le moteur, jamais confié à l'IA. */
+export const isTribute = (type: string) => type === "funerailles";
+
+/** Photos acceptées pour un hommage : un seul portrait. */
+export const MAX_PORTRAITS = 1;
+
+const LIGHT: Record<NonNullable<CardFacts["moment"]>, string> = {
+  matin: "le matin : lumière claire et fraîche",
+  "après-midi": "l'après-midi : lumière chaude et dorée",
+  soirée: "en soirée : lumières du soir, ambiance nocturne et feutrée",
+};
+
+const shorten = (text: string, max: number) => (text.length <= max ? text : `${text.slice(0, max).replace(/\s+\S*$/, "")}…`);
 
 /** Direction artistique par type d'événement : ce qui fait une belle carte de ce type, à Abidjan. */
 export const PREPROMPTS: Record<EventType, string> = {
@@ -20,7 +40,7 @@ export const PREPROMPTS: Record<EventType, string> = {
   bapteme:
     "Baptême ou présentation d'un enfant : douceur et tendresse, tons pastel, nuages, colombe, petites fleurs, lumière apaisante.",
   funerailles:
-    "Funérailles ou hommage à un défunt : sobriété, sérénité et respect ; tons doux, blanc, gris ou noir et blanc, lys, lumière paisible ; rien de festif ni de coloré.",
+    "Funérailles ou hommage à un défunt : sobriété, sérénité et respect ; tons doux, blanc, gris ou noir et blanc, lys, lumière paisible ; rien de festif ni de coloré ; aucun personnage, visage ni silhouette.",
   anniversaire:
     "Anniversaire : joie et fête, ballons, confettis, guirlandes lumineuses, couleurs vives et chaleureuses.",
   brunch: "Brunch convivial : table dressée, fruits tropicaux, fleurs fraîches, lumière douce du matin, ambiance détendue et chic.",
@@ -35,8 +55,16 @@ export const PREPROMPTS: Record<EventType, string> = {
   autre: "Événement privé : élégant, chaleureux et soigné.",
 };
 
+/**
+ * `photos` : nombre de photos jointes. Pour un hommage, c'est le portrait posé par le moteur : il n'est pas
+ * envoyé, le prompt lui réserve seulement sa place.
+ */
 export function cardImagePrompt(facts: CardFacts, request: string, photos = 0): string {
   const type = facts.type as EventType;
+  const tribute = isTribute(type);
+  const place = facts.placeLines.join(", ");
+  const context = [place ? `lieu : ${place}` : null, facts.moment ? LIGHT[facts.moment] : null].filter(Boolean);
+  const description = facts.description ? shorten(facts.description.replace(/\s+/g, " "), MAX_DESCRIPTION) : null;
   const lines = [
     `Illustration pour une carte d'invitation (${eventType(type).label.toLowerCase()}), format portrait 4:5, haut de gamme, soignée, digne d'un faire-part imprimé.`,
     `Direction artistique : ${PREPROMPTS[type] ?? PREPROMPTS.autre}`,
@@ -44,9 +72,17 @@ export function cardImagePrompt(facts: CardFacts, request: string, photos = 0): 
     facts.theme ? `Thème de l'événement : ${facts.theme}.` : null,
     facts.colors.length > 0 ? `Couleurs dominantes à respecter : ${facts.colors.join(", ")}.` : null,
     facts.dressCode && !/^dress code libre$/i.test(facts.dressCode) ? `Dress code des invités : ${facts.dressCode}.` : null,
-    photos > 0
-      ? `${photos === 1 ? "La photo jointe montre" : `Les ${photos} photos jointes montrent`} les personnes à l'honneur : représente-les fidèlement (visages, carnation, tenues), avec élégance, dans la moitié haute de l'image. La moitié basse reste une zone calme, claire et peu détaillée, où seront posés les textes ; le coin inférieur droit reste dégagé pour un QR code.`
-      : "Composition : décor et motifs sur les bords et en haut ; une grande zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code.",
+    context.length > 0
+      ? `Cadre de la cérémonie, pour un décor juste (par exemple une mairie, une église, un jardin, une plage, une salle de réception) : ${context.join(" ; ")}. N'écris pas le nom du lieu.`
+      : null,
+    description ? `Ce que l'organisateur dit de l'événement : ${description}` : null,
+    tribute
+      ? photos > 0
+        ? "Composition : en haut au centre, un espace uni, doux et sans motif où sera posé ensuite un médaillon avec le portrait du défunt ; ne dessine aucun personnage ni visage. Décor discret sur les bords ; une zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code."
+        : "Composition : ne dessine aucun personnage ni visage. Décor discret sur les bords et en haut ; une grande zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code."
+      : photos > 0
+        ? `${photos === 1 ? "La photo jointe montre" : `Les ${photos} photos jointes montrent`} les personnes à l'honneur : représente-les fidèlement (visages, carnation, tenues), avec élégance, dans la moitié haute de l'image. La moitié basse reste une zone calme, claire et peu détaillée, où seront posés les textes ; le coin inférieur droit reste dégagé pour un QR code.`
+        : "Composition : décor et motifs sur les bords et en haut ; une grande zone calme, claire et peu détaillée au centre, où seront posés les textes ; le coin inférieur droit dégagé pour un QR code.",
   ];
   return lines.filter(Boolean).join("\n");
 }

@@ -1,6 +1,6 @@
 import type { ReferenceImage } from "@/creative-engine/integrations/ai/contract";
 import { imageGenerationService } from "@/creative-engine/server/imageGeneration/service";
-import { cardImagePrompt, MAX_PHOTOS, MAX_REQUEST_LENGTH } from "@/lib/card/imagePrompt";
+import { cardImagePrompt, isTribute, MAX_PHOTOS, MAX_PORTRAITS, MAX_REQUEST_LENGTH } from "@/lib/card/imagePrompt";
 import { cardFacts } from "@/lib/card/proposals";
 import { getEvent } from "@/lib/events";
 
@@ -8,6 +8,7 @@ import { getEvent } from "@/lib/events";
 // l'événement + photos de référence → une illustration sans texte, au format de la carte. L'éditeur compose
 // ensuite la carte autour (host/proposals/aiCard.ts). getEvent passe par la session : seul l'organisateur de
 // l'événement peut générer. Corps : multipart, `prompt` et `photos` (0 à 4 images, réduites par le navigateur).
+// Hommage : `portrait` indique qu'un portrait sera posé par l'éditeur ; aucune photo n'est acceptée ni envoyée.
 
 const invalid = (message: string) => Response.json({ error: { code: "invalid_request", message } }, { status: 400 });
 
@@ -19,10 +20,14 @@ export async function POST(request: Request, { params }: RouteContext<"/tableau-
   if (!asked || asked.length > MAX_REQUEST_LENGTH)
     return invalid(`Décrivez la carte souhaitée en ${MAX_REQUEST_LENGTH} caractères au plus.`);
 
+  const facts = cardFacts(event);
   const service = imageGenerationService();
   const capabilities = service.capabilities().body as { sizes?: string[]; maxReferences?: number };
   const allowed = Math.min(MAX_PHOTOS, capabilities.maxReferences ?? 0);
   const files = (form?.getAll("photos") ?? []).filter((f): f is File => f instanceof File && f.size > 0);
+  // Le portrait d'un défunt ne part jamais chez le fournisseur : l'éditeur le pose lui-même.
+  if (isTribute(facts.type) && files.length > 0) return invalid("Le portrait est posé par Here!, il n'est pas envoyé à l'IA.");
+  const portraits = isTribute(facts.type) && form?.get("portrait") === "1" ? MAX_PORTRAITS : 0;
   if (files.length > allowed)
     return invalid(allowed > 0 ? `Ajoutez ${allowed} photos au plus.` : "Ce service de génération ne prend pas de photos.");
   // Le type est vérifié par le service (signature du fichier), pas sur la déclaration du navigateur.
@@ -37,7 +42,7 @@ export async function POST(request: Request, { params }: RouteContext<"/tableau-
   // Format portrait 4:5 si le fournisseur le connaît, sinon son format par défaut (le moteur recadre).
   const size = sizes.find((s) => s === "4:5" || s === "1080x1350" || s === "1024x1280") ?? sizes[0];
   const result = await service.generate(
-    { prompt: cardImagePrompt(cardFacts(event), asked, references.length), size, count: 1, noText: true, references },
+    { prompt: cardImagePrompt(facts, asked, portraits || references.length), size, count: 1, noText: true, references },
     request.signal,
   );
   return Response.json(result.body, { status: result.status, headers: { "Cache-Control": "no-store" } });
