@@ -430,7 +430,7 @@ export function GenerateBrowser() {
         {results.length > 0 && (
           <>
             <p className={styles.count}>
-              {results.length === 1 ? "1 image générée" : `${results.length} images générées`} — choisissez
+              {results.length === 1 ? "1 image générée" : `${results.length} images générées`}. Choisissez
               celle à ajouter.
             </p>
             <ul className={styles.resultGrid}>

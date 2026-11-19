@@ -106,7 +106,7 @@ function FramingControls({ element, asset }: { element: ImageElement; asset: Ima
         onCommit={commitLiveEdit}
       />
       <Slider
-        label="Gauche – droite"
+        label="Gauche ou droite"
         value={framing.centerX}
         min={0}
         max={1}
@@ -115,7 +115,7 @@ function FramingControls({ element, asset }: { element: ImageElement; asset: Ima
         onCommit={commitLiveEdit}
       />
       <Slider
-        label="Haut – bas"
+        label="Haut ou bas"
         value={framing.centerY}
         min={0}
         max={1}

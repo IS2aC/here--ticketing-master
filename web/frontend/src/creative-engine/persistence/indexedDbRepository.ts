@@ -15,7 +15,7 @@ import {
 // Stockage sur cet appareil (ADR-007), dans IndexedDB :
 //   - « documents » : métadonnées (liste sans charger le contenu) et révision ;
 //   - « contents »  : JSON du document, validé à l'écriture et revalidé (et migré) à la lecture ;
-//   - « assets »    : fichiers d'images, par clé de contenu (SHA-256) — partagés entre documents ;
+//   - « assets »    : fichiers d'images, par clé de contenu (SHA-256), partagés entre documents ;
 //   - « images »    : « Mes images », les images importées par l'utilisateur (v2) : nom, dimensions, aperçu.
 //     Retirer une image de cette liste ne supprime pas son fichier : les documents qui l'utilisent l'affichent
 //     toujours.

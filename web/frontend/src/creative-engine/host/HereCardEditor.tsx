@@ -134,7 +134,7 @@ export function HereCardEditor({ eventId, eventTitle, sample, facts, qrStyle: sa
               <>
                 <ActionButton
                   label="Nouvelle carte"
-                  icon="sparkles"
+                  icon="filePlus"
                   showLabel
                   variant="ghost"
                   aria-haspopup="dialog"

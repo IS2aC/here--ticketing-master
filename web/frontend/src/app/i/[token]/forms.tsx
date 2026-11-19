@@ -7,7 +7,7 @@ type Action = (state: ResponseState, formData: FormData) => Promise<ResponseStat
 
 // Page invité : textes en 17 px minimum, boutons de 56 px (DESIGN.md, « l'invité a peut-être 70 ans »).
 const big =
-  "flex h-14 w-full items-center justify-center rounded-full px-6 font-heading text-[17px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60";
+  "flex h-14 w-full items-center justify-center rounded-full px-6 font-heading text-[17px] font-semibold transition-[opacity,transform] duration-150 enabled:hover:opacity-90 enabled:active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60";
 
 function Error({ state }: { state: ResponseState }) {
   return state.message ? (
@@ -38,13 +38,13 @@ export function Question({ action, seats, plural }: { action: Action; seats: num
             </span>
           </p>
           <div className="flex items-center gap-3">
-            <button type="button" aria-label="Une personne de moins" disabled={count <= 1} onClick={() => setCount(count - 1)} className="flex size-12 items-center justify-center rounded-full bg-background text-[22px] font-semibold shadow-[inset_0_0_0_1.5px_var(--color-border)] disabled:opacity-40">
+            <button type="button" aria-label="Une personne de moins" disabled={count <= 1} onClick={() => setCount(count - 1)} className="flex size-12 items-center justify-center rounded-full bg-background text-[22px] font-semibold shadow-[inset_0_0_0_1.5px_var(--color-border)] enabled:hover:bg-surface disabled:opacity-40">
               −
             </button>
             <span className="w-8 text-center font-data text-[22px] font-semibold tabular-nums" aria-live="polite">
               {count}
             </span>
-            <button type="button" aria-label="Une personne de plus" disabled={count >= seats} onClick={() => setCount(count + 1)} className="flex size-12 items-center justify-center rounded-full bg-background text-[22px] font-semibold shadow-[inset_0_0_0_1.5px_var(--color-border)] disabled:opacity-40">
+            <button type="button" aria-label="Une personne de plus" disabled={count >= seats} onClick={() => setCount(count + 1)} className="flex size-12 items-center justify-center rounded-full bg-background text-[22px] font-semibold shadow-[inset_0_0_0_1.5px_var(--color-border)] enabled:hover:bg-surface disabled:opacity-40">
               +
             </button>
           </div>

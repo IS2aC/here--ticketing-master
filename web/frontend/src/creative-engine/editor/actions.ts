@@ -73,7 +73,7 @@ function remeasure(id: Id): DocumentCommand {
   };
 }
 
-// ——— Document ———
+// Document
 
 export function loadDocument(doc: CreativeDocument): void {
   nudging = false;
@@ -96,7 +96,7 @@ export function redo(): void {
   pruneSelection();
 }
 
-// ——— Sélection ———
+// Sélection
 
 /** Sélection d'éléments existants ; les identifiants inconnus sont ignorés. */
 export function setSelection(ids: readonly Id[]): void {
@@ -123,7 +123,7 @@ export function selectAll(): void {
   );
 }
 
-// ——— Géométrie ———
+// Géométrie
 
 export function moveElementTo(id: Id, x: number, y: number): CommandError | null {
   return run("Déplacer", [(doc) => moveElement(doc, { id, x, y })]);
@@ -235,7 +235,7 @@ export function endNudge(): void {
   store().commitTransaction();
 }
 
-// ——— Propriétés ———
+// Propriétés
 
 /**
  * Modification identique pour tous les éléments, ou calculée pour chacun (changer la couleur d'un contour
@@ -322,7 +322,7 @@ export function cancelLiveEdit(): void {
   store().cancelTransaction();
 }
 
-// ——— Sélection : actions groupées ———
+// Sélection : actions groupées
 
 export function deleteSelection(): CommandError | null {
   const ids = selection();
@@ -355,7 +355,7 @@ export function reorderSelection(to: ReorderTarget): CommandError | null {
   return run("Changer l'ordre", [(doc) => reorderElements(doc, { ids, to })]);
 }
 
-// ——— Ajout ———
+// Ajout
 
 function addAndSelect(label: string, element: Element): CommandError | null {
   const error = run(label, [(doc) => addElement(doc, { element }), remeasure(element.id)]);
@@ -441,7 +441,7 @@ export function addImage(
   return error;
 }
 
-// ——— Texte ———
+// Texte
 
 /** Nouveau contenu d'un texte (édition directe ou panneau) : une action, hauteur recalculée. */
 export function setTextContent(id: Id, content: string): CommandError | null {

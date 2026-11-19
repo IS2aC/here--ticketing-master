@@ -11,6 +11,27 @@ body {
   font-family: var(--font-body);
 }
 
+/* Tailwind 4 remet les boutons au curseur flèche : la main signale tout ce qui se clique. */
+@layer base {
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  label[for],
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  [role="switch"],
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+  button:disabled,
+  select:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
 /* Éditeur « Mon propre modèle » : police « élégante » des cartes (comme le rendu des cartes). */
 @font-face { font-family: "Playfair Display"; font-weight: 400; font-style: normal; font-display: swap; src: url("../styles/brand/fonts/PlayfairDisplay-Regular.ttf") format("truetype"); }
 @font-face { font-family: "Playfair Display"; font-weight: 600; font-style: normal; font-display: swap; src: url("../styles/brand/fonts/PlayfairDisplay-SemiBold.ttf") format("truetype"); }
@@ -24,12 +45,7 @@ body {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-@keyframes here-glow {
-  0%, 100% { opacity: 0.7; scale: 1; }
-  50% { opacity: 1; scale: 1.05; }
-}
 @media (prefers-reduced-motion: no-preference) {
   .here-rise { animation: here-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
   .here-fade { animation: here-fade 0.8s ease-out both; }
-  .here-glow { animation: here-glow 8s ease-in-out infinite; }
 }

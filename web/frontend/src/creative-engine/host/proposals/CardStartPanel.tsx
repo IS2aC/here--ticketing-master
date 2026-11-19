@@ -208,7 +208,7 @@ export function CardStartPanel({
 
         <div className={styles.startTabs} role="tablist" aria-label="Façon de créer la carte">
           <button type="button" role="tab" aria-selected={tab === "ia"} className={styles.startTab} onClick={() => setTab("ia")}>
-            <Icon name="sparkles" />
+            <Icon name="brush" />
             Créer avec l&apos;IA
           </button>
           <button type="button" role="tab" aria-selected={tab === "modeles"} className={styles.startTab} onClick={() => setTab("modeles")}>

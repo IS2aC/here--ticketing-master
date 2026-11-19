@@ -48,8 +48,8 @@ Here! s'occupe de tout le parcours des invités : la carte d'invitation personna
 - Une seule liste à jour : confirmés, en attente, refus, nombre de personnes par invitation.
 - Des relances automatiques aux invités qui n'ont pas répondu, puis une conseillère qui peut les appeler.
 - Un chiffre fiable à donner au traiteur et au lieu de réception.
-- Une carte élégante et personnalisée pour chaque invité, avec sa table.
-- Un accueil fluide le jour J : les agents scannent le QR code de chaque invité sur leur téléphone, et seuls les invités confirmés entrent.
+- Une carte au nom de chaque invité, avec sa table.
+- Le jour J, les agents scannent le QR code de chaque invité sur leur téléphone : seuls les invités confirmés entrent.
 - Moins de stress et plus de temps pour le reste : décoration, prestataires, mariés.
 
 ## Documentation de Here!

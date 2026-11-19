@@ -36,7 +36,7 @@ export function assetLibraries(): readonly AssetLibrary[] {
 
 const NOT_CONFIGURED: LibraryError = { code: "unavailable", message: "La bibliothèque est indisponible." };
 
-// ——— Modèles ———
+// Modèles
 
 export type TemplateUseResult =
   | {
@@ -106,7 +106,7 @@ export async function createFromTemplate(
   return { ok: true, saved, missingAssets };
 }
 
-// ——— Ressources ———
+// Ressources
 
 function libraryFor(asset: LibraryAsset): AssetLibrary | undefined {
   return config?.assets.find((library) => library.origin === asset.origin);

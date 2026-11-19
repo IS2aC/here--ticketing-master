@@ -49,7 +49,7 @@
   line-height: var(--text-small-line-height);
 }
 
-/* ——— Recherche et filtres ——— */
+/* Recherche et filtres */
 
 .search {
   display: flex;
@@ -163,7 +163,7 @@
   font: inherit;
 }
 
-/* ——— Résultats ——— */
+/* Résultats */
 
 .results {
   display: flex;
@@ -321,7 +321,7 @@
   font-size: var(--text-caption-size);
 }
 
-/* ——— Boutons ——— */
+/* Boutons */
 
 .more,
 .importButton,
@@ -414,7 +414,7 @@
   margin: 0 0 var(--space-2);
 }
 
-/* ——— Aperçu d'un modèle ——— */
+/* Aperçu d'un modèle */
 
 .preview {
   width: min(880px, calc(100vw - 2 * var(--space-4)));
@@ -529,7 +529,7 @@
   }
 }
 
-/* ——— Génération d'images ——— */
+/* Génération d'images */
 
 .notConfigured {
   padding: var(--space-4);

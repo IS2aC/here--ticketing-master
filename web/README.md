@@ -4,11 +4,11 @@ Trois services distincts, orchestrés par [docker-compose.yml](docker-compose.ym
 
 | Service | Dossier | Rôle | Port interne |
 |---|---|---|---|
-| `here-db` | — | PostgreSQL 16 (volume `db-data`) | 5432 |
-| `here-migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées | — |
+| `here-db` |  | PostgreSQL 16 (volume `db-data`) | 5432 |
+| `here-migrate` | [db/](db/) | Migrations SQL ([dbmate](https://github.com/amacneil/dbmate)), lancées à chaque démarrage puis arrêtées |  |
 | `here-api` | [api/](api/) | FastAPI. Seul service qui accède à la base. Routes métier sous `/v1`, appelées par le frontend et la future app mobile | 8000 |
 | `here-frontend` | [frontend/](frontend/) | Next.js. Interface web ; appelle l'API par le réseau interne (`http://here-api:8000`) | 3000 |
-| `here-worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp | — |
+| `here-worker` | [api/](api/) | Envoi WhatsApp des invitations et relances (même image que l'API, `python -m app.worker`). Un seul par numéro WhatsApp |  |
 
 Ordre de démarrage : `here-db` (sain) → `here-migrate` (terminé) → `here-api` (saine) et `here-worker` → `here-frontend`.
 

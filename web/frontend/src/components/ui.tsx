@@ -3,12 +3,12 @@ import type { ComponentProps, ReactNode } from "react";
 
 // Boutons et champs selon uiux/visual-identity/DESIGN.md (pilule, 52 px, un seul bouton rouge par écran).
 const button =
-  "inline-flex h-[52px] items-center justify-center gap-2 rounded-full px-6 font-heading text-[15px] font-semibold whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface disabled:text-text-muted disabled:shadow-none";
+  "inline-flex h-[52px] items-center justify-center gap-2 rounded-full px-6 font-heading text-[15px] font-semibold whitespace-nowrap transition-[background-color,transform] duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface disabled:text-text-muted disabled:shadow-none disabled:active:scale-100";
 
 const variants = {
   primary: "bg-primary text-on-primary hover:bg-primary-hover",
   ghost: "bg-background text-text shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-surface",
-  inverse: "bg-inverse text-on-inverse",
+  inverse: "bg-inverse text-on-inverse hover:bg-[color-mix(in_srgb,var(--color-inverse)_82%,var(--color-background))]",
 };
 
 type Variant = keyof typeof variants;
@@ -31,7 +31,12 @@ export function DisabledButton({ reason, className = "", children }: { reason: s
       className={`${button} cursor-not-allowed bg-surface text-text-muted opacity-70 ${className}`}
     >
       {children}
-      <span className="sr-only"> — {reason}</span>
+      <span className="sr-only"> : {reason}</span>
     </span>
   );
+}
+
+/** Cellule de tableau sans valeur : vide à l'écran, « non renseigné » pour les lecteurs d'écran. */
+export function NotSet() {
+  return <span className="sr-only">non renseigné</span>;
 }

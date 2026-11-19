@@ -78,7 +78,7 @@ const ROLES: Record<Composition, Record<string, Role>> = {
     Lieu: "place",
     Encadré: "panel",
     Invitation: "guestLabel",
-    "Programme — titre": "remove",
+    "Programme : titre": "remove",
     Programme: "remove",
     Inscription: "closing",
   },

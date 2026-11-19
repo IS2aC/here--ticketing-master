@@ -1,4 +1,4 @@
-# DESIGN.md — Here!
+# DESIGN.md · Here!
 
 > Direction artistique destinée aux agents et aux développeurs front.
 > Lis ce fichier en entier avant d'écrire la moindre ligne d'interface pour Here!.

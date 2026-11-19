@@ -170,10 +170,10 @@ export function discardResults(): void {
   });
 }
 
-/** Nom du calque et du fichier : « Image IA — début de la description ». */
+/** Nom du calque et du fichier : « Image IA : début de la description ». */
 function imageName(prompt: string): string {
   const short = prompt.length > 40 ? `${prompt.slice(0, 40).trimEnd()}…` : prompt;
-  return `Image IA — ${short}`;
+  return `Image IA : ${short}`;
 }
 
 /**

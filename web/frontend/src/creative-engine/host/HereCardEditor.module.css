@@ -112,7 +112,7 @@
   }
 }
 
-/* ——— Here! : barre du haut ——— */
+/* Here! : barre du haut */
 
 .back {
   display: inline-flex;
@@ -200,7 +200,7 @@
   }
 }
 
-/* ——— Panneau du QR code ——— */
+/* Panneau du QR code */
 
 .qrPanel {
   position: fixed;
@@ -285,7 +285,7 @@
   font-size: var(--text-caption-size);
 }
 
-/* ——— Cartes proposées ——— */
+/* Cartes proposées */
 
 .proposalsBackdrop {
   position: fixed;
@@ -405,7 +405,7 @@
   gap: var(--space-3);
 }
 
-/* ——— Ouverture de la carte : IA ou modèles ——— */
+/* Ouverture de la carte : IA ou modèles */
 
 .startTabs {
   display: grid;

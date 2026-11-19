@@ -53,7 +53,7 @@ async function Deleted({ searchParams }: { searchParams: Promise<Record<string, 
 
 async function Greeting() {
   const user = await getCurrentUser();
-  return <p className="text-[14px] text-text-muted">Bonjour {user.first_name} 👋</p>;
+  return <p className="text-[14px] text-text-muted">Bonjour {user.first_name}</p>;
 }
 
 // Ordre d'affichage : en cours, à venir (le plus proche d'abord), brouillons, terminés (le plus récent d'abord), annulés.
@@ -206,12 +206,12 @@ function NewEventBanner({ first }: { first: boolean }) {
       <div className="relative z-10 min-w-0 flex-1 sm:max-w-[46%] lg:max-w-[44%]">
         <h3 className="font-heading text-[18px] font-bold">{first ? "Créez votre premier événement" : "Créer un nouvel événement"}</h3>
         <p className="mt-1 text-[14px] text-text-muted">
-          Mariage, dot, baptême, funérailles, séminaire… Créez votre événement en quelques clics et commencez à inviter vos proches.
+          Mariage, dot, baptême, funérailles, séminaire… Créez votre événement, puis importez votre liste d&apos;invités.
         </p>
       </div>
       <div className="pointer-events-none absolute inset-y-0 right-[200px] hidden w-[300px] md:block lg:right-[230px] lg:w-[320px]" aria-hidden="true">
         <Image src="/images/vue-organisateur.jpg" alt="" fill sizes="320px" className="object-cover object-[50%_30%]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FFF4F3] via-transparent to-[#FFF4F3]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[color-mix(in_srgb,var(--color-primary)_5%,var(--color-background))] via-transparent to-[color-mix(in_srgb,var(--color-primary)_5%,var(--color-background))]" />
       </div>
       <ButtonLink href={NEW_EVENT} variant="inverse" className="relative z-10 h-11 self-start text-[14px] sm:ml-auto sm:self-center">
         <Icon name="ajouter" width={18} height={18} />

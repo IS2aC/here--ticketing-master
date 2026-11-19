@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import { BackToDashboard } from "@/components/back-link";
 import { Toast } from "@/components/toast";
-import { ButtonLink, DisabledButton } from "@/components/ui";
+import { ButtonLink, DisabledButton, NotSet } from "@/components/ui";
 import { PHASE_LABELS, phaseOf } from "@/lib/event-phase";
 import { eventType } from "@/lib/event-types";
 import { formatDate, formatDuration, formatShortDate, formatTime, getCardSettings, getEvent } from "@/lib/events";
@@ -286,7 +286,7 @@ function GuestList({
                       {g.category}
                     </span>
                   </td>
-                  <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">{g.seat ?? "—"}</td>
+                  <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">{g.seat ?? <NotSet />}</td>
                   <td className={`border-b border-border px-3 py-2.5 font-semibold whitespace-nowrap ${rsvp.tone}`}>
                     <span className="inline-flex items-center gap-1.5">
                       <Icon name={rsvp.icon} width={15} height={15} />
@@ -313,7 +313,7 @@ function GuestList({
                         Voir
                       </a>
                     ) : (
-                      <span className="text-text-muted">—</span>
+                      <NotSet />
                     )}
                   </td>
                   <td className="border-b border-border px-3 py-2.5 text-right whitespace-nowrap">
@@ -422,7 +422,7 @@ function Info({
       <div className="min-w-0">
         <dt className="truncate text-[12px] text-text-muted">{label}</dt>
         <dd className={`truncate ${data ? "font-data tabular-nums" : ""} ${value ? "" : "text-text-muted"}`} title={title ?? value ?? undefined}>
-          {value ?? "—"}
+          {value ?? "Non renseigné"}
         </dd>
       </div>
     </div>

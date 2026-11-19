@@ -78,7 +78,7 @@ export function useHasUnsavedChanges(): boolean {
   return present !== saved;
 }
 
-// ——— Configuration ———
+// Configuration
 
 interface Config {
   repository: DocumentRepository;
@@ -146,7 +146,7 @@ function schedule(delay: number): void {
   }, delay);
 }
 
-// ——— Enregistrement ———
+// Enregistrement
 
 /**
  * Enregistre maintenant (Ctrl + S, perte de visibilité de la page). Si un enregistrement est en cours, attend
@@ -231,7 +231,7 @@ export function hasPendingChanges(): boolean {
   return inFlight !== null || (isManaged() && currentDocument() !== state().savedDocument);
 }
 
-// ——— Cycle de vie ———
+// Cycle de vie
 
 /** Quitter le document perdrait des modifications qui n'ont pas pu être enregistrées : on ne le fait pas en silence. */
 export const UNSAVED_BLOCKS_LEAVING: RepositoryError = {
@@ -350,7 +350,7 @@ export async function removeDocument(id: Id): Promise<RepositoryResult<void>> {
   return result;
 }
 
-// ——— Fichiers .here.json ———
+// Fichiers .here.json
 
 /** Importe un fichier : ses images rejoignent le stockage de l'appareil, puis il devient un nouveau document. */
 export async function importDocumentFile(file: Blob): Promise<RepositoryResult<Id>> {

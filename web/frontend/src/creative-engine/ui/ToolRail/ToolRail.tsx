@@ -95,7 +95,7 @@ export function ToolRail({ onTemplates }: { onTemplates?: () => void } = {}) {
       />
       <ActionButton
         label="Générer une image"
-        icon="sparkles"
+        icon="brush"
         tooltipSide="right"
         className={styles.tool}
         tabIndex={-1}

@@ -3,7 +3,7 @@ import type { CreativeDocument } from "../domain/document/types.ts";
 import type { TextElement } from "../domain/elements/types.ts";
 
 // Pré-prompt d'une carte complète (décision de l'utilisateur, 01/11/2026) : l'IA dessine la carte entière, textes
-// compris, à partir de ce que la carte ouverte contient déjà — chaque texte (et son rôle quand le calque est nommé),
+// compris, à partir de ce que la carte ouverte contient déjà : chaque texte (et son rôle quand le calque est nommé),
 // sa police, ses couleurs, le format et le fond. Notre code ajoutera ensuite le QR code et le message de l'invité
 // dans la zone laissée libre. Les informations de l'événement fournies par Here! s'ajouteront à l'intégration.
 
@@ -22,7 +22,7 @@ export type EventType = keyof typeof EVENT_TYPES;
 
 /**
  * Informations de l'événement saisies par l'utilisateur (Here! les fournira à l'intégration). Toutes facultatives ;
- * dès qu'un texte est renseigné, ce sont elles — et non les textes posés sur la carte — que l'IA écrit.
+ * dès qu'un texte est renseigné, ce sont elles, et non les textes posés sur la carte, que l'IA écrit.
  */
 export interface EventInfo {
   readonly type: EventType | null;
@@ -174,7 +174,7 @@ export function buildCardPrompt(document: CreativeDocument, options: CardPromptO
       "Textes à écrire sur la carte, exactement comme indiqué (orthographe, accents, majuscules et ponctuation à respecter à la lettre, aucun autre texte) :",
       ...texts.map(
         (t, i) =>
-          `${i + 1}. ${t.role ? `${t.role} : ` : ""}« ${t.content} » — police ${t.font}, taille ${t.size}${t.color ? `, couleur ${t.color}` : ""}`,
+          `${i + 1}. ${t.role ? `${t.role} : ` : ""}« ${t.content} », police ${t.font}, taille ${t.size}${t.color ? `, couleur ${t.color}` : ""}`,
       ),
       "Respecte cet ordre de haut en bas et la hiérarchie des tailles.",
     );

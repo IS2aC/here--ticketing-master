@@ -71,7 +71,7 @@ export function DeleteEvent({
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex h-11 w-full items-center justify-center rounded-full bg-error px-5 font-heading text-[14px] font-semibold text-white disabled:opacity-60"
+              className="inline-flex h-11 w-full items-center justify-center rounded-full bg-error px-5 font-heading text-[14px] font-semibold text-white transition-[opacity,transform] duration-150 enabled:hover:opacity-90 enabled:active:scale-[0.98] disabled:opacity-60"
             >
               {pending ? "Suppression…" : "Supprimer l'événement"}
             </button>

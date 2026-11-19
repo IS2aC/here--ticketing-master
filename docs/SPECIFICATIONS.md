@@ -119,7 +119,7 @@ WasenderAPI ne ralentit pas les envois : c'est le worker qui protège le numéro
 
 | Règle | Valeur par défaut | Variable |
 |---|---|---|
-| Un invité à la fois (un seul message : la carte et le lien) | — | — |
+| Un invité à la fois (un seul message : la carte et le lien) |  |  |
 | Pause entre deux invités | 20 à 45 s, aléatoire | `WHATSAPP_MIN_DELAY_SECONDS`, `WHATSAPP_MAX_DELAY_SECONDS` |
 | Longue pause | 30 min tous les 25 invités | `WHATSAPP_BATCH_SIZE`, `WHATSAPP_BATCH_PAUSE_MINUTES` |
 | Heures d'envoi (Abidjan) | 8 h – 20 h | `WHATSAPP_SEND_START_HOUR`, `WHATSAPP_SEND_END_HOUR` |

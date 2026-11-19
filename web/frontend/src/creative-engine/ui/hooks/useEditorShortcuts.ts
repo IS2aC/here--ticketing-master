@@ -36,7 +36,7 @@ const ARROWS: Record<string, [number, number]> = {
 
 /**
  * Raccourcis de l'éditeur. Ignorés quand un champ de saisie a le focus, quand un autre composant a déjà traité
- * la touche (menu, tiroir), et — pour les flèches — quand le focus est sur un bouton d'une barre d'outils
+ * la touche (menu, tiroir), et, pour les flèches, quand le focus est sur un bouton d'une barre d'outils
  * ou d'un groupe (où elles servent à naviguer).
  */
 export function handleEditorShortcut(event: KeyboardEvent): boolean {

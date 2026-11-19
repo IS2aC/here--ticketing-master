@@ -7,7 +7,7 @@ import type { ImageGenerationCapabilities } from "../../integrations/ai/contract
 //   IMAGE_PROVIDER          none (défaut) | openrouter | gemini | openai-compatible
 //   IMAGE_API_KEY           clé du fournisseur (obligatoire pour openrouter et gemini ; facultative en local)
 //   IMAGE_MODEL             modèle d'image (openrouter : google/gemini-3.1-flash-lite-image ; gemini :
-//                           gemini-3.1-flash-lite-image — Nano Banana 2 Lite ; openai-compatible : obligatoire)
+//                           gemini-3.1-flash-lite-image (Nano Banana 2 Lite) ; openai-compatible : obligatoire)
 //   IMAGE_BASE_URL          adresse de l'API (openrouter, gemini : la leur par défaut ; openai-compatible : …/v1)
 //   IMAGE_SIZES             formats proposés, séparés par des virgules ; le premier est le défaut
 //                           openrouter, gemini : ratios « l:h » (défaut : 4:5,1:1,9:16,3:4,3:2) ;

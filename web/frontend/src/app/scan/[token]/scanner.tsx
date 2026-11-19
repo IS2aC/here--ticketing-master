@@ -19,7 +19,7 @@ const STATES: Record<ScanResult["result"], { color: string; border: string; icon
   refused: { color: "text-red-bright", border: "border-red-bright", icon: "decline", title: () => "Entrée refusée" },
 };
 
-const big = "flex h-14 w-full items-center justify-center gap-2 rounded-full px-6 font-heading text-[17px] font-semibold disabled:opacity-60";
+const big = "flex h-14 w-full items-center justify-center gap-2 rounded-full px-6 font-heading text-[17px] font-semibold transition-[opacity,transform] duration-150 enabled:hover:opacity-90 enabled:active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-bright disabled:opacity-60";
 
 export function Scanner({ token, initial }: { token: string; initial: ScanEvent }) {
   const [event, setEvent] = useState(initial);

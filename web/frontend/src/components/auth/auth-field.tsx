@@ -92,7 +92,7 @@ export function AuthSubmit({ pending, children, pendingLabel }: { pending: boole
     >
       {pending ? (
         <>
-          <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+          <span aria-hidden="true" className="size-4 motion-safe:animate-spin rounded-full border-2 border-white/40 border-t-white" />
           {pendingLabel}
         </>
       ) : (

@@ -13,7 +13,7 @@ async def health() -> JSONResponse:
     try:
         async with get_engine().connect() as conn:
             await conn.execute(text("SELECT 1"))
-    except Exception:  # noqa: BLE001 — toute erreur de connexion = base indisponible
+    except Exception:  # noqa: BLE001 : toute erreur de connexion = base indisponible
         return JSONResponse(
             {"status": "error", "database": "unreachable"}, status_code=503
         )

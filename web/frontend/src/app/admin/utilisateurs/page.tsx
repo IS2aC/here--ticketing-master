@@ -5,6 +5,7 @@ import { getUsers, PAGE_SIZE } from "@/lib/admin";
 import { formatShortDate } from "@/lib/events";
 import { maskPhone } from "@/lib/phone";
 import { AVATARS, CARD, Pager, SeeButton } from "../ui";
+import { NotSet } from "@/components/ui";
 
 export const metadata: Metadata = { title: "Utilisateurs · Portail admin · Here!" };
 
@@ -109,11 +110,11 @@ async function Users({ searchParams }: { searchParams: SearchParams }) {
                     </span>
                   </td>
                   <td className="py-3.5 pr-4 font-data whitespace-nowrap text-text-muted tabular-nums">{maskPhone(u.phone)}</td>
-                  <td className="py-3.5 pr-4 text-text-muted">{u.email ?? "—"}</td>
-                  <td className="py-3.5 pr-4 text-text-muted">{u.organization ?? "—"}</td>
-                  <td className="py-3.5 pr-4 text-text-muted">{u.city ?? "—"}</td>
+                  <td className="py-3.5 pr-4 text-text-muted">{u.email ?? <NotSet />}</td>
+                  <td className="py-3.5 pr-4 text-text-muted">{u.organization ?? <NotSet />}</td>
+                  <td className="py-3.5 pr-4 text-text-muted">{u.city ?? <NotSet />}</td>
                   <td className="py-3.5 pr-4 text-[12px] whitespace-nowrap text-text-muted">{formatShortDate(u.created_at)}</td>
-                  <td className="py-3.5 pr-4 text-[12px] whitespace-nowrap text-text-muted">{u.last_login_at ? formatShortDate(u.last_login_at) : "—"}</td>
+                  <td className="py-3.5 pr-4 text-[12px] whitespace-nowrap text-text-muted">{u.last_login_at ? formatShortDate(u.last_login_at) : <NotSet />}</td>
                   <td className="py-3.5 text-center font-data font-semibold tabular-nums">{u.events.toLocaleString("fr-FR")}</td>
                   <td className="py-3.5 text-right">
                     <SeeButton href={`/admin/utilisateurs/${u.id}`} name={`${u.first_name} ${u.last_name}`} />

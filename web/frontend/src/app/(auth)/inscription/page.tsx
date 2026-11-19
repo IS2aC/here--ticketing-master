@@ -8,7 +8,7 @@ export default function RegisterPage() {
   return (
     <>
       <AuthHeading badge="Nouveau sur Here!" title="Créez" accent="votre compte">
-        Organisez votre premier événement en quelques minutes.
+        Ensuite, créez votre premier événement et importez votre liste d&apos;invités.
       </AuthHeading>
       <RegisterForm />
     </>

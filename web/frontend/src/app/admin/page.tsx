@@ -9,6 +9,7 @@ import { formatShortDate, formatTime } from "@/lib/events";
 import { maskPhone } from "@/lib/phone";
 import { DailyChart, Donut } from "./charts";
 import { AVATARS, CARD, SeeAll, SeeButton, TONES, type Tone } from "./ui";
+import { NotSet } from "@/components/ui";
 
 export const metadata: Metadata = { title: "Portail admin · Here!" };
 
@@ -251,9 +252,9 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
                       </span>
                     </td>
                     <td className="py-3.5 pr-4 font-data whitespace-nowrap text-text-muted tabular-nums">{maskPhone(u.phone)}</td>
-                    <td className="py-3.5 pr-4 text-text-muted">{u.email ?? "—"}</td>
-                    <td className="py-3.5 pr-4 text-text-muted">{u.organization ?? "—"}</td>
-                    <td className="py-3.5 pr-4 text-text-muted">{u.city ?? "—"}</td>
+                    <td className="py-3.5 pr-4 text-text-muted">{u.email ?? <NotSet />}</td>
+                    <td className="py-3.5 pr-4 text-text-muted">{u.organization ?? <NotSet />}</td>
+                    <td className="py-3.5 pr-4 text-text-muted">{u.city ?? <NotSet />}</td>
                     <td className="py-3.5 pr-4 text-[12px] whitespace-nowrap text-text-muted">{formatShortDate(u.created_at)}</td>
                     <td className="py-3.5 text-center font-data font-semibold tabular-nums">{u.events.toLocaleString("fr-FR")}</td>
                     <td className="py-3.5 text-right">
@@ -350,7 +351,7 @@ function Provider({ provider, queued }: { provider: AdminDashboard["provider"]; 
       ),
     },
     { icon: "horloge", label: "Cadence", value: `${provider.min_delay_seconds} à ${provider.max_delay_seconds} s par invité` },
-    { icon: "calendrier", label: "Heures d'envoi", value: `${provider.send_start_hour} h – ${provider.send_end_hour} h` },
+    { icon: "calendrier", label: "Heures d'envoi", value: `de ${provider.send_start_hour} h à ${provider.send_end_hour} h` },
     { icon: "message", label: "En file", value: plural(queued, "message") },
   ];
   return (

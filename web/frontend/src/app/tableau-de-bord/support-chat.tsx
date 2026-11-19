@@ -156,7 +156,7 @@ export function SupportChat({ firstName }: { firstName: string }) {
                 <p className="flex items-center gap-2 text-[13px] text-text-muted">
                   <span className="flex gap-1" aria-hidden="true">
                     {[0, 1, 2].map((i) => (
-                      <span key={i} className="size-1.5 animate-bounce rounded-full bg-text-muted" style={{ animationDelay: `${i * 150}ms` }} />
+                      <span key={i} className="size-1.5 motion-safe:animate-bounce rounded-full bg-text-muted" style={{ animationDelay: `${i * 150}ms` }} />
                     ))}
                   </span>
                   L&apos;assistant Here! écrit…

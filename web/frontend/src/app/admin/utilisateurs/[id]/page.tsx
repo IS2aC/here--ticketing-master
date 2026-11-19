@@ -26,13 +26,13 @@ async function User({ params }: { params: Promise<{ id: string }> }) {
   const rows: [string, ReactNode][] = [
     // Fiche (et non liste) : numéro complet, pour que l'équipe puisse joindre le client.
     ["Téléphone", <span key="t" className="font-data tabular-nums">{formatPhone(u.phone)}</span>],
-    ["E-mail", u.email ?? "—"],
-    ["Structure", u.organization ?? "—"],
-    ["Ville, pays", [u.city, u.country].filter(Boolean).join(", ") || "—"],
-    ["Adresse de facturation", u.billing_address ?? "—"],
-    ["Identifiant fiscal", u.tax_id ?? "—"],
+    ["E-mail", u.email ?? "Non renseigné"],
+    ["Structure", u.organization ?? "Non renseigné"],
+    ["Ville, pays", [u.city, u.country].filter(Boolean).join(", ") || "Non renseigné"],
+    ["Adresse de facturation", u.billing_address ?? "Non renseigné"],
+    ["Identifiant fiscal", u.tax_id ?? "Non renseigné"],
     ["Inscription", formatShortDate(u.created_at)],
-    ["Dernière connexion", u.last_login_at ? `${formatShortDate(u.last_login_at)} · ${formatTime(u.last_login_at)}` : "—"],
+    ["Dernière connexion", u.last_login_at ? `${formatShortDate(u.last_login_at)} · ${formatTime(u.last_login_at)}` : "Non renseigné"],
   ];
 
   return (

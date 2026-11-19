@@ -61,7 +61,7 @@ export function DocumentTitle() {
         }}
       >
         {title || UNTITLED}
-        <span className="visually-hidden"> — renommer</span>
+        <span className="visually-hidden"> : renommer</span>
       </button>
     </h1>
   );

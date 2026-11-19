@@ -42,7 +42,7 @@ export interface ResultPage<T> {
   readonly nextCursor: string | null;
 }
 
-// ——— Modèles ———
+// Modèles
 
 /**
  * Catégories : les types d'événements de Here! (mêmes codes), limités à ceux du catalogue. Un modèle peut en
@@ -91,7 +91,7 @@ export interface TemplateCatalog {
   load(id: string): Promise<LibraryResult<{ readonly summary: TemplateSummary; readonly document: unknown }>>;
 }
 
-// ——— Ressources ———
+// Ressources
 
 /** Ornement fourni avec le moteur, ou image importée depuis cet appareil. */
 export type AssetOrigin = "bundled" | "device";
@@ -111,7 +111,7 @@ export interface LibraryAsset {
   readonly thumbnailUrl: string | null;
   readonly tags: readonly string[];
   /**
-   * Licence connue du fichier, conservée telle quelle. null : aucune licence n'est renseignée — ce n'est PAS
+   * Licence connue du fichier, conservée telle quelle. null : aucune licence n'est renseignée, ce n'est PAS
    * une autorisation de réutilisation hors de l'éditeur.
    */
   readonly license: string | null;

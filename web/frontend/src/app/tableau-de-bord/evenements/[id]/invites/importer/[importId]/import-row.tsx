@@ -5,6 +5,7 @@ import { Icon, type IconName } from "@/components/icons";
 import type { ImportOut } from "@/lib/guests";
 import { formatPhone } from "@/lib/phone";
 import type { RowFixState } from "../actions";
+import { NotSet } from "@/components/ui";
 
 type Row = ImportOut["rows"][number];
 export type RowStatusView = { icon: IconName; label: string; tone: string; row?: string };
@@ -44,7 +45,7 @@ export function ImportRow({
           {row.seats > 1 ? <span className="ml-1.5 font-data text-[12px] font-normal text-text-muted tabular-nums">· {row.seats} pers.</span> : null}
         </td>
         <td className="border-b border-border px-3 py-2.5 font-data whitespace-nowrap tabular-nums">
-          {row.phone ? (row.phone_valid ? formatPhone(row.phone) : row.phone) : "—"}
+          {row.phone ? (row.phone_valid ? formatPhone(row.phone) : row.phone) : <NotSet />}
         </td>
         <td className="border-b border-border px-3 py-2.5">
           {row.category ?? row.raw_category ? (
@@ -53,7 +54,7 @@ export function ImportRow({
             </span>
           ) : null}
         </td>
-        <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">{row.seat ?? "—"}</td>
+        <td className="border-b border-border px-3 py-2.5 whitespace-nowrap">{row.seat ?? <NotSet />}</td>
         <td className={`border-b border-border px-3 py-2.5 font-semibold ${status.tone}`}>
           <span className="inline-flex items-center gap-1.5">
             <Icon name={status.icon} width={15} height={15} className="shrink-0" />

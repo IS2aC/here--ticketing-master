@@ -76,8 +76,8 @@ describe("instantiateTemplate", () => {
     const strip = (doc: CreativeDocument) =>
       doc.elements.map((element) => ({
         ...element,
-        id: "—",
-        ...(element.type === "image" ? { assetId: "—" } : {}),
+        id: "_",
+        ...(element.type === "image" ? { assetId: "_" } : {}),
       }));
     expect(strip(document)).toEqual(strip(source));
   });
