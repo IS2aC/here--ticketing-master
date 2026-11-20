@@ -109,6 +109,18 @@ def test_preview_then_confirm(client: TestClient, organizer: dict[str, str]) -> 
     assert second["summary"]["duplicates"] == 4
     assert second["summary"]["to_import"] == 0
 
+    # Une nouvelle liste s'ajoute à l'ancienne : rien n'est retiré.
+    more = xlsx([["Nom", "Prénoms", "Numéro"], ["Yao", "Akissi", "05 05 12 34 56"]])
+    third = upload(client, organizer, event_id, more).json()
+    client.post(
+        f"/v1/events/{event_id}/imports/{third['id']}/confirm", headers=organizer
+    )
+    names = {
+        g["display_name"]
+        for g in client.get(f"/v1/events/{event_id}/guests", headers=organizer).json()
+    }
+    assert names == {"Jean Konan", "Fatou Bamba", "Paul Assi", "Akissi Yao"}
+
 
 def test_upload_errors_and_privacy(
     client: TestClient, organizer: dict[str, str]

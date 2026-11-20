@@ -27,6 +27,8 @@ export type WhatsAppOverview = {
   day_before_at: string; // la veille, à l'heure réglée
   calls_enabled: boolean;
   on_demand_reminders: boolean;
+  sending_now: boolean; // dans les heures d'envoi
+  next_send_at: string; // sinon, ouverture des envois (aucun envoi en soirée ni la nuit)
   ready: number;
   without_phone: number;
   without_card: number;

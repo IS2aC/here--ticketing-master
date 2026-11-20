@@ -18,6 +18,7 @@ from app.config import get_settings
 from app.db import dispose_engine, get_engine, get_session
 from app.messaging import (
     claim_next,
+    in_send_hours,
     plan_day_before,
     plan_follow_ups,
     resolve_whatsapp_ids,
@@ -30,12 +31,6 @@ log = logging.getLogger("here.worker")
 
 IDLE_SECONDS = 20  # attente quand la file est vide
 PLAN_EVERY_SECONDS = 300  # relances et appels
-
-
-def in_send_hours(moment: datetime) -> bool:
-    settings = get_settings()
-    hour = moment.astimezone(UTC).hour
-    return settings.whatsapp_send_start_hour <= hour < settings.whatsapp_send_end_hour
 
 
 async def run(stop: asyncio.Event) -> None:

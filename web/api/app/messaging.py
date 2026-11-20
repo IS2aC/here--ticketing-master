@@ -13,7 +13,7 @@ from datetime import UTC, date, datetime, time, timedelta
 from sqlalchemy import and_, exists, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import get_settings
+from app.config import LATEST_SEND_HOUR, get_settings
 from app.models import (
     Call,
     ContactStatus,
@@ -71,6 +71,29 @@ def reminder_dates(starts_at: datetime, chosen: list[date] | None) -> list[date]
             for d in get_settings().reminder_days_before
         }
     )
+
+
+def send_hours() -> tuple[int, int]:
+    """Plage d'envoi (heure d'Abidjan = UTC), jamais au-delà de LATEST_SEND_HOUR : pas d'envoi en soirée."""
+    settings = get_settings()
+    return settings.whatsapp_send_start_hour, min(
+        settings.whatsapp_send_end_hour, LATEST_SEND_HOUR
+    )
+
+
+def in_send_hours(moment: datetime) -> bool:
+    start, end = send_hours()
+    return start <= moment.astimezone(UTC).hour < end
+
+
+def next_send_at(moment: datetime) -> datetime:
+    """Premier moment où un message peut partir : tout de suite dans la plage, sinon à son ouverture."""
+    if in_send_hours(moment):
+        return moment
+    start, _ = send_hours()
+    moment = moment.astimezone(UTC)
+    day = moment.date() if moment.hour < start else moment.date() + timedelta(days=1)
+    return datetime.combine(day, time(start), UTC)
 
 
 def reminder_moment(day: date) -> datetime:

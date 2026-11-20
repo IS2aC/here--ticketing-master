@@ -52,6 +52,9 @@ export async function saveGuest(eventId: string, guestId: string | null, _: Gues
   if (!response.ok) return { message: UNAVAILABLE, values };
   revalidatePath(`/tableau-de-bord/evenements/${eventId}`);
   const { display_name } = (await response.json()) as { display_name: string };
+  if (!guestId && formData.get("next") === "another") {
+    redirect(`/tableau-de-bord/evenements/${eventId}/invites/nouveau?ajoute=${encodeURIComponent(display_name)}`);
+  }
   redirect(`/tableau-de-bord/evenements/${eventId}?${guestId ? "modifie" : "ajoute"}=${encodeURIComponent(display_name)}`);
 }
 

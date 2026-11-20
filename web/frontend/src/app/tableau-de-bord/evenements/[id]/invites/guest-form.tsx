@@ -15,35 +15,23 @@ export function GuestForm({
   categories,
   submitLabel,
   cancelHref,
+  quick = false,
 }: {
   action: (state: GuestFormState, formData: FormData) => Promise<GuestFormState>;
   initial: GuestInitial;
   categories: { id: string; name: string }[];
   submitLabel: string;
   cancelHref: string;
+  /** Ajout rapide : nom et numéro d'abord, le reste replié avec ses valeurs par défaut, et « Ajouter et saisir un autre ». */
+  quick?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   const v = (key: keyof GuestInitial) => state.values?.[key] ?? initial[key];
   const e = state.errors ?? {};
   const categoryId = `${useId()}category`;
 
-  return (
-    <form action={formAction} className="grid gap-5" noValidate>
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Prénoms" name="first_names" autoComplete="off" defaultValue={v("first_names")} error={e.first_names} />
-        <Field label="Nom" name="last_name" autoComplete="off" defaultValue={v("last_name")} error={e.last_name} />
-      </div>
-      <Field
-        label="Numéro WhatsApp"
-        name="phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="off"
-        placeholder="07 07 12 34 56"
-        defaultValue={v("phone")}
-        error={e.phone}
-        hint="Laissez vide si vous ne l'avez pas : l'invité ne recevra pas son invitation sur WhatsApp."
-      />
+  const optional = (
+    <>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="grid min-w-0 gap-1.5">
           <label htmlFor={categoryId} className="text-[13px] font-medium tracking-[0.02em] text-text-muted">
@@ -79,6 +67,42 @@ export function GuestForm({
         error={e.seats}
         hint="L'invité compris. Sur sa page, il indique combien viendront ; tous entrent au même scan."
       />
+    </>
+  );
+
+  return (
+    <form action={formAction} className="grid gap-5" noValidate>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Prénoms" name="first_names" autoComplete="off" defaultValue={v("first_names")} error={e.first_names} />
+        <Field label="Nom" name="last_name" autoComplete="off" defaultValue={v("last_name")} error={e.last_name} />
+      </div>
+      <Field
+        label="Numéro WhatsApp"
+        name="phone"
+        type="tel"
+        inputMode="tel"
+        autoComplete="off"
+        placeholder="07 07 12 34 56"
+        defaultValue={v("phone")}
+        error={e.phone}
+        hint="Laissez vide si vous ne l'avez pas : l'invité ne recevra pas son invitation sur WhatsApp."
+      />
+      {quick ? (
+        <details open={Boolean(e.category_id || e.seat || e.seats)} className="group rounded-md shadow-[inset_0_0_0_1px_var(--color-border)]">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[14px] font-semibold [&::-webkit-details-marker]:hidden">
+            <span>
+              Catégorie, position et nombre de personnes
+              <span className="block text-[13px] font-normal text-text-muted">
+                Facultatif · par défaut : {categories.find((c) => c.id === initial.category_id)?.name ?? "Normal"}, 1 personne
+              </span>
+            </span>
+            <Icon name="fleche-droite" width={18} height={18} className="shrink-0 transition-transform group-open:rotate-90" />
+          </summary>
+          <div className="grid gap-5 px-4 pt-1 pb-4">{optional}</div>
+        </details>
+      ) : (
+        optional
+      )}
       {state.message ? (
         <p role="alert" className="rounded-md bg-surface px-4 py-3 text-[14px] text-error">
           {state.message}
@@ -88,10 +112,19 @@ export function GuestForm({
         <Link href={cancelHref} className="text-center text-[14px] font-semibold text-text-muted hover:text-text hover:underline">
           Annuler
         </Link>
-        <Button type="submit" disabled={pending} className="h-11 text-[14px]">
-          {pending ? null : <Icon name="valide" width={18} height={18} />}
-          {pending ? "Enregistrement…" : submitLabel}
-        </Button>
+        {/* Bouton principal en premier : la touche Entrée enregistre sans enchaîner. */}
+        <div className="flex flex-col gap-3 sm:flex-row-reverse">
+          <Button type="submit" disabled={pending} className="h-11 text-[14px]">
+            {pending ? null : <Icon name="valide" width={18} height={18} />}
+            {pending ? "Enregistrement…" : submitLabel}
+          </Button>
+          {quick ? (
+            <Button type="submit" name="next" value="another" variant="ghost" disabled={pending} className="h-11 text-[14px]">
+              <Icon name="ajouter" width={18} height={18} />
+              Ajouter et saisir un autre
+            </Button>
+          ) : null}
+        </div>
       </div>
     </form>
   );

@@ -1,5 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 
 // Appels serveur vers l'API Here! (réseau interne Docker : http://here-api:8000).
 export function apiUrl(path: string): string {
@@ -45,6 +46,9 @@ export async function apiFetch(path: string, init: RequestInit & { token?: strin
   const url = apiUrl(path);
   // L'erreur est écrite dans les journaux du frontend : l'interface n'affiche qu'un message générique.
   const fail = (error: unknown): never => {
+    // Fetch interrompu par Next.js à la fin d'un pré-rendu (HANGING_PROMISE_REJECTION) : pas une panne de l'API,
+    // il remonte à Next.js sans être écrit dans les journaux.
+    unstable_rethrow(error);
     console.error(`API injoignable : ${rest.method ?? "GET"} ${url}`, error);
     throw error;
   };

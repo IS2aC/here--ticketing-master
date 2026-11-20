@@ -531,6 +531,10 @@ class WhatsAppOverview(BaseModel):
     day_before_at: datetime  # moment de l'envoi (la veille, à l'heure réglée)
     calls_enabled: bool
     on_demand_reminders: bool  # « Relancer maintenant » : option payante activée ou non
+    sending_now: bool  # dans les heures d'envoi : la file part maintenant
+    next_send_at: (
+        datetime  # sinon, ouverture des envois (pas d'envoi en soirée ni la nuit)
+    )
     ready: int  # invités qui peuvent recevoir leur invitation maintenant
     without_phone: int  # cartes prêtes mais numéro manquant ou à vérifier
     without_card: int  # invités sans carte préparée

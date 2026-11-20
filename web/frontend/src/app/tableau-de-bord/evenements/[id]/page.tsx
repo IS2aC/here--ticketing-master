@@ -109,19 +109,25 @@ async function EventView({
         {guests.length ? (
           <GuestList guests={guests} importUrl={importUrl} eventId={event.id} wa={wa} />
         ) : (
-          // État vide (DESIGN.md) : la prochaine étape est l'import de la liste.
+          // État vide (DESIGN.md) : deux façons de commencer la liste, au même niveau.
           <section className="flex flex-col items-center gap-3 rounded-lg bg-background px-6 py-14 text-center shadow-sm">
             <div className="flex size-16 items-center justify-center rounded-full bg-surface text-text-muted">
-              <Icon name="importer" width={28} height={28} />
+              <Icon name="participants" width={28} height={28} />
             </div>
             <h2 className="font-heading text-[18px] font-semibold">Votre liste d&apos;invités est vide</h2>
             <p className="max-w-md text-[14px] text-text-muted">
-              Importez votre fichier Excel ou CSV : nous vérifions les numéros avant d&apos;envoyer les invitations.
+              Importez votre fichier Excel ou CSV, ou ajoutez vos invités un par un. Nous vérifions les numéros avant d&apos;envoyer les invitations.
             </p>
-            <ButtonLink href={importUrl} className="mt-2 h-10 text-[14px]">
-              <Icon name="importer" width={18} height={18} />
-              Importer la liste
-            </ButtonLink>
+            <div className="mt-2 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+              <ButtonLink href={importUrl} variant="ghost" className="h-10 text-[14px]">
+                <Icon name="importer" width={18} height={18} />
+                Importer une liste
+              </ButtonLink>
+              <ButtonLink href={`/tableau-de-bord/evenements/${event.id}/invites/nouveau`} variant="ghost" className="h-10 text-[14px]">
+                <Icon name="ajouter" width={18} height={18} />
+                Ajouter un invité
+              </ButtonLink>
+            </div>
           </section>
         )}
 

@@ -10,7 +10,13 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import AdminAuth, DbSession
-from app.config import EDITABLE, Settings, env_settings, get_settings
+from app.config import (
+    EDITABLE,
+    LATEST_SEND_HOUR,
+    Settings,
+    env_settings,
+    get_settings,
+)
 from app.models import (
     Call,
     Checkin,
@@ -602,6 +608,18 @@ async def update_platform_settings(
         raise _refused("Le délai minimum doit être inférieur ou égal au délai maximum.")
     if effective.whatsapp_send_start_hour >= effective.whatsapp_send_end_hour:
         raise _refused("L'heure de fin des envois doit être après l'heure de début.")
+    if effective.whatsapp_send_end_hour > LATEST_SEND_HOUR:
+        raise _refused(
+            f"Pas d'envoi en soirée : les envois s'arrêtent à {LATEST_SEND_HOUR} h au plus tard."
+        )
+    if not (
+        effective.whatsapp_send_start_hour
+        <= effective.whatsapp_day_before_hour
+        < effective.whatsapp_send_end_hour
+    ):
+        raise _refused(
+            "Le rappel la veille doit partir pendant les heures d'envoi, sinon il partirait le jour de l'événement."
+        )
     if (
         changes.get("whatsapp_provider") == "wasender"
         and not effective.wasender_api_key

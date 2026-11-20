@@ -123,10 +123,10 @@ export function SettingsForm({ settings, action }: { settings: PlatformSettings;
         <h2 id="reglages-heures" className="font-heading text-[15px] font-semibold">
           Heures d&apos;envoi
         </h2>
-        <p className="mt-1 text-[13px] text-text-muted">Heure d&apos;Abidjan. Aucun message ne part la nuit.</p>
+        <p className="mt-1 text-[13px] text-text-muted">Heure d&apos;Abidjan. Aucun message ne part en soirée ni la nuit : fin à 20 h au plus, rappel la veille pendant ces heures.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Field label="Début (h)" name="whatsapp_send_start_hour" type="number" min={0} max={23} defaultValue={values.whatsapp_send_start_hour} hint={meta("whatsapp_send_start_hour")} />
-          <Field label="Fin (h)" name="whatsapp_send_end_hour" type="number" min={1} max={24} defaultValue={values.whatsapp_send_end_hour} hint={meta("whatsapp_send_end_hour")} />
+          <Field label="Fin (h)" name="whatsapp_send_end_hour" type="number" min={1} max={20} defaultValue={values.whatsapp_send_end_hour} hint={meta("whatsapp_send_end_hour")} />
           <Field label="Rappel la veille (h)" name="whatsapp_day_before_hour" type="number" min={0} max={23} defaultValue={values.whatsapp_day_before_hour} hint={meta("whatsapp_day_before_hour")} />
         </div>
       </section>

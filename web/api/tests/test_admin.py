@@ -160,6 +160,8 @@ def test_platform_settings(client: TestClient, organizer: dict[str, str]) -> Non
         for body in (
             {"whatsapp_min_delay_seconds": 100, "whatsapp_max_delay_seconds": 50},
             {"whatsapp_send_start_hour": 20, "whatsapp_send_end_hour": 8},
+            {"whatsapp_send_end_hour": 22},  # pas d'envoi en soirée
+            {"whatsapp_day_before_hour": 21},  # hors des heures d'envoi
             {"whatsapp_provider": "wasender"},  # pas de clé WasenderAPI
         ):
             refused = client.patch(url, json=body, headers=organizer)

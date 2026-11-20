@@ -36,6 +36,15 @@ function when(iso: string): string {
   return shortDate.format(new Date(iso)).replace(":", " h ");
 }
 
+/** « demain à partir de 8 h » : ouverture des envois (heure d'Abidjan = UTC). */
+function opening(iso: string): string {
+  const day = iso.slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+  const label = day === today ? "aujourd'hui" : day === tomorrow ? "demain" : `le ${toDateInput(iso).split("-").reverse().join("/")}`;
+  return `${label} à partir de ${new Date(iso).getUTCHours()} h`;
+}
+
 function plural(n: number, one: string, many: string = `${one}s`): string {
   return `${n.toLocaleString("fr-FR")} ${n > 1 ? many : one}`;
 }
@@ -60,6 +69,7 @@ async function RemindersView({
   const sentInvitations = sentTotal(wa.invitations);
   const sentReminders = sentTotal(wa.reminders);
   const queued = wa.invitations.scheduled + wa.reminders.scheduled;
+  const nextSend = opening(wa.next_send_at);
   const justSent = Number(query.envoyees);
   const justReminded = Number(query.relances);
   // Un seul bouton rouge : l'envoi des invitations s'il en reste, sinon la relance.
@@ -106,12 +116,36 @@ async function RemindersView({
         </p>
       ) : null}
 
+      {queued > 0 && wa.configured ? (
+        // Où en est la diffusion : sans ce repère, une file qui attend le matin ressemble à un échec.
+        <p role="status" className="flex items-start gap-3 rounded-md bg-background p-4 text-[14px] shadow-sm">
+          <Icon name={wa.sending_now ? "envoyer" : "horloge"} width={18} height={18} className="mt-0.5 shrink-0 text-status-pending" />
+          {wa.sending_now ? (
+            <span>
+              <b className="font-semibold">Envoi en cours.</b> {plural(queued, "message")} en file : ils partent un par un, avec des pauses
+              pour protéger le numéro WhatsApp.
+            </span>
+          ) : (
+            <span>
+              <b className="font-semibold">En attente du matin.</b> Aucun envoi en soirée ni la nuit : {plural(queued, "message")} en
+              file partiront {nextSend}.
+            </span>
+          )}
+        </p>
+      ) : null}
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="grid content-start gap-6">
           <section aria-label="Envois" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat icon="invitation" label="Invitations" value={sentInvitations} detail={`envoyées · ${plural(wa.invitations.read, "lue")} · ${plural(wa.invitations_opened, "ouverte")}`} />
             <Stat icon="relance" label="Relances" value={sentReminders} detail={`${plural(wa.to_remind, "invité")} sans réponse`} />
-            <Stat icon="horloge" label="En file" value={queued} detail="envoi progressif" className="text-status-pending" />
+            <Stat
+              icon="horloge"
+              label="En file"
+              value={queued}
+              detail={queued === 0 || wa.sending_now ? "envoi progressif" : `départ ${nextSend}`}
+              className="text-status-pending"
+            />
             <Stat
               icon="alerte"
               label="Échecs"
@@ -291,7 +325,7 @@ async function RemindersView({
         </aside>
       </div>
       {justSent > 0 ? (
-        <Toast title={`${plural(justSent, "invitation mise", "invitations mises")} en file`} detail="Elles partent une à une sur WhatsApp." />
+        <Toast title={`${plural(justSent, "invitation mise", "invitations mises")} en file`} detail={wa.sending_now ? "Elles partent une à une sur WhatsApp." : `Aucun envoi en soirée ni la nuit : elles partiront ${nextSend}.`} />
       ) : justReminded > 0 ? (
         <Toast title={`${plural(justReminded, "relance programmée", "relances programmées")}`} detail="Seuls les invités sans réponse sont relancés." />
       ) : null}

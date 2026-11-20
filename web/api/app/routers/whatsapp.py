@@ -12,6 +12,8 @@ from app.config import get_settings
 from app.messaging import (
     MAX_REMINDER_DATES,
     day_before_moment,
+    in_send_hours,
+    next_send_at,
     now,
     queue_invitations,
     queue_reminders,
@@ -136,6 +138,8 @@ async def _overview(db: AsyncSession, event: Event, owner: User) -> WhatsAppOver
         day_before_at=day_before_moment(event.starts_at),
         calls_enabled=event.call_reminders_enabled,
         on_demand_reminders=_on_demand(owner),
+        sending_now=in_send_hours(now()),
+        next_send_at=next_send_at(now()),
         ready=ready,
         without_phone=without_phone,
         without_card=without_card,

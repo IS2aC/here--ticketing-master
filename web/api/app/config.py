@@ -4,6 +4,9 @@ from typing import Any, Literal
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Règle de la solution : aucun envoi WhatsApp en soirée. Aucun réglage ne repousse la fin au-delà.
+LATEST_SEND_HOUR = 20
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
