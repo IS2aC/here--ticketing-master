@@ -12,10 +12,10 @@
   "dependencies": {
     "@types/culori": "^4.0.1",
     "culori": "^4.0.2",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.4.18",
     "jsqr": "^1.4.0",
     "konva": "^10.9.0",
-    "next": "16.4.3",
+    "next": "16.4.6",
     "opentype.js": "^2.0.0",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
@@ -33,7 +33,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.6",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.18"
