@@ -12,9 +12,11 @@ export type User = {
   id: string;
   first_name: string;
   last_name: string;
-  phone: string;
+  phone: string | null; // facultatif pour un compte Google
   email: string | null;
   role: "organizer" | "support" | "admin";
+  has_password: boolean; // false : compte Google sans mot de passe
+  google: boolean; // compte relié à Google
   organization: string | null;
   city: string | null;
   country: string | null;

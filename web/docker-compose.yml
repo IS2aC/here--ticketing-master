@@ -71,6 +71,9 @@ services:
       DATABASE_URL: *database-url
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
+      # Connexion avec Google : l'API échange le code et vérifie l'identité (voir .env.example).
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     expose:
       - "8000"
     depends_on:
@@ -84,6 +87,8 @@ services:
       API_URL: http://here-api:8000
       # Adresse publique du site : lien porté par le QR code des cartes (/i/<jeton>).
       PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+      # Connexion avec Google : bouton affiché si l'identifiant est renseigné (le secret reste à l'API).
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       # Éditeur de cartes : génération d'images par IA (voir .env.example), désactivée par défaut.
       IMAGE_PROVIDER: ${IMAGE_PROVIDER:-none}
       IMAGE_API_KEY: ${IMAGE_API_KEY:-}

@@ -27,11 +27,13 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID, primary_key=True, server_default=func.gen_random_uuid()
     )
-    phone: Mapped[str] = mapped_column(String, unique=True)
+    # Facultatifs pour un compte Google (téléphone demandé après la première connexion).
+    phone: Mapped[str | None] = mapped_column(String, unique=True)
     first_name: Mapped[str]
     last_name: Mapped[str]
     email: Mapped[str | None]
-    password_hash: Mapped[str]
+    password_hash: Mapped[str | None]
+    google_sub: Mapped[str | None] = mapped_column(unique=True)
     organization: Mapped[str | None]  # entreprise, association ou famille
     city: Mapped[str | None]
     country: Mapped[str | None]
@@ -47,6 +49,14 @@ class User(Base):
     day_before_reminders: Mapped[bool] = mapped_column(server_default="false")
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    @property
+    def has_password(self) -> bool:
+        return self.password_hash is not None
+
+    @property
+    def google(self) -> bool:
+        return self.google_sub is not None
 
 
 class Session(Base):

@@ -6,7 +6,7 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
 
 ## Urgent
 
-- [x] **Améliorer la page de garde** (fait le 07/11) : `/` mène à la connexion (ou au tableau de bord si l'on est connecté). Connexion, inscription et mot de passe oublié en deux panneaux : formulaire à gauche, univers Here! sur fond noir avec le visuel de l'invitation à droite (écrans larges). « Se souvenir de moi » décoché : session effacée à la fermeture du navigateur. Pas de connexion Google ni de choix de langue (absents de Here!).
+- [x] **Améliorer la page de garde** (fait le 07/11) : `/` mène à la connexion (ou au tableau de bord si l'on est connecté). Connexion, inscription et mot de passe oublié en deux panneaux : formulaire à gauche, univers Here! sur fond noir avec le visuel de l'invitation à droite (écrans larges). « Se souvenir de moi » décoché : session effacée à la fermeture du navigateur. Pas de choix de langue. Connexion avec Google ajoutée le 20/11 (voir plus bas).
 - [x] **Support : chatbot relié à un agent IA déployé dans Hermes** (en service le 08/11 : « Une question ? » répond avec l'agent `here-support`).
   - L'agent répond aux utilisateurs par API.
   - Il peut **interpeller l'administrateur par API** quand il ne sait pas répondre ou qu'une action humaine est nécessaire.
@@ -133,6 +133,11 @@ Le MVP est fonctionnel (05/11). Priorités : la section **Urgent** d'abord ; tou
 - [x] **Retours de navigation identiques** (fait le 29/10) : un seul style, celui de « Retour à l'événement » (lien rouge avec flèche, au-dessus du titre). « Retour au tableau de bord » sur la page de l'événement, la création d'un événement, la bibliothèque de cartes et le profil ; « Retour à l'événement » sur les étapes d'un événement. À garder pour tout nouvel écran (`components/back-link.tsx`).
 - [ ] **Ajustement complet du branding de la solution**.
 - [x] **Premier ajout d'invités : liste ou invité seul** (noté le 19/11, fait le 20/11) : une liste vide propose « Importer une liste » et « Ajouter un invité » côte à côte. L'ajout à la main demande prénoms, nom et numéro ; catégorie, position et nombre de personnes sont repliés avec leurs valeurs par défaut. « Ajouter et saisir un autre » enchaîne sur un formulaire vide et confirme l'invité précédent.
+
+- [ ] **Connexion avec Google** (codée le 20/11, branche `connexion-google`) : « Continuer avec Google » sur la connexion et l'inscription (OpenID Connect, code + PKCE + nonce ; l'API échange le code et vérifie l'identité). Un compte Google retrouve son compte par son identifiant Google, sinon par la même adresse e-mail confirmée par Google, sinon il est créé. Numéro WhatsApp **facultatif** : proposé à la première connexion (« Plus tard »), modifiable dans « Mon profil » ; pas de mot de passe pour un compte Google.
+  - Reste : renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` sur Dokploy, vérifier que `PUBLIC_APP_URL` vaut `https://web-here-ticketing.labis2ac.com`, puis essayer pour de vrai (nouveau compte, compte existant avec la même adresse, annulation).
+  - **À décider : rattachement par e-mail.** Here! ne vérifie pas l'adresse e-mail à l'inscription. Quelqu'un pourrait créer un compte avec l'adresse d'une autre personne, puis le jour où celle-ci se connecte avec Google, elle arriverait dans ce compte dont l'auteur connaît le mot de passe. Parades : ne rattacher qu'après une connexion par mot de passe (« Relier Google » dans « Mon profil »), ou vérifier les adresses e-mail.
+  - Tests de l'API avec base (`tests/test_google_login.py`) pas encore lancés (pas de PostgreSQL sur le poste).
 
 ### Point du 20/11 (remarques du 19/11)
 

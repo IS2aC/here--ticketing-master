@@ -6,11 +6,13 @@ from fastapi import APIRouter, HTTPException, Request, Response, status
 from sqlalchemy import false, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 
-from app import login_guard
+from app import google, login_guard
 from app.auth import CurrentAuth, DbSession, client_ip, open_session
 from app.models import OtpCode, OtpPurpose, Session, User
 from app.phone import normalize_phone
 from app.schemas import (
+    GoogleLoginIn,
+    GoogleSessionOut,
     LoginIn,
     PasswordChange,
     PasswordResetConfirm,
@@ -109,6 +111,63 @@ async def login(body: LoginIn, request: Request, db: DbSession) -> SessionOut:
     return _session_out(token, session.expires_at, user)
 
 
+_GOOGLE_REFUSED = HTTPException(
+    status.HTTP_401_UNAUTHORIZED,
+    detail={"message": "La connexion avec Google n'a pas abouti. Réessayez."},
+)
+
+
+@router.post("/auth/google")
+async def login_with_google(
+    body: GoogleLoginIn, request: Request, db: DbSession
+) -> GoogleSessionOut:
+    """Connexion avec Google : retrouve le compte (Google, puis même e-mail confirmé) ou le crée."""
+    if not google.configured():
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail={"message": "La connexion avec Google n'est pas activée."},
+        )
+    try:
+        who = await google.exchange(
+            body.code, body.code_verifier, body.redirect_uri, body.nonce
+        )
+    except google.GoogleError as exc:
+        log.warning("Connexion Google refusée : %s", exc)
+        raise _GOOGLE_REFUSED from None
+
+    created = False
+    user = await db.scalar(select(User).where(User.google_sub == who.sub))
+    if user is None and who.email:
+        # Compte Here! existant avec la même adresse, confirmée par Google : on y relie Google.
+        user = await db.scalar(
+            select(User).where(func.lower(User.email) == who.email).with_for_update()
+        )
+        if user is not None:
+            if user.google_sub is not None:  # déjà relié à un autre compte Google
+                raise _GOOGLE_REFUSED
+            user.google_sub = who.sub
+    if user is None:
+        user = User(
+            google_sub=who.sub,
+            email=who.email,
+            first_name=who.first_name,
+            last_name=who.last_name,
+        )
+        db.add(user)
+        created = True
+    try:
+        await db.flush()
+    except IntegrityError:
+        # Première connexion simultanée avec le même compte Google.
+        await db.rollback()
+        raise _GOOGLE_REFUSED from None
+    await db.refresh(user)
+    token, session = await open_session(db, user, request)
+    return GoogleSessionOut(
+        **_session_out(token, session.expires_at, user).model_dump(), created=created
+    )
+
+
 @router.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(auth: CurrentAuth, db: DbSession) -> Response:
     auth.session.revoked_at = datetime.now(UTC)
@@ -168,7 +227,15 @@ async def change_password(
     body: PasswordChange, auth: CurrentAuth, request: Request, db: DbSession
 ) -> Response:
     """Change le mot de passe et déconnecte les autres appareils (la session en cours reste ouverte)."""
-    key, ip = auth.user.phone, client_ip(request)
+    if auth.user.password_hash is None:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail={
+                "field": "current_password",
+                "message": "Votre compte se connecte avec Google : il n'a pas de mot de passe.",
+            },
+        )
+    key, ip = auth.user.phone or str(auth.user.id), client_ip(request)
     await login_guard.check(db, key, ip)
     if not verify_password(auth.user.password_hash, body.current_password):
         await login_guard.record(db, key, ip, succeeded=False)
@@ -242,7 +309,8 @@ async def request_password_reset(
             detail={"message": "Trop de demandes. Réessayez dans une heure."},
         )
     user = await _account(db, body.identifier)
-    if user is None:
+    if user is None or user.phone is None:
+        # Compte Google sans numéro : pas de code possible, il se reconnecte avec Google.
         return _RESET_SENT
     recent = await db.scalar(
         select(func.count()).where(
@@ -317,7 +385,8 @@ async def confirm_password_reset(
     )
     await db.commit()
     # Nouveau mot de passe : la suspension éventuelle du compte est levée.
-    await login_guard.record(db, user.phone, client_ip(request), succeeded=True)
+    if user.phone:
+        await login_guard.record(db, user.phone, client_ip(request), succeeded=True)
     if user.email:
         await login_guard.record(
             db, user.email.lower(), client_ip(request), succeeded=True

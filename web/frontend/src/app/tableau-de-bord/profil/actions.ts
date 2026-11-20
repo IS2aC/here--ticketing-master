@@ -62,7 +62,7 @@ export async function updateProfile(_: ProfileState, formData: FormData): Promis
   const body = {
     first_name: text(formData, "first_name"),
     last_name: text(formData, "last_name"),
-    phone: text(formData, "phone"),
+    phone: text(formData, "phone") || null, // vide : inchangé (compte Google sans numéro)
     email: text(formData, "email") || null,
     organization: text(formData, "organization"),
     city: text(formData, "city"),

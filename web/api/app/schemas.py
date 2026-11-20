@@ -53,9 +53,11 @@ class UserOut(BaseModel):
     id: uuid.UUID
     first_name: str
     last_name: str
-    phone: str
+    phone: str | None  # facultatif pour un compte Google
     email: str | None
     role: UserRole
+    has_password: bool = True  # False : compte Google sans mot de passe
+    google: bool = False  # compte relié à Google
     organization: str | None = None
     city: str | None = None
     country: str | None = None
@@ -68,6 +70,19 @@ class SessionOut(BaseModel):
     token_type: str = "bearer"
     expires_at: datetime
     user: UserOut
+
+
+class GoogleLoginIn(BaseModel):
+    """Retour de Google : le code à échanger, et ce que le frontend a gardé pour ce navigateur."""
+
+    code: Annotated[str, StringConstraints(min_length=1, max_length=2048)]
+    code_verifier: Annotated[str, StringConstraints(min_length=43, max_length=128)]
+    nonce: Annotated[str, StringConstraints(min_length=16, max_length=256)]
+    redirect_uri: Annotated[str, StringConstraints(min_length=1, max_length=512)]
+
+
+class GoogleSessionOut(SessionOut):
+    created: bool  # compte créé à l'instant : proposer d'ajouter le numéro WhatsApp
 
 
 # --- Événements ---------------------------------------------------------------
@@ -667,7 +682,7 @@ class AdminUser(BaseModel):
     id: uuid.UUID
     first_name: str
     last_name: str
-    phone: str
+    phone: str | None
     email: str | None
     organization: str | None
     city: str | None
@@ -861,7 +876,7 @@ class SupportThread(SupportConversationOut):
 
     organizer_id: uuid.UUID
     organizer_name: str
-    organizer_phone: str
+    organizer_phone: str | None
     organization: str | None
 
 

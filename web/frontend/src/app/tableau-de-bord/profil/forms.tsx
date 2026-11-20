@@ -40,15 +40,16 @@ export function ProfileForm({ user, action }: { user: User; action: Action }) {
           <Field label="Prénom" name="first_name" autoComplete="given-name" required defaultValue={user.first_name} error={e.first_name} />
           <Field label="Nom" name="last_name" autoComplete="family-name" required defaultValue={user.last_name} error={e.last_name} />
           <Field
-            label="Téléphone (WhatsApp)"
+            label={user.google ? "Téléphone WhatsApp (facultatif)" : "Téléphone (WhatsApp)"}
             name="phone"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
-            required
+            required={!user.google}
+            placeholder="07 07 12 34 56"
             defaultValue={localPhone(user.phone)}
             error={e.phone}
-            hint="Il vous sert à vous connecter."
+            hint={user.google ? "L'équipe Here! peut vous joindre plus vite sur WhatsApp." : "Il vous sert à vous connecter."}
           />
           <Field label="E-mail (facultatif)" name="email" type="email" autoComplete="email" defaultValue={user.email ?? ""} error={e.email} />
         </div>

@@ -282,13 +282,17 @@ function ThreadCard({ thread: t }: { thread: SupportThread }) {
         </ol>
       </div>
       <div className="grid content-start gap-3 lg:border-l lg:border-border/60 lg:pl-5">
-        <a
-          href={`tel:${t.organizer_phone}`}
-          className="inline-flex h-10 items-center gap-2 justify-self-start rounded-full px-4 text-[13px] font-semibold shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-surface"
-        >
-          <Icon name="telephone" width={16} height={16} />
-          {formatPhone(t.organizer_phone)}
-        </a>
+        {t.organizer_phone ? (
+          <a
+            href={`tel:${t.organizer_phone}`}
+            className="inline-flex h-10 items-center gap-2 justify-self-start rounded-full px-4 text-[13px] font-semibold shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-surface"
+          >
+            <Icon name="telephone" width={16} height={16} />
+            {formatPhone(t.organizer_phone)}
+          </a>
+        ) : (
+          <p className="text-[13px] text-text-muted">Pas de numéro : répondez ici.</p>
+        )}
         {t.status !== "closed" ? (
           <>
             <ReplyForm action={replyQuestion.bind(null, t.id)} name={t.organizer_name} />

@@ -21,6 +21,6 @@ export type SupportConversation = {
 export type SupportThread = SupportConversation & {
   organizer_id: string;
   organizer_name: string;
-  organizer_phone: string;
+  organizer_phone: string | null;
   organization: string | null;
 };

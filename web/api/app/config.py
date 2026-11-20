@@ -56,6 +56,11 @@ class Settings(BaseSettings):
     assistant_model: str = ""
     assistant_timeout_seconds: float = 25
 
+    # Connexion avec Google (console Google Cloud, identifiants OAuth « Application Web »).
+    # Vides : le bouton « Continuer avec Google » n'est pas proposé.
+    google_client_id: str = ""
+    google_client_secret: str = ""
+
     @field_validator("database_url")
     @classmethod
     def use_asyncpg_driver(cls, url: str) -> str:

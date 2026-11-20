@@ -53,7 +53,7 @@ export type AdminUser = {
   id: string;
   first_name: string;
   last_name: string;
-  phone: string;
+  phone: string | null; // compte Google sans numéro
   email: string | null;
   organization: string | null;
   city: string | null;

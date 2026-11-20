@@ -37,7 +37,11 @@ async function Profile({ searchParams }: { searchParams: Promise<Record<string, 
             <Icon name="cadenas" width={18} height={18} />
             Mot de passe
           </h2>
-          <PasswordForm action={changePassword} />
+          {user.has_password ? (
+            <PasswordForm action={changePassword} />
+          ) : (
+            <p className="text-[14px] text-text-muted">Vous vous connectez avec Google : votre compte n&apos;a pas de mot de passe.</p>
+          )}
         </section>
         <p className="flex items-start gap-2 rounded-lg bg-background p-4 text-[13px] text-text-muted shadow-sm">
           <Icon name="cadenas" width={16} height={16} className="mt-0.5 shrink-0" />

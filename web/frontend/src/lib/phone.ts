@@ -3,13 +3,15 @@
 const groups = (digits: string) => digits.match(/.{1,2}/g)?.join(" ") ?? digits;
 
 /** « +225 07 07 12 34 56 » : numéro complet, pour vérifier un import. */
-export function formatPhone(phone: string): string {
+export function formatPhone(phone: string | null): string {
+  if (!phone) return "Non renseigné"; // compte Google sans numéro
   if (/^\+225\d{10}$/.test(phone)) return `+225 ${groups(phone.slice(4))}`;
   return phone;
 }
 
 /** « 07 •• •• 34 56 » : numéro masqué dans les listes (DESIGN.md, règle 5). */
-export function maskPhone(phone: string): string {
+export function maskPhone(phone: string | null): string {
+  if (!phone) return "—";
   if (/^\+225\d{10}$/.test(phone)) {
     const local = phone.slice(4);
     return `${local.slice(0, 2)} •• •• ${local.slice(6, 8)} ${local.slice(8)}`;
@@ -19,7 +21,8 @@ export function maskPhone(phone: string): string {
 }
 
 /** « 07 00 00 00 09 » : numéro ivoirien tel qu'on le saisit (formulaires) ; les autres restent en +indicatif. */
-export function localPhone(phone: string): string {
+export function localPhone(phone: string | null): string {
+  if (!phone) return "";
   if (/^\+225\d{10}$/.test(phone)) return groups(phone.slice(4));
   return phone;
 }
